@@ -81,8 +81,8 @@ button, select, input, textarea { font: inherit; color: inherit; }
 .brand-mark { font-family: var(--font-display); font-weight: 800; font-stretch: 78%; font-size: 19px; letter-spacing: -0.01em; white-space: nowrap; }
 .brand-mark span { color: var(--accent); }
 .brand-co { color: var(--muted); font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
-.tabs { display: flex; gap: 2px; background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius); padding: 2px; }
-.tab { border: 0; background: transparent; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 500; color: var(--muted); display: flex; align-items: center; gap: 6px; }
+.tabs { display: flex; gap: 2px; overflow-x: auto; max-width: 100%; background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius); padding: 2px; }
+.tab { white-space: nowrap; flex: none; border: 0; background: transparent; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 500; color: var(--muted); display: flex; align-items: center; gap: 6px; }
 .tab[aria-selected="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 2px rgba(0,0,0,.08); }
 .tab .step { font-family: var(--font-mono); font-size: 11px; opacity: .7; }
 .tab .count { background: var(--bad-soft); color: var(--bad); font-size: 11px; font-weight: 600; border-radius: 10px; padding: 0 6px; }
@@ -250,7 +250,10 @@ img { max-width: 100%; }
       <button class="tab" role="tab" id="tab-data" aria-selected="false" data-view="data"><span class="step">1</span>Data</button>
       <button class="tab" role="tab" id="tab-map" aria-selected="false" data-view="map"><span class="step">2</span>Mapping <span class="count" id="unmapped-count" hidden></span></button>
       <button class="tab" role="tab" id="tab-pack" aria-selected="true" data-view="pack"><span class="step">3</span>Pack</button>
-      <button class="tab" role="tab" id="tab-model" aria-selected="false" data-view="model"><span class="step">4</span>Model</button>
+      <button class="tab" role="tab" id="tab-forecast" aria-selected="false" data-view="forecast"><span class="step">4</span>Forecast</button>
+      <button class="tab" role="tab" id="tab-budget" aria-selected="false" data-view="budget"><span class="step">5</span>Budget</button>
+      <button class="tab" role="tab" id="tab-valuation" aria-selected="false" data-view="valuation"><span class="step">6</span>Valuation</button>
+      <button class="tab" role="tab" id="tab-appraisal" aria-selected="false" data-view="appraisal"><span class="step">7</span>Loans and projects</button>
     </nav>
     <div class="actions" id="export-actions">
       <button class="btn" id="btn-install" type="button" hidden>Install app</button>
@@ -424,16 +427,14 @@ img { max-width: 100%; }
     <section class="view" id="view-model" hidden>
       <div class="pack-title">
         <div>
-          <div class="eyebrow">Financial model</div>
+          <div class="eyebrow" id="model-eyebrow">Financial model</div>
           <h1 id="model-title">Forecast</h1>
           <div class="sub" id="model-sub"></div>
         </div>
         <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">
-          <div class="seg" role="group" aria-label="Model section" id="model-nav">
-            <button type="button" data-mv="forecast" aria-pressed="true">Forecast</button>
-            <button type="button" data-mv="budget" aria-pressed="false">Budget</button>
-            <button type="button" data-mv="valuation" aria-pressed="false">Valuation</button>
-            <button type="button" data-mv="appraisal" aria-pressed="false">Loans and projects</button>
+          <div class="actions" id="task-actions">
+            <button class="btn small" type="button" id="btn-task-xlsx">Excel</button>
+            <button class="btn small primary" type="button" id="btn-task-pdf">Download PDF</button>
           </div>
           <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap" id="scen-wrap">
             <span class="eyebrow">Scenario</span>
@@ -538,7 +539,7 @@ img { max-width: 100%; }
         </div>
       </div>
 
-      <label class="check"><input type="checkbox" id="m-pdf"><span>Include the financial model in the PDF pack</span></label>
+      <label class="check"><input type="checkbox" id="m-pdf"><span>Also add the forecast, budget, valuation, and loans and projects to the full management pack downloads</span></label>
     </section>
 
     <!-- MAPPING -->
@@ -1446,6 +1447,9 @@ async function draftWithClaude() {
 
 /* ---------- Financial model ---------- */
 let modelView = "forecast", modelScen = "base", modelT = null;
+const MODEL_VIEWS = ["forecast", "budget", "valuation", "appraisal"];
+const TASK_TITLE = { forecast: "Three-year forecast", budget: "Budget", valuation: "Business valuation", appraisal: "Loans and projects" };
+const taskFileBase = t => `${(S.company || "Company").replace(/[^\w\- ]+/g, "").trim()} - ${TASK_TITLE[t]}`;
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const SCEN_LABEL = { base: "Base", down: "Downside", up: "Upside" };
 const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
@@ -1684,10 +1688,9 @@ function renderSeasonInputs() {
 function renderModel() {
   M();
   for (const v of ["forecast", "budget", "valuation", "appraisal"]) $("mv-" + v).hidden = v !== modelView;
-  document.querySelectorAll("#model-nav [data-mv]").forEach(b => b.setAttribute("aria-pressed", b.dataset.mv === modelView));
   document.querySelectorAll("#scen-nav [data-sc]").forEach(b => b.setAttribute("aria-pressed", b.dataset.sc === modelScen));
   $("scen-wrap").hidden = modelView === "appraisal";
-  $("m-pdf").checked = S.pdfModel !== false;
+  $("m-pdf").checked = S.pdfModel === true;
   $("mi-forecast").innerHTML = inputsHTML(FC_INPUTS);
   $("mi-valuation").innerHTML = inputsHTML(VAL_INPUTS);
   $("mi-loan").innerHTML = inputsHTML(LOAN_INPUTS);
@@ -1718,6 +1721,7 @@ function renderModelResults() {
   const { m, runs, years, labels, val, budget, loan, proj } = modelSnapshot();
   const scen = SCEN_LABEL[modelScen];
   const titles = { forecast: "Three-year forecast", budget: `Budget for ${labels[1]}`, valuation: "Business valuation", appraisal: "Loans and projects" };
+  $("model-eyebrow").textContent = { forecast: "Step 4 · Forecast", budget: "Step 5 · Budget", valuation: "Step 6 · Valuation", appraisal: "Step 7 · Loans and projects" }[modelView];
   $("model-title").textContent = titles[modelView];
   $("model-sub").textContent = modelView === "appraisal" ? `${S.company} · amounts in ${unitText()}` : `${S.company} · ${scen} case · built from ${S.cur}, annualised from ${S.months} month${Number(S.months) === 1 ? "" : "s"}`;
   document.querySelectorAll(".unit-label").forEach(e => e.textContent = "Amounts in " + unitText());
@@ -1885,7 +1889,8 @@ function pdfStacked(doc, X, Y, Wd, Ht, title, cur, cmp, bud) {
   });
   doc.setFontSize(6); doc.setTextColor(90, 90, 90); doc.text("Figures are per 100 of revenue plus other income.", X, ly + 4); doc.setTextColor(0, 0, 0);
 }
-async function exportPDF() {
+async function exportPDF(only) {
+  const want = k => !only || only === k;
   if (!window.jspdf) { toast("The PDF tool didn't load. Check your connection and reload."); return; }
   const { jsPDF } = window.jspdf;
   const { cur, cmp, bud, open, cf, built } = snapshot();
@@ -1897,11 +1902,11 @@ async function exportPDF() {
   const font = (st, sz) => { doc.setFont("helvetica", st); doc.setFontSize(sz); };
   doc.setTextColor(0, 0, 0); doc.setDrawColor(0, 0, 0);
   font("bold", 17); doc.text(plain(S.company || "Management pack"), M, y); y += 7;
-  font("normal", 11); doc.text(plain(`Management pack: ${S.cur}`), M, y); y += 5;
-  font("normal", 8.5); doc.text(plain(`Amounts in ${unitText()} unless stated. Prepared ${new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}. Unaudited management accounts.`), M, y); y += 4;
+  font("normal", 11); doc.text(plain(only ? `${TASK_TITLE[only]}, built from ${S.cur}` : `Management pack: ${S.cur}`), M, y); y += 5;
+  font("normal", 8.5); doc.text(plain(`Amounts in ${unitText()} unless stated. Prepared ${new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}. ${only ? "Management estimates, unaudited." : "Unaudited management accounts."}`), M, y); y += 4;
   doc.setLineWidth(0.5); doc.line(M, y, R, y); y += 8;
-  const heading = (t, newPage) => { if (newPage) { doc.addPage(); y = 20; } ensure(14); font("bold", 11.5); doc.text(plain(t), M, y); y += 2; doc.setLineWidth(0.25); doc.line(M, y, R, y); y += 5.5; };
-  const subheading = t => { ensure(10); font("bold", 9.5); doc.text(plain(t), M, y); y += 5; };
+  const heading = (t, newPage) => { if (newPage) { doc.addPage(); y = 20; } ensure(30); font("bold", 11.5); doc.text(plain(t), M, y); y += 2; doc.setLineWidth(0.25); doc.line(M, y, R, y); y += 5.5; };
+  const subheading = t => { ensure(24); font("bold", 9.5); doc.text(plain(t), M, y); y += 5; };
   const table = (cols, rows) => {
     const xs = []; let x = M; for (const c of cols) { xs.push(x); x += c.w; }
     const draw = (v, i) => { const c = cols[i]; c.a === "r" ? doc.text(plain(v), xs[i] + c.w, y, { align: "right" }) : c.a === "c" ? doc.text(plain(v), xs[i] + c.w / 2, y, { align: "center" }) : doc.text(plain(v), xs[i], y); };
@@ -1929,6 +1934,7 @@ async function exportPDF() {
       doc.splitTextToSize(txt, R - M - indent).forEach((pt, i) => { ensure(5); if (indent && i === 0) doc.text("-", M, y); doc.text(pt, M + indent, y); y += size * 0.47; });
     }
   };
+  if (!only) {
   // Key figures
   heading("Key figures");
   table([{ t: "", w: 62 }, { t: S.cur, w: 34, a: "r" }, { t: cmp ? S.cmp : "", w: 34, a: "r" }, { t: bud ? "Budget" : "", w: 34, a: "r" }], [
@@ -2019,12 +2025,14 @@ async function exportPDF() {
   heading("Ratios");
   table([{ t: "Ratio", w: 54 }, { t: S.cur, w: 26, a: "r" }, { t: cmp ? S.cmp : "", w: 26, a: "r" }, { t: "Guide", w: 44 }, { t: "Status", w: 16 }],
     RATIOS.map(d => { const v = ratioVal(d, cur), st = ratioStatus(d, v); return { cells: [d.l, ratioFmt(d, v), cmp ? ratioFmt(d, ratioVal(d, cmp)) : "", d.bench, st ? STATUS_TEXT[st] : "n/a"] }; }));
-  if (S.pdfModel !== false) {
+  }
+  if (only || S.pdfModel === true) {
     const { m, runs, years, labels, val, budget, loan, proj } = modelSnapshot();
     const scen = SCEN_LABEL[modelScen];
-    heading("Financial model", true);
-    para(`Forecast built from ${S.cur}, annualised from ${S.months} months. ${scen} case shown. All assumptions are management estimates and should be reviewed before use.`, 9);
+    heading(only ? TASK_TITLE[only] : "Financial model", !only);
+    if (only !== "appraisal") para(`Forecast built from ${S.cur}, annualised from ${S.months} months. ${scen} case shown. All assumptions are management estimates and should be reviewed before use.`, 9);
     y += 3;
+    if (want("forecast")) {
     subheading(`Three-year forecast, ${scen.toLowerCase()} case`);
     const yc = [{ t: unitShort(), w: 70 }].concat(labels.map((l, i) => ({ t: i === 0 ? l + " (ann.)" : l, w: 26, a: "r" })));
     const fcRows = [];
@@ -2043,10 +2051,14 @@ async function exportPDF() {
     subheading(`Scenarios in ${labels[3]}`);
     table([{ t: unitShort(), w: 70 }, { t: "Downside", w: 30, a: "r" }, { t: "Base", w: 30, a: "r" }, { t: "Upside", w: 30, a: "r" }],
       [["rev", "Revenue"], ["np", "Net profit"], ["cash", "Closing cash"], ["debt", "Borrowings"]].map(([k, l]) => ({ cells: [l, amt(runs.down[3][k]), amt(runs.base[3][k]), amt(runs.up[3][k])] })));
+    }
+    if (want("budget")) {
     subheading(`Budget for ${labels[1]} by quarter`);
     const q = [0, 1, 2, 3].map(i => budget.slice(i * 3, i * 3 + 3));
     table([{ t: unitShort(), w: 54 }].concat(q.map((qq, i) => ({ t: `Q${i + 1} (${qq[0].label}-${qq[2].label})`, w: 24, a: "r" }))).concat([{ t: "Total", w: 24, a: "r" }]),
       BUDGET_ROWS.map(([k, l, lvl]) => ({ cells: [l].concat(q.map(qq => amt(qq.reduce((t, x) => t + x[k], 0)))).concat([amt(budget.reduce((t, x) => t + x[k], 0))]), b: lvl > 0, top: lvl > 0, dbl: lvl === 2 })));
+    }
+    if (want("valuation")) {
     subheading(`Valuation: discounted cash flow at ${m.val.wacc}%, long-term growth ${m.val.tg}%`);
     table([{ t: unitShort(), w: 76 }].concat(val.rows.map(r => ({ t: labels[r.t], w: 28, a: "r" }))), [
       { cells: ["Free cash flow"].concat(val.rows.map(r => amt(r.fcff))) },
@@ -2059,6 +2071,8 @@ async function exportPDF() {
       { cells: ["Less net debt", amt(-val.netDebt)] },
       { cells: ["Equity value", val.equity === null ? "n/a" : amt(val.equity)], b: true, top: true, dbl: true }
     ]);
+    }
+    if (want("appraisal")) {
     subheading("Loan repayment schedule");
     para(`${amt(m.loan.amt)} ${unitShort()} over ${m.loan.months} months at ${m.loan.rate}% a year${m.loan.grace ? `, with ${m.loan.grace} months interest only` : ""}. ${m.loan.type === "equal" ? "Equal principal" : "Equal instalments"} of ${amt(loan.firstPay)} ${unitShort()}${m.loan.type === "equal" ? " to start" : " a month"}. Total interest ${amt(loan.totInt)} ${unitShort()}.`, 9);
     y += 2;
@@ -2071,6 +2085,7 @@ async function exportPDF() {
       ["Discounted payback", proj.dpb === null ? "Not within life" : proj.dpb.toFixed(1) + " years"], ["Profitability index", proj.pi === null ? "n/a" : proj.pi.toFixed(2)],
       ["Conclusion", proj.npv >= 0 ? "Adds value at this discount rate" : "Does not cover its cost of capital"]
     ].map(c => ({ cells: c })));
+    }
   }
   const n = doc.getNumberOfPages();
   for (let i = 1; i <= n; i++) {
@@ -2078,12 +2093,13 @@ async function exportPDF() {
     doc.text(plain(`${S.company} - ${S.cur} - management accounts, unaudited`), M, 290);
     doc.text(`Page ${i} of ${n}`, R, 290, { align: "right" });
   }
-  await saveFile(fileBase() + ".pdf", doc.output("blob"));
+  await saveFile((only ? taskFileBase(only) : fileBase()) + ".pdf", doc.output("blob"));
 }
 const fileBase = () => `${(S.company || "Management pack").replace(/[^\w\- ]+/g, "").trim()} - ${String(S.cur).replace(/[^\w\- ]+/g, "").trim()} pack`;
 
 /* ---------- Excel ---------- */
-async function exportXLSX() {
+async function exportXLSX(only) {
+  const want = k => !only || only === k;
   if (!window.XLSX) { toast("The Excel tool didn't load. Check your connection and reload."); return; }
   const { cur, cmp, bud, open, cf, built } = snapshot();
   const wb = XLSX.utils.book_new();
@@ -2118,6 +2134,7 @@ async function exportXLSX() {
   const cRows = $("commentary").value.split("\n").map(l => [l]);
   const mRows = [["Account code", "Account name", S.cur, S.cmp, S.bud, S.opn || "Opening", "Pack line"]].concat(A.map(a => [a.code, a.name, a.cur, a.cmp, a.bud, a.opn, a.cat ? catLabel(a.cat) : "Not mapped"]));
   const add = (rows, name, widths) => { const ws = XLSX.utils.aoa_to_sheet(rows); ws["!cols"] = widths.map(w => ({ wch: w })); XLSX.utils.book_append_sheet(wb, ws, name); };
+  if (!only) {
   add(cRows, "Commentary", [110]);
   add(isRows, "Profit or loss", [32, 6, 16, 16, 16, 16, 16]);
   add(bsRows, "Financial position", [34, 6, 16, 16, 16]);
@@ -2125,38 +2142,39 @@ async function exportXLSX() {
   add(nRows, "Notes", [52, 16, 16]);
   add(rRows, "Ratios", [28, 14, 14, 22, 10]);
   add(mRows, "Mapping", [14, 40, 16, 16, 16, 16, 28]);
-  {
+  }
+  if (only || S.pdfModel === true) {
     const { m, runs, years, labels, val, budget, loan, proj } = modelSnapshot();
     const scen = SCEN_LABEL[modelScen];
     const xr = (v, f) => v === null || v === undefined || !isFinite(v) ? "" : f === "pct" ? Math.round(v * 1000) / 10 + "%" : f === "x" ? Math.round(v * 100) / 100 : Math.round(v);
     const fRows = [[`Forecast, ${scen} case (${S.currency})`, labels[0] + " annualised"].concat(labels.slice(1))];
     for (const r of FC_ROWS) { if (r.h) { fRows.push([r.h]); continue; } const [k, l, , f] = r; fRows.push([l].concat(years.map(yy => xr(yy[k], f)))); }
-    add(fRows, "Forecast", [36, 18, 16, 16, 16]);
+    if (want("forecast")) add(fRows, "Forecast", [36, 18, 16, 16, 16]);
     const sRows = [["Scenario comparison (" + S.currency + ")"].concat(labels)];
     for (const sc of ["down", "base", "up"]) { sRows.push([SCEN_LABEL[sc] + " case"]); for (const [k, l] of [["rev", "Revenue"], ["np", "Net profit"], ["cash", "Closing cash"], ["debt", "Borrowings"]]) sRows.push([l].concat(runs[sc].map(yy => xr(yy[k])))); }
-    add(sRows, "Scenarios", [28, 16, 16, 16, 16]);
+    if (want("forecast")) add(sRows, "Scenarios", [28, 16, 16, 16, 16]);
     const aRows = [["Assumption", "Value"]];
     for (const gr of FC_INPUTS.concat(VAL_INPUTS)) { aRows.push([gr.g]); for (const [p, l, k] of gr.items) aRows.push([l, getPath(m, p), k === "money" ? S.currency : INPUT_UNITS[k]]); }
-    add(aRows, "Assumptions", [40, 16, 10]);
+    if (want("forecast") || want("valuation")) add(aRows, "Assumptions", [40, 16, 10]);
     const bRows = [[`Budget ${labels[1]}, ${scen} case (${S.currency})`].concat(budget.map(x => x.label)).concat(["Total"])];
     for (const [k, l] of BUDGET_ROWS) bRows.push([l].concat(budget.map(x => Math.round(x[k]))).concat([Math.round(budget.reduce((t, x) => t + x[k], 0))]));
-    add(bRows, "Budget", [26].concat(Array(13).fill(13)));
+    if (want("budget")) add(bRows, "Budget", [26].concat(Array(13).fill(13)));
     const vRows = [[`Valuation at ${m.val.wacc}% WACC, ${m.val.tg}% long-term growth (${S.currency})`].concat(val.rows.map(r => labels[r.t]))];
     for (const [k, l] of [["ebit", "Operating profit"], ["nopat", "After tax"], ["dep", "Depreciation"], ["capex", "Capital spending"], ["dNwc", "Increase in working capital"], ["fcff", "Free cash flow"], ["df", "Discount factor"], ["pv", "Present value"]]) vRows.push([l].concat(val.rows.map(r => k === "df" ? Math.round(r.df * 1000) / 1000 : Math.round(r[k]))));
     vRows.push([], ["Present value of years 1 to 3", Math.round(val.sumPV)], ["Present value after year 3", val.pvtv === null ? "" : Math.round(val.pvtv)], ["Enterprise value", val.ev === null ? "" : Math.round(val.ev)], ["Net debt", Math.round(val.netDebt)], ["Equity value", val.equity === null ? "" : Math.round(val.equity)], []);
     const gs = [-2, -1, 0, 1, 2].map(d => m.val.tg + d);
     vRows.push(["Equity value: WACC (rows) by growth (columns)"].concat(gs.map(g => g + "%")));
     for (const w of [-4, -2, 0, 2, 4].map(d => m.val.wacc + d)) vRows.push([w + "%"].concat(gs.map(g => { const r = dcf(years, m, w, g); return r.equity === null ? "" : Math.round(r.equity); })));
-    add(vRows, "Valuation", [44, 16, 16, 16, 16, 16]);
+    if (want("valuation")) add(vRows, "Valuation", [44, 16, 16, 16, 16, 16]);
     const lRows = [["Month", "Opening", "Interest", "Principal", "Instalment", "Closing"]].concat(loan.rows.map(x => [x.i, Math.round(x.open), Math.round(x.interest), Math.round(x.principal), Math.round(x.pay), Math.round(x.close)]));
     lRows.push([], ["Total interest", "", Math.round(loan.totInt)], ["Total repaid", "", "", "", Math.round(loan.totPay)]);
-    add(lRows, "Loan schedule", [8, 16, 14, 14, 14, 16]);
+    if (want("appraisal")) add(lRows, "Loan schedule", [8, 16, 14, 14, 14, 16]);
     const pRows = [["Year", "Cash flow", "Discounted", "Cumulative", "Cumulative discounted"]].concat(proj.table.map(x => [x.t, Math.round(x.c), Math.round(x.d), Math.round(x.cum), Math.round(x.dcum)]));
     pRows.push([], ["Net present value", Math.round(proj.npv)], ["Internal rate of return", proj.irr === null ? "" : Math.round(proj.irr * 1000) / 10 + "%"], ["Payback (years)", proj.pb === null ? "Not within life" : Math.round(proj.pb * 10) / 10], ["Discounted payback (years)", proj.dpb === null ? "Not within life" : Math.round(proj.dpb * 10) / 10], ["Profitability index", proj.pi === null ? "" : Math.round(proj.pi * 100) / 100]);
-    add(pRows, "Project appraisal", [24, 16, 16, 16, 20]);
+    if (want("appraisal")) add(pRows, "Project appraisal", [24, 16, 16, 16, 20]);
   }
   const buf = XLSX.write(wb, { bookType: "xlsx", type: "array" });
-  await saveFile(fileBase() + ".xlsx", new Blob([buf]));
+  await saveFile((only ? taskFileBase(only) : fileBase()) + ".xlsx", new Blob([buf]));
 }
 async function saveFile(filename, data) {
   try {
@@ -2229,10 +2247,14 @@ function readSettingsForm() {
 
 /* ---------- Views and events ---------- */
 function show(view) {
-  for (const v of ["pack", "data", "map", "model"]) { $("view-" + v).hidden = v !== view; $("tab-" + v).setAttribute("aria-selected", v === view); }
+  const isModel = MODEL_VIEWS.includes(view);
+  if (isModel) modelView = view;
+  for (const v of ["pack", "data", "map"]) $("view-" + v).hidden = v !== view;
+  $("view-model").hidden = !isModel;
+  for (const v of ["pack", "data", "map", ...MODEL_VIEWS]) $("tab-" + v).setAttribute("aria-selected", v === view);
   if (view === "map") renderMapping();
   if (view === "pack") renderPack();
-  if (view === "model") renderModel();
+  if (isModel) renderModel();
   window.scrollTo({ top: 0 });
 }
 document.addEventListener("click", e => {
@@ -2247,8 +2269,8 @@ $("btn-basic").onclick = () => { $("commentary").value = basicDraft(); store.set
 $("btn-claude").onclick = draftWithClaude;
 $("btn-stop").onclick = () => ctl && ctl.abort();
 $("commentary").addEventListener("input", () => { clearTimeout(draftT); draftT = setTimeout(() => store.set(commKey(), $("commentary").value), 400); });
-$("btn-pdf").onclick = exportPDF;
-$("btn-xlsx").onclick = exportXLSX;
+$("btn-pdf").onclick = () => exportPDF();
+$("btn-xlsx").onclick = () => exportXLSX();
 $("btn-template").onclick = () => saveFile("trial-balance-template.csv",
   "Account code,Account name,This period YTD,Comparative YTD,Budget YTD,Opening balances\n4000,Sales,-500000000,-420000000,-520000000,\n5000,Purchases,320000000,270000000,330000000,\n1300,Cash at bank,25000000,31000000,,28000000\n");
 $("btn-sample").onclick = () => { loadSample(); renderAll(); show("pack"); toast("Example data loaded."); };
@@ -2294,7 +2316,8 @@ $("view-model").addEventListener("input", e => {
   clearTimeout(modelT); modelT = setTimeout(persist, 400);
   renderModelResults();
 });
-$("model-nav").addEventListener("click", e => { const b = e.target.closest("[data-mv]"); if (b) { modelView = b.dataset.mv; renderModel(); } });
+$("btn-task-pdf").onclick = () => exportPDF(modelView);
+$("btn-task-xlsx").onclick = () => exportXLSX(modelView);
 $("scen-nav").addEventListener("click", e => { const b = e.target.closest("[data-sc]"); if (b) { modelScen = b.dataset.sc; document.querySelectorAll("#scen-nav [data-sc]").forEach(x => x.setAttribute("aria-pressed", x.dataset.sc === modelScen)); renderModelResults(); } });
 $("btn-model-reset").onclick = () => { S.model = modelDefaults(); persist(); renderModel(); toast("Assumptions reset from the actuals."); };
 $("btn-even").onclick = () => { M().season = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]; persist(); renderSeasonInputs(); renderModelResults(); };
