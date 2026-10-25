@@ -206,6 +206,24 @@ table.map select { padding: 5px 7px; border: 1px solid var(--line); border-radiu
 table.map tr.unmapped td { background: var(--bad-soft); }
 table.map select.unset { border-color: var(--bad); }
 
+.mv { display: flex; flex-direction: column; gap: 18px; }
+.mform { display: flex; flex-direction: column; gap: 16px; }
+.mgroup { display: flex; flex-direction: column; gap: 8px; }
+.mgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr)); gap: 10px 12px; }
+.mfield { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.mfield label { font-size: 12px; color: var(--muted); font-weight: 500; }
+.mfield .inp { display: flex; align-items: center; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+.mfield .inp:focus-within { border-color: var(--accent); }
+.mfield input, .mfield select { border: 0; background: transparent; padding: 6px 8px; width: 100%; min-width: 0; font-variant-numeric: tabular-nums; }
+.mfield input { text-align: right; }
+.mfield select { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+.mfield .u { padding: 0 8px 0 2px; color: var(--muted); font-size: 12px; white-space: nowrap; }
+.season { display: grid; grid-template-columns: repeat(auto-fit, minmax(68px, 1fr)); gap: 8px; }
+.kpis.small .kpi { padding: 10px 12px; }
+.kpis.small .kpi .v { font-size: 22px; }
+table.st td.hl { background: var(--accent-soft); font-weight: 600; }
+table.st td.dim, table.st th.dim { color: var(--muted); }
+details.sched summary { cursor: pointer; font-size: 13px; color: var(--accent); margin-top: 6px; }
 html { -webkit-text-size-adjust: 100%; }
 body { margin: 0; }
 [hidden] { display: none !important; }
@@ -232,6 +250,7 @@ img { max-width: 100%; }
       <button class="tab" role="tab" id="tab-data" aria-selected="false" data-view="data"><span class="step">1</span>Data</button>
       <button class="tab" role="tab" id="tab-map" aria-selected="false" data-view="map"><span class="step">2</span>Mapping <span class="count" id="unmapped-count" hidden></span></button>
       <button class="tab" role="tab" id="tab-pack" aria-selected="true" data-view="pack"><span class="step">3</span>Pack</button>
+      <button class="tab" role="tab" id="tab-model" aria-selected="false" data-view="model"><span class="step">4</span>Model</button>
     </nav>
     <div class="actions" id="export-actions">
       <button class="btn" id="btn-install" type="button" hidden>Install app</button>
@@ -399,6 +418,127 @@ img { max-width: 100%; }
           </div>
         </div>
       </div>
+    </section>
+
+    <!-- MODEL -->
+    <section class="view" id="view-model" hidden>
+      <div class="pack-title">
+        <div>
+          <div class="eyebrow">Financial model</div>
+          <h1 id="model-title">Forecast</h1>
+          <div class="sub" id="model-sub"></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">
+          <div class="seg" role="group" aria-label="Model section" id="model-nav">
+            <button type="button" data-mv="forecast" aria-pressed="true">Forecast</button>
+            <button type="button" data-mv="budget" aria-pressed="false">Budget</button>
+            <button type="button" data-mv="valuation" aria-pressed="false">Valuation</button>
+            <button type="button" data-mv="appraisal" aria-pressed="false">Loans and projects</button>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap" id="scen-wrap">
+            <span class="eyebrow">Scenario</span>
+            <div class="seg" role="group" aria-label="Scenario" id="scen-nav">
+              <button type="button" data-sc="base" aria-pressed="true">Base</button>
+              <button type="button" data-sc="down" aria-pressed="false">Downside</button>
+              <button type="button" data-sc="up" aria-pressed="false">Upside</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="checks" id="model-checks"></div>
+
+      <div id="mv-forecast" class="mv">
+        <div class="grid-2">
+          <div class="panel">
+            <div class="panel-head"><h3>Assumptions</h3><button class="btn small" type="button" id="btn-model-reset">Reset from actuals</button></div>
+            <div class="mform" id="mi-forecast"></div>
+          </div>
+          <div class="mv">
+            <div class="panel">
+              <div class="panel-head"><h3>Closing cash by scenario</h3><span class="sub" id="fc-cash-sub"></span></div>
+              <div class="chart-box" id="fc-cash"></div>
+            </div>
+            <div class="panel">
+              <div class="panel-head"><h3>Revenue and net profit</h3><span class="sub" id="fc-rn-sub"></span></div>
+              <div class="chart-box" id="fc-rn"></div>
+              <div class="legend"><span><i style="background:var(--bar-total)"></i>Revenue</span><span><i style="background:var(--accent)"></i>Net profit</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><h3 id="fc-title">Forecast statements</h3><span class="sub unit-label"></span></div>
+          <div class="table-box"><table class="st" id="fc-table"></table></div>
+        </div>
+      </div>
+
+      <div id="mv-budget" class="mv" hidden>
+        <div class="grid-2">
+          <div class="panel">
+            <div class="panel-head"><h3>Phasing</h3></div>
+            <div class="mform">
+              <p class="help">Give each month a weight for how much of the year's revenue falls in it. Cost of sales, selling costs and other income follow revenue. Staff, administration, depreciation, interest and tax are spread evenly.</p>
+              <div class="mfield" style="max-width:240px"><label for="m-fyStart">Financial year starts in</label><select id="m-fyStart" data-m="fyStart" data-k="sel"></select></div>
+              <div class="season" id="mi-season"></div>
+              <div class="actions"><button class="btn small" type="button" id="btn-even">Spread evenly</button></div>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="panel-head"><h3>Monthly revenue and net profit</h3><span class="sub" id="bd-sub"></span></div>
+            <div class="chart-box" id="bd-chart"></div>
+            <div class="legend"><span><i style="background:var(--bar-total)"></i>Revenue</span><span><i style="background:var(--accent)"></i>Net profit</span></div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><h3 id="bd-title">Budget</h3><span class="sub unit-label"></span></div>
+          <div class="table-box"><table class="st" id="bd-table"></table></div>
+        </div>
+      </div>
+
+      <div id="mv-valuation" class="mv" hidden>
+        <div class="kpis" id="val-kpis"></div>
+        <div class="grid-2">
+          <div class="panel">
+            <div class="panel-head"><h3>Assumptions</h3></div>
+            <div class="mform" id="mi-valuation"></div>
+            <p class="help" style="margin-top:14px">The discount rate should reflect what lenders and investors expect from a business of this size and risk. With a three-year forecast, most of the value comes from the years after it, so read the result as a range rather than a price.</p>
+          </div>
+          <div class="panel">
+            <div class="panel-head"><h3>Free cash flow and value</h3><span class="sub unit-label"></span></div>
+            <div class="table-box"><table class="st narrow" id="val-table"></table></div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><h3>Equity value sensitivity</h3><span class="sub">Rows are the discount rate, columns the long-term growth rate.</span></div>
+          <div class="table-box"><table class="st narrow" id="val-sens"></table></div>
+        </div>
+      </div>
+
+      <div id="mv-appraisal" class="mv" hidden>
+        <div class="grid-2">
+          <div class="panel">
+            <div class="panel-head"><h3>Loan repayment schedule</h3></div>
+            <div class="mform">
+              <div id="mi-loan"></div>
+              <div class="mfield" style="max-width:260px"><label for="m-loan-type">Repayment type</label><select id="m-loan-type" data-m="loan.type" data-k="sel"><option value="annuity">Equal monthly instalments</option><option value="equal">Equal principal, falling instalments</option></select></div>
+            </div>
+            <div class="kpis small" id="loan-kpis" style="margin-top:14px"></div>
+            <div class="chart-box" id="loan-chart" style="margin-top:12px"></div>
+            <div class="legend"><span><i style="background:var(--bar-total)"></i>Principal repaid</span><span><i style="background:var(--accent)"></i>Interest paid</span></div>
+            <div class="table-box" style="margin-top:12px"><table class="st narrow" id="loan-years"></table></div>
+            <details class="sched"><summary>Show the full monthly schedule</summary><div class="table-box"><table class="st narrow" id="loan-full"></table></div></details>
+          </div>
+          <div class="panel">
+            <div class="panel-head"><h3>Investment appraisal</h3></div>
+            <div class="mform" id="mi-proj"></div>
+            <div class="kpis small" id="proj-kpis" style="margin-top:14px"></div>
+            <div class="panel-head" style="margin:14px 0 4px"><span class="sub">Cumulative discounted cash flow</span></div>
+            <div class="chart-box" id="proj-chart"></div>
+            <div class="table-box" style="margin-top:12px"><table class="st narrow" id="proj-table"></table></div>
+          </div>
+        </div>
+      </div>
+
+      <label class="check"><input type="checkbox" id="m-pdf"><span>Include the financial model in the PDF pack</span></label>
     </section>
 
     <!-- MAPPING -->
@@ -1304,6 +1444,362 @@ async function draftWithClaude() {
   } finally { btn.disabled = false; stop.hidden = true; ctl = null; }
 }
 
+/* ---------- Financial model ---------- */
+let modelView = "forecast", modelScen = "base", modelT = null;
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const SCEN_LABEL = { base: "Base", down: "Downside", up: "Upside" };
+const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
+const r1 = v => Math.round(v * 10) / 10, r05 = v => Math.round(v * 2) / 2;
+const getPath = (o, p) => p.split(".").reduce((x, k) => x == null ? x : x[k], o);
+function setPath(o, p, v) { const ks = p.split("."); let x = o; for (let i = 0; i < ks.length - 1; i++) x = x[ks[i]]; x[ks[ks.length - 1]] = v; }
+function baseYear() {
+  const cur = compute("cur"), cmp = compute("cmp"), open = openingBS(), cf = cashFlow(cur, open);
+  const ann = 12 / (Number(S.months) || 12);
+  const b = {};
+  for (const k of ["rev", "cos", "gp", "staff", "selling", "admin", "dep", "oi", "op", "fin", "pbt", "tax", "np"]) b[k] = cur[k] * ann;
+  Object.assign(b, { nca: cur.nca, inv: cur.inv, rec: cur.rec, oca: cur.oca, cash: cur.cash, equity: cur.teq, debt: cur.ncl, pay: cur.pay, ocl: cur.ocl, ta: cur.ta, tel: cur.tel, diff: cur.ta - cur.tel });
+  return { b, cur, cmp, open, cf, ann };
+}
+function modelYears() {
+  const mt = String(S.cur || "").match(/(19|20)\d\d/);
+  const y0 = mt ? parseInt(mt[0], 10) : null;
+  return y0 ? [`FY${y0}`, `FY${y0 + 1}`, `FY${y0 + 2}`, `FY${y0 + 3}`] : ["Base year", "Year 1", "Year 2", "Year 3"];
+}
+function modelDefaults() {
+  const { b, cur, cmp, open, cf, ann } = baseYear();
+  const growth = cmp && cmp.rev ? (cur.rev / cmp.rev - 1) * 100 : 10;
+  const g1 = r05(clamp(growth, -10, 25));
+  const rev = b.rev || 1;
+  const avgDebt = open ? (cur.ncl + open.r.ncl) / 2 : cur.ncl;
+  const repayAnn = open ? Math.max(0, (open.r.ncl - cur.ncl) * ann) : cur.ncl / 5;
+  const eff = cur.pbt > 0 ? cur.tax / cur.pbt * 100 : 30;
+  const dd = ratioVal(RATIO.dd, cur), idd = ratioVal(RATIO.id, cur), cd = ratioVal(RATIO.cd, cur);
+  const roundM = v => Math.round(v / 1e6) * 1e6;
+  const scale = Math.max(1e6, roundM(rev * 0.12));
+  return {
+    v: 1,
+    g: [g1, r05(g1 * 0.8), r05(g1 * 0.6)],
+    gm: r1(b.gp / rev * 100), staffG: 8, adminG: 8,
+    sellPct: r1(b.selling / rev * 100), oiPct: r1(b.oi / rev * 100),
+    capex: roundM(cf ? Math.max(0, -cf.iv * ann) : b.dep),
+    depRate: cur.nca > 0 ? r1(b.dep / cur.nca * 100) : 10,
+    dd: dd !== null ? Math.round(dd) : 45, id: idd !== null ? Math.round(idd) : 60, cd: cd !== null ? Math.round(cd) : 45,
+    ocaPct: r1(cur.oca / rev * 100), oclPct: r1(cur.ocl / rev * 100),
+    rate: avgDebt > 0 ? r05(b.fin / avgDebt * 100) : 15,
+    repay: roundM(Math.min(repayAnn, cur.ncl)), newDebt: 0,
+    tax: r05(clamp(eff, 0, 40)), div: 0,
+    scen: { down: { g: -10, gm: -2, dd: 15 }, up: { g: 5, gm: 1, dd: -5 } },
+    val: { wacc: 18, tg: 5 },
+    fyStart: 1, season: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    loan: { amt: scale, rate: 16, months: 60, grace: 0, type: "annuity" },
+    proj: { inv: scale, life: 7, cf1: roundM(scale * 0.27), growth: 5, salvage: roundM(scale * 0.12), rate: 18 }
+  };
+}
+function M() { if (!S.model || S.model.v !== 1) { S.model = modelDefaults(); persist(); } return S.model; }
+function runForecast(m, sc) {
+  const { b } = baseYear();
+  const adj = sc === "base" ? { g: 0, gm: 0, dd: 0 } : m.scen[sc];
+  const y0 = { ...b, capex: null, nwc: b.rec + b.inv + b.oca - b.pay - b.ocl, ebitda: b.op + b.dep, cfo: null, cfi: null, cff: null, netcash: null };
+  const kpi = y => { y.gmP = y.rev ? y.gp / y.rev : null; y.nmP = y.rev ? y.np / y.rev : null; y.icov = y.fin ? y.op / y.fin : null; y.de = y.equity ? y.debt / y.equity : null; };
+  kpi(y0);
+  const years = [y0];
+  for (let t = 1; t <= 3; t++) {
+    const p = years[t - 1], y = {};
+    const g = (m.g[t - 1] + adj.g) / 100, gm = (m.gm + adj.gm) / 100;
+    y.rev = p.rev * (1 + g); y.cos = y.rev * (1 - gm); y.gp = y.rev - y.cos;
+    y.staff = p.staff * (1 + m.staffG / 100); y.admin = p.admin * (1 + m.adminG / 100); y.selling = y.rev * m.sellPct / 100;
+    y.dep = Math.max(0, p.nca) * m.depRate / 100; y.oi = y.rev * m.oiPct / 100;
+    y.op = y.gp - y.staff - y.selling - y.admin - y.dep + y.oi;
+    y.fin = Math.max(0, p.debt) * m.rate / 100 + Math.max(0, -p.cash) * m.rate / 100;
+    y.pbt = y.op - y.fin; y.tax = Math.max(0, y.pbt) * m.tax / 100; y.np = y.pbt - y.tax;
+    y.div = Math.max(0, y.np) * m.div / 100;
+    y.capex = m.capex;
+    y.nca = p.nca + m.capex - y.dep;
+    y.rec = y.rev * Math.max(0, m.dd + adj.dd) / 365; y.inv = y.cos * m.id / 365; y.pay = y.cos * m.cd / 365;
+    y.oca = y.rev * m.ocaPct / 100; y.ocl = y.rev * m.oclPct / 100;
+    y.repay = Math.min(Math.max(0, p.debt), m.repay);
+    y.debt = p.debt - y.repay + m.newDebt;
+    y.equity = p.equity + y.np - y.div;
+    y.cfo = y.np + y.dep - (y.rec - p.rec) - (y.inv - p.inv) - (y.oca - p.oca) + (y.pay - p.pay) + (y.ocl - p.ocl);
+    y.cfi = -m.capex; y.cff = -y.repay + m.newDebt - y.div; y.netcash = y.cfo + y.cfi + y.cff;
+    y.cash = p.cash + y.netcash;
+    y.ta = y.nca + y.inv + y.rec + y.oca + y.cash; y.tel = y.equity + y.debt + y.pay + y.ocl; y.diff = y.ta - y.tel;
+    y.nwc = y.rec + y.inv + y.oca - y.pay - y.ocl; y.ebitda = y.op + y.dep;
+    kpi(y);
+    years.push(y);
+  }
+  return years;
+}
+function dcf(years, m, wacc, tg) {
+  const w = wacc / 100, g = tg / 100, rows = [];
+  let sum = 0;
+  for (let t = 1; t <= 3; t++) {
+    const y = years[t], p = years[t - 1];
+    const nopat = y.op * (1 - m.tax / 100), dNwc = y.nwc - p.nwc;
+    const fcff = nopat + y.dep - y.capex - dNwc, df = 1 / Math.pow(1 + w, t);
+    rows.push({ t, ebit: y.op, nopat, dep: y.dep, capex: y.capex, dNwc, fcff, df, pv: fcff * df });
+    sum += fcff * df;
+  }
+  const last = rows[2];
+  const tv = w > g ? last.fcff * (1 + g) / (w - g) : null;
+  const pvtv = tv === null ? null : tv * last.df;
+  const ev = tv === null ? null : sum + pvtv;
+  const netDebt = years[0].debt - years[0].cash;
+  return { rows, sumPV: sum, tv, pvtv, ev, netDebt, equity: ev === null ? null : ev - netDebt, tvShare: ev ? pvtv / ev : null, evEbitda: ev && years[0].ebitda > 0 ? ev / years[0].ebitda : null };
+}
+function budgetMonths(y1, m) {
+  let w = m.season.map(v => Math.max(0, Number(v) || 0));
+  const s = w.reduce((a, c) => a + c, 0);
+  w = s > 0 ? w.map(v => v / s) : w.map(() => 1 / 12);
+  return w.map((wi, i) => {
+    const x = { label: MONTHS[(m.fyStart - 1 + i) % 12], share: wi };
+    x.rev = y1.rev * wi; x.cos = y1.cos * wi; x.selling = y1.selling * wi; x.oi = y1.oi * wi;
+    x.staff = y1.staff / 12; x.admin = y1.admin / 12; x.dep = y1.dep / 12; x.fin = y1.fin / 12; x.tax = y1.tax / 12;
+    x.gp = x.rev - x.cos; x.op = x.gp - x.staff - x.selling - x.admin - x.dep + x.oi; x.pbt = x.op - x.fin; x.np = x.pbt - x.tax;
+    return x;
+  });
+}
+function loanSchedule(l) {
+  const P = Math.max(0, l.amt), n = Math.max(1, Math.round(l.months)), gr = clamp(Math.round(l.grace || 0), 0, n - 1), r = l.rate / 1200;
+  const amortN = n - gr, pmt = r ? P * r / (1 - Math.pow(1 + r, -amortN)) : P / amortN;
+  const rows = []; let bal = P;
+  for (let i = 1; i <= n; i++) {
+    const interest = bal * r;
+    let principal = i <= gr ? 0 : l.type === "equal" ? P / amortN : pmt - interest;
+    if (i === n) principal = bal;
+    const open = bal; bal = Math.max(0, bal - principal);
+    rows.push({ i, open, interest, principal, pay: principal + interest, close: bal });
+  }
+  const years = [];
+  for (const x of rows) {
+    const yi = Math.ceil(x.i / 12) - 1;
+    years[yi] = years[yi] || { y: yi + 1, interest: 0, principal: 0, pay: 0, close: 0 };
+    years[yi].interest += x.interest; years[yi].principal += x.principal; years[yi].pay += x.pay; years[yi].close = x.close;
+  }
+  const totInt = rows.reduce((t, x) => t + x.interest, 0);
+  return { rows, years, firstPay: rows[Math.min(gr, n - 1)].pay, gracePay: gr ? rows[0].pay : null, lastPay: rows[n - 1].pay, totInt, totPay: P + totInt };
+}
+function projAppraisal(p) {
+  const life = clamp(Math.round(p.life), 1, 30), r = p.rate / 100;
+  const flows = [-p.inv];
+  for (let t = 1; t <= life; t++) flows.push(p.cf1 * Math.pow(1 + p.growth / 100, t - 1) + (t === life ? p.salvage : 0));
+  const npvAt = rate => flows.reduce((s, c, t) => s + c / Math.pow(1 + rate, t), 0);
+  const npv = npvAt(r);
+  let irr = null, lo = -0.99, hi = 10, flo = npvAt(lo);
+  if (flo * npvAt(hi) < 0) {
+    for (let k = 0; k < 200; k++) { const mid = (lo + hi) / 2, fm = npvAt(mid); if (fm * flo < 0) hi = mid; else { lo = mid; flo = fm; } }
+    irr = (lo + hi) / 2;
+  }
+  const payback = disc => { let cum = flows[0]; for (let t = 1; t < flows.length; t++) { const c = disc ? flows[t] / Math.pow(1 + r, t) : flows[t]; if (c > 0 && cum + c >= 0) return t - 1 + (-cum) / c; cum += c; } return null; };
+  const pvIn = flows.slice(1).reduce((s, c, i) => s + c / Math.pow(1 + r, i + 1), 0);
+  let cum = 0, dcum = 0;
+  const table = flows.map((c, t) => { const d = c / Math.pow(1 + r, t); cum += c; dcum += d; return { t, c, d, cum, dcum }; });
+  return { flows, npv, irr, pb: payback(false), dpb: payback(true), pi: p.inv ? pvIn / p.inv : null, table, life };
+}
+
+/* model charts */
+function groupedBarsSVG(cats, series, aria) {
+  const W = 760, H = 300, left = 16, right = 16, top = 26, bottom = 40;
+  const vals = series.flatMap(s => s.vals);
+  const hi = Math.max(0, ...vals) * 1.14 || 1, lo = Math.min(0, ...vals) * 1.14;
+  const y = v => top + (hi - v) / (hi - lo) * (H - top - bottom);
+  const gw = (W - left - right) / cats.length, bw = Math.min(40, gw * 0.72 / series.length);
+  const showLabels = cats.length * series.length <= 16;
+  let svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(aria)}" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-size="12">`;
+  svg += `<line x1="${left}" x2="${W - right}" y1="${y(0)}" y2="${y(0)}" stroke="var(--line)"/>`;
+  cats.forEach((c, ci) => {
+    const gx = left + ci * gw + (gw - bw * series.length - 3 * (series.length - 1)) / 2;
+    series.forEach((s, si) => {
+      const v = s.vals[ci], x = gx + si * (bw + 3), y1 = y(Math.max(0, v)), y2 = y(Math.min(0, v));
+      svg += `<rect x="${x.toFixed(1)}" y="${y1.toFixed(1)}" width="${bw.toFixed(1)}" height="${Math.max(1, y2 - y1).toFixed(1)}" rx="2" fill="${s.fill}"><title>${esc(c)}, ${esc(s.l)}: ${esc(amt(v))} ${esc(unitShort())}</title></rect>`;
+      if (showLabels) svg += `<text x="${(x + bw / 2).toFixed(1)}" y="${(v >= 0 ? y1 - 5 : y2 + 13).toFixed(1)}" text-anchor="middle" fill="${si === series.length - 1 ? "var(--ink)" : "var(--muted)"}" font-size="10.5" style="font-variant-numeric:tabular-nums">${esc(amt(v))}</text>`;
+    });
+    svg += `<text x="${(left + ci * gw + gw / 2).toFixed(1)}" y="${H - bottom + 20}" text-anchor="middle" fill="var(--ink)" font-size="11">${esc(c)}</text>`;
+  });
+  return svg + `</svg>`;
+}
+function linesSVG(cats, series, aria) {
+  const W = 760, H = 300, left = 24, right = 150, top = 24, bottom = 40;
+  const vals = series.flatMap(s => s.vals);
+  let hi = Math.max(0, ...vals), lo = Math.min(0, ...vals);
+  const pad = (hi - lo) * 0.12 || 1; hi += pad; if (lo < 0) lo -= pad;
+  const y = v => top + (hi - v) / (hi - lo) * (H - top - bottom);
+  const x = i => left + i * (W - left - right) / Math.max(1, cats.length - 1);
+  let svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(aria)}" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-size="12">`;
+  svg += `<line x1="${left}" x2="${W - right + 10}" y1="${y(0)}" y2="${y(0)}" stroke="var(--ink)" stroke-opacity=".5"/>`;
+  svg += `<text x="${W - right + 14}" y="${y(0) + 4}" fill="var(--muted)" font-size="10.5">zero</text>`;
+  cats.forEach((c, i) => { svg += `<text x="${x(i)}" y="${H - bottom + 22}" text-anchor="middle" fill="var(--muted)" font-size="11">${esc(c)}</text>`; });
+  const ends = series.map(s => ({ s, v: s.vals[s.vals.length - 1], y: y(s.vals[s.vals.length - 1]) })).sort((a, b) => a.y - b.y);
+  for (let i = 1; i < ends.length; i++) if (ends[i].y - ends[i - 1].y < 15) ends[i].y = ends[i - 1].y + 15;
+  for (const s of series) {
+    const d = s.vals.map((v, i) => `${i ? "L" : "M"}${x(i).toFixed(1)} ${y(v).toFixed(1)}`).join(" ");
+    svg += `<path d="${d}" fill="none" stroke="${s.stroke}" stroke-width="${s.bold ? 3 : 2}"/>`;
+    s.vals.forEach((v, i) => { svg += `<circle cx="${x(i).toFixed(1)}" cy="${y(v).toFixed(1)}" r="${s.bold ? 4 : 3}" fill="${s.stroke}"><title>${esc(s.l)}, ${esc(cats[i])}: ${esc(amt(v))} ${esc(unitShort())}</title></circle>`; });
+  }
+  for (const e of ends) svg += `<text x="${x(cats.length - 1) + 10}" y="${(e.y + 4).toFixed(1)}" fill="${e.s.bold ? "var(--ink)" : "var(--muted)"}" font-weight="${e.s.bold ? 600 : 400}" style="font-variant-numeric:tabular-nums">${esc(e.s.l)}: ${esc(amt(e.v))}</text>`;
+  return svg + `</svg>`;
+}
+function signedBarsSVG(cats, vals, aria) {
+  const W = 760, H = 260, left = 16, right = 16, top = 22, bottom = 36;
+  let hi = Math.max(0, ...vals), lo = Math.min(0, ...vals);
+  const pad = (hi - lo) * 0.14 || 1; hi += pad; if (lo < 0) lo -= pad;
+  const y = v => top + (hi - v) / (hi - lo) * (H - top - bottom);
+  const bw = (W - left - right) / cats.length;
+  let svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(aria)}" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-size="12">`;
+  svg += `<line x1="${left}" x2="${W - right}" y1="${y(0)}" y2="${y(0)}" stroke="var(--ink)" stroke-opacity=".5"/>`;
+  cats.forEach((c, i) => {
+    const v = vals[i], x = left + i * bw + bw * 0.18, w = bw * 0.64, y1 = y(Math.max(0, v)), y2 = y(Math.min(0, v));
+    svg += `<rect x="${x.toFixed(1)}" y="${y1.toFixed(1)}" width="${w.toFixed(1)}" height="${Math.max(1, y2 - y1).toFixed(1)}" rx="2" fill="${v >= 0 ? "var(--good)" : "var(--bad)"}" fill-opacity=".85"><title>${esc(c)}: ${esc(amt(v))} ${esc(unitShort())}</title></rect>`;
+    if (cats.length <= 12) svg += `<text x="${(x + w / 2).toFixed(1)}" y="${(v >= 0 ? y1 - 5 : y2 + 13).toFixed(1)}" text-anchor="middle" fill="var(--ink)" font-size="10.5" style="font-variant-numeric:tabular-nums">${esc(amt(v))}</text>`;
+    svg += `<text x="${(x + w / 2).toFixed(1)}" y="${H - bottom + 20}" text-anchor="middle" fill="var(--muted)" font-size="11">${esc(c)}</text>`;
+  });
+  return svg + `</svg>`;
+}
+
+/* model inputs */
+const INPUT_UNITS = { pct: "%", pts: "pts", days: "days", months: "months", years: "years", w: "" };
+const FC_INPUTS = [
+  { g: "Revenue growth", items: [["g.0", "Year 1", "pct"], ["g.1", "Year 2", "pct"], ["g.2", "Year 3", "pct"]] },
+  { g: "Margins and costs", items: [["gm", "Gross margin", "pct"], ["staffG", "Staff cost growth", "pct"], ["adminG", "Admin cost growth", "pct"], ["sellPct", "Selling costs, % of revenue", "pct"], ["oiPct", "Other income, % of revenue", "pct"]] },
+  { g: "Assets and working capital", items: [["capex", "Capital spending per year", "money"], ["depRate", "Depreciation, % of assets", "pct"], ["dd", "Debtor days", "days"], ["id", "Inventory days", "days"], ["cd", "Creditor days", "days"]] },
+  { g: "Financing and tax", items: [["rate", "Interest rate on debt", "pct"], ["repay", "Loan repayments per year", "money"], ["newDebt", "New borrowing per year", "money"], ["tax", "Tax rate", "pct"], ["div", "Dividends, % of profit", "pct"]] },
+  { g: "Downside case, change from base", items: [["scen.down.g", "Growth", "pts"], ["scen.down.gm", "Gross margin", "pts"], ["scen.down.dd", "Debtor days", "days"]] },
+  { g: "Upside case, change from base", items: [["scen.up.g", "Growth", "pts"], ["scen.up.gm", "Gross margin", "pts"], ["scen.up.dd", "Debtor days", "days"]] }
+];
+const VAL_INPUTS = [{ g: "Discount rate and growth", items: [["val.wacc", "Discount rate (WACC)", "pct"], ["val.tg", "Long-term growth after year 3", "pct"]] }];
+const LOAN_INPUTS = [{ g: "Loan terms", items: [["loan.amt", "Amount borrowed", "money"], ["loan.rate", "Interest rate per year", "pct"], ["loan.months", "Term", "months"], ["loan.grace", "Grace period, interest only", "months"]] }];
+const PROJ_INPUTS = [{ g: "Investment", items: [["proj.inv", "Initial investment", "money"], ["proj.life", "Useful life", "years"], ["proj.cf1", "Net cash inflow, year 1", "money"], ["proj.growth", "Inflow growth per year", "pct"], ["proj.salvage", "Value at end of life", "money"], ["proj.rate", "Discount rate", "pct"]] }];
+const moneyIn = v => { const u = UNIT[S.unit] || UNIT.m, f = Math.pow(10, u.dp); return Math.round(v / u.div * f) / f; };
+function inputsHTML(groups) {
+  return groups.map(gr => `<div class="mgroup"><div class="eyebrow">${esc(gr.g)}</div><div class="mgrid">${gr.items.map(([p, l, k]) => {
+    const raw = getPath(M(), p), val = k === "money" ? moneyIn(raw) : raw, id = "m-" + p.replace(/\./g, "-");
+    return `<div class="mfield"><label for="${id}">${esc(l)}</label><div class="inp"><input id="${id}" type="number" inputmode="decimal" step="any" data-m="${p}" data-k="${k}" value="${esc(val)}"><span class="u">${esc(k === "money" ? unitShort() : INPUT_UNITS[k] || "")}</span></div></div>`;
+  }).join("")}</div></div>`).join("");
+}
+function renderSeasonInputs() {
+  const m = M();
+  $("m-fyStart").innerHTML = MONTHS.map((n, i) => `<option value="${i + 1}" ${m.fyStart === i + 1 ? "selected" : ""}>${n}</option>`).join("");
+  $("mi-season").innerHTML = m.season.map((w, i) => `<div class="mfield"><label for="m-season-${i}">${MONTHS[(m.fyStart - 1 + i) % 12]}</label><div class="inp"><input id="m-season-${i}" type="number" min="0" step="any" inputmode="decimal" data-m="season.${i}" data-k="w" value="${esc(w)}"></div></div>`).join("");
+}
+function renderModel() {
+  M();
+  for (const v of ["forecast", "budget", "valuation", "appraisal"]) $("mv-" + v).hidden = v !== modelView;
+  document.querySelectorAll("#model-nav [data-mv]").forEach(b => b.setAttribute("aria-pressed", b.dataset.mv === modelView));
+  document.querySelectorAll("#scen-nav [data-sc]").forEach(b => b.setAttribute("aria-pressed", b.dataset.sc === modelScen));
+  $("scen-wrap").hidden = modelView === "appraisal";
+  $("m-pdf").checked = S.pdfModel !== false;
+  $("mi-forecast").innerHTML = inputsHTML(FC_INPUTS);
+  $("mi-valuation").innerHTML = inputsHTML(VAL_INPUTS);
+  $("mi-loan").innerHTML = inputsHTML(LOAN_INPUTS);
+  $("mi-proj").innerHTML = inputsHTML(PROJ_INPUTS);
+  $("m-loan-type").value = M().loan.type;
+  renderSeasonInputs();
+  renderModelResults();
+}
+const FC_ROWS = [
+  { h: "Profit or loss" },
+  ["rev", "Revenue"], ["cos", "Cost of sales"], ["gp", "Gross profit", 1], ["staff", "Staff costs"], ["selling", "Selling and distribution"], ["admin", "Administration and other"], ["dep", "Depreciation"], ["oi", "Other income"], ["op", "Operating profit", 1], ["fin", "Finance costs"], ["pbt", "Profit before tax", 1], ["tax", "Income tax"], ["np", "Net profit", 2],
+  { h: "Financial position" },
+  ["nca", "Property, plant and equipment"], ["inv", "Inventories"], ["rec", "Trade receivables"], ["oca", "Other current assets"], ["cash", "Cash and bank"], ["ta", "Total assets", 2], ["equity", "Total equity"], ["debt", "Borrowings"], ["pay", "Trade payables"], ["ocl", "Other current liabilities"], ["tel", "Total equity and liabilities", 2],
+  { h: "Cash flows" },
+  ["cfo", "Net cash from operating activities"], ["cfi", "Net cash used in investing"], ["cff", "Net cash from financing"], ["netcash", "Net change in cash", 1],
+  { h: "Key measures" },
+  ["gmP", "Gross margin", 0, "pct"], ["nmP", "Net margin", 0, "pct"], ["ebitda", "EBITDA"], ["icov", "Interest cover", 0, "x"], ["de", "Debt to equity", 0, "x"]
+];
+const fmtRow = (v, f) => v === null || v === undefined || !isFinite(v) ? "–" : f === "pct" ? pct(v) : f === "x" ? v.toFixed(2) + "×" : amt(v);
+const BUDGET_ROWS = [["rev", "Revenue"], ["cos", "Cost of sales"], ["gp", "Gross profit", 1], ["staff", "Staff costs"], ["selling", "Selling and distribution"], ["admin", "Administration and other"], ["dep", "Depreciation"], ["oi", "Other income"], ["op", "Operating profit", 1], ["fin", "Finance costs"], ["pbt", "Profit before tax", 1], ["tax", "Income tax"], ["np", "Net profit", 2]];
+function modelSnapshot() {
+  const m = M();
+  const runs = { base: runForecast(m, "base"), down: runForecast(m, "down"), up: runForecast(m, "up") };
+  const years = runs[modelScen];
+  return { m, runs, years, labels: modelYears(), val: dcf(years, m, m.val.wacc, m.val.tg), budget: budgetMonths(years[1], m), loan: loanSchedule(m.loan), proj: projAppraisal(m.proj) };
+}
+function renderModelResults() {
+  const { m, runs, years, labels, val, budget, loan, proj } = modelSnapshot();
+  const scen = SCEN_LABEL[modelScen];
+  const titles = { forecast: "Three-year forecast", budget: `Budget for ${labels[1]}`, valuation: "Business valuation", appraisal: "Loans and projects" };
+  $("model-title").textContent = titles[modelView];
+  $("model-sub").textContent = modelView === "appraisal" ? `${S.company} · amounts in ${unitText()}` : `${S.company} · ${scen} case · built from ${S.cur}, annualised from ${S.months} month${Number(S.months) === 1 ? "" : "s"}`;
+  document.querySelectorAll(".unit-label").forEach(e => e.textContent = "Amounts in " + unitText());
+  // checks
+  const chips = [];
+  if (modelView !== "appraisal") {
+    const maxDiff = Math.max(...years.map(y => Math.abs(y.diff || 0)));
+    chips.push(maxDiff < 1 ? `<span class="chip good">Forecast balance sheets balance</span>` : `<span class="chip warn">Balance sheet differs by ${S.currency} ${Math.round(maxDiff).toLocaleString("en-US")}: check the mapping</span>`);
+    const neg = years.findIndex((y, i) => i > 0 && y.cash < 0);
+    chips.push(neg > 0 ? `<span class="chip bad">Cash goes negative in ${labels[neg]}: funding needed</span>` : `<span class="chip good">Cash stays positive in the ${scen.toLowerCase()} case</span>`);
+    const dn = runs.down.findIndex((y, i) => i > 0 && y.cash < 0);
+    if (modelScen !== "down") chips.push(dn > 0 ? `<span class="chip warn">Downside case runs out of cash in ${labels[dn]}</span>` : `<span class="chip plain">Downside case keeps positive cash</span>`);
+    chips.push(`<span class="chip plain">${labels[0]} is annualised from ${S.months} months</span>`);
+  }
+  $("model-checks").innerHTML = chips.join("");
+  // forecast
+  $("fc-title").textContent = `Forecast statements, ${scen.toLowerCase()} case`;
+  let h = `<thead><tr><th></th><th class="n dim">${esc(labels[0])} actual, annualised</th>${labels.slice(1).map(l => `<th class="n">${esc(l)}</th>`).join("")}</tr></thead><tbody>`;
+  for (const r of FC_ROWS) {
+    if (r.h) { h += `<tr class="sec"><td colspan="5">${esc(r.h)}</td></tr>`; continue; }
+    const [k, l, lvl, f] = r;
+    h += `<tr class="${lvl === 2 ? "total" : lvl === 1 ? "sub" : ""}"><td class="lbl">${esc(l)}</td>${years.map((y, i) => `<td class="n ${i === 0 ? "dim" : ""} ${k === "cash" && y.cash < 0 ? "adv" : ""}">${fmtRow(y[k], f)}</td>`).join("")}</tr>`;
+  }
+  $("fc-table").innerHTML = h + "</tbody>";
+  $("fc-cash-sub").textContent = unitText();
+  $("fc-cash").innerHTML = linesSVG(labels, [
+    { l: "Upside", vals: runs.up.map(y => y.cash), stroke: "var(--good)", bold: modelScen === "up" },
+    { l: "Base", vals: runs.base.map(y => y.cash), stroke: "var(--accent)", bold: modelScen === "base" },
+    { l: "Downside", vals: runs.down.map(y => y.cash), stroke: "var(--bad)", bold: modelScen === "down" }
+  ], "Closing cash by scenario");
+  $("fc-rn-sub").textContent = `${scen} case, ${unitText()}`;
+  $("fc-rn").innerHTML = groupedBarsSVG(labels, [{ l: "Revenue", vals: years.map(y => y.rev), fill: "var(--bar-total)" }, { l: "Net profit", vals: years.map(y => y.np), fill: "var(--accent)" }], "Revenue and net profit by year");
+  // budget
+  $("bd-title").textContent = `Monthly budget for ${labels[1]}, ${scen.toLowerCase()} case`;
+  $("bd-sub").textContent = unitText();
+  let b = `<thead><tr><th></th>${budget.map(x => `<th class="n">${esc(x.label)}</th>`).join("")}<th class="n">Total</th></tr></thead><tbody>`;
+  b += `<tr><td class="lbl dim">Share of revenue</td>${budget.map(x => `<td class="n dim">${pct(x.share, 1)}</td>`).join("")}<td class="n dim">100.0%</td></tr>`;
+  for (const [k, l, lvl] of BUDGET_ROWS) b += `<tr class="${lvl === 2 ? "total" : lvl === 1 ? "sub" : ""}"><td class="lbl">${esc(l)}</td>${budget.map(x => `<td class="n">${amt(x[k])}</td>`).join("")}<td class="n">${amt(budget.reduce((t, x) => t + x[k], 0))}</td></tr>`;
+  $("bd-table").innerHTML = b + "</tbody>";
+  $("bd-chart").innerHTML = groupedBarsSVG(budget.map(x => x.label), [{ l: "Revenue", vals: budget.map(x => x.rev), fill: "var(--bar-total)" }, { l: "Net profit", vals: budget.map(x => x.np), fill: "var(--accent)" }], "Monthly revenue and net profit");
+  // valuation
+  $("val-kpis").innerHTML = [
+    { l: "Enterprise value", v: val.ev === null ? "–" : amt(val.ev), s: unitShort() },
+    { l: "Equity value", v: val.equity === null ? "–" : amt(val.equity), s: unitShort() },
+    { l: "Value from after year 3", v: val.tvShare === null ? "–" : (val.tvShare * 100).toFixed(0), s: "%" },
+    { l: `EV to ${labels[0]} EBITDA`, v: val.evEbitda === null ? "–" : val.evEbitda.toFixed(1), s: "×" }
+  ].map(t => `<div class="kpi"><span class="eyebrow">${esc(t.l)}</span><span class="v">${t.v}<small>${esc(t.s)}</small></span></div>`).join("");
+  let v = `<thead><tr><th></th>${val.rows.map(r => `<th class="n">${esc(labels[r.t])}</th>`).join("")}</tr></thead><tbody>`;
+  const vr = [["ebit", "Operating profit"], ["nopat", `After tax at ${m.tax}%`], ["dep", "Add back depreciation"], ["capex", "Less capital spending", -1], ["dNwc", "Less increase in working capital", -1], ["fcff", "Free cash flow", 1], ["df", "Discount factor", 0, "df"], ["pv", "Present value", 1]];
+  for (const [k, l, s, f] of vr) v += `<tr class="${s === 1 ? "sub" : ""}"><td class="lbl">${esc(l)}</td>${val.rows.map(r => `<td class="n">${f === "df" ? r.df.toFixed(3) : amt(s === -1 ? -r[k] : r[k])}</td>`).join("")}</tr>`;
+  v += `<tr class="sec"><td colspan="4">Value</td></tr>`;
+  v += `<tr><td class="lbl">Present value of years 1 to 3</td><td class="n" colspan="3">${amt(val.sumPV)}</td></tr>`;
+  v += `<tr><td class="lbl">Present value after year 3</td><td class="n" colspan="3">${val.pvtv === null ? "Discount rate must exceed growth" : amt(val.pvtv)}</td></tr>`;
+  v += `<tr class="sub"><td class="lbl">Enterprise value</td><td class="n" colspan="3">${val.ev === null ? "–" : amt(val.ev)}</td></tr>`;
+  v += `<tr><td class="lbl">Less net debt (borrowings less cash)</td><td class="n" colspan="3">${amt(-val.netDebt)}</td></tr>`;
+  v += `<tr class="total"><td class="lbl">Equity value</td><td class="n" colspan="3">${val.equity === null ? "–" : amt(val.equity)}</td></tr>`;
+  $("val-table").innerHTML = v + "</tbody>";
+  const ws = [-4, -2, 0, 2, 4].map(d => m.val.wacc + d), gs = [-2, -1, 0, 1, 2].map(d => m.val.tg + d);
+  let sx = `<thead><tr><th>WACC \\ growth</th>${gs.map(g => `<th class="n">${g}%</th>`).join("")}</tr></thead><tbody>`;
+  for (const w of ws) sx += `<tr><td class="lbl">${w}%</td>${gs.map(g => { const r = dcf(years, m, w, g); return `<td class="n ${w === m.val.wacc && g === m.val.tg ? "hl" : ""}">${r.equity === null ? "–" : amt(r.equity)}</td>`; }).join("")}</tr>`;
+  $("val-sens").innerHTML = sx + "</tbody>";
+  // loan
+  $("loan-kpis").innerHTML = [
+    { l: m.loan.type === "equal" ? "First instalment" : "Monthly instalment", v: amt(loan.firstPay), s: unitShort() },
+    { l: "Total interest", v: amt(loan.totInt), s: unitShort() },
+    { l: "Total repaid", v: amt(loan.totPay), s: unitShort() }
+  ].map(t => `<div class="kpi"><span class="eyebrow">${esc(t.l)}</span><span class="v">${t.v}<small>${esc(t.s)}</small></span></div>`).join("");
+  $("loan-chart").innerHTML = groupedBarsSVG(loan.years.map(y => "Year " + y.y), [{ l: "Principal", vals: loan.years.map(y => y.principal), fill: "var(--bar-total)" }, { l: "Interest", vals: loan.years.map(y => y.interest), fill: "var(--accent)" }], "Principal and interest by year");
+  $("loan-years").innerHTML = `<thead><tr><th>Year</th><th class="n">Interest</th><th class="n">Principal</th><th class="n">Paid</th><th class="n">Balance at end</th></tr></thead><tbody>` + loan.years.map(y => `<tr><td class="lbl">Year ${y.y}</td><td class="n">${amt(y.interest)}</td><td class="n">${amt(y.principal)}</td><td class="n">${amt(y.pay)}</td><td class="n">${amt(y.close)}</td></tr>`).join("") + "</tbody>";
+  $("loan-full").innerHTML = `<thead><tr><th>Month</th><th class="n">Opening</th><th class="n">Interest</th><th class="n">Principal</th><th class="n">Instalment</th><th class="n">Closing</th></tr></thead><tbody>` + loan.rows.map(x => `<tr><td class="lbl">${x.i}</td><td class="n">${amt(x.open)}</td><td class="n">${amt(x.interest)}</td><td class="n">${amt(x.principal)}</td><td class="n">${amt(x.pay)}</td><td class="n">${amt(x.close)}</td></tr>`).join("") + "</tbody>";
+  // project
+  const verdict = proj.npv >= 0 ? `<span class="chip good">Adds value at ${m.proj.rate}%</span>` : `<span class="chip bad">Destroys value at ${m.proj.rate}%</span>`;
+  $("proj-kpis").innerHTML = [
+    { l: "Net present value", v: amt(proj.npv), s: unitShort(), d: verdict },
+    { l: "Internal rate of return", v: proj.irr === null ? "–" : (proj.irr * 100).toFixed(1), s: "%" },
+    { l: "Payback", v: proj.pb === null ? "Not within life" : proj.pb.toFixed(1), s: proj.pb === null ? "" : "years", d: `<span class="flat">Discounted: ${proj.dpb === null ? "not within life" : proj.dpb.toFixed(1) + " years"}</span>` },
+    { l: "Profitability index", v: proj.pi === null ? "–" : proj.pi.toFixed(2), s: "×" }
+  ].map(t => `<div class="kpi"><span class="eyebrow">${esc(t.l)}</span><span class="v">${t.v}<small>${esc(t.s)}</small></span>${t.d ? `<span class="d">${t.d}</span>` : ""}</div>`).join("");
+  $("proj-chart").innerHTML = signedBarsSVG(proj.table.map(x => "Yr " + x.t), proj.table.map(x => x.dcum), "Cumulative discounted cash flow");
+  $("proj-table").innerHTML = `<thead><tr><th>Year</th><th class="n">Cash flow</th><th class="n">Discounted</th><th class="n">Cumulative, discounted</th></tr></thead><tbody>` + proj.table.map(x => `<tr><td class="lbl">${x.t}</td><td class="n">${amt(x.c)}</td><td class="n">${amt(x.d)}</td><td class="n ${x.dcum < 0 ? "adv" : "fav"}">${amt(x.dcum)}</td></tr>`).join("") + "</tbody>";
+}
+
 /* ---------- PDF ---------- */
 const GREYS = [[45, 45, 45], [85, 85, 85], [120, 120, 120], [155, 155, 155], [185, 185, 185], [210, 210, 210], [230, 230, 230]];
 function pdfWaterfall(doc, X, Y, Wd, Ht, title, start, steps, end) {
@@ -1523,6 +2019,59 @@ async function exportPDF() {
   heading("Ratios");
   table([{ t: "Ratio", w: 54 }, { t: S.cur, w: 26, a: "r" }, { t: cmp ? S.cmp : "", w: 26, a: "r" }, { t: "Guide", w: 44 }, { t: "Status", w: 16 }],
     RATIOS.map(d => { const v = ratioVal(d, cur), st = ratioStatus(d, v); return { cells: [d.l, ratioFmt(d, v), cmp ? ratioFmt(d, ratioVal(d, cmp)) : "", d.bench, st ? STATUS_TEXT[st] : "n/a"] }; }));
+  if (S.pdfModel !== false) {
+    const { m, runs, years, labels, val, budget, loan, proj } = modelSnapshot();
+    const scen = SCEN_LABEL[modelScen];
+    heading("Financial model", true);
+    para(`Forecast built from ${S.cur}, annualised from ${S.months} months. ${scen} case shown. All assumptions are management estimates and should be reviewed before use.`, 9);
+    y += 3;
+    subheading(`Three-year forecast, ${scen.toLowerCase()} case`);
+    const yc = [{ t: unitShort(), w: 70 }].concat(labels.map((l, i) => ({ t: i === 0 ? l + " (ann.)" : l, w: 26, a: "r" })));
+    const fcRows = [];
+    for (const r of FC_ROWS) {
+      if (r.h) { fcRows.push({ cells: [r.h.toUpperCase()], b: true, span: true }); continue; }
+      const [k, l, lvl, f] = r;
+      fcRows.push({ cells: [l].concat(years.map(yy => fmtRow(yy[k], f))), b: lvl > 0, top: lvl > 0, dbl: lvl === 2 });
+    }
+    table(yc, fcRows);
+    subheading("Key assumptions");
+    table([{ t: "", w: 84 }, { t: "Value", w: 40, a: "r" }], [
+      ["Revenue growth, years 1 to 3", m.g.map(x => x + "%").join(" / ")], ["Gross margin", m.gm + "%"], ["Staff and admin cost growth", `${m.staffG}% / ${m.adminG}%`],
+      ["Capital spending per year", amt(m.capex)], ["Debtor, inventory and creditor days", `${m.dd} / ${m.id} / ${m.cd}`], ["Interest rate on debt", m.rate + "%"],
+      ["Loan repayments per year", amt(m.repay)], ["Tax rate", m.tax + "%"], ["Downside: growth, margin, debtor days", `${m.scen.down.g} pts / ${m.scen.down.gm} pts / ${m.scen.down.dd} days`], ["Upside: growth, margin, debtor days", `+${m.scen.up.g} pts / +${m.scen.up.gm} pts / ${m.scen.up.dd} days`]
+    ].map(c => ({ cells: c })));
+    subheading(`Scenarios in ${labels[3]}`);
+    table([{ t: unitShort(), w: 70 }, { t: "Downside", w: 30, a: "r" }, { t: "Base", w: 30, a: "r" }, { t: "Upside", w: 30, a: "r" }],
+      [["rev", "Revenue"], ["np", "Net profit"], ["cash", "Closing cash"], ["debt", "Borrowings"]].map(([k, l]) => ({ cells: [l, amt(runs.down[3][k]), amt(runs.base[3][k]), amt(runs.up[3][k])] })));
+    subheading(`Budget for ${labels[1]} by quarter`);
+    const q = [0, 1, 2, 3].map(i => budget.slice(i * 3, i * 3 + 3));
+    table([{ t: unitShort(), w: 54 }].concat(q.map((qq, i) => ({ t: `Q${i + 1} (${qq[0].label}-${qq[2].label})`, w: 24, a: "r" }))).concat([{ t: "Total", w: 24, a: "r" }]),
+      BUDGET_ROWS.map(([k, l, lvl]) => ({ cells: [l].concat(q.map(qq => amt(qq.reduce((t, x) => t + x[k], 0)))).concat([amt(budget.reduce((t, x) => t + x[k], 0))]), b: lvl > 0, top: lvl > 0, dbl: lvl === 2 })));
+    subheading(`Valuation: discounted cash flow at ${m.val.wacc}%, long-term growth ${m.val.tg}%`);
+    table([{ t: unitShort(), w: 76 }].concat(val.rows.map(r => ({ t: labels[r.t], w: 28, a: "r" }))), [
+      { cells: ["Free cash flow"].concat(val.rows.map(r => amt(r.fcff))) },
+      { cells: ["Present value"].concat(val.rows.map(r => amt(r.pv))) }
+    ]);
+    table([{ t: "", w: 96 }, { t: unitShort(), w: 32, a: "r" }], [
+      { cells: ["Present value of years 1 to 3", amt(val.sumPV)] },
+      { cells: ["Present value after year 3", val.pvtv === null ? "n/a" : amt(val.pvtv)] },
+      { cells: ["Enterprise value", val.ev === null ? "n/a" : amt(val.ev)], b: true, top: true },
+      { cells: ["Less net debt", amt(-val.netDebt)] },
+      { cells: ["Equity value", val.equity === null ? "n/a" : amt(val.equity)], b: true, top: true, dbl: true }
+    ]);
+    subheading("Loan repayment schedule");
+    para(`${amt(m.loan.amt)} ${unitShort()} over ${m.loan.months} months at ${m.loan.rate}% a year${m.loan.grace ? `, with ${m.loan.grace} months interest only` : ""}. ${m.loan.type === "equal" ? "Equal principal" : "Equal instalments"} of ${amt(loan.firstPay)} ${unitShort()}${m.loan.type === "equal" ? " to start" : " a month"}. Total interest ${amt(loan.totInt)} ${unitShort()}.`, 9);
+    y += 2;
+    table([{ t: "Year", w: 30 }, { t: "Interest", w: 30, a: "r" }, { t: "Principal", w: 30, a: "r" }, { t: "Paid", w: 30, a: "r" }, { t: "Balance", w: 30, a: "r" }],
+      loan.years.map(yy => ({ cells: ["Year " + yy.y, amt(yy.interest), amt(yy.principal), amt(yy.pay), amt(yy.close)] })));
+    subheading("Investment appraisal");
+    table([{ t: "", w: 96 }, { t: "Result", w: 40, a: "r" }], [
+      ["Initial investment", amt(m.proj.inv) + " " + unitShort()], ["Net present value at " + m.proj.rate + "%", amt(proj.npv) + " " + unitShort()],
+      ["Internal rate of return", proj.irr === null ? "n/a" : (proj.irr * 100).toFixed(1) + "%"], ["Payback", proj.pb === null ? "Not within life" : proj.pb.toFixed(1) + " years"],
+      ["Discounted payback", proj.dpb === null ? "Not within life" : proj.dpb.toFixed(1) + " years"], ["Profitability index", proj.pi === null ? "n/a" : proj.pi.toFixed(2)],
+      ["Conclusion", proj.npv >= 0 ? "Adds value at this discount rate" : "Does not cover its cost of capital"]
+    ].map(c => ({ cells: c })));
+  }
   const n = doc.getNumberOfPages();
   for (let i = 1; i <= n; i++) {
     doc.setPage(i); font("normal", 7.5); doc.setTextColor(0, 0, 0);
@@ -1576,6 +2125,36 @@ async function exportXLSX() {
   add(nRows, "Notes", [52, 16, 16]);
   add(rRows, "Ratios", [28, 14, 14, 22, 10]);
   add(mRows, "Mapping", [14, 40, 16, 16, 16, 16, 28]);
+  {
+    const { m, runs, years, labels, val, budget, loan, proj } = modelSnapshot();
+    const scen = SCEN_LABEL[modelScen];
+    const xr = (v, f) => v === null || v === undefined || !isFinite(v) ? "" : f === "pct" ? Math.round(v * 1000) / 10 + "%" : f === "x" ? Math.round(v * 100) / 100 : Math.round(v);
+    const fRows = [[`Forecast, ${scen} case (${S.currency})`, labels[0] + " annualised"].concat(labels.slice(1))];
+    for (const r of FC_ROWS) { if (r.h) { fRows.push([r.h]); continue; } const [k, l, , f] = r; fRows.push([l].concat(years.map(yy => xr(yy[k], f)))); }
+    add(fRows, "Forecast", [36, 18, 16, 16, 16]);
+    const sRows = [["Scenario comparison (" + S.currency + ")"].concat(labels)];
+    for (const sc of ["down", "base", "up"]) { sRows.push([SCEN_LABEL[sc] + " case"]); for (const [k, l] of [["rev", "Revenue"], ["np", "Net profit"], ["cash", "Closing cash"], ["debt", "Borrowings"]]) sRows.push([l].concat(runs[sc].map(yy => xr(yy[k])))); }
+    add(sRows, "Scenarios", [28, 16, 16, 16, 16]);
+    const aRows = [["Assumption", "Value"]];
+    for (const gr of FC_INPUTS.concat(VAL_INPUTS)) { aRows.push([gr.g]); for (const [p, l, k] of gr.items) aRows.push([l, getPath(m, p), k === "money" ? S.currency : INPUT_UNITS[k]]); }
+    add(aRows, "Assumptions", [40, 16, 10]);
+    const bRows = [[`Budget ${labels[1]}, ${scen} case (${S.currency})`].concat(budget.map(x => x.label)).concat(["Total"])];
+    for (const [k, l] of BUDGET_ROWS) bRows.push([l].concat(budget.map(x => Math.round(x[k]))).concat([Math.round(budget.reduce((t, x) => t + x[k], 0))]));
+    add(bRows, "Budget", [26].concat(Array(13).fill(13)));
+    const vRows = [[`Valuation at ${m.val.wacc}% WACC, ${m.val.tg}% long-term growth (${S.currency})`].concat(val.rows.map(r => labels[r.t]))];
+    for (const [k, l] of [["ebit", "Operating profit"], ["nopat", "After tax"], ["dep", "Depreciation"], ["capex", "Capital spending"], ["dNwc", "Increase in working capital"], ["fcff", "Free cash flow"], ["df", "Discount factor"], ["pv", "Present value"]]) vRows.push([l].concat(val.rows.map(r => k === "df" ? Math.round(r.df * 1000) / 1000 : Math.round(r[k]))));
+    vRows.push([], ["Present value of years 1 to 3", Math.round(val.sumPV)], ["Present value after year 3", val.pvtv === null ? "" : Math.round(val.pvtv)], ["Enterprise value", val.ev === null ? "" : Math.round(val.ev)], ["Net debt", Math.round(val.netDebt)], ["Equity value", val.equity === null ? "" : Math.round(val.equity)], []);
+    const gs = [-2, -1, 0, 1, 2].map(d => m.val.tg + d);
+    vRows.push(["Equity value: WACC (rows) by growth (columns)"].concat(gs.map(g => g + "%")));
+    for (const w of [-4, -2, 0, 2, 4].map(d => m.val.wacc + d)) vRows.push([w + "%"].concat(gs.map(g => { const r = dcf(years, m, w, g); return r.equity === null ? "" : Math.round(r.equity); })));
+    add(vRows, "Valuation", [44, 16, 16, 16, 16, 16]);
+    const lRows = [["Month", "Opening", "Interest", "Principal", "Instalment", "Closing"]].concat(loan.rows.map(x => [x.i, Math.round(x.open), Math.round(x.interest), Math.round(x.principal), Math.round(x.pay), Math.round(x.close)]));
+    lRows.push([], ["Total interest", "", Math.round(loan.totInt)], ["Total repaid", "", "", "", Math.round(loan.totPay)]);
+    add(lRows, "Loan schedule", [8, 16, 14, 14, 14, 16]);
+    const pRows = [["Year", "Cash flow", "Discounted", "Cumulative", "Cumulative discounted"]].concat(proj.table.map(x => [x.t, Math.round(x.c), Math.round(x.d), Math.round(x.cum), Math.round(x.dcum)]));
+    pRows.push([], ["Net present value", Math.round(proj.npv)], ["Internal rate of return", proj.irr === null ? "" : Math.round(proj.irr * 1000) / 10 + "%"], ["Payback (years)", proj.pb === null ? "Not within life" : Math.round(proj.pb * 10) / 10], ["Discounted payback (years)", proj.dpb === null ? "Not within life" : Math.round(proj.dpb * 10) / 10], ["Profitability index", proj.pi === null ? "" : Math.round(proj.pi * 100) / 100]);
+    add(pRows, "Project appraisal", [24, 16, 16, 16, 20]);
+  }
   const buf = XLSX.write(wb, { bookType: "xlsx", type: "array" });
   await saveFile(fileBase() + ".xlsx", new Blob([buf]));
 }
@@ -1624,7 +2203,7 @@ function useColumns() {
   if (real(cols.cmp)) S.cmp = hdr(cols.cmp);
   if (real(cols.bud)) S.bud = hdr(cols.bud);
   if (real(cols.opn)) S.opn = hdr(cols.opn);
-  A = accts; isSample = false; compareTo = "cmp"; S.policies = null;
+  A = accts; isSample = false; compareTo = "cmp"; S.policies = null; S.model = null;
   autoMap(false);
   $("commentary").value = "";
   persist();
@@ -1650,9 +2229,10 @@ function readSettingsForm() {
 
 /* ---------- Views and events ---------- */
 function show(view) {
-  for (const v of ["pack", "data", "map"]) { $("view-" + v).hidden = v !== view; $("tab-" + v).setAttribute("aria-selected", v === view); }
+  for (const v of ["pack", "data", "map", "model"]) { $("view-" + v).hidden = v !== view; $("tab-" + v).setAttribute("aria-selected", v === view); }
   if (view === "map") renderMapping();
   if (view === "pack") renderPack();
+  if (view === "model") renderModel();
   window.scrollTo({ top: 0 });
 }
 document.addEventListener("click", e => {
@@ -1703,6 +2283,22 @@ $("map").addEventListener("change", e => {
   saveMapping(); persist(); renderMapping();
 });
 $("only-unmapped").addEventListener("change", renderMapping);
+$("view-model").addEventListener("input", e => {
+  const el = e.target.closest("[data-m]"); if (!el) return;
+  const p = el.dataset.m, k = el.dataset.k;
+  let v;
+  if (k === "sel") v = p === "fyStart" ? parseInt(el.value, 10) : el.value;
+  else { v = parseFloat(el.value); if (!isFinite(v)) return; if (k === "money") v *= (UNIT[S.unit] || UNIT.m).div; }
+  setPath(M(), p, v);
+  if (p === "fyStart") renderSeasonInputs();
+  clearTimeout(modelT); modelT = setTimeout(persist, 400);
+  renderModelResults();
+});
+$("model-nav").addEventListener("click", e => { const b = e.target.closest("[data-mv]"); if (b) { modelView = b.dataset.mv; renderModel(); } });
+$("scen-nav").addEventListener("click", e => { const b = e.target.closest("[data-sc]"); if (b) { modelScen = b.dataset.sc; document.querySelectorAll("#scen-nav [data-sc]").forEach(x => x.setAttribute("aria-pressed", x.dataset.sc === modelScen)); renderModelResults(); } });
+$("btn-model-reset").onclick = () => { S.model = modelDefaults(); persist(); renderModel(); toast("Assumptions reset from the actuals."); };
+$("btn-even").onclick = () => { M().season = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]; persist(); renderSeasonInputs(); renderModelResults(); };
+$("m-pdf").addEventListener("change", e => { S.pdfModel = e.target.checked; persist(); });
 $("btn-remap").onclick = () => { autoMap(false); persist(); renderMapping(); toast("Automatic mapping applied. Remembered choices were kept."); };
 
 /* ---------- Start ---------- */
