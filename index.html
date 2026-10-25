@@ -1626,8 +1626,8 @@ function linesSVG(cats, series, aria) {
   const y = v => top + (hi - v) / (hi - lo) * (H - top - bottom);
   const x = i => left + i * (W - left - right) / Math.max(1, cats.length - 1);
   let svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(aria)}" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-size="12">`;
-  svg += `<line x1="${left}" x2="${W - right + 10}" y1="${y(0)}" y2="${y(0)}" stroke="var(--ink)" stroke-opacity=".5"/>`;
-  svg += `<text x="${W - right + 14}" y="${y(0) + 4}" fill="var(--muted)" font-size="10.5">zero</text>`;
+  svg += `<line x1="${left}" x2="${W - right}" y1="${y(0)}" y2="${y(0)}" stroke="var(--ink)" stroke-opacity=".5"/>`;
+  svg += `<text x="${left}" y="${y(0) - 5}" fill="var(--muted)" font-size="10.5">zero</text>`;
   cats.forEach((c, i) => { svg += `<text x="${x(i)}" y="${H - bottom + 22}" text-anchor="middle" fill="var(--muted)" font-size="11">${esc(c)}</text>`; });
   const ends = series.map(s => ({ s, v: s.vals[s.vals.length - 1], y: y(s.vals[s.vals.length - 1]) })).sort((a, b) => a.y - b.y);
   for (let i = 1; i < ends.length; i++) if (ends[i].y - ends[i - 1].y < 15) ends[i].y = ends[i - 1].y + 15;
