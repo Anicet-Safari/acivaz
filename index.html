@@ -1,0 +1,1730 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Turn a trial balance into a board-ready management pack: three financial statements, notes, charts, ratios and commentary, exported to PDF or Excel.">
+<meta name="theme-color" content="#0D5B54">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Acivaz">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<title>Acivaz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,500..800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+/* Layout: a ledger workbench. Sticky band with the three working steps; the pack reads top-down: key figures, charts, commentary, the three statements, then the notes. */
+:root {
+  --bg: #F3F6F5;
+  --surface: #FFFFFF;
+  --ink: #13201B;
+  --muted: #5A6862;
+  --line: #D6DEDA;
+  --line-soft: #E7ECEA;
+  --accent: #0D5B54;
+  --accent-ink: #FFFFFF;
+  --accent-soft: #E0EEEA;
+  --good: #1D7449;
+  --good-soft: #E2F1E8;
+  --warn: #8F5E00;
+  --warn-soft: #FAEFD9;
+  --bad: #AE3528;
+  --bad-soft: #F7E2DF;
+  --bar-total: #8A9893;
+  --bar-ghost: #C9D3CF;
+  --seg1: #3F5F59; --seg2: #6E8F88; --seg3: #9DB7B1; --seg4: #C8D6D2; --seg5: #B9A77E; --seg6: #A07E6A; --seg7: #7D7391;
+  --font-display: "Archivo", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+  --font-body: "IBM Plex Sans", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --radius: 6px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0E1412; --surface: #151D1A; --ink: #E4EBE8; --muted: #98A6A0; --line: #2A3531; --line-soft: #1F2925;
+    --accent: #5BBFB2; --accent-ink: #062320; --accent-soft: #16312D;
+    --good: #5FC28C; --good-soft: #15301F; --warn: #E2AA4C; --warn-soft: #33270F; --bad: #EF8174; --bad-soft: #3A1B18;
+    --bar-total: #6E7C77; --bar-ghost: #34413C;
+    --seg1: #9EC2BB; --seg2: #7AA39B; --seg3: #5C827B; --seg4: #3F5D57; --seg5: #B8A57A; --seg6: #B58B74; --seg7: #9B90B0;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0E1412; --surface: #151D1A; --ink: #E4EBE8; --muted: #98A6A0; --line: #2A3531; --line-soft: #1F2925;
+  --accent: #5BBFB2; --accent-ink: #062320; --accent-soft: #16312D;
+  --good: #5FC28C; --good-soft: #15301F; --warn: #E2AA4C; --warn-soft: #33270F; --bad: #EF8174; --bad-soft: #3A1B18;
+  --bar-total: #6E7C77; --bar-ghost: #34413C;
+  --seg1: #9EC2BB; --seg2: #7AA39B; --seg3: #5C827B; --seg4: #3F5D57; --seg5: #B8A57A; --seg6: #B58B74; --seg7: #9B90B0;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 14px; line-height: 1.5; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--surface); }
+.gutter { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.wrap { max-width: 1180px; margin: 0 auto; }
+h1, h2, h3, h4 { font-family: var(--font-display); font-stretch: 85%; text-wrap: balance; margin: 0; }
+h2 { font-size: 20px; font-weight: 700; letter-spacing: -0.01em; }
+h3 { font-size: 15px; font-weight: 700; letter-spacing: 0.01em; }
+h4 { font-size: 14px; font-weight: 700; }
+.num, td.n, th.n { font-variant-numeric: tabular-nums; }
+.eyebrow { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 600; }
+.muted { color: var(--muted); }
+button, select, input, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.band { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--surface); border-bottom: 1px solid var(--line); }
+.band-inner { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 20px; padding-block: 10px; }
+.brand { display: flex; align-items: baseline; gap: 10px; min-width: 0; flex: 1 1 260px; }
+.brand-mark { font-family: var(--font-display); font-weight: 800; font-stretch: 78%; font-size: 19px; letter-spacing: -0.01em; white-space: nowrap; }
+.brand-mark span { color: var(--accent); }
+.brand-co { color: var(--muted); font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.tabs { display: flex; gap: 2px; background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius); padding: 2px; }
+.tab { border: 0; background: transparent; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 500; color: var(--muted); display: flex; align-items: center; gap: 6px; }
+.tab[aria-selected="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 2px rgba(0,0,0,.08); }
+.tab .step { font-family: var(--font-mono); font-size: 11px; opacity: .7; }
+.tab .count { background: var(--bad-soft); color: var(--bad); font-size: 11px; font-weight: 600; border-radius: 10px; padding: 0 6px; }
+.actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.btn { border: 1px solid var(--line); background: var(--surface); padding: 7px 12px; border-radius: var(--radius); cursor: pointer; font-weight: 500; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.btn:hover { border-color: var(--muted); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn.primary:hover { filter: brightness(1.08); }
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+.btn.small { padding: 4px 9px; font-size: 13px; }
+
+main { padding-block: 20px 60px; }
+.view { display: flex; flex-direction: column; gap: 18px; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; min-width: 0; }
+.panel-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 6px 16px; margin-bottom: 12px; }
+.panel-head .sub { font-size: 12px; color: var(--muted); }
+.grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: 18px; align-items: start; }
+.section-title { display: flex; align-items: baseline; gap: 12px; padding-top: 10px; border-top: 2px solid var(--ink); scroll-margin-top: 90px; }
+.section-title h2 { font-size: 22px; }
+
+.notice { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; padding: 10px 14px; border-radius: var(--radius); background: var(--accent-soft); font-size: 13px; }
+.notice strong { font-weight: 600; }
+.checks { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 500; padding: 3px 9px; border-radius: 12px; white-space: nowrap; }
+.chip::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.chip.good { background: var(--good-soft); color: var(--good); }
+.chip.warn { background: var(--warn-soft); color: var(--warn); }
+.chip.bad { background: var(--bad-soft); color: var(--bad); }
+.chip.plain { background: var(--bg); color: var(--muted); }
+.linkish { background: none; border: 0; padding: 0; color: var(--accent); text-decoration: underline; cursor: pointer; font-size: inherit; }
+
+.pack-title { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 10px 20px; }
+.pack-title h1 { font-size: clamp(24px, 4vw, 34px); font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; }
+.pack-title .sub { color: var(--muted); margin-top: 4px; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+.seg button { border: 0; background: var(--surface); padding: 6px 12px; cursor: pointer; color: var(--muted); font-size: 13px; }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--surface); }
+.seg button:disabled { opacity: .4; cursor: not-allowed; }
+.pack-nav { display: flex; flex-wrap: wrap; gap: 6px; }
+.pack-nav button { border: 1px solid var(--line); background: var(--surface); border-radius: 14px; padding: 3px 11px; font-size: 13px; cursor: pointer; color: var(--muted); }
+.pack-nav button:hover { color: var(--ink); border-color: var(--muted); }
+
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); gap: 12px; }
+.kpi { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; }
+.kpi .v { font-family: var(--font-display); font-stretch: 80%; font-weight: 700; font-size: 30px; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.kpi .v small { font-size: 14px; font-weight: 500; color: var(--muted); margin-left: 4px; }
+.kpi .d { font-size: 13px; font-variant-numeric: tabular-nums; }
+.up { color: var(--good); } .down { color: var(--bad); } .flat { color: var(--muted); }
+
+.chart-box { width: 100%; overflow-x: auto; }
+.chart-box svg { display: block; width: 100%; min-width: 520px; height: auto; }
+.legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; color: var(--muted); margin-top: 6px; }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
+.legend i.ghost { background: transparent; border: 1.5px solid var(--bar-total); }
+table.seg-key { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 12px; }
+table.seg-key td { padding: 3px 4px; border-bottom: 1px solid var(--line-soft); }
+table.seg-key td.n { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+table.seg-key i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
+table.seg-key th { font-size: 11px; color: var(--muted); font-weight: 600; text-align: right; padding: 3px 4px; }
+table.seg-key th:first-child { text-align: left; }
+
+.ratios { width: 100%; border-collapse: collapse; }
+.ratios td, .ratios th { padding: 7px 6px; border-bottom: 1px solid var(--line-soft); text-align: left; vertical-align: middle; }
+.ratios th { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); font-weight: 600; }
+.ratios td.n, .ratios th.n { text-align: right; white-space: nowrap; }
+.ratios .bench { display: block; font-size: 12px; color: var(--muted); }
+
+.table-box { overflow-x: auto; }
+table.st { width: 100%; border-collapse: collapse; min-width: 480px; }
+table.st.narrow { min-width: 340px; }
+table.st th, table.st td { padding: 6px 8px; text-align: left; border-bottom: 1px solid var(--line-soft); white-space: nowrap; }
+table.st td.lbl { white-space: normal; min-width: 150px; }
+table.st th { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); font-weight: 600; border-bottom: 1px solid var(--line); vertical-align: bottom; white-space: normal; }
+table.st .n { text-align: right; font-family: var(--font-mono); font-size: 13px; }
+table.st td.note { color: var(--muted); font-family: var(--font-mono); font-size: 12px; text-align: center; width: 40px; }
+table.st th.note { text-align: center; }
+table.st tr.sub td { font-weight: 600; border-top: 1px solid var(--line); }
+table.st tr.sub td.n { font-weight: 500; }
+table.st tr.total td { border-top: 2px solid var(--ink); border-bottom: 2px solid var(--ink); font-weight: 700; }
+table.st tr.sec td { font-family: var(--font-display); font-stretch: 85%; font-weight: 700; padding-top: 14px; border-bottom: 0; color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .06em; }
+table.st tr.head td { font-style: italic; color: var(--muted); border-bottom: 0; padding-top: 10px; }
+table.st td.fav { color: var(--good); } table.st td.adv { color: var(--bad); }
+
+.notes { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 460px), 1fr)); gap: 18px; align-items: start; }
+.note { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.note h4 span { font-family: var(--font-mono); color: var(--accent); margin-right: 8px; font-weight: 500; }
+.note p { margin: 0; font-size: 13px; color: var(--muted); max-width: 65ch; }
+textarea#policies { width: 100%; min-height: 220px; resize: vertical; padding: 12px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg); font-size: 13px; line-height: 1.6; }
+
+.comm-tools { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+textarea#commentary { width: 100%; min-height: 300px; resize: vertical; padding: 14px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg); line-height: 1.6; font-size: 14px; }
+.status { font-size: 13px; color: var(--muted); min-height: 1.4em; }
+.empty { padding: 18px; border: 1px dashed var(--line); border-radius: var(--radius); color: var(--muted); font-size: 13px; display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
+
+.drop { border: 2px dashed var(--line); border-radius: var(--radius); padding: 26px 18px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 10px; background: var(--bg); }
+.drop.over { border-color: var(--accent); background: var(--accent-soft); }
+.drop p { margin: 0; max-width: 46ch; }
+.or { display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: 12px; margin: 14px 0 10px; }
+.or::before, .or::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+textarea#paste { width: 100%; min-height: 110px; padding: 10px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); font-family: var(--font-mono); font-size: 12px; }
+.form { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); gap: 12px 14px; }
+.field { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.field label { font-size: 12px; font-weight: 600; color: var(--muted); }
+.field input, .field select { padding: 7px 9px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); width: 100%; min-width: 0; }
+.check { display: flex; gap: 8px; align-items: flex-start; font-size: 13px; }
+.check input { margin-top: 3px; }
+.help { font-size: 13px; color: var(--muted); margin: 0; }
+.help code { font-family: var(--font-mono); font-size: 12px; background: var(--bg); padding: 1px 4px; border-radius: 3px; }
+.preview { overflow-x: auto; margin-top: 12px; }
+.preview table { border-collapse: collapse; font-size: 12px; font-family: var(--font-mono); }
+.preview td { padding: 4px 8px; border: 1px solid var(--line-soft); white-space: nowrap; max-width: 260px; overflow: hidden; text-overflow: ellipsis; }
+.preview tr:first-child td { background: var(--bg); font-weight: 500; }
+
+.map-tools { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; margin-bottom: 10px; }
+table.map { width: 100%; border-collapse: collapse; min-width: 640px; }
+table.map th, table.map td { padding: 6px 8px; border-bottom: 1px solid var(--line-soft); text-align: left; }
+table.map th { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); font-weight: 600; border-bottom: 1px solid var(--line); }
+table.map td.n { text-align: right; font-family: var(--font-mono); font-size: 13px; white-space: nowrap; }
+table.map td.code { font-family: var(--font-mono); font-size: 13px; color: var(--muted); white-space: nowrap; }
+table.map select { padding: 5px 7px; border: 1px solid var(--line); border-radius: 4px; background: var(--surface); max-width: 230px; }
+table.map tr.unmapped td { background: var(--bad-soft); }
+table.map select.unset { border-color: var(--bad); }
+
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; }
+[hidden] { display: none !important; }
+img { max-width: 100%; }
+:root { padding-bottom: env(safe-area-inset-bottom, 0px); }
+.foot { padding-block: 22px 30px; font-size: 12px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 6px 18px; border-top: 1px solid var(--line); }
+.toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(18px + env(safe-area-inset-bottom, 0px)); background: var(--ink); color: var(--surface); padding: 9px 16px; border-radius: var(--radius); font-size: 13px; z-index: 20; max-width: calc(100% - 32px); }
+@media (max-width: 640px) {
+  .brand { flex-basis: 100%; }
+  .kpi .v { font-size: 26px; }
+  .panel { padding: 14px; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<header class="band gutter">
+  <div class="wrap band-inner">
+    <div class="brand">
+      <div class="brand-mark">Acivaz</div>
+      <div class="brand-co" id="brand-co"></div>
+    </div>
+    <nav class="tabs" role="tablist" aria-label="Steps">
+      <button class="tab" role="tab" id="tab-data" aria-selected="false" data-view="data"><span class="step">1</span>Data</button>
+      <button class="tab" role="tab" id="tab-map" aria-selected="false" data-view="map"><span class="step">2</span>Mapping <span class="count" id="unmapped-count" hidden></span></button>
+      <button class="tab" role="tab" id="tab-pack" aria-selected="true" data-view="pack"><span class="step">3</span>Pack</button>
+    </nav>
+    <div class="actions" id="export-actions">
+      <button class="btn" id="btn-install" type="button" hidden>Install app</button>
+      <button class="btn" id="btn-xlsx" type="button">Excel</button>
+      <button class="btn primary" id="btn-pdf" type="button">Download PDF pack</button>
+    </div>
+  </div>
+</header>
+
+<main class="gutter">
+  <div class="wrap">
+
+    <!-- PACK -->
+    <section class="view" id="view-pack">
+      <div class="notice" id="sample-note" hidden>
+        <span><strong>Example data.</strong> Umucyo Agro Processors Ltd is a fictional maize and feed processor, loaded so you can see the pack. Files you load are read on this device and never uploaded.</span>
+        <button class="linkish" type="button" data-goto="data">Load your own trial balance</button>
+      </div>
+
+      <div class="pack-title" id="sec-overview">
+        <div>
+          <div class="eyebrow">Management pack</div>
+          <h1 id="pack-company">Company</h1>
+          <div class="sub" id="pack-sub"></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span class="eyebrow">Compare with</span>
+            <div class="seg" role="group" aria-label="Compare with">
+              <button type="button" id="cmp-cmp" aria-pressed="true">Comparative</button>
+              <button type="button" id="cmp-bud" aria-pressed="false">Budget</button>
+            </div>
+          </div>
+          <div class="pack-nav">
+            <button type="button" data-jump="sec-charts">Charts</button>
+            <button type="button" data-jump="sec-commentary">Commentary</button>
+            <button type="button" data-jump="sec-statements">Statements</button>
+            <button type="button" data-jump="sec-notes">Notes</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="checks" id="checks"></div>
+      <div class="kpis" id="kpis"></div>
+
+      <div class="grid-2" id="sec-charts" style="scroll-margin-top:90px">
+        <div class="panel">
+          <div class="panel-head"><h3>Results against comparison</h3><span class="sub" id="results-sub"></span></div>
+          <div class="chart-box" id="chart-results"></div>
+          <div class="legend" id="results-legend"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><h3>What moved net profit</h3><span class="sub" id="bridge-sub"></span></div>
+          <div class="chart-box" id="bridge"></div>
+          <div class="legend"><span><i style="background:var(--good)"></i>Raised profit</span><span><i style="background:var(--bad)"></i>Lowered profit</span><span><i style="background:var(--bar-total)"></i>Net profit</span></div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><h3>Where each 100 of income went</h3><span class="sub" id="cost-sub"></span></div>
+          <div class="chart-box" id="chart-cost"></div>
+          <div id="cost-key"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><h3>How cash moved</h3><span class="sub" id="cash-sub"></span></div>
+          <div class="chart-box" id="chart-cash"></div>
+          <div class="legend" id="cash-legend"><span><i style="background:var(--good)"></i>Cash in</span><span><i style="background:var(--bad)"></i>Cash out</span><span><i style="background:var(--bar-total)"></i>Cash balance</span></div>
+        </div>
+      </div>
+
+      <div class="panel" id="sec-commentary" style="scroll-margin-top:90px">
+        <div class="panel-head">
+          <h3>Commentary</h3>
+          <div class="comm-tools">
+            <button class="btn small" type="button" id="btn-basic">Rebuild basic draft</button>
+            <button class="btn small primary" type="button" id="btn-claude" hidden>Draft with Claude</button>
+            <button class="btn small" type="button" id="btn-stop" hidden>Stop</button>
+          </div>
+        </div>
+        <textarea id="commentary" spellcheck="true" aria-label="Commentary for the pack"></textarea>
+        <div class="status" id="comm-status">Edit freely. This text goes into the PDF exactly as written.</div>
+      </div>
+
+      <div class="section-title" id="sec-statements"><h2>Financial statements</h2><span class="muted unit-label" style="font-size:13px"></span></div>
+      <div class="grid-2">
+        <div class="panel">
+          <div class="panel-head"><h3>Statement of profit or loss</h3><span class="sub" id="is-sub"></span></div>
+          <div class="table-box"><table class="st" id="is"></table></div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><h3>Statement of financial position</h3><span class="sub" id="bs-sub"></span></div>
+          <div class="table-box"><table class="st" id="bs"></table></div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><h3>Statement of cash flows</h3><span class="sub" id="cf-sub"></span></div>
+          <div id="cf-box"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><h3>Ratios</h3><span class="sub" id="ratio-sub"></span></div>
+          <div class="table-box"><table class="ratios" id="ratios"></table></div>
+        </div>
+      </div>
+
+      <div class="section-title" id="sec-notes"><h2>Notes to the financial statements</h2></div>
+      <div class="panel">
+        <div class="notes" id="notes"></div>
+      </div>
+    </section>
+
+    <!-- DATA -->
+    <section class="view" id="view-data" hidden>
+      <div class="grid-2">
+        <div class="panel">
+          <div class="panel-head"><h2>Load a trial balance</h2></div>
+          <div class="drop" id="drop">
+            <p><strong>Drop an Excel or CSV export here</strong></p>
+            <p class="muted">From Tally, Odoo, QuickBooks, Sage or your own workbook.</p>
+            <div class="actions" style="justify-content:center">
+              <label class="btn primary" for="file">Choose file</label>
+              <input type="file" id="file" accept=".csv,.xlsx,.xls,.txt" hidden>
+              <button class="btn" type="button" id="btn-template">Download template</button>
+            </div>
+          </div>
+          <div class="or">or paste from Excel</div>
+          <textarea id="paste" placeholder="Select the rows in Excel, copy, and paste here (include the header row)"></textarea>
+          <div class="actions" style="margin-top:10px">
+            <button class="btn" type="button" id="btn-paste">Read pasted rows</button>
+            <button class="btn" type="button" id="btn-sample">Load example data</button>
+          </div>
+          <div id="colpick" hidden style="margin-top:18px">
+            <h3 style="margin-bottom:8px">Match your columns</h3>
+            <div class="form">
+              <div class="field"><label for="col-code">Account code</label><select id="col-code"></select></div>
+              <div class="field"><label for="col-name">Account name</label><select id="col-name"></select></div>
+              <div class="field"><label for="col-cur">This period balance</label><select id="col-cur"></select></div>
+              <div class="field"><label for="col-cmp">Comparative balance</label><select id="col-cmp"></select></div>
+              <div class="field"><label for="col-bud">Budget (optional)</label><select id="col-bud"></select></div>
+              <div class="field"><label for="col-opn">Opening balances (optional)</label><select id="col-opn"></select></div>
+            </div>
+            <div class="preview" id="preview"></div>
+            <div class="actions" style="margin-top:12px">
+              <button class="btn primary" type="button" id="btn-usecols">Use these columns</button>
+              <span class="status" id="col-status"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head"><h2>Pack settings</h2></div>
+          <div class="form">
+            <div class="field" style="grid-column:1/-1"><label for="s-company">Company name</label><input id="s-company" type="text"></div>
+            <div class="field"><label for="s-cur">This period label</label><input id="s-cur" type="text"></div>
+            <div class="field"><label for="s-cmp">Comparative label</label><input id="s-cmp" type="text"></div>
+            <div class="field"><label for="s-bud">Budget label</label><input id="s-bud" type="text"></div>
+            <div class="field"><label for="s-opn">Opening balances label</label><input id="s-opn" type="text"></div>
+            <div class="field"><label for="s-months">Months covered</label><input id="s-months" type="number" min="1" max="12" step="1"></div>
+            <div class="field"><label for="s-unit">Show amounts in</label>
+              <select id="s-unit"><option value="m">Millions</option><option value="k">Thousands</option><option value="1">Units</option></select></div>
+            <div class="field"><label for="s-currency">Currency code</label><input id="s-currency" type="text" maxlength="5"></div>
+          </div>
+          <div style="margin-top:14px;display:flex;flex-direction:column;gap:10px">
+            <label class="check"><input type="checkbox" id="s-flip"><span>My export shows credits as positive numbers (flip all signs)</span></label>
+            <label class="check"><input type="checkbox" id="s-cmpopen"><span>My comparative column is last year's closing balance. Use it as the opening balance sheet for the cash flow statement.</span></label>
+            <p class="help"><strong>Format.</strong> One row per account with an account code, an account name, a balance for this period and a comparative balance. A budget column is optional. Debits are positive and credits negative, for example sales as <code>-612,400,000</code>.</p>
+            <p class="help"><strong>Use year-to-date balances</strong> for both periods, before closing entries. The profit for the period is then added to equity and the balance sheet ties. Months covered is used for debtor, creditor and inventory days.</p>
+            <p class="help"><strong>For the cash flow statement</strong>, add an opening-balance column: the trial balance at the start of the financial year, after closing entries. Income and expense accounts are blank in that column.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MAPPING -->
+    <section class="view" id="view-map" hidden>
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Account mapping</h2>
+          <span class="muted" id="map-summary" style="font-size:13px"></span>
+        </div>
+        <div class="map-tools">
+          <label class="check"><input type="checkbox" id="only-unmapped"><span>Show only accounts that need a line</span></label>
+          <button class="btn small" type="button" id="btn-remap">Re-run automatic mapping</button>
+          <span class="help">Your choices are remembered for this company in this browser, so next month's upload maps itself.</span>
+        </div>
+        <div class="table-box"><table class="map" id="map"></table></div>
+      </div>
+    </section>
+
+  </div>
+</main>
+<footer class="gutter"><div class="wrap foot"><span>Acivaz</span><span>Your files are processed on this device. Nothing is uploaded.</span><span>Management accounts are unaudited. Check every figure before you send a pack.</span></div></footer>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+(() => {
+"use strict";
+
+/* ---------- Example data (fictional company) ---------- */
+const SAMPLE_CSV = `Account code,Account name,Sep 2026 YTD,Sep 2025 YTD,Budget Sep 2026 YTD,Opening 1 Jan 2026
+4000,Sales - maize flour,-612400000,-498300000,-640000000,
+4010,Sales - animal feed,-238900000,-201600000,-230000000,
+4100,Sales returns and discounts,9800000,6100000,8000000,
+5000,Raw maize purchases,431200000,338700000,440000000,
+5010,Packaging materials,41300000,33900000,40000000,
+5020,Factory labour,52600000,47800000,54000000,
+5030,Factory electricity and fuel,38900000,29400000,33000000,
+5090,Change in inventory,-6200000,4300000,0,
+6000,Salaries - administration,64800000,58200000,66000000,
+6010,RSSB pension and medical contributions,7100000,6300000,7300000,
+6100,Transport and distribution,46500000,35200000,42000000,
+6110,Marketing and promotion,12400000,9800000,15000000,
+6200,Rent and utilities - office,14400000,13500000,14400000,
+6210,Professional fees,8700000,7900000,9000000,
+6220,Repairs and maintenance,11300000,6800000,9000000,
+6290,Other administrative expenses,9600000,8900000,10000000,
+6300,Depreciation,27000000,24300000,27000000,
+7000,Other income - sale of bran,-5400000,-4100000,-5000000,
+7100,Interest on bank loan,21600000,18900000,21000000,
+7110,Bank charges,2300000,2000000,2200000,
+8000,Income tax expense,18700000,16900000,21000000,
+1000,Plant and machinery - cost,412000000,365000000,,380000000
+1010,Buildings - cost,280000000,280000000,,280000000
+1050,Accumulated depreciation,-186000000,-150000000,,-159000000
+1100,Inventory - raw maize,58400000,41200000,,52100000
+1110,Inventory - finished goods,36900000,47300000,,44000000
+1200,Trade receivables,142600000,98400000,,112300000
+1210,Prepayments and deposits,9800000,8600000,,8900000
+1300,Cash at bank - BK,38700000,61300000,,57600000
+1310,Mobile money float,4200000,3100000,,3600000
+2000,Trade payables,-96300000,-89900000,,-93000000
+2010,VAT payable (RRA),-14600000,-11200000,,-12900000
+2020,PAYE and RSSB payable,-6100000,-5400000,,-5800000
+2030,Corporate income tax payable,-18700000,-16900000,,-22400000
+2040,Accrued expenses,-7900000,-6400000,,-7100000
+2100,Bank loan - long term,-240000000,-250000000,,-270000000
+3000,Share capital,-150000000,-150000000,,-150000000
+3100,Retained earnings brought forward,-218300000,-190000000,,-218300000`;
+const SAMPLE_SETTINGS = { company: "Umucyo Agro Processors Ltd", cur: "Sep 2026 YTD", cmp: "Sep 2025 YTD", bud: "Budget Sep 2026 YTD", opn: "Opening 1 Jan 2026", months: 9, unit: "m", currency: "RWF", flip: false, cmpOpen: false, policies: null };
+
+/* ---------- Categories and mapping rules ---------- */
+const CATS = [
+  { k: "rev", l: "Revenue", g: "Income statement" },
+  { k: "cos", l: "Cost of sales", g: "Income statement" },
+  { k: "staff", l: "Staff costs", g: "Income statement" },
+  { k: "selling", l: "Selling and distribution", g: "Income statement" },
+  { k: "admin", l: "Administration and other", g: "Income statement" },
+  { k: "dep", l: "Depreciation", g: "Income statement" },
+  { k: "oi", l: "Other income", g: "Income statement" },
+  { k: "fin", l: "Finance costs", g: "Income statement" },
+  { k: "tax", l: "Income tax", g: "Income statement" },
+  { k: "nca", l: "Non-current assets", g: "Balance sheet" },
+  { k: "inv", l: "Inventory", g: "Balance sheet" },
+  { k: "rec", l: "Trade receivables", g: "Balance sheet" },
+  { k: "oca", l: "Other current assets", g: "Balance sheet" },
+  { k: "cash", l: "Cash and bank", g: "Balance sheet" },
+  { k: "eq", l: "Share capital and reserves", g: "Balance sheet" },
+  { k: "ncl", l: "Long-term borrowings", g: "Balance sheet" },
+  { k: "pay", l: "Trade payables", g: "Balance sheet" },
+  { k: "ocl", l: "Other current liabilities", g: "Balance sheet" },
+  { k: "ign", l: "Leave out of the pack", g: "Other" }
+];
+const catLabel = k => (CATS.find(c => c.k === k) || { l: k }).l;
+const PL_CATS = new Set(["rev", "cos", "staff", "selling", "admin", "dep", "oi", "fin", "tax"]);
+const BS_CATS = new Set(["nca", "inv", "rec", "oca", "cash", "eq", "ncl", "pay", "ocl"]);
+const CREDIT_CATS = new Set(["rev", "oi", "eq", "ncl", "pay", "ocl"]);
+const RULES = [
+  [/accumulated\s+(depreciation|amorti[sz])/i, "nca"],
+  [/vat\s+(receivable|recoverable)|input\s+vat/i, "oca"],
+  [/other\s+income|sundry\s+income|miscellaneous\s+income|gain\s+on|grant\s+income|interest\s+(income|received)/i, "oi"],
+  [/overdraft/i, "ocl"],
+  [/interest|bank\s+charges|finance\s+(cost|charge)/i, "fin"],
+  [/loan|borrowing/i, "ncl"],
+  [/trade\s+payable|creditors|accounts\s+payable|suppliers/i, "pay"],
+  [/payable|accrued|accrual|\bvat\b|\bpaye\b|withholding|deferred\s+income/i, "ocl"],
+  [/receivable|debtors/i, "rec"],
+  [/prepay|prepaid|deposit|advance/i, "oca"],
+  [/change\s+in\s+(inventory|stock)|opening\s+stock|closing\s+stock/i, "cos"],
+  [/inventory|stock/i, "inv"],
+  [/cash|bank|mobile\s+money|momo|petty/i, "cash"],
+  [/share\s+capital|retained|reserve|equity|drawings|dividend/i, "eq"],
+  [/plant|machinery|building|equipment|vehicle|motor|furniture|fitting|\bland\b|computer|fixed\s+asset|property|intangible/i, "nca"],
+  [/income\s+tax|tax\s+expense|corporate\s+tax/i, "tax"],
+  [/sales|revenue|turnover|fees\s+earned|service\s+income/i, "rev"],
+  [/purchases|cost\s+of\s+(sales|goods)|packaging|raw\s+material|factory|direct\s+labou?r|production|carriage\s+in/i, "cos"],
+  [/depreciation|amorti[sz]/i, "dep"],
+  [/salar|wage|staff|pension|rssb|medical|payroll|casual|bonus/i, "staff"],
+  [/transport|distribution|delivery|marketing|advert|promotion|selling|commission/i, "selling"],
+  [/rent|utilit|electric|water|professional|audit|legal|repair|maintenance|insurance|office|admin|telephone|internet|airtime|travel|fuel|licen|subscription|stationery|security|cleaning|expense/i, "admin"]
+];
+function guessCat(code, name, bal) {
+  for (const [re, k] of RULES) if (re.test(name)) return k;
+  const d = String(code || "").trim().charAt(0);
+  if (d === "1") return "oca";
+  if (d === "2") return "ocl";
+  if (d === "3") return "eq";
+  if (d === "4") return "rev";
+  if (d === "5") return "cos";
+  if (d === "6") return "admin";
+  if (d === "7") return (bal || 0) < 0 ? "oi" : "fin";
+  if (d === "8") return "tax";
+  return "";
+}
+
+/* ---------- State ---------- */
+let S = null, A = [], isSample = false, compareTo = "cmp", grid = null;
+let downloads = null, sample = null, ctl = null, draftT = null, polT = null;
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const store = {
+  get(k) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : null; } catch (e) { return null; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+function toast(msg) {
+  const t = $("toast"); t.textContent = msg; t.hidden = false;
+  clearTimeout(toast.t); toast.t = setTimeout(() => { t.hidden = true; }, 3200);
+}
+
+/* ---------- Numbers ---------- */
+function toNum(v) {
+  if (v === null || v === undefined) return null;
+  if (typeof v === "number") return isFinite(v) ? v : null;
+  let s = String(v).trim();
+  if (!s || s === "-" || s === "–") return null;
+  let neg = false;
+  if (/^\(.*\)$/.test(s)) { neg = true; s = s.slice(1, -1); }
+  if (/\s*(dr|cr)$/i.test(s)) { if (/cr$/i.test(s)) neg = !neg; s = s.replace(/\s*(dr|cr)$/i, ""); }
+  s = s.replace(/[^0-9.\-eE]/g, "");
+  if (!s || s === "-") return null;
+  const n = parseFloat(s);
+  if (!isFinite(n)) return null;
+  return neg ? -Math.abs(n) : n;
+}
+const UNIT = { m: { div: 1e6, dp: 1, label: "millions", sfx: "m" }, k: { div: 1e3, dp: 0, label: "thousands", sfx: "k" }, "1": { div: 1, dp: 0, label: "", sfx: "" } };
+function amt(v, opts = {}) {
+  if (v === null || v === undefined || !isFinite(v)) return "–";
+  const u = UNIT[S.unit] || UNIT.m;
+  const x = v / u.div;
+  const s = Math.abs(x).toLocaleString("en-US", { minimumFractionDigits: u.dp, maximumFractionDigits: u.dp });
+  const zero = Number(s.replace(/,/g, "")) === 0;
+  if (opts.sign) return zero ? s : (x > 0 ? "+" : "−") + s;
+  return x < 0 && !zero ? "(" + s + ")" : s;
+}
+const unitText = () => S.currency + (S.unit === "1" ? "" : " " + UNIT[S.unit].label);
+const unitShort = () => S.currency + (S.unit === "m" ? "m" : S.unit === "k" ? "'000" : "");
+const money = v => S.currency + " " + amt(v) + UNIT[S.unit].sfx;
+const pct = (v, dp = 1) => (v === null || v === undefined || !isFinite(v)) ? "–" : (v * 100).toFixed(dp) + "%";
+
+/* ---------- Parsing ---------- */
+function parseCSV(text) {
+  const first = text.split("\n")[0];
+  const cnt = ch => (first.match(new RegExp(ch, "g")) || []).length;
+  const delim = cnt("\t") > 0 ? "\t" : cnt(";") > cnt(",") ? ";" : ",";
+  const rows = []; let row = [], cell = "", q = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (q) {
+      if (c === '"') { if (text[i + 1] === '"') { cell += '"'; i++; } else q = false; }
+      else cell += c;
+    } else if (c === '"') q = true;
+    else if (c === delim) { row.push(cell); cell = ""; }
+    else if (c === "\n" || c === "\r") {
+      if (c === "\r" && text[i + 1] === "\n") i++;
+      row.push(cell); rows.push(row); row = []; cell = "";
+    } else cell += c;
+  }
+  if (cell !== "" || row.length) { row.push(cell); rows.push(row); }
+  return rows.filter(r => r.some(c => String(c).trim() !== ""));
+}
+function headerIndex(rows) {
+  for (let i = 0; i < Math.min(rows.length, 30); i++) {
+    const texts = rows[i].filter(c => String(c).trim() !== "" && toNum(c) === null).length;
+    if (texts >= 3) return i;
+  }
+  return 0;
+}
+function guessCols(header, body) {
+  const H = header.map(h => String(h || "").toLowerCase());
+  const find = (re, not) => H.findIndex((h, i) => re.test(h) && !(not && not.includes(i)));
+  const numericCols = header.map((_, i) => body.slice(0, 20).filter(r => toNum(r[i]) !== null).length > Math.min(5, body.length / 2)).map((b, i) => b ? i : -1).filter(i => i >= 0);
+  let code = find(/code|acc(ount)?\s*(no|number|#)|^no\.?$|ledger\s*id|^ref/);
+  let name = find(/name|description|account|ledger|particulars/, [code]);
+  let bud = find(/budget|plan|target|forecast/);
+  let opn = find(/opening|b\/f|brought|start of|beginning/, [bud]);
+  let cmp = find(/prior|previous|last|comparative|py\b|prev/, [bud, opn]);
+  let cur = find(/current|this|actual|balance|closing|cy\b|ytd/, [bud, cmp, code, name, opn]);
+  if (cur < 0) cur = numericCols.filter(i => ![code, bud, cmp, opn].includes(i))[0] ?? -1;
+  if (cmp < 0) cmp = numericCols.filter(i => ![code, bud, cur, opn].includes(i))[0] ?? -1;
+  if (code === cur || code === cmp) code = -1;
+  if (name < 0) name = header.findIndex((_, i) => ![code, cur, cmp, bud, opn].includes(i));
+  return { code, name, cur, cmp, bud, opn };
+}
+function openColumnPicker(rows) {
+  const hi = headerIndex(rows);
+  const header = rows[hi].map((h, i) => String(h).trim() || "Column " + (i + 1));
+  const body = rows.slice(hi + 1);
+  grid = { header, body };
+  const g = guessCols(header, body);
+  const opts = (sel, none) => (none ? `<option value="-1">None</option>` : "") + header.map((h, i) => `<option value="${i}" ${i === sel ? "selected" : ""}>${esc(h)}</option>`).join("");
+  $("col-code").innerHTML = opts(g.code, true);
+  $("col-name").innerHTML = opts(g.name, false);
+  $("col-cur").innerHTML = opts(g.cur, false);
+  $("col-cmp").innerHTML = opts(g.cmp, true);
+  $("col-bud").innerHTML = opts(g.bud, true);
+  $("col-opn").innerHTML = opts(g.opn, true);
+  const prev = [header, ...body.slice(0, 5)];
+  $("preview").innerHTML = "<table>" + prev.map(r => "<tr>" + header.map((_, i) => `<td>${esc(r[i] ?? "")}</td>`).join("") + "</tr>").join("") + "</table>";
+  $("col-status").textContent = `${body.length} rows found. Check the guesses, then continue.`;
+  $("colpick").hidden = false;
+  $("colpick").scrollIntoView({ block: "nearest" });
+}
+function buildAccounts(rows, cols) {
+  const out = [], sign = S.flip ? -1 : 1;
+  const get = (r, i) => i >= 0 ? toNum(r[i]) : null;
+  for (const r of rows) {
+    const name = String(r[cols.name] ?? "").trim();
+    const code = cols.code >= 0 ? String(r[cols.code] ?? "").trim() : "";
+    if (!name && !code) continue;
+    if (/^(grand\s+)?total/i.test(name) || /^total/i.test(code)) continue;
+    const cur = get(r, cols.cur), cmp = get(r, cols.cmp), bud = get(r, cols.bud), opn = get(r, cols.opn ?? -1);
+    if (cur === null && cmp === null && bud === null && opn === null) continue;
+    out.push({ code, name: name || code, cur: (cur ?? 0) * sign, cmp: cmp === null ? null : cmp * sign, bud: bud === null ? null : bud * sign, opn: opn === null ? null : opn * sign, cat: "", src: "auto" });
+  }
+  return out;
+}
+const mapKey = () => "mpb:map:" + (S.company || "").trim().toLowerCase();
+const acctKey = a => (a.code || "") + "|" + a.name.toLowerCase();
+function autoMap(keepEdits) {
+  const saved = store.get(mapKey()) || {};
+  for (const a of A) {
+    if (keepEdits && a.src === "edited") continue;
+    const s = saved[acctKey(a)];
+    if (s && CATS.some(c => c.k === s)) { a.cat = s; a.src = "saved"; }
+    else { a.cat = guessCat(a.code, a.name, a.cur); a.src = "auto"; }
+  }
+}
+function saveMapping() {
+  const saved = store.get(mapKey()) || {};
+  for (const a of A) if (a.cat) saved[acctKey(a)] = a.cat;
+  store.set(mapKey(), saved);
+}
+function persist() { store.set("mpb:last2", { S, A, isSample }); }
+function loadSample() {
+  S = { ...SAMPLE_SETTINGS };
+  const rows = parseCSV(SAMPLE_CSV);
+  A = buildAccounts(rows.slice(1), { code: 0, name: 1, cur: 2, cmp: 3, bud: 4, opn: 5 });
+  autoMap(false);
+  isSample = true; compareTo = "cmp";
+  $("commentary").value = "";
+  persist();
+}
+
+/* ---------- Calculations ---------- */
+const hasBudget = () => A.some(a => PL_CATS.has(a.cat) && a.bud);
+const hasBudgetBS = () => A.some(a => BS_CATS.has(a.cat) && a.bud);
+const hasCmp = () => A.some(a => a.cmp !== null && a.cmp !== 0);
+const hasOpn = () => A.some(a => BS_CATS.has(a.cat) && a.opn);
+function compute(col) {
+  if (col === "bud" && !hasBudget()) return null;
+  if (col === "cmp" && !hasCmp()) return null;
+  if (col === "opn" && !hasOpn()) return null;
+  const s = k => A.reduce((t, a) => a.cat === k ? t + (a[col] || 0) : t, 0);
+  const r = {};
+  r.rev = -s("rev"); r.cos = s("cos"); r.gp = r.rev - r.cos;
+  r.staff = s("staff"); r.selling = s("selling"); r.admin = s("admin"); r.dep = s("dep");
+  r.opex = r.staff + r.selling + r.admin + r.dep;
+  r.oi = -s("oi"); r.op = r.gp - r.opex + r.oi;
+  r.fin = s("fin"); r.pbt = r.op - r.fin; r.tax = s("tax"); r.np = r.pbt - r.tax;
+  r.bsOk = col !== "bud" || hasBudgetBS();
+  if (r.bsOk) {
+    r.nca = s("nca"); r.inv = s("inv"); r.rec = s("rec"); r.oca = s("oca"); r.cash = s("cash");
+    r.ca = r.inv + r.rec + r.oca + r.cash; r.ta = r.nca + r.ca;
+    r.eq = -s("eq"); r.teq = r.eq + r.np;
+    r.ncl = -s("ncl"); r.pay = -s("pay"); r.ocl = -s("ocl"); r.cl = r.pay + r.ocl;
+    r.tel = r.teq + r.ncl + r.cl;
+  }
+  r.tb = A.reduce((t, a) => t + (a[col] || 0), 0);
+  return r;
+}
+function openingBS() {
+  if (hasOpn()) return { r: compute("opn"), label: S.opn || "Opening balances", src: "opn" };
+  if (S.cmpOpen) { const c = compute("cmp"); if (c) return { r: c, label: S.cmp, src: "cmp" }; }
+  return null;
+}
+function cashFlow(cur, open) {
+  if (!open) return null;
+  const o = open.r;
+  const opLines = [
+    { l: "Net profit for the period", v: cur.np },
+    { l: "Add back depreciation", v: cur.dep },
+    { l: "(Increase)/decrease in inventory", v: -(cur.inv - o.inv) },
+    { l: "(Increase)/decrease in trade receivables", v: -(cur.rec - o.rec) },
+    { l: "(Increase)/decrease in other current assets", v: -(cur.oca - o.oca) },
+    { l: "Increase/(decrease) in trade payables", v: cur.pay - o.pay },
+    { l: "Increase/(decrease) in other current liabilities", v: cur.ocl - o.ocl }
+  ];
+  const invLines = [{ l: "Purchase of non-current assets, net of disposals", v: -((cur.nca - o.nca) + cur.dep) }];
+  const finLines = [
+    { l: "Increase/(decrease) in long-term borrowings", v: cur.ncl - o.ncl },
+    { l: "Capital introduced less dividends and drawings", v: cur.eq - o.teq }
+  ];
+  const sum = ls => ls.reduce((t, x) => t + x.v, 0);
+  const op = sum(opLines), iv = sum(invLines), fi = sum(finLines);
+  const net = op + iv + fi;
+  return {
+    sections: [
+      { h: "Operating activities", lines: opLines, total: { l: "Net cash from operating activities", v: op } },
+      { h: "Investing activities", lines: invLines, total: { l: "Net cash used in investing activities", v: iv } },
+      { h: "Financing activities", lines: finLines, total: { l: "Net cash from financing activities", v: fi } }
+    ],
+    op, iv, fi, net, openCash: o.cash, closeCalc: o.cash + net, closeBS: cur.cash, diff: (o.cash + net) - cur.cash, openLabel: open.label
+  };
+}
+const days = () => (Number(S.months) || 12) * 365 / 12;
+const RATIOS = [
+  { k: "gm", l: "Gross margin", f: r => r.gp / r.rev, fmt: "pct", good: v => v >= 0.25, warn: v => v >= 0.15, bench: "Healthy at 25% or more" },
+  { k: "nm", l: "Net margin", f: r => r.np / r.rev, fmt: "pct", good: v => v >= 0.05, warn: v => v >= 0, bench: "5% or more" },
+  { k: "ox", l: "Operating costs to revenue", f: r => r.opex / r.rev, fmt: "pct", good: v => v <= 0.2, warn: v => v <= 0.3, bench: "20% or less" },
+  { k: "cr", l: "Current ratio", f: r => r.ca / r.cl, fmt: "x", bs: true, good: v => v >= 1.5, warn: v => v >= 1, bench: "1.5 or more" },
+  { k: "qr", l: "Quick ratio", f: r => (r.ca - r.inv) / r.cl, fmt: "x", bs: true, good: v => v >= 1, warn: v => v >= 0.7, bench: "1.0 or more" },
+  { k: "dd", l: "Debtor days", f: r => r.rec / r.rev * days(), fmt: "d", bs: true, good: v => v <= 45, warn: v => v <= 75, bench: "45 days or fewer" },
+  { k: "id", l: "Inventory days", f: r => r.inv / r.cos * days(), fmt: "d", bs: true, good: v => v <= 60, warn: v => v <= 90, bench: "60 days or fewer" },
+  { k: "cd", l: "Creditor days", f: r => r.pay / r.cos * days(), fmt: "d", bs: true, good: v => v >= 30 && v <= 60, warn: v => v >= 20 && v <= 90, bench: "30 to 60 days" },
+  { k: "de", l: "Debt to equity", f: r => r.ncl / r.teq, fmt: "x", bs: true, good: v => v <= 1, warn: v => v <= 2, bench: "1.0 or less" },
+  { k: "ic", l: "Interest cover", f: r => r.op / r.fin, fmt: "x", good: v => v >= 3, warn: v => v >= 1.5, bench: "3 times or more" }
+];
+const RATIO = Object.fromEntries(RATIOS.map(d => [d.k, d]));
+function ratioVal(def, r) {
+  if (!r || (def.bs && !r.bsOk)) return null;
+  const v = def.f(r);
+  return isFinite(v) ? v : null;
+}
+const ratioFmt = (def, v) => v === null ? "–" : def.fmt === "pct" ? pct(v) : def.fmt === "d" ? Math.round(v) + " days" : v.toFixed(2) + "×";
+const ratioStatus = (def, v) => v === null ? null : def.good(v) ? "good" : def.warn(v) ? "warn" : "bad";
+const STATUS_TEXT = { good: "Healthy", warn: "Watch", bad: "Act" };
+
+/* ---------- Notes ---------- */
+const NOTE_DEFS = [
+  { id: "rev", title: "Revenue", cats: ["rev"] },
+  { id: "cos", title: "Cost of sales", cats: ["cos"] },
+  { id: "opex", title: "Operating expenses", cats: ["staff", "selling", "admin", "dep"] },
+  { id: "oifin", title: "Other income and finance costs", cats: ["oi", "fin"], noTotal: true },
+  { id: "tax", title: "Income tax", cats: ["tax"] },
+  { id: "nca", title: "Property, plant and equipment", cats: ["nca"] },
+  { id: "inv", title: "Inventories", cats: ["inv"] },
+  { id: "rec", title: "Trade and other receivables", cats: ["rec", "oca"] },
+  { id: "cash", title: "Cash and bank", cats: ["cash"] },
+  { id: "pay", title: "Trade and other payables", cats: ["pay", "ocl"] },
+  { id: "ncl", title: "Borrowings", cats: ["ncl"] },
+  { id: "eq", title: "Equity", cats: ["eq"] }
+];
+function defaultPolicies() {
+  return `These management accounts have been prepared from the company's trial balance for use by the board and management. They have not been audited or reviewed.
+
+Amounts are in ${S.currency} and the layout follows IFRS for SMEs. Income and expenses are recognised on an accruals basis. The figures cover ${S.months} month${Number(S.months) === 1 ? "" : "s"} to the end of the period (${S.cur}), compared with ${S.cmp}.
+
+Year-to-date balances are used. Closing entries have not been posted, so the profit for the period is shown separately within equity.
+
+The statement of cash flows uses the indirect method and is derived from the movement between the opening balance sheet and this period's balance sheet. Interest is treated as paid in the period it is charged. Income tax paid is reflected through the change in tax payable, which sits within other current liabilities.
+
+Purchases of non-current assets are derived from the movement in their carrying amount plus the depreciation charge, net of any disposals.`;
+}
+function buildNotes(cur, cmp, open) {
+  const notes = [];
+  const noteOf = {};
+  notes.push({ n: 1, id: "basis", title: "Basis of preparation", text: S.policies || defaultPolicies() });
+  let n = 2;
+  for (const def of NOTE_DEFS) {
+    const inNote = A.filter(a => def.cats.includes(a.cat));
+    if (!inNote.length) continue;
+    const rows = [];
+    let tc = 0, tp = 0;
+    const multi = def.cats.length > 1;
+    for (const k of def.cats) {
+      const accts = A.filter(a => a.cat === k);
+      if (!accts.length) continue;
+      const sg = CREDIT_CATS.has(k) ? -1 : 1;
+      if (multi) rows.push({ l: catLabel(k), head: true });
+      let sc = 0, sp = 0;
+      for (const a of accts) {
+        const c = sg * (a.cur || 0), p = a.cmp === null ? null : sg * a.cmp;
+        rows.push({ l: a.name, cur: c, cmp: p });
+        sc += c; sp += p || 0;
+      }
+      if (multi) rows.push({ l: "Total " + catLabel(k).toLowerCase(), cur: sc, cmp: cmp ? sp : null, sub: true });
+      tc += sc; tp += sp;
+    }
+    const note = { n, id: def.id, title: def.title, rows, extra: [] };
+    if (def.id === "eq") {
+      rows.push({ l: "Profit for the period", cur: cur.np, cmp: cmp ? cmp.np : null });
+      rows.push({ l: "Total equity", cur: cur.teq, cmp: cmp ? cmp.teq : null, total: true });
+    } else if (!def.noTotal) {
+      rows.push({ l: "Total", cur: tc, cmp: cmp ? tp : null, total: true });
+    }
+    if (def.id === "tax") {
+      note.extra.push({
+        title: "Effective tax rate", rows: [
+          { l: "Profit before tax", cur: cur.pbt, cmp: cmp ? cmp.pbt : null },
+          { l: "Income tax expense", cur: cur.tax, cmp: cmp ? cmp.tax : null },
+          { l: "Effective tax rate", cur: cur.pbt ? cur.tax / cur.pbt : null, cmp: cmp && cmp.pbt ? cmp.tax / cmp.pbt : null, pct: true, sub: true }
+        ]
+      });
+      note.text = "The effective rate is the tax expense in the trial balance divided by profit before tax. Compare it with the statutory rate and explain material differences.";
+    }
+    if (def.id === "nca") {
+      if (open) {
+        const o = open.r, adds = (cur.nca - o.nca) + cur.dep;
+        note.extra.push({
+          title: "Movement in carrying amount", single: true, rows: [
+            { l: `Carrying amount at ${open.label}`, cur: o.nca },
+            { l: "Additions, net of disposals", cur: adds },
+            { l: "Depreciation charge for the period", cur: -cur.dep },
+            { l: `Carrying amount at ${S.cur}`, cur: cur.nca, total: true }
+          ]
+        });
+        note.text = "Additions are derived from the change in carrying amount plus the depreciation charge. Record disposals separately if there were any.";
+      }
+    }
+    if (def.id === "ncl") note.text = "Show the lender, interest rate, security and repayment terms here before sending the pack.";
+    if (def.id === "rec") {
+      const dd = ratioVal(RATIO.dd, cur);
+      if (dd !== null) note.text = `Trade receivables equal ${Math.round(dd)} days of revenue. Add an ageing analysis and any provision for doubtful debts.`;
+    }
+    for (const k of def.cats) noteOf[k] = n;
+    notes.push(note);
+    n++;
+  }
+  return { notes, noteOf };
+}
+
+/* ---------- Statement layouts ---------- */
+const IS_LINES = [
+  { k: "rev", l: "Revenue", t: "inc", note: "rev" },
+  { k: "cos", l: "Cost of sales", t: "exp", note: "cos" },
+  { k: "gp", l: "Gross profit", t: "inc", sub: true },
+  { k: "staff", l: "Staff costs", t: "exp", note: "staff" },
+  { k: "selling", l: "Selling and distribution", t: "exp", note: "selling" },
+  { k: "admin", l: "Administration and other", t: "exp", note: "admin" },
+  { k: "dep", l: "Depreciation", t: "exp", note: "dep" },
+  { k: "oi", l: "Other income", t: "inc", note: "oi" },
+  { k: "op", l: "Operating profit", t: "inc", sub: true },
+  { k: "fin", l: "Finance costs", t: "exp", note: "fin" },
+  { k: "pbt", l: "Profit before tax", t: "inc", sub: true },
+  { k: "tax", l: "Income tax", t: "exp", note: "tax" },
+  { k: "np", l: "Net profit for the period", t: "inc", total: true }
+];
+const BS_LINES = [
+  { h: "Assets" },
+  { k: "nca", l: "Property, plant and equipment", note: "nca" },
+  { k: "inv", l: "Inventories", note: "inv" },
+  { k: "rec", l: "Trade receivables", note: "rec" },
+  { k: "oca", l: "Other current assets", note: "oca" },
+  { k: "cash", l: "Cash and bank", note: "cash" },
+  { k: "ca", l: "Current assets", sub: true },
+  { k: "ta", l: "Total assets", total: true },
+  { h: "Equity and liabilities" },
+  { k: "eq", l: "Share capital and reserves", note: "eq" },
+  { k: "np", l: "Profit for the period" },
+  { k: "teq", l: "Total equity", sub: true },
+  { k: "ncl", l: "Long-term borrowings", note: "ncl" },
+  { k: "pay", l: "Trade payables", note: "pay" },
+  { k: "ocl", l: "Other current liabilities", note: "ocl" },
+  { k: "cl", l: "Current liabilities", sub: true },
+  { k: "tel", l: "Total equity and liabilities", total: true }
+];
+
+/* ---------- Rendering: statements ---------- */
+function varCell(cur, base, type) {
+  if (base === null || base === undefined) return `<td class="n">–</td><td class="n">–</td>`;
+  const d = cur - base;
+  const fav = type === "inc" ? d > 0 : d < 0;
+  const cls = Math.abs(d) < 0.5 ? "" : fav ? "fav" : "adv";
+  const p = base !== 0 ? d / Math.abs(base) : null;
+  return `<td class="n ${cls}">${amt(d, { sign: true })}</td><td class="n ${cls}">${p === null ? "–" : (p > 0 ? "+" : p < 0 ? "−" : "") + Math.abs(p * 100).toFixed(1) + "%"}</td>`;
+}
+function renderIS(cur, cmp, bud, noteOf) {
+  $("is-sub").textContent = `For ${S.cur}, ${unitText()}`;
+  let h = `<thead><tr><th></th><th class="note">Note</th><th class="n">${esc(S.cur)}</th>${cmp ? `<th class="n">${esc(S.cmp)}</th><th class="n">Change</th><th class="n">%</th>` : ""}${bud ? `<th class="n">Budget</th><th class="n">vs budget</th><th class="n">%</th>` : ""}</tr></thead><tbody>`;
+  for (const L of IS_LINES) {
+    h += `<tr class="${L.total ? "total" : L.sub ? "sub" : ""}"><td class="lbl">${esc(L.l)}</td><td class="note">${L.note && noteOf[L.note] ? noteOf[L.note] : ""}</td><td class="n">${amt(cur[L.k])}</td>`;
+    if (cmp) h += `<td class="n">${amt(cmp[L.k])}</td>` + varCell(cur[L.k], cmp[L.k], L.t);
+    if (bud) h += `<td class="n">${amt(bud[L.k])}</td>` + varCell(cur[L.k], bud[L.k], L.t);
+    h += "</tr>";
+  }
+  $("is").innerHTML = h + "</tbody>";
+}
+function renderBS(cur, cmp, open, noteOf) {
+  $("bs-sub").textContent = `As at ${S.cur}, ${unitText()}`;
+  const showC = cmp && cmp.bsOk, showO = open && open.src === "opn";
+  let h = `<thead><tr><th></th><th class="note">Note</th><th class="n">${esc(S.cur)}</th>${showC ? `<th class="n">${esc(S.cmp)}</th>` : ""}${showO ? `<th class="n">${esc(open.label)}</th>` : ""}</tr></thead><tbody>`;
+  const span = 3 + (showC ? 1 : 0) + (showO ? 1 : 0);
+  for (const L of BS_LINES) {
+    if (L.h) { h += `<tr class="sec"><td colspan="${span}">${esc(L.h)}</td></tr>`; continue; }
+    h += `<tr class="${L.total ? "total" : L.sub ? "sub" : ""}"><td class="lbl">${esc(L.l)}</td><td class="note">${L.note && noteOf[L.note] ? noteOf[L.note] : ""}</td><td class="n">${amt(cur[L.k])}</td>`;
+    if (showC) h += `<td class="n">${amt(cmp[L.k])}</td>`;
+    if (showO) h += `<td class="n">${amt(open.r[L.k])}</td>`;
+    h += "</tr>";
+  }
+  $("bs").innerHTML = h + "</tbody>";
+}
+function renderCF(cf) {
+  const box = $("cf-box");
+  if (!cf) {
+    $("cf-sub").textContent = "";
+    box.innerHTML = `<div class="empty"><span>The cash flow statement needs an opening balance sheet: the trial balance at the start of the year. Add it as an extra column when you load your data, or tick the comparative option in Pack settings if your comparative column is last year's closing balance.</span><button class="btn small" type="button" data-goto="data">Add opening balances</button></div>`;
+    return;
+  }
+  $("cf-sub").textContent = `For ${S.cur}, ${unitText()}`;
+  let h = `<div class="table-box"><table class="st narrow"><thead><tr><th></th><th class="n">${esc(S.cur)}</th></tr></thead><tbody>`;
+  for (const s of cf.sections) {
+    h += `<tr class="sec"><td colspan="2">${esc(s.h)}</td></tr>`;
+    for (const l of s.lines) h += `<tr><td class="lbl">${esc(l.l)}</td><td class="n">${amt(l.v)}</td></tr>`;
+    h += `<tr class="sub"><td class="lbl">${esc(s.total.l)}</td><td class="n">${amt(s.total.v)}</td></tr>`;
+  }
+  h += `<tr class="sub"><td class="lbl">Net increase/(decrease) in cash</td><td class="n">${amt(cf.net)}</td></tr>`;
+  h += `<tr><td class="lbl">Cash and bank at ${esc(cf.openLabel)}</td><td class="n">${amt(cf.openCash)}</td></tr>`;
+  h += `<tr class="total"><td class="lbl">Cash and bank at ${esc(S.cur)}</td><td class="n">${amt(cf.closeCalc)}</td></tr>`;
+  if (Math.abs(cf.diff) >= 1) h += `<tr><td class="lbl" style="color:var(--bad)">Difference to the balance sheet</td><td class="n" style="color:var(--bad)">${amt(cf.diff)}</td></tr>`;
+  box.innerHTML = h + "</tbody></table></div>";
+}
+function noteTableHTML(rows, cols, single) {
+  let h = `<div class="table-box"><table class="st narrow"><thead><tr><th>${esc(unitShort())}</th>${cols.map(c => `<th class="n">${esc(c)}</th>`).join("")}</tr></thead><tbody>`;
+  for (const r of rows) {
+    if (r.head) { h += `<tr class="head"><td class="lbl" colspan="${cols.length + 1}">${esc(r.l)}</td></tr>`; continue; }
+    const f = v => r.pct ? pct(v) : amt(v);
+    h += `<tr class="${r.total ? "total" : r.sub ? "sub" : ""}"><td class="lbl">${esc(r.l)}</td><td class="n">${f(r.cur)}</td>${single || cols.length < 2 ? "" : `<td class="n">${r.cmp === null || r.cmp === undefined ? "–" : f(r.cmp)}</td>`}</tr>`;
+  }
+  return h + "</tbody></table></div>";
+}
+function renderNotes(built, cmp) {
+  const cols = cmp ? [S.cur, S.cmp] : [S.cur];
+  let h = "";
+  for (const note of built.notes) {
+    h += `<div class="note"><h4><span>${note.n}</span>${esc(note.title)}</h4>`;
+    if (note.id === "basis") {
+      h += `<textarea id="policies" aria-label="Basis of preparation">${esc(note.text)}</textarea><div><button class="btn small" type="button" id="btn-policies-reset">Reset to standard wording</button></div>`;
+    } else {
+      h += noteTableHTML(note.rows, cols);
+      for (const x of note.extra) h += `<div class="eyebrow" style="margin-top:4px">${esc(x.title)}</div>` + noteTableHTML(x.rows, x.single ? [S.cur] : cols, x.single);
+      if (note.text) h += `<p>${esc(note.text)}</p>`;
+    }
+    h += `</div>`;
+  }
+  $("notes").innerHTML = h;
+  $("policies").addEventListener("input", e => { clearTimeout(polT); polT = setTimeout(() => { S.policies = e.target.value; persist(); }, 400); });
+  $("btn-policies-reset").onclick = () => { S.policies = null; persist(); $("policies").value = defaultPolicies(); toast("Standard wording restored."); };
+}
+function renderChecks(cur, cf) {
+  const out = [];
+  out.push(Math.abs(cur.tb) < 1 ? `<span class="chip good">Trial balance balances</span>` : `<span class="chip bad">Trial balance out by ${S.currency} ${Math.round(Math.abs(cur.tb)).toLocaleString("en-US")}</span>`);
+  const un = A.filter(a => !a.cat).length;
+  out.push(un === 0 ? `<span class="chip good">All ${A.length} accounts mapped</span>` : `<span class="chip bad">${un} account${un > 1 ? "s" : ""} not mapped <button class="linkish" data-goto="map" type="button">Fix</button></span>`);
+  const diff = cur.ta - cur.tel;
+  out.push(Math.abs(diff) < 1 ? `<span class="chip good">Balance sheet ties</span>` : `<span class="chip warn">Balance sheet differs by ${S.currency} ${Math.round(Math.abs(diff)).toLocaleString("en-US")}</span>`);
+  if (cf) out.push(Math.abs(cf.diff) < 1 ? `<span class="chip good">Cash flow reconciles to cash</span>` : `<span class="chip warn">Cash flow differs from cash by ${S.currency} ${Math.round(Math.abs(cf.diff)).toLocaleString("en-US")}</span>`);
+  else out.push(`<span class="chip plain">No opening balances: cash flow not prepared <button class="linkish" data-goto="data" type="button">Add</button></span>`);
+  $("checks").innerHTML = out.join("");
+}
+function delta(curV, baseV, type, isPts, lab) {
+  if (baseV === null || baseV === undefined || !isFinite(baseV)) return `<span class="flat">No comparison</span>`;
+  if (isPts) {
+    const d = (curV - baseV) * 100;
+    const cls = Math.abs(d) < 0.05 ? "flat" : d > 0 ? "up" : "down";
+    return `<span class="${cls}">${d > 0 ? "+" : d < 0 ? "−" : ""}${Math.abs(d).toFixed(1)} pts</span> <span class="flat">vs ${esc(lab)}</span>`;
+  }
+  const d = curV - baseV, p = baseV !== 0 ? d / Math.abs(baseV) : 0;
+  const good = type === "inc" ? d >= 0 : d <= 0;
+  const cls = Math.abs(p) < 0.0005 ? "flat" : good ? "up" : "down";
+  return `<span class="${cls}">${d > 0 ? "+" : d < 0 ? "−" : ""}${Math.abs(p * 100).toFixed(1)}%</span> <span class="flat">vs ${esc(lab)}</span>`;
+}
+function renderKPIs(cur, base, cmp, cf) {
+  const u = unitShort();
+  const lab = compareTo === "bud" ? "budget" : S.cmp;
+  const gm = cur.rev ? cur.gp / cur.rev : null, gmb = base && base.rev ? base.gp / base.rev : null;
+  const tiles = [
+    { l: "Revenue", v: amt(cur.rev), s: u, d: delta(cur.rev, base ? base.rev : null, "inc", false, lab) },
+    { l: "Gross margin", v: gm === null ? "–" : (gm * 100).toFixed(1), s: "%", d: delta(gm, gmb, "inc", true, lab) },
+    { l: "Net profit", v: amt(cur.np), s: u, d: delta(cur.np, base ? base.np : null, "inc", false, lab) },
+    { l: "Cash and bank", v: amt(cur.cash), s: u, d: cf ? `<span class="${cf.net >= 0 ? "up" : "down"}">${amt(cf.net, { sign: true })}</span> <span class="flat">since ${esc(cf.openLabel)}</span>` : (cmp && cmp.bsOk ? delta(cur.cash, cmp.cash, "inc", false, S.cmp) : `<span class="flat">No comparison</span>`) }
+  ];
+  $("kpis").innerHTML = tiles.map(t => `<div class="kpi"><span class="eyebrow">${t.l}</span><span class="v">${t.v}<small>${esc(t.s)}</small></span><span class="d">${t.d}</span></div>`).join("");
+}
+
+/* ---------- Rendering: charts ---------- */
+function splitLabel(s, max = 11) {
+  const words = String(s).split(" ");
+  let l1 = "", l2 = "";
+  for (const w of words) { if (!l2 && (l1 + " " + w).trim().length <= max) l1 = (l1 + " " + w).trim(); else l2 = (l2 + " " + w).trim(); }
+  if (l2.length > max + 2) l2 = l2.slice(0, max + 1) + "…";
+  return [l1 || l2, l1 ? l2 : ""];
+}
+function waterfallSVG(start, steps, end, aria) {
+  const bars = [{ l: start.l, v: start.v, total: true }];
+  let run = start.v;
+  for (const s of steps) { bars.push({ l: s.l, v: s.v, from: run, to: run + s.v }); run += s.v; }
+  bars.push({ l: end.l, v: end.v, total: true });
+  const levels = [0];
+  for (const b of bars) { if (b.total) levels.push(b.v); else levels.push(b.from, b.to); }
+  let lo = Math.min(...levels), hi = Math.max(...levels);
+  const pad = (hi - lo) * 0.12 || 1; hi += pad; if (lo < 0) lo -= pad;
+  const W = 760, H = 330, left = 14, right = 14, top = 26, bottom = 62;
+  const band = (W - left - right) / bars.length, bw = band * Math.min(0.62, 0.62 * 11 / bars.length + 0.2);
+  const y = v => top + (hi - v) / (hi - lo) * (H - top - bottom);
+  let svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(aria)}" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-size="12">`;
+  svg += `<line x1="${left}" x2="${W - right}" y1="${y(0)}" y2="${y(0)}" stroke="var(--line)" stroke-width="1"/>`;
+  bars.forEach((b, i) => {
+    const x = left + i * band + (band - bw) / 2;
+    let y1, y2, fill, label;
+    if (b.total) { y1 = y(Math.max(0, b.v)); y2 = y(Math.min(0, b.v)); fill = "var(--bar-total)"; label = amt(b.v); }
+    else { y1 = y(Math.max(b.from, b.to)); y2 = y(Math.min(b.from, b.to)); fill = b.v >= 0 ? "var(--good)" : "var(--bad)"; label = amt(b.v, { sign: true }); }
+    const hgt = Math.max(1.5, y2 - y1);
+    svg += `<rect x="${x.toFixed(1)}" y="${y1.toFixed(1)}" width="${bw.toFixed(1)}" height="${hgt.toFixed(1)}" rx="2" fill="${fill}" fill-opacity="${b.total ? 1 : 0.85}"><title>${esc(b.l)}: ${esc(label)} ${esc(unitShort())}</title></rect>`;
+    const up = b.total ? b.v >= 0 : b.v >= 0;
+    const ly = up ? y1 - 7 : y2 + 15;
+    svg += `<text x="${(x + bw / 2).toFixed(1)}" y="${ly.toFixed(1)}" text-anchor="middle" fill="var(--ink)" font-weight="${b.total ? 600 : 500}" style="font-variant-numeric:tabular-nums">${esc(label)}</text>`;
+    if (i < bars.length - 1) {
+      const lvl = b.total ? b.v : b.to;
+      svg += `<line x1="${(x + bw).toFixed(1)}" x2="${(x + band + (band - bw) / 2).toFixed(1)}" y1="${y(lvl).toFixed(1)}" y2="${y(lvl).toFixed(1)}" stroke="var(--muted)" stroke-dasharray="2 2" stroke-width="1"/>`;
+    }
+    const [l1, l2] = splitLabel(b.l, bars.length <= 6 ? 16 : 11);
+    svg += `<text x="${(x + bw / 2).toFixed(1)}" y="${H - bottom + 20}" text-anchor="middle" fill="${b.total ? "var(--ink)" : "var(--muted)"}" font-weight="${b.total ? 600 : 400}" font-size="11">${esc(l1)}${l2 ? `<tspan x="${(x + bw / 2).toFixed(1)}" dy="14">${esc(l2)}</tspan>` : ""}</text>`;
+  });
+  return svg + `</svg>`;
+}
+function bridgeSteps(cur, base) {
+  return [
+    { l: "Revenue", v: cur.rev - base.rev },
+    { l: "Cost of sales", v: -(cur.cos - base.cos) },
+    { l: "Staff costs", v: -(cur.staff - base.staff) },
+    { l: "Selling", v: -(cur.selling - base.selling) },
+    { l: "Admin and other", v: -(cur.admin - base.admin) },
+    { l: "Depreciation", v: -(cur.dep - base.dep) },
+    { l: "Other income", v: cur.oi - base.oi },
+    { l: "Finance costs", v: -(cur.fin - base.fin) },
+    { l: "Income tax", v: -(cur.tax - base.tax) }
+  ];
+}
+function renderBridge(cur, base) {
+  if (!base) { $("bridge").innerHTML = `<p class="muted">Add a comparative or budget column to see what moved profit.</p>`; $("bridge-sub").textContent = ""; return; }
+  const baseLabel = compareTo === "bud" ? S.bud : S.cmp;
+  $("bridge-sub").textContent = `${baseLabel} to ${S.cur}, ${unitText()}`;
+  $("bridge").innerHTML = waterfallSVG({ l: baseLabel, v: base.np }, bridgeSteps(cur, base), { l: S.cur, v: cur.np }, `Net profit bridge from ${baseLabel} to ${S.cur}`);
+}
+function renderCashChart(cf) {
+  if (!cf) { $("chart-cash").innerHTML = `<div class="empty"><span>Add opening balances to see how cash moved through operations, investment and financing.</span><button class="btn small" type="button" data-goto="data">Add opening balances</button></div>`; $("cash-sub").textContent = ""; $("cash-legend").hidden = true; return; }
+  $("cash-legend").hidden = false;
+  $("cash-sub").textContent = `${cf.openLabel} to ${S.cur}, ${unitText()}`;
+  $("chart-cash").innerHTML = waterfallSVG({ l: "Opening cash", v: cf.openCash }, [{ l: "Operating activities", v: cf.op }, { l: "Investing activities", v: cf.iv }, { l: "Financing activities", v: cf.fi }], { l: "Closing cash", v: cf.closeCalc }, "Cash bridge from opening to closing cash");
+}
+const RESULT_KEYS = [["rev", "Revenue"], ["gp", "Gross profit"], ["op", "Operating profit"], ["np", "Net profit"]];
+function renderResults(cur, cmp, bud) {
+  const series = [{ r: cur, l: S.cur, fill: "var(--accent)" }];
+  if (cmp) series.push({ r: cmp, l: S.cmp, fill: "var(--bar-total)" });
+  if (bud) series.push({ r: bud, l: "Budget", ghost: true });
+  $("results-sub").textContent = unitText();
+  $("results-legend").innerHTML = series.map(s => `<span><i class="${s.ghost ? "ghost" : ""}" style="${s.ghost ? "" : `background:${s.fill}`}"></i>${esc(s.l)}</span>`).join("");
+  const W = 760, H = 320, left = 16, right = 16, top = 28, bottom = 40;
+  const vals = []; for (const s of series) for (const [k] of RESULT_KEYS) vals.push(s.r[k]);
+  const hi = Math.max(...vals, 0) * 1.12 || 1, lo = Math.min(0, ...vals) * 1.12;
+  const y = v => top + (hi - v) / (hi - lo) * (H - top - bottom);
+  const gw = (W - left - right) / RESULT_KEYS.length, bw = Math.min(46, gw * 0.7 / series.length);
+  let svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Revenue and profit compared" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-size="12">`;
+  svg += `<line x1="${left}" x2="${W - right}" y1="${y(0)}" y2="${y(0)}" stroke="var(--line)"/>`;
+  RESULT_KEYS.forEach(([k, lab], gi) => {
+    const gx = left + gi * gw + (gw - bw * series.length - 4 * (series.length - 1)) / 2;
+    series.forEach((s, si) => {
+      const v = s.r[k], x = gx + si * (bw + 4);
+      const y1 = y(Math.max(0, v)), y2 = y(Math.min(0, v));
+      const fillAttr = s.ghost ? `fill="none" stroke="var(--bar-total)" stroke-width="1.5" stroke-dasharray="3 2"` : `fill="${s.fill}"`;
+      svg += `<rect x="${x.toFixed(1)}" y="${y1.toFixed(1)}" width="${bw.toFixed(1)}" height="${Math.max(1.5, y2 - y1).toFixed(1)}" rx="2" ${fillAttr}><title>${esc(lab)}, ${esc(s.l)}: ${esc(amt(v))} ${esc(unitShort())}</title></rect>`;
+      if (si === 0) svg += `<text x="${(x + bw / 2).toFixed(1)}" y="${(v >= 0 ? y1 - 6 : y2 + 14).toFixed(1)}" text-anchor="middle" fill="var(--ink)" font-weight="600" style="font-variant-numeric:tabular-nums">${esc(amt(v))}</text>`;
+      else svg += `<text x="${(x + bw / 2).toFixed(1)}" y="${(v >= 0 ? y1 - 6 : y2 + 14).toFixed(1)}" text-anchor="middle" fill="var(--muted)" font-size="10.5" style="font-variant-numeric:tabular-nums">${esc(amt(v))}</text>`;
+    });
+    svg += `<text x="${(left + gi * gw + gw / 2).toFixed(1)}" y="${H - bottom + 22}" text-anchor="middle" fill="var(--ink)" font-weight="500">${esc(lab)}</text>`;
+  });
+  $("chart-results").innerHTML = svg + `</svg>`;
+}
+const COST_SEGS = [["cos", "Cost of sales", "--seg1"], ["staff", "Staff costs", "--seg2"], ["selling", "Selling and distribution", "--seg3"], ["admin", "Administration and other", "--seg4"], ["dep", "Depreciation", "--seg5"], ["fin", "Finance costs", "--seg6"], ["tax", "Income tax", "--seg7"], ["np", "Net profit", "--accent"]];
+function costShares(r) {
+  const base = r.rev + Math.max(0, r.oi);
+  return COST_SEGS.map(([k]) => base ? r[k] / base : 0);
+}
+function renderCost(cur, cmp, bud) {
+  const rows = [{ r: cur, l: S.cur }];
+  if (cmp) rows.push({ r: cmp, l: S.cmp });
+  if (bud) rows.push({ r: bud, l: "Budget" });
+  $("cost-sub").textContent = "Share of revenue plus other income";
+  const W = 760, left = 130, right = 20, rowH = 34, gap = 16, top = 10;
+  const H = top + rows.length * (rowH + gap) + 18;
+  const shares = rows.map(x => costShares(x.r));
+  const maxTotal = Math.max(1, ...shares.map(s => s.reduce((t, v) => t + Math.max(0, v), 0)));
+  const xs = v => left + v / maxTotal * (W - left - right);
+  let svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Cost structure as a share of income" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-size="12">`;
+  rows.forEach((row, ri) => {
+    const yy = top + ri * (rowH + gap);
+    svg += `<text x="${left - 10}" y="${yy + rowH / 2 + 4}" text-anchor="end" fill="${ri === 0 ? "var(--ink)" : "var(--muted)"}" font-weight="${ri === 0 ? 600 : 400}">${esc(row.l)}</text>`;
+    let acc = 0;
+    shares[ri].forEach((v, si) => {
+      if (v <= 0) return;
+      const x0 = xs(acc), x1 = xs(acc + v);
+      svg += `<rect x="${x0.toFixed(1)}" y="${yy}" width="${Math.max(0.5, x1 - x0 - 1).toFixed(1)}" height="${rowH}" fill="var(${COST_SEGS[si][2]})"><title>${esc(COST_SEGS[si][1])}, ${esc(row.l)}: ${(v * 100).toFixed(1)} of every 100</title></rect>`;
+      acc += v;
+    });
+  });
+  if (maxTotal > 1.0001) svg += `<line x1="${xs(1)}" x2="${xs(1)}" y1="${top - 4}" y2="${H - 14}" stroke="var(--ink)" stroke-dasharray="3 3"/><text x="${xs(1)}" y="${H - 2}" text-anchor="middle" fill="var(--muted)" font-size="11">100 of income</text>`;
+  $("chart-cost").innerHTML = svg + `</svg>`;
+  let key = `<table class="seg-key"><thead><tr><th>Per 100 of income</th>${rows.map(r => `<th>${esc(r.l)}</th>`).join("")}</tr></thead><tbody>`;
+  COST_SEGS.forEach(([k, l, tok], si) => {
+    key += `<tr><td><i style="background:var(${tok})"></i>${esc(l)}</td>${shares.map(s => `<td class="n">${(s[si] * 100).toFixed(1)}</td>`).join("")}</tr>`;
+  });
+  $("cost-key").innerHTML = key + `</tbody></table>`;
+}
+function renderRatios(cur, cmp) {
+  $("ratio-sub").textContent = `${S.cur} against ${S.cmp}`;
+  let h = `<thead><tr><th>Ratio</th><th class="n">${esc(S.cur)}</th><th class="n">${esc(S.cmp)}</th><th>Status</th></tr></thead><tbody>`;
+  for (const d of RATIOS) {
+    const v = ratioVal(d, cur), c = ratioVal(d, cmp), st = ratioStatus(d, v);
+    h += `<tr><td>${esc(d.l)}<span class="bench">${esc(d.bench)}</span></td><td class="n num">${ratioFmt(d, v)}</td><td class="n num muted">${ratioFmt(d, c)}</td><td>${st ? `<span class="chip ${st}">${STATUS_TEXT[st]}</span>` : `<span class="chip plain">n/a</span>`}</td></tr>`;
+  }
+  $("ratios").innerHTML = h + "</tbody>";
+}
+function snapshot() {
+  const cur = compute("cur"), cmp = compute("cmp"), bud = compute("bud"), open = openingBS();
+  const cf = cashFlow(cur, open);
+  const built = buildNotes(cur, cmp, open);
+  return { cur, cmp, bud, open, cf, built };
+}
+function renderPack() {
+  const { cur, cmp, bud, open, cf, built } = snapshot();
+  if (compareTo === "bud" && !bud) compareTo = "cmp";
+  const base = compareTo === "bud" ? bud : cmp;
+  $("cmp-bud").disabled = !bud; $("cmp-cmp").disabled = !cmp;
+  $("cmp-cmp").textContent = S.cmp || "Comparative";
+  $("cmp-cmp").setAttribute("aria-pressed", compareTo === "cmp");
+  $("cmp-bud").setAttribute("aria-pressed", compareTo === "bud");
+  $("sample-note").hidden = !isSample;
+  $("pack-company").textContent = S.company || "Your company";
+  $("pack-sub").textContent = `${S.cur} · ${S.months} month${Number(S.months) === 1 ? "" : "s"} · amounts in ${unitText()}`;
+  $("brand-co").textContent = (S.company || "") + (S.cur ? " · " + S.cur : "");
+  document.querySelectorAll(".unit-label").forEach(e => e.textContent = "Amounts in " + unitText());
+  renderChecks(cur, cf);
+  renderKPIs(cur, base, cmp, cf);
+  renderResults(cur, cmp, bud);
+  renderBridge(cur, base);
+  renderCost(cur, cmp, bud);
+  renderCashChart(cf);
+  renderIS(cur, cmp, bud, built.noteOf);
+  renderBS(cur, cmp, open, built.noteOf);
+  renderCF(cf);
+  renderRatios(cur, cmp);
+  renderNotes(built, cmp);
+  const ck = commKey();
+  if (!$("commentary").value.trim() || renderPack.lastKey !== ck) $("commentary").value = store.get(ck) || basicDraft();
+  renderPack.lastKey = ck;
+}
+function renderMapping() {
+  const only = $("only-unmapped").checked;
+  const un = A.filter(a => !a.cat).length;
+  $("unmapped-count").hidden = un === 0;
+  $("unmapped-count").textContent = un;
+  $("map-summary").textContent = `${A.length} accounts · ${un === 0 ? "all mapped" : un + " need a line"}`;
+  const groups = {};
+  for (const c of CATS) (groups[c.g] = groups[c.g] || []).push(c);
+  const optHtml = sel => `<option value="" ${!sel ? "selected" : ""}>Choose a line…</option>` + Object.entries(groups).map(([g, cs]) => `<optgroup label="${esc(g)}">${cs.map(c => `<option value="${c.k}" ${c.k === sel ? "selected" : ""}>${esc(c.l)}</option>`).join("")}</optgroup>`).join("");
+  let h = `<thead><tr><th>Code</th><th>Account</th><th class="n" style="text-align:right">${esc(S.cur)} (${esc(unitShort())})</th><th>Pack line</th><th>Source</th></tr></thead><tbody>`;
+  A.forEach((a, i) => {
+    if (only && a.cat) return;
+    const src = !a.cat ? `<span class="chip bad">Needs a line</span>` : a.src === "edited" ? `<span class="chip plain">Your choice</span>` : a.src === "saved" ? `<span class="chip plain">Remembered</span>` : `<span class="chip good">Automatic</span>`;
+    h += `<tr class="${a.cat ? "" : "unmapped"}"><td class="code">${esc(a.code)}</td><td>${esc(a.name)}</td><td class="n">${amt(a.cur)}</td><td><select data-i="${i}" id="map-${i}" class="${a.cat ? "" : "unset"}" aria-label="Pack line for ${esc(a.name)}">${optHtml(a.cat)}</select></td><td>${src}</td></tr>`;
+  });
+  $("map").innerHTML = h + "</tbody>";
+}
+function renderSettings() {
+  $("s-company").value = S.company; $("s-cur").value = S.cur; $("s-cmp").value = S.cmp; $("s-bud").value = S.bud; $("s-opn").value = S.opn || "";
+  $("s-months").value = S.months; $("s-unit").value = S.unit; $("s-currency").value = S.currency;
+  $("s-flip").checked = !!S.flip; $("s-cmpopen").checked = !!S.cmpOpen;
+}
+function renderAll() { renderSettings(); renderMapping(); renderPack(); }
+
+/* ---------- Commentary ---------- */
+const commKey = () => "mpb:comm:" + (S.company || "").toLowerCase() + "|" + (S.cur || "");
+function basicDraft() {
+  const { cur, cmp, bud, cf } = snapshot();
+  const chg = (a, b) => b ? ((a - b) / Math.abs(b) * 100) : null;
+  const L = ["Performance"];
+  let p = `Revenue for ${S.cur} was ${money(cur.rev)}`;
+  if (cmp) { const c = chg(cur.rev, cmp.rev); p += `, ${c >= 0 ? "up" : "down"} ${Math.abs(c).toFixed(1)}% on ${S.cmp} (${money(cmp.rev)})`; }
+  if (bud) { const c = chg(cur.rev, bud.rev); p += ` and ${Math.abs(c).toFixed(1)}% ${c >= 0 ? "above" : "below"} budget`; }
+  p += `. Net profit was ${money(cur.np)}`;
+  if (cmp) p += ` against ${money(cmp.np)} in ${S.cmp}`;
+  if (bud) p += ` and a budget of ${money(bud.np)}`;
+  L.push(p + ". [Main reason for the revenue movement to confirm.]", "", "Margins and costs");
+  const gm = cur.gp / cur.rev;
+  let q = `Gross margin was ${pct(gm)}`;
+  if (cmp) { const d = (gm - cmp.gp / cmp.rev) * 100; q += ` (${d >= 0 ? "up" : "down"} ${Math.abs(d).toFixed(1)} points on ${S.cmp})`; }
+  q += ".";
+  if (cmp) {
+    const costs = [["cos", "Cost of sales"], ["staff", "Staff costs"], ["selling", "Selling and distribution costs"], ["admin", "Administration and other costs"], ["dep", "Depreciation"], ["fin", "Finance costs"]]
+      .map(([k, l]) => ({ l, d: cur[k] - cmp[k], p: chg(cur[k], cmp[k]) })).sort((a, b) => Math.abs(b.d) - Math.abs(a.d)).slice(0, 3);
+    q += " The largest cost movements were: " + costs.map(c => `${c.l.toLowerCase()} ${c.d >= 0 ? "up" : "down"} ${money(Math.abs(c.d))} (${c.p >= 0 ? "+" : "−"}${Math.abs(c.p || 0).toFixed(1)}%)`).join("; ") + ". [Reasons to confirm.]";
+  }
+  L.push(q, "", "Cash and working capital");
+  let w = `Cash and bank closed at ${money(cur.cash)}`;
+  if (cf) w += `, ${cf.net >= 0 ? "up" : "down"} ${money(Math.abs(cf.net))} since ${cf.openLabel}. Operations generated ${money(cf.op)}, ${money(Math.abs(cf.iv))} went into non-current assets and financing ${cf.fi >= 0 ? "brought in" : "used"} ${money(Math.abs(cf.fi))}`;
+  else if (cmp && cmp.bsOk) w += ` against ${money(cmp.cash)} at ${S.cmp}`;
+  const dd = ratioVal(RATIO.dd, cur), ddc = ratioVal(RATIO.dd, cmp), idd = ratioVal(RATIO.id, cur);
+  w += ".";
+  if (dd !== null) w += ` Customers took ${Math.round(dd)} days to pay${ddc !== null ? ` (${Math.round(ddc)} days in ${S.cmp})` : ""}`;
+  if (idd !== null) w += `, and inventory covered ${Math.round(idd)} days of cost of sales.`;
+  L.push(w, "", "Points for attention");
+  const flags = RATIOS.map(d => ({ d, v: ratioVal(d, cur) })).filter(x => x.v !== null && ratioStatus(x.d, x.v) !== "good");
+  if (flags.length) for (const f of flags) L.push(`- ${f.d.l} is ${ratioFmt(f.d, f.v)}, outside the guide of ${f.d.bench.toLowerCase()}. [Action to agree.]`);
+  else L.push("- All ratios are within their guide ranges.");
+  if (Math.abs(cur.tb) >= 1) L.push(`- The trial balance does not balance (difference ${S.currency} ${Math.round(Math.abs(cur.tb)).toLocaleString("en-US")}). Figures are provisional.`);
+  return L.join("\n");
+}
+function claudePrompt() {
+  const { cur, cmp, bud, cf } = snapshot();
+  const f = v => v === null || v === undefined || !isFinite(v) ? null : Math.round(v / 1e6 * 10) / 10;
+  const pick = (r, keys) => r ? Object.fromEntries(keys.map(k => [k, f(r[k])])) : null;
+  const isKeys = IS_LINES.map(l => l.k), bsKeys = BS_LINES.filter(l => l.k).map(l => l.k);
+  const ratios = RATIOS.map(d => ({ ratio: d.l, current: ratioFmt(d, ratioVal(d, cur)), comparative: ratioFmt(d, ratioVal(d, cmp)), guide: d.bench, status: STATUS_TEXT[ratioStatus(d, ratioVal(d, cur))] || "n/a" }));
+  const acct = cmp ? A.filter(a => PL_CATS.has(a.cat) && a.cmp !== null).map(a => ({ account: a.name, current: f(a.cur), comparative: f(a.cmp), change: f(a.cur - a.cmp), budget: f(a.bud) }))
+    .sort((a, b) => Math.abs(b.change) - Math.abs(a.change)).slice(0, 10) : [];
+  const data = {
+    company: S.company, period: S.cur, comparative_period: cmp ? S.cmp : null, budget_label: bud ? S.bud : null,
+    months_covered: Number(S.months), units: S.currency + " millions; income statement figures are positive amounts (costs shown as positive)",
+    income_statement: { current: pick(cur, isKeys), comparative: pick(cmp, isKeys), budget: pick(bud, isKeys) },
+    balance_sheet: { current: pick(cur, bsKeys), comparative: cmp && cmp.bsOk ? pick(cmp, bsKeys) : null },
+    cash_flow: cf ? { from: cf.openLabel, operating: f(cf.op), investing: f(cf.iv), financing: f(cf.fi), net_change: f(cf.net), opening_cash: f(cf.openCash), closing_cash: f(cf.closeCalc) } : null,
+    ratios, largest_account_movements: acct
+  };
+  return `You are drafting the commentary section of a management pack that an accountant will send to the owner and board of a small or medium business in Rwanda.
+
+Write in plain English for a reader who is not an accountant. Use ${S.currency} millions with one decimal place (for example "${S.currency} 841.5m"). Keep it to 200-280 words.
+
+Use exactly these four headings, each on its own line with no symbols around it:
+Performance
+Margins and costs
+Cash and working capital
+Points for attention
+
+Under the first three headings write one or two short paragraphs. Under "Points for attention" write two to four lines that each start with "- ".
+
+Rules:
+- State only facts that are in the data below. Do not guess reasons for movements. Where a reason is needed, write [reason to confirm] so the accountant can fill it in.
+- Compare with the comparative period, and with the budget where one is given.
+- Under "Cash and working capital", use the cash flow figures where they are given.
+- Mention the largest account-level movements by name where they explain a change.
+- No markdown other than the "- " lines. No introduction or sign-off.
+
+Data (JSON):
+${JSON.stringify(data, null, 1)}`;
+}
+async function draftWithClaude() {
+  if (!sample) return;
+  ctl = new AbortController();
+  const ta = $("commentary"), btn = $("btn-claude"), stop = $("btn-stop"), st = $("comm-status");
+  const before = ta.value;
+  btn.disabled = true; stop.hidden = false; st.textContent = "Claude is reading the figures…";
+  try {
+    const { truncated } = await sample(claudePrompt(), { signal: ctl.signal, cache: false, onText: ({ text }) => { ta.value = text; st.textContent = "Writing…"; } });
+    store.set(commKey(), ta.value);
+    st.textContent = truncated ? "The draft was cut short. Edit it or try again." : "Draft ready. Check every figure and fill in the [reason to confirm] notes before sending.";
+  } catch (e) {
+    const code = e && e.code;
+    if (code === "cancelled") { if (!e.text) ta.value = before; st.textContent = "Stopped."; }
+    else if (["not_granted", "sampling_disabled", "not_declared", "capability_disabled", "capability_removed"].includes(code)) { ta.value = before; btn.hidden = true; st.textContent = "Claude drafting isn't available here. The basic draft still works."; }
+    else if (code === "rate_limited") { if (!e.text) ta.value = before; st.textContent = "Too many requests just now. Try again in a minute."; }
+    else if (code === "session_expired") { ta.value = before; st.textContent = "Please sign in to Claude again, then retry."; }
+    else if (code === "refused") { ta.value = before; st.textContent = "Claude couldn't draft this. Use the basic draft instead."; }
+    else { ta.value = (e && e.text) || before; st.textContent = "The draft was interrupted. Try again."; }
+  } finally { btn.disabled = false; stop.hidden = true; ctl = null; }
+}
+
+/* ---------- PDF ---------- */
+const GREYS = [[45, 45, 45], [85, 85, 85], [120, 120, 120], [155, 155, 155], [185, 185, 185], [210, 210, 210], [230, 230, 230]];
+function pdfWaterfall(doc, X, Y, Wd, Ht, title, start, steps, end) {
+  const plain = s => String(s).replace(/−/g, "-");
+  doc.setFont("helvetica", "bold"); doc.setFontSize(9); doc.setTextColor(0, 0, 0); doc.text(plain(title), X, Y);
+  const bars = [{ l: start.l, v: start.v, total: true }];
+  let run = start.v;
+  for (const s of steps) { bars.push({ l: s.l, v: s.v, from: run, to: run + s.v }); run += s.v; }
+  bars.push({ l: end.l, v: end.v, total: true });
+  const levels = [0]; for (const b of bars) b.total ? levels.push(b.v) : levels.push(b.from, b.to);
+  let lo = Math.min(...levels), hi = Math.max(...levels); const pad = (hi - lo) * 0.14 || 1; hi += pad; if (lo < 0) lo -= pad;
+  const top = Y + 6, bot = Y + Ht - 10, y = v => top + (hi - v) / (hi - lo) * (bot - top);
+  const band = Wd / bars.length, bw = band * 0.6;
+  doc.setDrawColor(150, 150, 150); doc.setLineWidth(0.15); doc.line(X, y(0), X + Wd, y(0));
+  bars.forEach((b, i) => {
+    const x = X + i * band + (band - bw) / 2;
+    let y1, y2, c, label;
+    if (b.total) { y1 = y(Math.max(0, b.v)); y2 = y(Math.min(0, b.v)); c = GREYS[0]; label = amt(b.v); }
+    else { y1 = y(Math.max(b.from, b.to)); y2 = y(Math.min(b.from, b.to)); c = b.v >= 0 ? GREYS[3] : GREYS[5]; label = amt(b.v, { sign: true }); }
+    doc.setFillColor(...c); doc.setDrawColor(90, 90, 90); doc.setLineWidth(0.1);
+    doc.rect(x, y1, bw, Math.max(0.4, y2 - y1), b.total ? "F" : "FD");
+    doc.setFont("helvetica", b.total ? "bold" : "normal"); doc.setFontSize(6.3);
+    doc.text(plain(label), x + bw / 2, (b.v >= 0 ? y1 - 1.2 : y2 + 2.8), { align: "center" });
+    doc.setFont("helvetica", "normal"); doc.setFontSize(5.8);
+    const lines = doc.splitTextToSize(plain(b.l), band - 1).slice(0, 2);
+    doc.text(lines, x + bw / 2, bot + 3.2, { align: "center" });
+  });
+  doc.setFontSize(6); doc.setTextColor(90, 90, 90);
+  doc.text("Totals in dark grey. Increases mid grey, decreases light grey with outline.", X, Y + Ht - 1);
+  doc.setTextColor(0, 0, 0);
+}
+function pdfGrouped(doc, X, Y, Wd, Ht, title, cur, cmp, bud) {
+  doc.setFont("helvetica", "bold"); doc.setFontSize(9); doc.text(title, X, Y);
+  const series = [{ r: cur, l: S.cur, c: GREYS[0] }]; if (cmp) series.push({ r: cmp, l: S.cmp, c: GREYS[3] }); if (bud) series.push({ r: bud, l: "Budget", c: GREYS[6], o: true });
+  const vals = []; for (const s of series) for (const [k] of RESULT_KEYS) vals.push(s.r[k]);
+  const hi = Math.max(0, ...vals) * 1.15 || 1, lo = Math.min(0, ...vals) * 1.15;
+  const top = Y + 6, bot = Y + Ht - 12, y = v => top + (hi - v) / (hi - lo) * (bot - top);
+  const gw = Wd / RESULT_KEYS.length, bw = Math.min(8, gw * 0.7 / series.length);
+  doc.setDrawColor(150, 150, 150); doc.setLineWidth(0.15); doc.line(X, y(0), X + Wd, y(0));
+  RESULT_KEYS.forEach(([k, lab], gi) => {
+    const gx = X + gi * gw + (gw - bw * series.length - (series.length - 1)) / 2;
+    series.forEach((s, si) => {
+      const v = s.r[k], x = gx + si * (bw + 1);
+      const y1 = y(Math.max(0, v)), y2 = y(Math.min(0, v));
+      doc.setFillColor(...s.c); doc.setDrawColor(90, 90, 90); doc.setLineWidth(0.1);
+      doc.rect(x, y1, bw, Math.max(0.4, y2 - y1), s.o ? "FD" : "F");
+      doc.setFont("helvetica", si === 0 ? "bold" : "normal"); doc.setFontSize(5.4);
+      doc.text(String(amt(v)).replace(/−/g, "-"), x + bw / 2, v >= 0 ? y1 - 1 : y2 + 2.6, { align: "center" });
+    });
+    doc.setFont("helvetica", "normal"); doc.setFontSize(6.5);
+    doc.text(lab, X + gi * gw + gw / 2, bot + 3.5, { align: "center" });
+  });
+  let lx = X; doc.setFontSize(6.2);
+  for (const s of series) { doc.setFillColor(...s.c); doc.setDrawColor(90, 90, 90); doc.rect(lx, Y + Ht - 4.2, 2.6, 2.6, s.o ? "FD" : "F"); doc.text(s.l, lx + 3.6, Y + Ht - 2.2); lx += 6 + doc.getTextWidth(s.l); }
+}
+function pdfStacked(doc, X, Y, Wd, Ht, title, cur, cmp, bud) {
+  doc.setFont("helvetica", "bold"); doc.setFontSize(9); doc.text(title, X, Y);
+  const rows = [{ r: cur, l: S.cur }]; if (cmp) rows.push({ r: cmp, l: S.cmp }); if (bud) rows.push({ r: bud, l: "Budget" });
+  const shares = rows.map(x => costShares(x.r));
+  const maxTotal = Math.max(1, ...shares.map(s => s.reduce((t, v) => t + Math.max(0, v), 0)));
+  const lw = 24, bx = X + lw, bwid = Wd - lw, rh = 6.5, gap = 3.5, top = Y + 4;
+  const fills = [[40, 40, 40], [80, 80, 80], [115, 115, 115], [150, 150, 150], [180, 180, 180], [205, 205, 205], [228, 228, 228], [255, 255, 255]];
+  rows.forEach((row, ri) => {
+    const yy = top + ri * (rh + gap);
+    doc.setFont("helvetica", ri === 0 ? "bold" : "normal"); doc.setFontSize(6.5); doc.setTextColor(0, 0, 0);
+    doc.text(row.l, X, yy + rh / 2 + 1.2);
+    let acc = 0;
+    shares[ri].forEach((v, si) => {
+      if (v <= 0) return;
+      const x0 = bx + acc / maxTotal * bwid, w = v / maxTotal * bwid;
+      doc.setFillColor(...fills[si]); doc.setDrawColor(60, 60, 60); doc.setLineWidth(0.1);
+      doc.rect(x0, yy, w, rh, "FD");
+      if (w > 7) { doc.setFontSize(5.4); doc.setTextColor(...(si < 3 ? [255, 255, 255] : [0, 0, 0])); doc.text((v * 100).toFixed(0), x0 + w / 2, yy + rh / 2 + 1, { align: "center" }); }
+      acc += v;
+    });
+  });
+  doc.setTextColor(0, 0, 0);
+  let ly = top + rows.length * (rh + gap) + 2, lx = X; doc.setFontSize(5.8); doc.setFont("helvetica", "normal");
+  COST_SEGS.forEach(([k, l], si) => {
+    const tw = doc.getTextWidth(l) + 7;
+    if (lx + tw > X + Wd) { lx = X; ly += 3.6; }
+    doc.setFillColor(...fills[si]); doc.setDrawColor(60, 60, 60); doc.rect(lx, ly - 2.2, 2.4, 2.4, "FD"); doc.text(l, lx + 3.2, ly); lx += tw;
+  });
+  doc.setFontSize(6); doc.setTextColor(90, 90, 90); doc.text("Figures are per 100 of revenue plus other income.", X, ly + 4); doc.setTextColor(0, 0, 0);
+}
+async function exportPDF() {
+  if (!window.jspdf) { toast("The PDF tool didn't load. Check your connection and reload."); return; }
+  const { jsPDF } = window.jspdf;
+  const { cur, cmp, bud, open, cf, built } = snapshot();
+  const doc = new jsPDF({ unit: "mm", format: "a4" });
+  const W = 210, M = 18, R = W - M;
+  let y = 20;
+  const plain = s => String(s ?? "").replace(/[−]/g, "-").replace(/[×]/g, "x").replace(/[…]/g, "...").replace(/[–—]/g, "-");
+  const ensure = h => { if (y + h > 280) { doc.addPage(); y = 20; } };
+  const font = (st, sz) => { doc.setFont("helvetica", st); doc.setFontSize(sz); };
+  doc.setTextColor(0, 0, 0); doc.setDrawColor(0, 0, 0);
+  font("bold", 17); doc.text(plain(S.company || "Management pack"), M, y); y += 7;
+  font("normal", 11); doc.text(plain(`Management pack: ${S.cur}`), M, y); y += 5;
+  font("normal", 8.5); doc.text(plain(`Amounts in ${unitText()} unless stated. Prepared ${new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}. Unaudited management accounts.`), M, y); y += 4;
+  doc.setLineWidth(0.5); doc.line(M, y, R, y); y += 8;
+  const heading = (t, newPage) => { if (newPage) { doc.addPage(); y = 20; } ensure(14); font("bold", 11.5); doc.text(plain(t), M, y); y += 2; doc.setLineWidth(0.25); doc.line(M, y, R, y); y += 5.5; };
+  const subheading = t => { ensure(10); font("bold", 9.5); doc.text(plain(t), M, y); y += 5; };
+  const table = (cols, rows) => {
+    const xs = []; let x = M; for (const c of cols) { xs.push(x); x += c.w; }
+    const draw = (v, i) => { const c = cols[i]; c.a === "r" ? doc.text(plain(v), xs[i] + c.w, y, { align: "right" }) : c.a === "c" ? doc.text(plain(v), xs[i] + c.w / 2, y, { align: "center" }) : doc.text(plain(v), xs[i], y); };
+    const head = () => { font("bold", 8.3); cols.forEach((c, i) => draw(c.t, i)); y += 1.8; doc.setLineWidth(0.2); doc.line(M, y, M + cols.reduce((t, c) => t + c.w, 0), y); y += 4.2; };
+    ensure(14); head();
+    for (const r of rows) {
+      if (y > 276) { doc.addPage(); y = 20; head(); }
+      const tw = cols.reduce((t, c) => t + c.w, 0);
+      if (r.top) { doc.setLineWidth(0.2); doc.line(M, y - 3.8, M + tw, y - 3.8); }
+      font(r.b ? "bold" : r.i ? "italic" : "normal", 8.8);
+      if (r.span) doc.text(plain(r.cells[0]), M, y);
+      else r.cells.forEach((v, i) => draw(v, i));
+      if (r.dbl) { doc.setLineWidth(0.2); doc.line(M, y + 1.4, M + tw, y + 1.4); doc.line(M, y + 2, M + tw, y + 2); y += 1; }
+      y += 5;
+    }
+    y += 3;
+  };
+  const para = (text, size = 9.6) => {
+    for (const raw of String(text).split("\n")) {
+      const line = plain(raw.trimEnd());
+      if (!line.trim()) { y += 2; continue; }
+      font("normal", size);
+      const indent = /^\s*-\s/.test(line) ? 4 : 0;
+      const txt = indent ? line.replace(/^\s*-\s/, "") : line;
+      doc.splitTextToSize(txt, R - M - indent).forEach((pt, i) => { ensure(5); if (indent && i === 0) doc.text("-", M, y); doc.text(pt, M + indent, y); y += size * 0.47; });
+    }
+  };
+  // Key figures
+  heading("Key figures");
+  table([{ t: "", w: 62 }, { t: S.cur, w: 34, a: "r" }, { t: cmp ? S.cmp : "", w: 34, a: "r" }, { t: bud ? "Budget" : "", w: 34, a: "r" }], [
+    ["Revenue", amt(cur.rev), cmp ? amt(cmp.rev) : "", bud ? amt(bud.rev) : ""],
+    ["Gross margin", pct(cur.gp / cur.rev), cmp ? pct(cmp.gp / cmp.rev) : "", bud ? pct(bud.gp / bud.rev) : ""],
+    ["Net profit", amt(cur.np), cmp ? amt(cmp.np) : "", bud ? amt(bud.np) : ""],
+    ["Cash and bank", amt(cur.cash), cmp && cmp.bsOk ? amt(cmp.cash) : "", ""],
+    ["Net cash from operating activities", cf ? amt(cf.op) : "-", "", ""]
+  ].map(c => ({ cells: c })));
+  // Commentary
+  heading("Commentary");
+  const heads = new Set(["performance", "margins and costs", "cash and working capital", "points for attention"]);
+  for (const raw of $("commentary").value.split("\n")) {
+    const line = plain(raw.replace(/^#+\s*/, "").replace(/\*\*/g, "").trimEnd());
+    if (!line.trim()) { y += 2; continue; }
+    if (heads.has(line.trim().toLowerCase())) { ensure(9); y += 1; font("bold", 10); doc.text(line.trim(), M, y); y += 5; continue; }
+    para(line);
+  }
+  // Charts page
+  heading("Charts", true);
+  const cw = (R - M - 8) / 2, ch = 70;
+  pdfGrouped(doc, M, y + 2, cw, ch, "Results against comparison", cur, cmp, bud);
+  const base = compareTo === "bud" && bud ? bud : cmp;
+  if (base) pdfWaterfall(doc, M + cw + 8, y + 2, cw, ch, `What moved net profit (${plain(compareTo === "bud" && bud ? "vs budget" : "vs " + S.cmp)})`, { l: compareTo === "bud" && bud ? "Budget" : S.cmp, v: base.np }, bridgeSteps(cur, base), { l: S.cur, v: cur.np });
+  y += ch + 10;
+  pdfStacked(doc, M, y + 2, cw, ch, "Where each 100 of income went", cur, cmp, bud);
+  if (cf) pdfWaterfall(doc, M + cw + 8, y + 2, cw, ch, "How cash moved", { l: "Opening cash", v: cf.openCash }, [{ l: "Operating", v: cf.op }, { l: "Investing", v: cf.iv }, { l: "Financing", v: cf.fi }], { l: "Closing cash", v: cf.closeCalc });
+  y += ch + 10;
+  font("normal", 7.5); doc.setTextColor(90, 90, 90); doc.text(plain(`All charts in ${unitText()}.`), M, y); doc.setTextColor(0, 0, 0); y += 6;
+  // Statements
+  const noteOf = built.noteOf;
+  heading("Statement of profit or loss", true);
+  font("normal", 8.5); doc.text(plain(`For ${S.cur}`), M, y); y += 5;
+  const isCols = [{ t: unitShort(), w: 56 }, { t: "Note", w: 10, a: "c" }, { t: S.cur, w: 24, a: "r" }];
+  if (cmp) isCols.push({ t: S.cmp, w: 24, a: "r" }, { t: "Change", w: 20, a: "r" });
+  if (bud) isCols.push({ t: "Budget", w: 22, a: "r" }, { t: "vs budget", w: 18, a: "r" });
+  table(isCols, IS_LINES.map(L => {
+    const cells = [L.l, L.note && noteOf[L.note] ? String(noteOf[L.note]) : "", amt(cur[L.k])];
+    if (cmp) cells.push(amt(cmp[L.k]), amt(cur[L.k] - cmp[L.k], { sign: true }));
+    if (bud) cells.push(amt(bud[L.k]), amt(cur[L.k] - bud[L.k], { sign: true }));
+    return { cells, b: !!(L.sub || L.total), top: !!(L.sub || L.total), dbl: !!L.total };
+  }));
+  heading("Statement of financial position");
+  font("normal", 8.5); doc.text(plain(`As at ${S.cur}`), M, y); y += 5;
+  const showC = cmp && cmp.bsOk, showO = open && open.src === "opn";
+  const bsCols = [{ t: unitShort(), w: 70 }, { t: "Note", w: 10, a: "c" }, { t: S.cur, w: 28, a: "r" }];
+  if (showC) bsCols.push({ t: S.cmp, w: 28, a: "r" });
+  if (showO) bsCols.push({ t: open.label, w: 30, a: "r" });
+  table(bsCols, BS_LINES.map(L => {
+    if (L.h) return { cells: [L.h.toUpperCase()], b: true, span: true };
+    const cells = [L.l, L.note && noteOf[L.note] ? String(noteOf[L.note]) : "", amt(cur[L.k])];
+    if (showC) cells.push(amt(cmp[L.k]));
+    if (showO) cells.push(amt(open.r[L.k]));
+    return { cells, b: !!(L.sub || L.total), top: !!(L.sub || L.total), dbl: !!L.total };
+  }));
+  heading("Statement of cash flows");
+  if (cf) {
+    font("normal", 8.5); doc.text(plain(`For ${S.cur}, indirect method`), M, y); y += 5;
+    const rows = [];
+    for (const s of cf.sections) {
+      rows.push({ cells: [s.h.toUpperCase()], b: true, span: true });
+      for (const l of s.lines) rows.push({ cells: [l.l, amt(l.v)] });
+      rows.push({ cells: [s.total.l, amt(s.total.v)], b: true, top: true });
+    }
+    rows.push({ cells: ["Net increase/(decrease) in cash", amt(cf.net)], b: true, top: true });
+    rows.push({ cells: [`Cash and bank at ${cf.openLabel}`, amt(cf.openCash)] });
+    rows.push({ cells: [`Cash and bank at ${S.cur}`, amt(cf.closeCalc)], b: true, top: true, dbl: true });
+    if (Math.abs(cf.diff) >= 1) rows.push({ cells: ["Difference to the balance sheet", amt(cf.diff)], i: true });
+    table([{ t: unitShort(), w: 120 }, { t: S.cur, w: 30, a: "r" }], rows);
+  } else {
+    para("Not prepared: no opening balance sheet was supplied. Add the trial balance at the start of the year to produce this statement.");
+    y += 4;
+  }
+  // Notes
+  heading("Notes to the financial statements", true);
+  for (const note of built.notes) {
+    subheading(`${note.n}. ${note.title}`);
+    if (note.id === "basis") { para(note.text, 9); y += 4; continue; }
+    const nCols = [{ t: unitShort(), w: 96 }, { t: S.cur, w: 28, a: "r" }];
+    if (cmp) nCols.push({ t: S.cmp, w: 28, a: "r" });
+    const toRows = (rs, single) => rs.map(r => r.head ? { cells: [r.l], i: true, span: true } : { cells: [r.l, r.pct ? pct(r.cur) : amt(r.cur)].concat(cmp && !single ? [r.cmp === null || r.cmp === undefined ? "-" : (r.pct ? pct(r.cmp) : amt(r.cmp))] : []), b: !!(r.sub || r.total), top: !!(r.sub || r.total), dbl: !!r.total });
+    table(nCols, toRows(note.rows));
+    for (const x of note.extra) { font("bold", 8.5); ensure(10); doc.text(plain(x.title), M, y); y += 4.5; table(x.single ? nCols.slice(0, 2) : nCols, toRows(x.rows, x.single)); }
+    if (note.text) { para(note.text, 8.6); y += 3; }
+    y += 2;
+  }
+  // Ratios
+  heading("Ratios");
+  table([{ t: "Ratio", w: 54 }, { t: S.cur, w: 26, a: "r" }, { t: cmp ? S.cmp : "", w: 26, a: "r" }, { t: "Guide", w: 44 }, { t: "Status", w: 16 }],
+    RATIOS.map(d => { const v = ratioVal(d, cur), st = ratioStatus(d, v); return { cells: [d.l, ratioFmt(d, v), cmp ? ratioFmt(d, ratioVal(d, cmp)) : "", d.bench, st ? STATUS_TEXT[st] : "n/a"] }; }));
+  const n = doc.getNumberOfPages();
+  for (let i = 1; i <= n; i++) {
+    doc.setPage(i); font("normal", 7.5); doc.setTextColor(0, 0, 0);
+    doc.text(plain(`${S.company} - ${S.cur} - management accounts, unaudited`), M, 290);
+    doc.text(`Page ${i} of ${n}`, R, 290, { align: "right" });
+  }
+  await saveFile(fileBase() + ".pdf", doc.output("blob"));
+}
+const fileBase = () => `${(S.company || "Management pack").replace(/[^\w\- ]+/g, "").trim()} - ${String(S.cur).replace(/[^\w\- ]+/g, "").trim()} pack`;
+
+/* ---------- Excel ---------- */
+async function exportXLSX() {
+  if (!window.XLSX) { toast("The Excel tool didn't load. Check your connection and reload."); return; }
+  const { cur, cmp, bud, open, cf, built } = snapshot();
+  const wb = XLSX.utils.book_new();
+  const R0 = v => v === null || v === undefined || !isFinite(v) ? "" : Math.round(v);
+  const isRows = [["Statement of profit or loss (" + S.currency + ")", "Note", S.cur].concat(cmp ? [S.cmp, "Change"] : []).concat(bud ? [S.bud, "vs budget"] : [])];
+  for (const L of IS_LINES) {
+    const row = [L.l, L.note && built.noteOf[L.note] ? built.noteOf[L.note] : "", R0(cur[L.k])];
+    if (cmp) row.push(R0(cmp[L.k]), R0(cur[L.k] - cmp[L.k]));
+    if (bud) row.push(R0(bud[L.k]), R0(cur[L.k] - bud[L.k]));
+    isRows.push(row);
+  }
+  const showO = open && open.src === "opn";
+  const bsRows = [["Statement of financial position (" + S.currency + ")", "Note", S.cur].concat(cmp && cmp.bsOk ? [S.cmp] : []).concat(showO ? [open.label] : [])];
+  for (const L of BS_LINES) bsRows.push(L.h ? [L.h] : [L.l, L.note && built.noteOf[L.note] ? built.noteOf[L.note] : "", R0(cur[L.k])].concat(cmp && cmp.bsOk ? [R0(cmp[L.k])] : []).concat(showO ? [R0(open.r[L.k])] : []));
+  const cfRows = [["Statement of cash flows (" + S.currency + ")", S.cur]];
+  if (cf) {
+    for (const s of cf.sections) { cfRows.push([s.h]); for (const l of s.lines) cfRows.push([l.l, R0(l.v)]); cfRows.push([s.total.l, R0(s.total.v)]); }
+    cfRows.push(["Net increase/(decrease) in cash", R0(cf.net)], ["Cash and bank at " + cf.openLabel, R0(cf.openCash)], ["Cash and bank at " + S.cur, R0(cf.closeCalc)]);
+  } else cfRows.push(["Not prepared: no opening balance sheet supplied."]);
+  const nRows = [];
+  for (const note of built.notes) {
+    nRows.push([`Note ${note.n}. ${note.title}`]);
+    if (note.id === "basis") { for (const l of note.text.split("\n")) nRows.push([l]); nRows.push([]); continue; }
+    nRows.push(["", S.cur].concat(cmp ? [S.cmp] : []));
+    const put = (rs, single) => { for (const r of rs) nRows.push(r.head ? [r.l] : [r.l, r.pct ? (r.cur === null ? "" : Math.round(r.cur * 1000) / 10 + "%") : R0(r.cur)].concat(cmp && !single ? [r.pct ? (r.cmp === null ? "" : Math.round(r.cmp * 1000) / 10 + "%") : R0(r.cmp)] : [])); };
+    put(note.rows);
+    for (const x of note.extra) { nRows.push([x.title]); put(x.rows, x.single); }
+    if (note.text) nRows.push([note.text]);
+    nRows.push([]);
+  }
+  const rRows = [["Ratio", S.cur, S.cmp, "Guide", "Status"]].concat(RATIOS.map(d => { const v = ratioVal(d, cur), st = ratioStatus(d, v); return [d.l, ratioFmt(d, v), ratioFmt(d, ratioVal(d, cmp)), d.bench, st ? STATUS_TEXT[st] : "n/a"]; }));
+  const cRows = $("commentary").value.split("\n").map(l => [l]);
+  const mRows = [["Account code", "Account name", S.cur, S.cmp, S.bud, S.opn || "Opening", "Pack line"]].concat(A.map(a => [a.code, a.name, a.cur, a.cmp, a.bud, a.opn, a.cat ? catLabel(a.cat) : "Not mapped"]));
+  const add = (rows, name, widths) => { const ws = XLSX.utils.aoa_to_sheet(rows); ws["!cols"] = widths.map(w => ({ wch: w })); XLSX.utils.book_append_sheet(wb, ws, name); };
+  add(cRows, "Commentary", [110]);
+  add(isRows, "Profit or loss", [32, 6, 16, 16, 16, 16, 16]);
+  add(bsRows, "Financial position", [34, 6, 16, 16, 16]);
+  add(cfRows, "Cash flows", [52, 16]);
+  add(nRows, "Notes", [52, 16, 16]);
+  add(rRows, "Ratios", [28, 14, 14, 22, 10]);
+  add(mRows, "Mapping", [14, 40, 16, 16, 16, 16, 28]);
+  const buf = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+  await saveFile(fileBase() + ".xlsx", new Blob([buf]));
+}
+async function saveFile(filename, data) {
+  try {
+    const type = /\.pdf$/i.test(filename) ? "application/pdf" : /\.xlsx$/i.test(filename) ? "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" : "text/csv";
+    const blob = data instanceof Blob && data.type ? data : new Blob([data], { type });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = filename; a.rel = "noopener";
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 5000);
+    toast("Downloaded " + filename);
+  } catch (e) { toast("That file couldn't be saved. Try again."); }
+}
+
+/* ---------- Loading user data ---------- */
+async function readFile(file) {
+  const nm = file.name.toLowerCase();
+  try {
+    if (/\.(xlsx|xls)$/.test(nm)) {
+      if (!window.XLSX) { toast("The Excel reader didn't load. Save the sheet as CSV and try again."); return; }
+      const wb = XLSX.read(await file.arrayBuffer(), { type: "array" });
+      const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header: 1, raw: true, defval: "" }).filter(r => r.some(c => String(c).trim() !== ""));
+      if (!rows.length) { toast("The first sheet is empty."); return; }
+      openColumnPicker(rows);
+    } else {
+      const rows = parseCSV(await file.text());
+      if (!rows.length) { toast("That file has no rows."); return; }
+      openColumnPicker(rows);
+    }
+  } catch (e) { toast("That file couldn't be read. Try saving it as CSV."); }
+}
+function useColumns() {
+  if (!grid) return;
+  const v = id => parseInt($(id).value, 10);
+  const cols = { code: v("col-code"), name: v("col-name"), cur: v("col-cur"), cmp: v("col-cmp"), bud: v("col-bud"), opn: v("col-opn") };
+  if (cols.cur < 0 || cols.name < 0) { $("col-status").textContent = "Choose the account name and this period's balance."; return; }
+  readSettingsForm();
+  const accts = buildAccounts(grid.body, cols);
+  if (!accts.length) { $("col-status").textContent = "No account rows with numbers were found in those columns."; return; }
+  const hdr = i => i >= 0 ? String(grid.header[i]).trim() : "";
+  const real = i => i >= 0 && hdr(i) && !/^column \d+$/i.test(hdr(i));
+  if (isSample && S.company === SAMPLE_SETTINGS.company) S.company = "Your company";
+  if (real(cols.cur)) S.cur = hdr(cols.cur);
+  if (real(cols.cmp)) S.cmp = hdr(cols.cmp);
+  if (real(cols.bud)) S.bud = hdr(cols.bud);
+  if (real(cols.opn)) S.opn = hdr(cols.opn);
+  A = accts; isSample = false; compareTo = "cmp"; S.policies = null;
+  autoMap(false);
+  $("commentary").value = "";
+  persist();
+  grid = null; $("colpick").hidden = true; $("paste").value = "";
+  renderAll();
+  const un = A.filter(a => !a.cat).length;
+  toast(`${A.length} accounts loaded${un ? `, ${un} need a line` : ""}.`);
+  show(un ? "map" : "pack");
+}
+function readSettingsForm() {
+  const prevKey = mapKey();
+  S.company = $("s-company").value.trim();
+  S.cur = $("s-cur").value.trim() || "This period";
+  S.cmp = $("s-cmp").value.trim() || "Comparative";
+  S.bud = $("s-bud").value.trim() || "Budget";
+  S.opn = $("s-opn").value.trim() || "Opening balances";
+  S.months = Math.min(12, Math.max(1, parseInt($("s-months").value, 10) || 12));
+  S.unit = $("s-unit").value;
+  S.currency = ($("s-currency").value.trim() || "RWF").toUpperCase();
+  S.cmpOpen = $("s-cmpopen").checked;
+  return prevKey !== mapKey();
+}
+
+/* ---------- Views and events ---------- */
+function show(view) {
+  for (const v of ["pack", "data", "map"]) { $("view-" + v).hidden = v !== view; $("tab-" + v).setAttribute("aria-selected", v === view); }
+  if (view === "map") renderMapping();
+  if (view === "pack") renderPack();
+  window.scrollTo({ top: 0 });
+}
+document.addEventListener("click", e => {
+  const j = e.target.closest("[data-jump]");
+  if (j) { const t = $(j.dataset.jump); if (t) t.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" }); return; }
+  const t = e.target.closest("[data-view],[data-goto]");
+  if (t) show(t.dataset.view || t.dataset.goto);
+});
+$("cmp-cmp").onclick = () => { compareTo = "cmp"; renderPack(); };
+$("cmp-bud").onclick = () => { compareTo = "bud"; renderPack(); };
+$("btn-basic").onclick = () => { $("commentary").value = basicDraft(); store.set(commKey(), $("commentary").value); $("comm-status").textContent = "Basic draft rebuilt from the figures. Fill in the bracketed notes."; };
+$("btn-claude").onclick = draftWithClaude;
+$("btn-stop").onclick = () => ctl && ctl.abort();
+$("commentary").addEventListener("input", () => { clearTimeout(draftT); draftT = setTimeout(() => store.set(commKey(), $("commentary").value), 400); });
+$("btn-pdf").onclick = exportPDF;
+$("btn-xlsx").onclick = exportXLSX;
+$("btn-template").onclick = () => saveFile("trial-balance-template.csv",
+  "Account code,Account name,This period YTD,Comparative YTD,Budget YTD,Opening balances\n4000,Sales,-500000000,-420000000,-520000000,\n5000,Purchases,320000000,270000000,330000000,\n1300,Cash at bank,25000000,31000000,,28000000\n");
+$("btn-sample").onclick = () => { loadSample(); renderAll(); show("pack"); toast("Example data loaded."); };
+$("btn-paste").onclick = () => {
+  const t = $("paste").value;
+  if (!t.trim()) { toast("Paste some rows first."); return; }
+  const rows = parseCSV(t);
+  if (rows.length < 2) { toast("Include the header row and at least one account."); return; }
+  openColumnPicker(rows);
+};
+$("btn-usecols").onclick = useColumns;
+$("file").addEventListener("change", e => { const f = e.target.files[0]; if (f) readFile(f); e.target.value = ""; });
+const drop = $("drop");
+["dragenter", "dragover"].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add("over"); }));
+["dragleave", "drop"].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove("over"); }));
+drop.addEventListener("drop", e => { const f = e.dataTransfer.files[0]; if (f) readFile(f); });
+for (const id of ["s-company", "s-cur", "s-cmp", "s-bud", "s-opn", "s-months", "s-unit", "s-currency", "s-cmpopen"]) {
+  $(id).addEventListener("change", () => {
+    if (readSettingsForm()) autoMap(true);
+    persist(); renderMapping(); renderPack();
+  });
+}
+$("s-flip").addEventListener("change", () => {
+  S.flip = $("s-flip").checked;
+  for (const a of A) { a.cur = -a.cur; for (const k of ["cmp", "bud", "opn"]) if (a[k] !== null && a[k] !== undefined) a[k] = -a[k]; }
+  autoMap(true); persist(); renderMapping(); renderPack();
+  toast("Signs flipped on all balances.");
+});
+$("map").addEventListener("change", e => {
+  const s = e.target.closest("select[data-i]"); if (!s) return;
+  const a = A[+s.dataset.i]; a.cat = s.value; a.src = "edited";
+  saveMapping(); persist(); renderMapping();
+});
+$("only-unmapped").addEventListener("change", renderMapping);
+$("btn-remap").onclick = () => { autoMap(false); persist(); renderMapping(); toast("Automatic mapping applied. Remembered choices were kept."); };
+
+/* ---------- Start ---------- */
+const last = store.get("mpb:last2") || store.get("mpb:last");
+if (last && last.S && Array.isArray(last.A) && last.A.length && !last.isSample) {
+  S = { ...SAMPLE_SETTINGS, ...last.S };
+  A = last.A.map(a => ({ opn: null, ...a }));
+  isSample = false;
+} else loadSample();
+renderAll();
+
+let installEvt = null;
+window.addEventListener("beforeinstallprompt", e => { e.preventDefault(); installEvt = e; $("btn-install").hidden = false; });
+$("btn-install").onclick = async () => {
+  if (!installEvt) return;
+  installEvt.prompt();
+  try { await installEvt.userChoice; } catch (e) {}
+  installEvt = null; $("btn-install").hidden = true;
+};
+window.addEventListener("appinstalled", () => { $("btn-install").hidden = true; toast("Installed. Open Acivaz from your apps."); });
+if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js").catch(() => {});
+})();
+</script>
+</body>
+</html>
