@@ -6,8 +6,8 @@
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#F3F6F5",
-  "theme_color": "#0D5B54",
+  "background_color": "#F3F5F8",
+  "theme_color": "#1F3A5F",
   "categories": ["finance", "business", "productivity"],
   "icons": [
     { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="description" content="Turn a trial balance into a board-ready management pack: three financial statements, notes, charts, ratios and commentary, exported to PDF or Excel.">
-<meta name="theme-color" content="#0D5B54">
+<meta name="theme-color" content="#1F3A5F">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Acivaz">
 <link rel="manifest" href="manifest.webmanifest">
@@ -13,51 +13,53 @@
 <title>Acivaz</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,500..800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
-/* Layout: a ledger workbench. Sticky band with the three working steps; the pack reads top-down: key figures, charts, commentary, the three statements, then the notes. */
+/* Layout: a set of management accounts from a good firm. White paper on a cool grey desk, navy as the house colour, ruled tables (single rule above subtotals, double rule under totals), serif headings like an annual report. Charts use a distinct palette: green up, brick red down, steel and ochre for comparisons. */
 :root {
-  --bg: #F3F6F5;
+  --bg: #F3F5F8;
   --surface: #FFFFFF;
-  --ink: #13201B;
-  --muted: #5A6862;
-  --line: #D6DEDA;
-  --line-soft: #E7ECEA;
-  --accent: #0D5B54;
+  --ink: #141A22;
+  --muted: #5B6573;
+  --line: #D6DBE2;
+  --line-soft: #E8EBF0;
+  --accent: #1F3A5F;
   --accent-ink: #FFFFFF;
-  --accent-soft: #E0EEEA;
-  --good: #1D7449;
-  --good-soft: #E2F1E8;
-  --warn: #8F5E00;
-  --warn-soft: #FAEFD9;
-  --bad: #AE3528;
-  --bad-soft: #F7E2DF;
-  --bar-total: #8A9893;
-  --bar-ghost: #C9D3CF;
-  --seg1: #3F5F59; --seg2: #6E8F88; --seg3: #9DB7B1; --seg4: #C8D6D2; --seg5: #B9A77E; --seg6: #A07E6A; --seg7: #7D7391;
-  --font-display: "Archivo", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+  --accent-soft: #E7EDF5;
+  --good: #2F7A4D;
+  --good-soft: #E8F3EC;
+  --warn: #9A6A12;
+  --warn-soft: #F7EFDD;
+  --bad: #B23A2C;
+  --bad-soft: #F8E7E4;
+  --bar-total: #9DB3CC;
+  --bar-ghost: #C9A55E;
+  --pos: #3F8A5C;
+  --neg: #C0503F;
+  --seg1: #5B82B0; --seg2: #C08A2B; --seg3: #6E8540; --seg4: #8C6BA0; --seg5: #9AA5B1; --seg6: #A6473B; --seg7: #D9BC80;
+  --font-display: "Source Serif 4", "Iowan Old Style", Georgia, "Times New Roman", serif;
   --font-body: "IBM Plex Sans", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
-  --radius: 6px;
+  --radius: 3px;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #0E1412; --surface: #151D1A; --ink: #E4EBE8; --muted: #98A6A0; --line: #2A3531; --line-soft: #1F2925;
-    --accent: #5BBFB2; --accent-ink: #062320; --accent-soft: #16312D;
-    --good: #5FC28C; --good-soft: #15301F; --warn: #E2AA4C; --warn-soft: #33270F; --bad: #EF8174; --bad-soft: #3A1B18;
-    --bar-total: #6E7C77; --bar-ghost: #34413C;
-    --seg1: #9EC2BB; --seg2: #7AA39B; --seg3: #5C827B; --seg4: #3F5D57; --seg5: #B8A57A; --seg6: #B58B74; --seg7: #9B90B0;
+    --bg: #0E131A; --surface: #161D27; --ink: #E7ECF2; --muted: #9AA6B5; --line: #2C3644; --line-soft: #212935;
+    --accent: #8FB0D9; --accent-ink: #0E1726; --accent-soft: #1C2A3D;
+    --good: #7CC79A; --good-soft: #17291F; --warn: #E2B45E; --warn-soft: #2D2414; --bad: #EE8A7C; --bad-soft: #3A1D19;
+    --bar-total: #4D6A8F; --bar-ghost: #C9A55E; --pos: #5DB07E; --neg: #E0705F;
+    --seg1: #7FA3CF; --seg2: #D5A24A; --seg3: #93AE5E; --seg4: #AE8CC2; --seg5: #7D8896; --seg6: #D0705F; --seg7: #E3CB98;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #0E1412; --surface: #151D1A; --ink: #E4EBE8; --muted: #98A6A0; --line: #2A3531; --line-soft: #1F2925;
-  --accent: #5BBFB2; --accent-ink: #062320; --accent-soft: #16312D;
-  --good: #5FC28C; --good-soft: #15301F; --warn: #E2AA4C; --warn-soft: #33270F; --bad: #EF8174; --bad-soft: #3A1B18;
-  --bar-total: #6E7C77; --bar-ghost: #34413C;
-  --seg1: #9EC2BB; --seg2: #7AA39B; --seg3: #5C827B; --seg4: #3F5D57; --seg5: #B8A57A; --seg6: #B58B74; --seg7: #9B90B0;
+  --bg: #0E131A; --surface: #161D27; --ink: #E7ECF2; --muted: #9AA6B5; --line: #2C3644; --line-soft: #212935;
+  --accent: #8FB0D9; --accent-ink: #0E1726; --accent-soft: #1C2A3D;
+  --good: #7CC79A; --good-soft: #17291F; --warn: #E2B45E; --warn-soft: #2D2414; --bad: #EE8A7C; --bad-soft: #3A1D19;
+  --bar-total: #4D6A8F; --bar-ghost: #C9A55E; --pos: #5DB07E; --neg: #E0705F;
+  --seg1: #7FA3CF; --seg2: #D5A24A; --seg3: #93AE5E; --seg4: #AE8CC2; --seg5: #7D8896; --seg6: #D0705F; --seg7: #E3CB98;
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
@@ -65,25 +67,26 @@ body { background: var(--bg); color: var(--ink); font-family: var(--font-body); 
 body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--surface); }
 .gutter { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 .wrap { max-width: 1180px; margin: 0 auto; }
-h1, h2, h3, h4 { font-family: var(--font-display); font-stretch: 85%; text-wrap: balance; margin: 0; }
-h2 { font-size: 20px; font-weight: 700; letter-spacing: -0.01em; }
-h3 { font-size: 15px; font-weight: 700; letter-spacing: 0.01em; }
-h4 { font-size: 14px; font-weight: 700; }
+h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 600; text-wrap: balance; margin: 0; letter-spacing: -0.005em; }
+h2 { font-size: 21px; font-weight: 600; }
+h3 { font-size: 17px; font-weight: 600; }
+h4 { font-size: 15.5px; font-weight: 600; }
 .num, td.n, th.n { font-variant-numeric: tabular-nums; }
 .eyebrow { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 600; }
 .muted { color: var(--muted); }
 button, select, input, textarea { font: inherit; color: inherit; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
-.band { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--surface); border-bottom: 1px solid var(--line); }
+.band { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--surface); border-bottom: 3px solid var(--accent); }
 .band-inner { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 20px; padding-block: 10px; }
 .brand { display: flex; align-items: baseline; gap: 10px; min-width: 0; flex: 1 1 260px; }
-.brand-mark { font-family: var(--font-display); font-weight: 800; font-stretch: 78%; font-size: 19px; letter-spacing: -0.01em; white-space: nowrap; }
-.brand-mark span { color: var(--accent); }
+.brand-mark { font-family: var(--font-display); font-weight: 700; font-size: 23px; color: var(--accent); letter-spacing: -0.01em; white-space: nowrap; }
+.brand-mark small { font-family: var(--font-body); font-size: 11px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-left: 8px; }
 .brand-co { color: var(--muted); font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
-.tabs { display: flex; gap: 2px; overflow-x: auto; max-width: 100%; background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius); padding: 2px; }
-.tab { white-space: nowrap; flex: none; border: 0; background: transparent; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 500; color: var(--muted); display: flex; align-items: center; gap: 6px; }
-.tab[aria-selected="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 2px rgba(0,0,0,.08); }
+.tabs { display: flex; gap: 2px; overflow-x: auto; max-width: 100%; }
+.tab { white-space: nowrap; flex: none; border: 0; border-bottom: 2px solid transparent; background: transparent; padding: 7px 10px 5px; cursor: pointer; font-weight: 500; color: var(--muted); display: flex; align-items: center; gap: 6px; }
+.tab:hover { color: var(--ink); }
+.tab[aria-selected="true"] { color: var(--accent); border-bottom-color: var(--accent); font-weight: 600; }
 .tab .step { font-family: var(--font-mono); font-size: 11px; opacity: .7; }
 .tab .count { background: var(--bad-soft); color: var(--bad); font-size: 11px; font-weight: 600; border-radius: 10px; padding: 0 6px; }
 .actions { display: flex; gap: 8px; flex-wrap: wrap; }
@@ -91,7 +94,7 @@ button, select, input, textarea { font: inherit; color: inherit; }
 .btn:hover { border-color: var(--muted); }
 a.btn { text-decoration: none; color: inherit; }
 .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
-.btn.primary:hover { filter: brightness(1.08); }
+.btn.primary:hover { opacity: .88; }
 .btn:disabled { opacity: .5; cursor: not-allowed; }
 .btn.small { padding: 4px 9px; font-size: 13px; }
 
@@ -101,47 +104,52 @@ main { padding-block: 20px 60px; }
 .panel-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 6px 16px; margin-bottom: 12px; }
 .panel-head .sub { font-size: 12px; color: var(--muted); }
 .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: 18px; align-items: start; }
-.section-title { display: flex; align-items: baseline; gap: 12px; padding-top: 10px; border-top: 2px solid var(--ink); scroll-margin-top: 90px; }
-.section-title h2 { font-size: 22px; }
+.section-title { display: flex; align-items: baseline; gap: 12px; padding-top: 10px; border-top: 3px solid var(--accent); scroll-margin-top: 90px; }
+.section-title h2 { font-size: 24px; color: var(--accent); }
 
-.notice { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; padding: 10px 14px; border-radius: var(--radius); background: var(--accent-soft); font-size: 13px; }
+.notice { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; padding: 10px 14px; border-left: 3px solid var(--accent); background: var(--accent-soft); font-size: 13px; }
 .notice strong { font-weight: 600; }
 .checks { display: flex; flex-wrap: wrap; gap: 8px; }
-.chip { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 500; padding: 3px 9px; border-radius: 12px; white-space: nowrap; }
-.chip::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
-.chip.good { background: var(--good-soft); color: var(--good); }
-.chip.warn { background: var(--warn-soft); color: var(--warn); }
-.chip.bad { background: var(--bad-soft); color: var(--bad); }
-.chip.plain { background: var(--bg); color: var(--muted); }
+.chip { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 500; padding: 2px 9px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); white-space: nowrap; }
+.chip::before { font-weight: 700; font-size: 11px; }
+.chip.good::before { content: "✓"; }
+.chip.warn::before { content: "!"; }
+.chip.bad::before { content: "×"; font-size: 13px; }
+.chip.plain::before { content: "·"; }
+.chip.good { color: var(--good); border-color: currentColor; background: var(--good-soft); }
+.chip.warn { color: var(--warn); border-color: currentColor; background: var(--warn-soft); }
+.chip.bad { color: var(--bad); border-color: currentColor; background: var(--bad-soft); }
+.chip.plain { color: var(--muted); }
 .linkish { background: none; border: 0; padding: 0; color: var(--accent); text-decoration: underline; cursor: pointer; font-size: inherit; }
 
 .pack-title { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 10px 20px; }
-.pack-title h1 { font-size: clamp(24px, 4vw, 34px); font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; }
+.pack-title h1 { font-size: clamp(26px, 4.2vw, 38px); font-weight: 600; color: var(--accent); letter-spacing: -0.015em; line-height: 1.1; }
 .pack-title .sub { color: var(--muted); margin-top: 4px; }
 .seg { display: inline-flex; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
 .seg button { border: 0; background: var(--surface); padding: 6px 12px; cursor: pointer; color: var(--muted); font-size: 13px; }
 .seg button[aria-pressed="true"] { background: var(--ink); color: var(--surface); }
 .seg button:disabled { opacity: .4; cursor: not-allowed; }
 .pack-nav { display: flex; flex-wrap: wrap; gap: 6px; }
-.pack-nav button { border: 1px solid var(--line); background: var(--surface); border-radius: 14px; padding: 3px 11px; font-size: 13px; cursor: pointer; color: var(--muted); }
+.pack-nav button { border: 1px solid var(--line); background: var(--surface); border-radius: var(--radius); padding: 3px 11px; font-size: 13px; cursor: pointer; color: var(--muted); }
 .pack-nav button:hover { color: var(--ink); border-color: var(--muted); }
 
 .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); gap: 12px; }
-.kpi { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; }
-.kpi .v { font-family: var(--font-display); font-stretch: 80%; font-weight: 700; font-size: 30px; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.kpi { background: var(--surface); border: 1px solid var(--line); border-top: 3px solid var(--accent); border-radius: var(--radius); padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; }
+.kpi .v { font-family: var(--font-display); font-weight: 600; font-size: 32px; line-height: 1.1; font-variant-numeric: tabular-nums lining-nums; }
 .kpi .v small { font-size: 14px; font-weight: 500; color: var(--muted); margin-left: 4px; }
 .kpi .d { font-size: 13px; font-variant-numeric: tabular-nums; }
-.up { color: var(--good); } .down { color: var(--bad); } .flat { color: var(--muted); }
+.up { color: var(--good); font-weight: 600; } .down { color: var(--bad); font-weight: 600; } .flat { color: var(--muted); }
 
 .chart-box { width: 100%; overflow-x: auto; }
 .chart-box svg { display: block; width: 100%; min-width: 520px; height: auto; }
 .legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; color: var(--muted); margin-top: 6px; }
 .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
-.legend i.ghost { background: transparent; border: 1.5px solid var(--bar-total); }
+.legend i.ghost { background: transparent; border: 1.5px dashed var(--bar-ghost); }
+.legend i.hollow { background: var(--neg); border: 1px solid var(--ink); }
 table.seg-key { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 12px; }
 table.seg-key td { padding: 3px 4px; border-bottom: 1px solid var(--line-soft); }
 table.seg-key td.n { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
-table.seg-key i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
+table.seg-key i { border: 1px solid var(--line);  display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
 table.seg-key th { font-size: 11px; color: var(--muted); font-weight: 600; text-align: right; padding: 3px 4px; }
 table.seg-key th:first-child { text-align: left; }
 
@@ -156,20 +164,20 @@ table.st { width: 100%; border-collapse: collapse; min-width: 480px; }
 table.st.narrow { min-width: 340px; }
 table.st th, table.st td { padding: 6px 8px; text-align: left; border-bottom: 1px solid var(--line-soft); white-space: nowrap; }
 table.st td.lbl { white-space: normal; min-width: 150px; }
-table.st th { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); font-weight: 600; border-bottom: 1px solid var(--line); vertical-align: bottom; white-space: normal; }
-table.st .n { text-align: right; font-family: var(--font-mono); font-size: 13px; }
+table.st th { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--ink); font-weight: 600; border-bottom: 1px solid var(--ink); vertical-align: bottom; white-space: normal; }
+table.st .n { text-align: right; font-size: 13.5px; font-variant-numeric: tabular-nums lining-nums; }
 table.st td.note { color: var(--muted); font-family: var(--font-mono); font-size: 12px; text-align: center; width: 40px; }
 table.st th.note { text-align: center; }
-table.st tr.sub td { font-weight: 600; border-top: 1px solid var(--line); }
+table.st tr.sub td { font-weight: 600; border-top: 1px solid var(--ink); }
 table.st tr.sub td.n { font-weight: 500; }
-table.st tr.total td { border-top: 2px solid var(--ink); border-bottom: 2px solid var(--ink); font-weight: 700; }
-table.st tr.sec td { font-family: var(--font-display); font-stretch: 85%; font-weight: 700; padding-top: 14px; border-bottom: 0; color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .06em; }
+table.st tr.total td { border-top: 1px solid var(--ink); border-bottom: 3px double var(--ink); font-weight: 700; }
+table.st tr.sec td { font-weight: 600; padding-top: 16px; border-bottom: 0; color: var(--ink); font-size: 11.5px; text-transform: uppercase; letter-spacing: .08em; }
 table.st tr.head td { font-style: italic; color: var(--muted); border-bottom: 0; padding-top: 10px; }
 table.st td.fav { color: var(--good); } table.st td.adv { color: var(--bad); }
 
 .notes { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 460px), 1fr)); gap: 18px; align-items: start; }
 .note { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
-.note h4 span { font-family: var(--font-mono); color: var(--accent); margin-right: 8px; font-weight: 500; }
+.note h4 span { font-family: var(--font-body); font-size: 12px; font-weight: 600; color: var(--accent-ink); background: var(--accent); padding: 1px 6px; margin-right: 8px; vertical-align: 2px; }
 .note p { margin: 0; font-size: 13px; color: var(--muted); max-width: 65ch; }
 textarea#policies { width: 100%; min-height: 220px; resize: vertical; padding: 12px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg); font-size: 13px; line-height: 1.6; }
 
@@ -201,7 +209,7 @@ textarea#paste { width: 100%; min-height: 110px; padding: 10px; border: 1px soli
 table.map { width: 100%; border-collapse: collapse; min-width: 640px; }
 table.map th, table.map td { padding: 6px 8px; border-bottom: 1px solid var(--line-soft); text-align: left; }
 table.map th { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); font-weight: 600; border-bottom: 1px solid var(--line); }
-table.map td.n { text-align: right; font-family: var(--font-mono); font-size: 13px; white-space: nowrap; }
+table.map td.n { text-align: right; font-size: 13.5px; font-variant-numeric: tabular-nums; white-space: nowrap; }
 table.map td.code { font-family: var(--font-mono); font-size: 13px; color: var(--muted); white-space: nowrap; }
 table.map select { padding: 5px 7px; border: 1px solid var(--line); border-radius: 4px; background: var(--surface); max-width: 230px; }
 table.map tr.unmapped td { background: var(--bad-soft); }
@@ -222,11 +230,11 @@ table.map select.unset { border-color: var(--bad); }
 .season { display: grid; grid-template-columns: repeat(auto-fit, minmax(68px, 1fr)); gap: 8px; }
 .kpis.small .kpi { padding: 10px 12px; }
 .kpis.small .kpi .v { font-size: 22px; }
-table.st td.hl { background: var(--accent-soft); font-weight: 600; }
+table.st td.hl { background: var(--accent-soft); color: var(--accent); font-weight: 700; }
 table.st td.dim, table.st th.dim { color: var(--muted); }
 details.sched summary { cursor: pointer; font-size: 13px; color: var(--accent); margin-top: 6px; }
 .modal-back { position: fixed; inset: 0; z-index: 30; background: rgba(8, 18, 15, .55); display: flex; align-items: center; justify-content: center; padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
-.modal { position: relative; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; width: 100%; max-width: 540px; max-height: 100%; overflow: auto; padding: 22px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 20px 50px rgba(0,0,0,.25); }
+.modal { position: relative; background: var(--surface); border: 1px solid var(--line); border-top: 4px solid var(--accent); border-radius: var(--radius); width: 100%; max-width: 540px; max-height: 100%; overflow: auto; padding: 22px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 20px 50px rgba(0,0,0,.25); }
 .modal h2 { font-size: 22px; padding-right: 28px; }
 .modal p { margin: 0; }
 .modal-x { position: absolute; top: 10px; right: 12px; border: 0; background: none; font-size: 24px; line-height: 1; cursor: pointer; color: var(--muted); padding: 4px 8px; }
@@ -235,7 +243,7 @@ details.sched summary { cursor: pointer; font-size: 13px; color: var(--accent); 
 .pw-line { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 6px; }
 .pw-big { font-family: var(--font-mono); font-size: 16px; font-weight: 500; background: var(--bg); padding: 3px 8px; border-radius: 4px; user-select: all; }
 textarea#pw-code { width: 100%; min-height: 72px; margin-top: 6px; padding: 10px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg); font-family: var(--font-mono); font-size: 12px; resize: vertical; }
-.pw-price { font-family: var(--font-display); font-stretch: 85%; font-weight: 700; }
+.pw-price { font-family: var(--font-display); font-weight: 600; }
 html { -webkit-text-size-adjust: 100%; }
 body { margin: 0; }
 [hidden] { display: none !important; }
@@ -255,7 +263,7 @@ img { max-width: 100%; }
 <header class="band gutter">
   <div class="wrap band-inner">
     <div class="brand">
-      <div class="brand-mark">Acivaz</div>
+      <div class="brand-mark">Acivaz<small>Management accounts</small></div>
       <div class="brand-co" id="brand-co"></div>
     </div>
     <nav class="tabs" role="tablist" aria-label="Steps">
@@ -320,7 +328,7 @@ img { max-width: 100%; }
         <div class="panel">
           <div class="panel-head"><h3>What moved net profit</h3><span class="sub" id="bridge-sub"></span></div>
           <div class="chart-box" id="bridge"></div>
-          <div class="legend"><span><i style="background:var(--good)"></i>Raised profit</span><span><i style="background:var(--bad)"></i>Lowered profit</span><span><i style="background:var(--bar-total)"></i>Net profit</span></div>
+          <div class="legend"><span><i style="background:var(--pos)"></i>Raised profit</span><span><i style="background:var(--neg)"></i>Lowered profit</span><span><i style="background:var(--accent)"></i>Net profit</span></div>
         </div>
         <div class="panel">
           <div class="panel-head"><h3>Where each 100 of income went</h3><span class="sub" id="cost-sub"></span></div>
@@ -330,7 +338,7 @@ img { max-width: 100%; }
         <div class="panel">
           <div class="panel-head"><h3>How cash moved</h3><span class="sub" id="cash-sub"></span></div>
           <div class="chart-box" id="chart-cash"></div>
-          <div class="legend" id="cash-legend"><span><i style="background:var(--good)"></i>Cash in</span><span><i style="background:var(--bad)"></i>Cash out</span><span><i style="background:var(--bar-total)"></i>Cash balance</span></div>
+          <div class="legend" id="cash-legend"><span><i style="background:var(--pos)"></i>Cash in</span><span><i style="background:var(--neg)"></i>Cash out</span><span><i style="background:var(--accent)"></i>Cash balance</span></div>
         </div>
       </div>
 
@@ -536,7 +544,7 @@ img { max-width: 100%; }
             </div>
             <div class="kpis small" id="loan-kpis" style="margin-top:14px"></div>
             <div class="chart-box" id="loan-chart" style="margin-top:12px"></div>
-            <div class="legend"><span><i style="background:var(--bar-total)"></i>Principal repaid</span><span><i style="background:var(--accent)"></i>Interest paid</span></div>
+            <div class="legend"><span><i style="background:var(--bar-total)"></i>Principal repaid</span><span><i style="background:var(--seg2)"></i>Interest paid</span></div>
             <div class="table-box" style="margin-top:12px"><table class="st narrow" id="loan-years"></table></div>
             <details class="sched"><summary>Show the full monthly schedule</summary><div class="table-box"><table class="st narrow" id="loan-full"></table></div></details>
           </div>
@@ -1207,10 +1215,10 @@ function waterfallSVG(start, steps, end, aria) {
   bars.forEach((b, i) => {
     const x = left + i * band + (band - bw) / 2;
     let y1, y2, fill, label;
-    if (b.total) { y1 = y(Math.max(0, b.v)); y2 = y(Math.min(0, b.v)); fill = "var(--bar-total)"; label = amt(b.v); }
-    else { y1 = y(Math.max(b.from, b.to)); y2 = y(Math.min(b.from, b.to)); fill = b.v >= 0 ? "var(--good)" : "var(--bad)"; label = amt(b.v, { sign: true }); }
+    if (b.total) { y1 = y(Math.max(0, b.v)); y2 = y(Math.min(0, b.v)); fill = "var(--accent)"; label = amt(b.v); }
+    else { y1 = y(Math.max(b.from, b.to)); y2 = y(Math.min(b.from, b.to)); fill = b.v >= 0 ? "var(--pos)" : "var(--neg)"; label = amt(b.v, { sign: true }); }
     const hgt = Math.max(1.5, y2 - y1);
-    svg += `<rect x="${x.toFixed(1)}" y="${y1.toFixed(1)}" width="${bw.toFixed(1)}" height="${hgt.toFixed(1)}" rx="2" fill="${fill}" fill-opacity="${b.total ? 1 : 0.85}"><title>${esc(b.l)}: ${esc(label)} ${esc(unitShort())}</title></rect>`;
+    svg += `<rect x="${x.toFixed(1)}" y="${y1.toFixed(1)}" width="${bw.toFixed(1)}" height="${hgt.toFixed(1)}" fill="${fill}"><title>${esc(b.l)}: ${esc(label)} ${esc(unitShort())}</title></rect>`;
     const up = b.total ? b.v >= 0 : b.v >= 0;
     const ly = up ? y1 - 7 : y2 + 15;
     svg += `<text x="${(x + bw / 2).toFixed(1)}" y="${ly.toFixed(1)}" text-anchor="middle" fill="var(--ink)" font-weight="${b.total ? 600 : 500}" style="font-variant-numeric:tabular-nums">${esc(label)}</text>`;
@@ -1267,8 +1275,8 @@ function renderResults(cur, cmp, bud) {
     series.forEach((s, si) => {
       const v = s.r[k], x = gx + si * (bw + 4);
       const y1 = y(Math.max(0, v)), y2 = y(Math.min(0, v));
-      const fillAttr = s.ghost ? `fill="none" stroke="var(--bar-total)" stroke-width="1.5" stroke-dasharray="3 2"` : `fill="${s.fill}"`;
-      svg += `<rect x="${x.toFixed(1)}" y="${y1.toFixed(1)}" width="${bw.toFixed(1)}" height="${Math.max(1.5, y2 - y1).toFixed(1)}" rx="2" ${fillAttr}><title>${esc(lab)}, ${esc(s.l)}: ${esc(amt(v))} ${esc(unitShort())}</title></rect>`;
+      const fillAttr = s.ghost ? `fill="var(--bar-ghost)" fill-opacity=".35" stroke="var(--bar-ghost)" stroke-width="1.5" stroke-dasharray="3 2"` : `fill="${s.fill}"`;
+      svg += `<rect x="${x.toFixed(1)}" y="${y1.toFixed(1)}" width="${bw.toFixed(1)}" height="${Math.max(1.5, y2 - y1).toFixed(1)}" ${fillAttr}><title>${esc(lab)}, ${esc(s.l)}: ${esc(amt(v))} ${esc(unitShort())}</title></rect>`;
       if (si === 0) svg += `<text x="${(x + bw / 2).toFixed(1)}" y="${(v >= 0 ? y1 - 6 : y2 + 14).toFixed(1)}" text-anchor="middle" fill="var(--ink)" font-weight="600" style="font-variant-numeric:tabular-nums">${esc(amt(v))}</text>`;
       else svg += `<text x="${(x + bw / 2).toFixed(1)}" y="${(v >= 0 ? y1 - 6 : y2 + 14).toFixed(1)}" text-anchor="middle" fill="var(--muted)" font-size="10.5" style="font-variant-numeric:tabular-nums">${esc(amt(v))}</text>`;
     });
@@ -1276,7 +1284,7 @@ function renderResults(cur, cmp, bud) {
   });
   $("chart-results").innerHTML = svg + `</svg>`;
 }
-const COST_SEGS = [["cos", "Cost of sales", "--seg1"], ["staff", "Staff costs", "--seg2"], ["selling", "Selling and distribution", "--seg3"], ["admin", "Administration and other", "--seg4"], ["dep", "Depreciation", "--seg5"], ["fin", "Finance costs", "--seg6"], ["tax", "Income tax", "--seg7"], ["np", "Net profit", "--accent"]];
+const COST_SEGS = [["cos", "Cost of sales", "--seg1"], ["staff", "Staff costs", "--seg2"], ["selling", "Selling and distribution", "--seg3"], ["admin", "Administration and other", "--seg4"], ["dep", "Depreciation", "--seg5"], ["fin", "Finance costs", "--seg6"], ["tax", "Income tax", "--seg7"], ["np", "Net profit", "--pos"]];
 function costShares(r) {
   const base = r.rev + Math.max(0, r.oi);
   return COST_SEGS.map(([k]) => base ? r[k] / base : 0);
@@ -1644,7 +1652,7 @@ function groupedBarsSVG(cats, series, aria) {
     const gx = left + ci * gw + (gw - bw * series.length - 3 * (series.length - 1)) / 2;
     series.forEach((s, si) => {
       const v = s.vals[ci], x = gx + si * (bw + 3), y1 = y(Math.max(0, v)), y2 = y(Math.min(0, v));
-      svg += `<rect x="${x.toFixed(1)}" y="${y1.toFixed(1)}" width="${bw.toFixed(1)}" height="${Math.max(1, y2 - y1).toFixed(1)}" rx="2" fill="${s.fill}"><title>${esc(c)}, ${esc(s.l)}: ${esc(amt(v))} ${esc(unitShort())}</title></rect>`;
+      svg += `<rect x="${x.toFixed(1)}" y="${y1.toFixed(1)}" width="${bw.toFixed(1)}" height="${Math.max(1, y2 - y1).toFixed(1)}" fill="${s.fill}"><title>${esc(c)}, ${esc(s.l)}: ${esc(amt(v))} ${esc(unitShort())}</title></rect>`;
       if (showLabels) svg += `<text x="${(x + bw / 2).toFixed(1)}" y="${(v >= 0 ? y1 - 5 : y2 + 13).toFixed(1)}" text-anchor="middle" fill="${si === series.length - 1 ? "var(--ink)" : "var(--muted)"}" font-size="10.5" style="font-variant-numeric:tabular-nums">${esc(amt(v))}</text>`;
     });
     svg += `<text x="${(left + ci * gw + gw / 2).toFixed(1)}" y="${H - bottom + 20}" text-anchor="middle" fill="var(--ink)" font-size="11">${esc(c)}</text>`;
@@ -1666,7 +1674,7 @@ function linesSVG(cats, series, aria) {
   for (let i = 1; i < ends.length; i++) if (ends[i].y - ends[i - 1].y < 15) ends[i].y = ends[i - 1].y + 15;
   for (const s of series) {
     const d = s.vals.map((v, i) => `${i ? "L" : "M"}${x(i).toFixed(1)} ${y(v).toFixed(1)}`).join(" ");
-    svg += `<path d="${d}" fill="none" stroke="${s.stroke}" stroke-width="${s.bold ? 3 : 2}"/>`;
+    svg += `<path d="${d}" fill="none" stroke="${s.stroke}" stroke-width="${s.bold ? 3 : 1.6}" ${s.dash ? `stroke-dasharray="${s.dash}"` : ""}/>`;
     s.vals.forEach((v, i) => { svg += `<circle cx="${x(i).toFixed(1)}" cy="${y(v).toFixed(1)}" r="${s.bold ? 4 : 3}" fill="${s.stroke}"><title>${esc(s.l)}, ${esc(cats[i])}: ${esc(amt(v))} ${esc(unitShort())}</title></circle>`; });
   }
   for (const e of ends) svg += `<text x="${x(cats.length - 1) + 10}" y="${(e.y + 4).toFixed(1)}" fill="${e.s.bold ? "var(--ink)" : "var(--muted)"}" font-weight="${e.s.bold ? 600 : 400}" style="font-variant-numeric:tabular-nums">${esc(e.s.l)}: ${esc(amt(e.v))}</text>`;
@@ -1682,7 +1690,7 @@ function signedBarsSVG(cats, vals, aria) {
   svg += `<line x1="${left}" x2="${W - right}" y1="${y(0)}" y2="${y(0)}" stroke="var(--ink)" stroke-opacity=".5"/>`;
   cats.forEach((c, i) => {
     const v = vals[i], x = left + i * bw + bw * 0.18, w = bw * 0.64, y1 = y(Math.max(0, v)), y2 = y(Math.min(0, v));
-    svg += `<rect x="${x.toFixed(1)}" y="${y1.toFixed(1)}" width="${w.toFixed(1)}" height="${Math.max(1, y2 - y1).toFixed(1)}" rx="2" fill="${v >= 0 ? "var(--good)" : "var(--bad)"}" fill-opacity=".85"><title>${esc(c)}: ${esc(amt(v))} ${esc(unitShort())}</title></rect>`;
+    svg += `<rect x="${x.toFixed(1)}" y="${y1.toFixed(1)}" width="${w.toFixed(1)}" height="${Math.max(1, y2 - y1).toFixed(1)}" rx="2" fill="${v >= 0 ? "var(--pos)" : "var(--neg)"}"><title>${esc(c)}: ${esc(amt(v))} ${esc(unitShort())}</title></rect>`;
     if (cats.length <= 12) svg += `<text x="${(x + w / 2).toFixed(1)}" y="${(v >= 0 ? y1 - 5 : y2 + 13).toFixed(1)}" text-anchor="middle" fill="var(--ink)" font-size="10.5" style="font-variant-numeric:tabular-nums">${esc(amt(v))}</text>`;
     svg += `<text x="${(x + w / 2).toFixed(1)}" y="${H - bottom + 20}" text-anchor="middle" fill="var(--muted)" font-size="11">${esc(c)}</text>`;
   });
@@ -1777,9 +1785,9 @@ function renderModelResults() {
   $("fc-table").innerHTML = h + "</tbody>";
   $("fc-cash-sub").textContent = unitText();
   $("fc-cash").innerHTML = linesSVG(labels, [
-    { l: "Upside", vals: runs.up.map(y => y.cash), stroke: "var(--good)", bold: modelScen === "up" },
+    { l: "Upside", vals: runs.up.map(y => y.cash), stroke: "var(--pos)", dash: "7 4", bold: modelScen === "up" },
     { l: "Base", vals: runs.base.map(y => y.cash), stroke: "var(--accent)", bold: modelScen === "base" },
-    { l: "Downside", vals: runs.down.map(y => y.cash), stroke: "var(--bad)", bold: modelScen === "down" }
+    { l: "Downside", vals: runs.down.map(y => y.cash), stroke: "var(--neg)", dash: "3 3", bold: modelScen === "down" }
   ], "Closing cash by scenario");
   $("fc-rn-sub").textContent = `${scen} case, ${unitText()}`;
   $("fc-rn").innerHTML = groupedBarsSVG(labels, [{ l: "Revenue", vals: years.map(y => y.rev), fill: "var(--bar-total)" }, { l: "Net profit", vals: years.map(y => y.np), fill: "var(--accent)" }], "Revenue and net profit by year");
@@ -1818,7 +1826,7 @@ function renderModelResults() {
     { l: "Total interest", v: amt(loan.totInt), s: unitShort() },
     { l: "Total repaid", v: amt(loan.totPay), s: unitShort() }
   ].map(t => `<div class="kpi"><span class="eyebrow">${esc(t.l)}</span><span class="v">${t.v}<small>${esc(t.s)}</small></span></div>`).join("");
-  $("loan-chart").innerHTML = groupedBarsSVG(loan.years.map(y => "Year " + y.y), [{ l: "Principal", vals: loan.years.map(y => y.principal), fill: "var(--bar-total)" }, { l: "Interest", vals: loan.years.map(y => y.interest), fill: "var(--accent)" }], "Principal and interest by year");
+  $("loan-chart").innerHTML = groupedBarsSVG(loan.years.map(y => "Year " + y.y), [{ l: "Principal", vals: loan.years.map(y => y.principal), fill: "var(--bar-total)" }, { l: "Interest", vals: loan.years.map(y => y.interest), fill: "var(--seg2)" }], "Principal and interest by year");
   $("loan-years").innerHTML = `<thead><tr><th>Year</th><th class="n">Interest</th><th class="n">Principal</th><th class="n">Paid</th><th class="n">Balance at end</th></tr></thead><tbody>` + loan.years.map(y => `<tr><td class="lbl">Year ${y.y}</td><td class="n">${amt(y.interest)}</td><td class="n">${amt(y.principal)}</td><td class="n">${amt(y.pay)}</td><td class="n">${amt(y.close)}</td></tr>`).join("") + "</tbody>";
   $("loan-full").innerHTML = `<thead><tr><th>Month</th><th class="n">Opening</th><th class="n">Interest</th><th class="n">Principal</th><th class="n">Instalment</th><th class="n">Closing</th></tr></thead><tbody>` + loan.rows.map(x => `<tr><td class="lbl">${x.i}</td><td class="n">${amt(x.open)}</td><td class="n">${amt(x.interest)}</td><td class="n">${amt(x.principal)}</td><td class="n">${amt(x.pay)}</td><td class="n">${amt(x.close)}</td></tr>`).join("") + "</tbody>";
   // project
@@ -1923,7 +1931,7 @@ document.addEventListener("click", e => {
 });
 
 /* ---------- PDF ---------- */
-const GREYS = [[45, 45, 45], [85, 85, 85], [120, 120, 120], [155, 155, 155], [185, 185, 185], [210, 210, 210], [230, 230, 230]];
+const PC = { navy: [31, 58, 95], steel: [157, 179, 204], green: [63, 138, 92], red: [192, 80, 63], sand: [217, 188, 128] };
 function pdfWaterfall(doc, X, Y, Wd, Ht, title, start, steps, end) {
   const plain = s => String(s).replace(/−/g, "-");
   doc.setFont("helvetica", "bold"); doc.setFontSize(9); doc.setTextColor(0, 0, 0); doc.text(plain(title), X, Y);
@@ -1939,23 +1947,23 @@ function pdfWaterfall(doc, X, Y, Wd, Ht, title, start, steps, end) {
   bars.forEach((b, i) => {
     const x = X + i * band + (band - bw) / 2;
     let y1, y2, c, label;
-    if (b.total) { y1 = y(Math.max(0, b.v)); y2 = y(Math.min(0, b.v)); c = GREYS[0]; label = amt(b.v); }
-    else { y1 = y(Math.max(b.from, b.to)); y2 = y(Math.min(b.from, b.to)); c = b.v >= 0 ? GREYS[3] : GREYS[5]; label = amt(b.v, { sign: true }); }
-    doc.setFillColor(...c); doc.setDrawColor(90, 90, 90); doc.setLineWidth(0.1);
-    doc.rect(x, y1, bw, Math.max(0.4, y2 - y1), b.total ? "F" : "FD");
+    if (b.total) { y1 = y(Math.max(0, b.v)); y2 = y(Math.min(0, b.v)); c = PC.navy; label = amt(b.v); }
+    else { y1 = y(Math.max(b.from, b.to)); y2 = y(Math.min(b.from, b.to)); c = b.v >= 0 ? PC.green : PC.red; label = amt(b.v, { sign: true }); }
+    doc.setFillColor(...c);
+    doc.rect(x, y1, bw, Math.max(0.4, y2 - y1), "F");
     doc.setFont("helvetica", b.total ? "bold" : "normal"); doc.setFontSize(6.3);
     doc.text(plain(label), x + bw / 2, (b.v >= 0 ? y1 - 1.2 : y2 + 2.8), { align: "center" });
-    doc.setFont("helvetica", "normal"); doc.setFontSize(5.8);
-    const lines = doc.splitTextToSize(plain(b.l), band - 1).slice(0, 2);
+    doc.setFont("helvetica", "normal"); doc.setFontSize(5.2);
+    const lines = doc.splitTextToSize(plain(b.l), band + 1).slice(0, 2);
     doc.text(lines, x + bw / 2, bot + 3.2, { align: "center" });
   });
   doc.setFontSize(6); doc.setTextColor(90, 90, 90);
-  doc.text("Totals in dark grey. Increases mid grey, decreases light grey with outline.", X, Y + Ht - 1);
+  doc.text("Totals in dark blue. Increases in green, decreases in red.", X, Y + Ht - 1);
   doc.setTextColor(0, 0, 0);
 }
 function pdfGrouped(doc, X, Y, Wd, Ht, title, cur, cmp, bud) {
   doc.setFont("helvetica", "bold"); doc.setFontSize(9); doc.text(title, X, Y);
-  const series = [{ r: cur, l: S.cur, c: GREYS[0] }]; if (cmp) series.push({ r: cmp, l: S.cmp, c: GREYS[3] }); if (bud) series.push({ r: bud, l: "Budget", c: GREYS[6], o: true });
+  const series = [{ r: cur, l: S.cur, c: PC.navy }]; if (cmp) series.push({ r: cmp, l: S.cmp, c: PC.steel }); if (bud) series.push({ r: bud, l: "Budget", c: PC.sand });
   const vals = []; for (const s of series) for (const [k] of RESULT_KEYS) vals.push(s.r[k]);
   const hi = Math.max(0, ...vals) * 1.15 || 1, lo = Math.min(0, ...vals) * 1.15;
   const top = Y + 6, bot = Y + Ht - 12, y = v => top + (hi - v) / (hi - lo) * (bot - top);
@@ -1966,8 +1974,8 @@ function pdfGrouped(doc, X, Y, Wd, Ht, title, cur, cmp, bud) {
     series.forEach((s, si) => {
       const v = s.r[k], x = gx + si * (bw + 1);
       const y1 = y(Math.max(0, v)), y2 = y(Math.min(0, v));
-      doc.setFillColor(...s.c); doc.setDrawColor(90, 90, 90); doc.setLineWidth(0.1);
-      doc.rect(x, y1, bw, Math.max(0.4, y2 - y1), s.o ? "FD" : "F");
+      doc.setFillColor(...s.c);
+      doc.rect(x, y1, bw, Math.max(0.4, y2 - y1), "F");
       doc.setFont("helvetica", si === 0 ? "bold" : "normal"); doc.setFontSize(5.4);
       doc.text(String(amt(v)).replace(/−/g, "-"), x + bw / 2, v >= 0 ? y1 - 1 : y2 + 2.6, { align: "center" });
     });
@@ -1975,7 +1983,7 @@ function pdfGrouped(doc, X, Y, Wd, Ht, title, cur, cmp, bud) {
     doc.text(lab, X + gi * gw + gw / 2, bot + 3.5, { align: "center" });
   });
   let lx = X; doc.setFontSize(6.2);
-  for (const s of series) { doc.setFillColor(...s.c); doc.setDrawColor(90, 90, 90); doc.rect(lx, Y + Ht - 4.2, 2.6, 2.6, s.o ? "FD" : "F"); doc.text(s.l, lx + 3.6, Y + Ht - 2.2); lx += 6 + doc.getTextWidth(s.l); }
+  for (const s of series) { doc.setFillColor(...s.c); doc.rect(lx, Y + Ht - 4.2, 2.6, 2.6, "F"); doc.text(s.l, lx + 3.6, Y + Ht - 2.2); lx += 6 + doc.getTextWidth(s.l); }
 }
 function pdfStacked(doc, X, Y, Wd, Ht, title, cur, cmp, bud) {
   doc.setFont("helvetica", "bold"); doc.setFontSize(9); doc.text(title, X, Y);
@@ -1983,7 +1991,8 @@ function pdfStacked(doc, X, Y, Wd, Ht, title, cur, cmp, bud) {
   const shares = rows.map(x => costShares(x.r));
   const maxTotal = Math.max(1, ...shares.map(s => s.reduce((t, v) => t + Math.max(0, v), 0)));
   const lw = 24, bx = X + lw, bwid = Wd - lw, rh = 6.5, gap = 3.5, top = Y + 4;
-  const fills = [[40, 40, 40], [80, 80, 80], [115, 115, 115], [150, 150, 150], [180, 180, 180], [205, 205, 205], [228, 228, 228], [255, 255, 255]];
+  const fills = [[91, 130, 176], [192, 138, 43], [110, 133, 64], [140, 107, 160], [154, 165, 177], [166, 71, 59], [217, 188, 128], [63, 138, 92]];
+  const darkFill = [true, false, true, true, false, true, false, true];
   rows.forEach((row, ri) => {
     const yy = top + ri * (rh + gap);
     doc.setFont("helvetica", ri === 0 ? "bold" : "normal"); doc.setFontSize(6.5); doc.setTextColor(0, 0, 0);
@@ -1992,9 +2001,9 @@ function pdfStacked(doc, X, Y, Wd, Ht, title, cur, cmp, bud) {
     shares[ri].forEach((v, si) => {
       if (v <= 0) return;
       const x0 = bx + acc / maxTotal * bwid, w = v / maxTotal * bwid;
-      doc.setFillColor(...fills[si]); doc.setDrawColor(60, 60, 60); doc.setLineWidth(0.1);
+      doc.setFillColor(...fills[si]); doc.setDrawColor(255, 255, 255); doc.setLineWidth(0.3);
       doc.rect(x0, yy, w, rh, "FD");
-      if (w > 7) { doc.setFontSize(5.4); doc.setTextColor(...(si < 3 ? [255, 255, 255] : [0, 0, 0])); doc.text((v * 100).toFixed(0), x0 + w / 2, yy + rh / 2 + 1, { align: "center" }); }
+      if (w > 7) { doc.setFontSize(5.4); doc.setTextColor(...(darkFill[si] ? [255, 255, 255] : [0, 0, 0])); doc.text((v * 100).toFixed(0), x0 + w / 2, yy + rh / 2 + 1, { align: "center" }); }
       acc += v;
     });
   });
@@ -2003,7 +2012,7 @@ function pdfStacked(doc, X, Y, Wd, Ht, title, cur, cmp, bud) {
   COST_SEGS.forEach(([k, l], si) => {
     const tw = doc.getTextWidth(l) + 7;
     if (lx + tw > X + Wd) { lx = X; ly += 3.6; }
-    doc.setFillColor(...fills[si]); doc.setDrawColor(60, 60, 60); doc.rect(lx, ly - 2.2, 2.4, 2.4, "FD"); doc.text(l, lx + 3.2, ly); lx += tw;
+    doc.setFillColor(...fills[si]); doc.rect(lx, ly - 2.2, 2.4, 2.4, "F"); doc.text(l, lx + 3.2, ly); lx += tw;
   });
   doc.setFontSize(6); doc.setTextColor(90, 90, 90); doc.text("Figures are per 100 of revenue plus other income.", X, ly + 4); doc.setTextColor(0, 0, 0);
 }
@@ -2077,7 +2086,7 @@ async function exportPDF(only) {
   const cw = (R - M - 8) / 2, ch = 70;
   pdfGrouped(doc, M, y + 2, cw, ch, "Results against comparison", cur, cmp, bud);
   const base = compareTo === "bud" && bud ? bud : cmp;
-  if (base) pdfWaterfall(doc, M + cw + 8, y + 2, cw, ch, `What moved net profit (${plain(compareTo === "bud" && bud ? "vs budget" : "vs " + S.cmp)})`, { l: compareTo === "bud" && bud ? "Budget" : S.cmp, v: base.np }, bridgeSteps(cur, base), { l: S.cur, v: cur.np });
+  if (base) pdfWaterfall(doc, M + cw + 8, y + 2, cw, ch, `What moved net profit (${plain(compareTo === "bud" && bud ? "vs budget" : "vs " + S.cmp)})`, { l: compareTo === "bud" && bud ? "Budget" : S.cmp, v: base.np }, bridgeSteps(cur, base).map((x, i) => ({ ...x, l: ["Revenue", "Cost of sales", "Staff", "Selling", "Admin", "Deprec.", "Other income", "Finance", "Tax"][i] })), { l: S.cur, v: cur.np });
   y += ch + 10;
   pdfStacked(doc, M, y + 2, cw, ch, "Where each 100 of income went", cur, cmp, bud);
   if (cf) pdfWaterfall(doc, M + cw + 8, y + 2, cw, ch, "How cash moved", { l: "Opening cash", v: cf.openCash }, [{ l: "Operating", v: cf.op }, { l: "Investing", v: cf.iv }, { l: "Financing", v: cf.fi }], { l: "Closing cash", v: cf.closeCalc });
