@@ -262,6 +262,34 @@ table.st td.chk, table.st th.chk { text-align: center; width: 92px; }
 #bk-body .kpis { grid-template-columns: repeat(auto-fit, minmax(min(100%, 165px), 1fr)); }
 #bk-body .kpi .v { font-size: 25px; }
 @media (max-width: 640px) { .pack-title > div[style] { align-items: flex-start !important; } }
+.manual { display: grid; grid-template-columns: 230px minmax(0, 1fr); gap: 32px; align-items: start; }
+.m-toc { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 118px); display: flex; flex-direction: column; gap: 1px; max-height: calc(100vh - 140px); overflow: auto; padding: 4px 0; border-left: 1px solid var(--line); }
+.m-toc button { text-align: left; background: none; border: 0; border-left: 2px solid transparent; margin-left: -1px; padding: 4px 10px; color: var(--muted); cursor: pointer; font-size: 13.5px; font-weight: 500; }
+.m-toc button:hover { color: var(--accent); border-left-color: var(--accent); }
+.m-toc button.lvl2 { padding-left: 22px; font-size: 12.5px; font-weight: 400; }
+.m-art { max-width: 82ch; min-width: 0; }
+.m-art section, .m-art h3 { scroll-margin-top: 130px; }
+.m-art h2 { font-size: 26px; color: var(--accent); margin: 30px 0 10px; padding-top: 12px; border-top: 3px solid var(--accent); }
+.m-art section:first-child h2 { margin-top: 0; }
+.m-art h3 { font-size: 18px; margin: 24px 0 6px; }
+.m-art p, .m-art li { line-height: 1.65; font-size: 14.5px; }
+.m-art p { margin: 8px 0; }
+.m-art ol, .m-art ul { padding-left: 22px; display: flex; flex-direction: column; gap: 5px; margin: 8px 0; }
+.m-art table.st { margin: 10px 0; }
+.m-art table.st td.lbl { white-space: normal; vertical-align: top; }
+.m-steps td.lbl:first-child { width: 120px; white-space: nowrap; }
+.m-fig { margin: 14px 0 18px; }
+.m-fig .fig-box { overflow-x: auto; border: 1px solid var(--line); background: var(--surface); padding: 12px; border-radius: var(--radius); }
+.m-fig svg { display: block; width: 100%; min-width: 700px; height: auto; color: var(--muted); }
+.m-fig figcaption { font-size: 13px; color: var(--muted); margin-top: 8px; line-height: 1.55; }
+.m-tip { border-left: 3px solid var(--accent); background: var(--accent-soft); padding: 10px 14px; margin: 12px 0; font-size: 14px; line-height: 1.6; }
+.m-tip.m-warn { border-left-color: var(--warn); background: var(--warn-soft); }
+@media (max-width: 860px) {
+  .manual { grid-template-columns: 1fr; gap: 18px; }
+  .m-toc { position: static; max-height: none; flex-direction: row; flex-wrap: wrap; gap: 6px; border-left: 0; }
+  .m-toc button { border: 1px solid var(--line); border-radius: var(--radius); margin: 0; padding: 3px 9px; }
+  .m-toc button.lvl2 { display: none; }
+}
 .modal-back { position: fixed; inset: 0; z-index: 30; background: rgba(8, 18, 15, .55); display: flex; align-items: center; justify-content: center; padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
 .modal { position: relative; background: var(--surface); border: 1px solid var(--line); border-top: 4px solid var(--accent); border-radius: var(--radius); width: 100%; max-width: 540px; max-height: 100%; overflow: auto; padding: 22px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 20px 50px rgba(0,0,0,.25); }
 .modal h2 { font-size: 22px; padding-right: 28px; }
@@ -304,6 +332,7 @@ img { max-width: 100%; }
       <button class="tab" role="tab" id="tab-budget" aria-selected="false" data-view="budget"><span class="step">6</span>Budget</button>
       <button class="tab" role="tab" id="tab-valuation" aria-selected="false" data-view="valuation"><span class="step">7</span>Valuation</button>
       <button class="tab" role="tab" id="tab-appraisal" aria-selected="false" data-view="appraisal"><span class="step">8</span>Loans and projects</button>
+      <button class="tab" role="tab" id="tab-manual" aria-selected="false" data-view="manual">Manual</button>
     </nav>
     <div class="actions" id="export-actions">
       <button class="btn" id="btn-install" type="button" hidden>Install app</button>
@@ -633,6 +662,258 @@ img { max-width: 100%; }
       <label class="check"><input type="checkbox" id="m-pdf"><span>Also add the forecast, budget, valuation, and loans and projects to the full management pack downloads</span></label>
     </section>
 
+    <!-- MANUAL -->
+    <section class="view" id="view-manual" hidden>
+      <div class="pack-title">
+        <div>
+          <div class="eyebrow">Help</div>
+          <h1>Acivaz manual</h1>
+          <div class="sub">How to keep the books, build a management pack, and run the financial models.</div>
+        </div>
+      </div>
+      <div class="manual">
+        <nav class="m-toc" aria-label="Manual contents">
+          <button type="button" data-jump="m-start">Getting started</button>
+          <button type="button" data-jump="m-books">1 · Books</button>
+          <button type="button" class="lvl2" data-jump="m-books-setup">Set up a company</button>
+          <button type="button" class="lvl2" data-jump="m-books-opening">Opening balances</button>
+          <button type="button" class="lvl2" data-jump="m-books-sales">Sales and customers</button>
+          <button type="button" class="lvl2" data-jump="m-books-purchases">Bills and suppliers</button>
+          <button type="button" class="lvl2" data-jump="m-books-money">Money in, money out, transfers</button>
+          <button type="button" class="lvl2" data-jump="m-books-journal">Journal entries</button>
+          <button type="button" class="lvl2" data-jump="m-books-vat">VAT</button>
+          <button type="button" class="lvl2" data-jump="m-books-tax">Income tax at 28%</button>
+          <button type="button" class="lvl2" data-jump="m-books-recon">Bank reconciliation</button>
+          <button type="button" class="lvl2" data-jump="m-books-reports">Reports</button>
+          <button type="button" class="lvl2" data-jump="m-books-backup">Backup and restore</button>
+          <button type="button" class="lvl2" data-jump="m-books-pack">From books to pack</button>
+          <button type="button" data-jump="m-data">2 · Data</button>
+          <button type="button" data-jump="m-mapping">3 · Mapping</button>
+          <button type="button" data-jump="m-pack">4 · Pack</button>
+          <button type="button" data-jump="m-forecast">5 · Forecast</button>
+          <button type="button" data-jump="m-budget">6 · Budget</button>
+          <button type="button" data-jump="m-valuation">7 · Valuation</button>
+          <button type="button" data-jump="m-appraisal">8 · Loans and projects</button>
+          <button type="button" data-jump="m-downloads">Downloads and unlocking</button>
+          <button type="button" data-jump="m-install">Install and offline use</button>
+          <button type="button" data-jump="m-built">How Acivaz is built</button>
+          <button type="button" data-jump="m-faq">Problems and questions</button>
+        </nav>
+
+        <article class="m-art">
+          <section id="m-start">
+            <h2>Getting started</h2>
+            <p>Acivaz takes a business from its day-to-day transactions to a board-ready management pack, then on to forecasts, a budget, a valuation and loan or project appraisal. The steps run along the top bar in order.</p>
+            <h3>How the figures flow</h3>
+            <figure class="m-fig"><div class="fig-box"><svg viewBox="0 0 960 450" role="img" aria-label="Figures flow from Books or an uploaded trial balance, through mapping, into the pack; the forecast starts from the pack and feeds the budget and valuation; every download passes the free-download count" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-size="12"><defs><marker id="mfa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker></defs><rect x="20" y="30" width="160" height="100" rx="4" fill="var(--seg1)" fill-opacity=".13" stroke="var(--seg1)" stroke-width="1.5"/><text x="34" y="56" font-weight="700" font-size="13" fill="var(--ink)">1 Books</text><text x="34" y="78" fill="var(--ink)">Invoices and bills</text><text x="34" y="97" fill="var(--ink)">Bank, MoMo, journals</text><text x="34" y="116" fill="var(--ink)">VAT and 28% tax</text><rect x="20" y="170" width="160" height="80" rx="4" fill="var(--seg1)" fill-opacity=".13" stroke="var(--seg1)" stroke-width="1.5"/><text x="34" y="196" font-weight="700" font-size="13" fill="var(--ink)">2 Data</text><text x="34" y="218" fill="var(--ink)">Trial balance file</text><text x="34" y="237" fill="var(--ink)">Excel or CSV</text><rect x="260" y="90" width="140" height="100" rx="4" fill="var(--accent)" fill-opacity=".13" stroke="var(--accent)" stroke-width="1.5"/><text x="274" y="116" font-weight="700" font-size="13" fill="var(--ink)">Trial balance</text><text x="274" y="138" fill="var(--ink)">This period</text><text x="274" y="157" fill="var(--ink)">Comparative</text><text x="274" y="176" fill="var(--ink)">Opening</text><rect x="440" y="105" width="120" height="70" rx="4" fill="var(--accent)" fill-opacity=".13" stroke="var(--accent)" stroke-width="1.5"/><text x="454" y="131" font-weight="700" font-size="13" fill="var(--ink)">3 Mapping</text><text x="454" y="153" fill="var(--ink)">Account to line</text><rect x="600" y="30" width="170" height="190" rx="4" fill="var(--accent)" fill-opacity=".13" stroke="var(--accent)" stroke-width="1.5"/><text x="614" y="56" font-weight="700" font-size="13" fill="var(--ink)">4 Pack</text><text x="614" y="78" fill="var(--ink)">Profit or loss</text><text x="614" y="97" fill="var(--ink)">Financial position</text><text x="614" y="116" fill="var(--ink)">Cash flows</text><text x="614" y="135" fill="var(--ink)">Notes</text><text x="614" y="154" fill="var(--ink)">Ratios</text><text x="614" y="173" fill="var(--ink)">Charts</text><text x="614" y="192" fill="var(--ink)">Commentary</text><rect x="420" y="270" width="170" height="70" rx="4" fill="var(--seg3)" fill-opacity=".13" stroke="var(--seg3)" stroke-width="1.5"/><text x="434" y="296" font-weight="700" font-size="13" fill="var(--ink)">5 Forecast</text><text x="434" y="318" fill="var(--ink)">3 years, 3 scenarios</text><rect x="630" y="270" width="150" height="56" rx="4" fill="var(--seg3)" fill-opacity=".13" stroke="var(--seg3)" stroke-width="1.5"/><text x="644" y="296" font-weight="700" font-size="13" fill="var(--ink)">6 Budget</text><text x="644" y="318" fill="var(--ink)">Year 1 by month</text><rect x="630" y="342" width="150" height="56" rx="4" fill="var(--seg3)" fill-opacity=".13" stroke="var(--seg3)" stroke-width="1.5"/><text x="644" y="368" font-weight="700" font-size="13" fill="var(--ink)">7 Valuation</text><text x="644" y="390" fill="var(--ink)">DCF, sensitivity</text><rect x="420" y="370" width="170" height="56" rx="4" fill="var(--seg3)" fill-opacity=".13" stroke="var(--seg3)" stroke-width="1.5" stroke-dasharray="5 4"/><text x="434" y="396" font-weight="700" font-size="13" fill="var(--ink)">8 Loans and projects</text><text x="434" y="418" fill="var(--ink)">Own inputs</text><rect x="820" y="30" width="120" height="400" rx="4" fill="var(--seg2)" fill-opacity=".13" stroke="var(--seg2)" stroke-width="1.5"/><text x="834" y="56" font-weight="700" font-size="13" fill="var(--ink)">Downloads</text><text x="834" y="78" fill="var(--ink)">PDF and Excel</text><text x="834" y="97" fill="var(--ink)"></text><text x="834" y="116" fill="var(--ink)">4 free per device,</text><text x="834" y="135" fill="var(--ink)">then RWF 20,000</text><text x="834" y="154" fill="var(--ink)">a month by MoMo</text><text x="834" y="173" fill="var(--ink)"></text><text x="834" y="192" fill="var(--ink)">Backups are</text><text x="834" y="211" fill="var(--ink)">always free</text><path d="M180 80 H220 V120 H259" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfa)"/><text x="184" y="72" text-anchor="start" font-size="11" fill="var(--muted)">Build pack</text><path d="M180 210 H220 V155 H259" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfa)"/><text x="184" y="226" text-anchor="start" font-size="11" fill="var(--muted)">Upload</text><path d="M400 140 H439" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfa)"/><path d="M560 140 H599" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfa)"/><path d="M770 90 H819" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfa)"/><path d="M685 220 V245 H505 V269" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfa)"/><text x="595" y="239" text-anchor="middle" font-size="11" fill="var(--muted)">Actuals, annualised</text><path d="M590 298 H629" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfa)"/><path d="M590 322 H610 V370 H629" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfa)"/><path d="M780 298 H819" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfa)"/><path d="M780 370 H819" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfa)"/><path d="M590 412 H819" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfa)"/></svg></div>
+              <figcaption>Figures come either from the books or from an uploaded trial balance. Mapping places each account on a line of the pack. The forecast starts from the pack's actuals, scaled to a full year, and feeds the budget and valuation. Loans and projects use their own inputs. Every PDF or Excel download goes through the same free-download count.</figcaption></figure>
+            <p>There are two ways in. If you keep the client's books in Acivaz, start at <strong>Books</strong> and press <strong>Build management pack</strong> when you're ready. If the books are kept in other software, start at <strong>Data</strong> and upload a trial balance.</p>
+            <p>Both ways open on example data, a fictional bakery and a fictional maize processor, so you can see every screen working before you enter your own figures.</p>
+            <div class="m-tip"><strong>Your data stays on your device.</strong> Files you load and books you keep are processed in your browser and never uploaded. The flip side is that clearing your browser data erases them, so back up your books regularly (see <button class="linkish" type="button" data-jump="m-books-backup">Backup and restore</button>).</div>
+          </section>
+
+          <section id="m-books">
+            <h2>1 · Books</h2>
+            <p>The Books step is a complete set of double-entry books. You fill in plain forms and Acivaz posts the debits and credits for you. Its sections run along the second row of tabs: <strong>Overview, Sales, Purchases, Bank, All entries, VAT, Reports</strong> and <strong>Setup</strong>.</p>
+            <p>The <strong>Overview</strong> shows cash, what customers owe, what you owe suppliers, profit before tax this year, VAT payable and estimated income tax, all as at the date you choose. Below them are buttons for every type of transaction, a chart of income and expenses by month, and the latest entries.</p>
+            <p>The green check <strong>Debits equal credits</strong> confirms the books balance. A warning appears if opening balances are incomplete or if you haven't backed up recent changes.</p>
+            <div class="actions"><button class="btn small" type="button" data-goto="books">Open Books</button></div>
+
+            <h3 id="m-books-setup">Set up a company</h3>
+            <ol>
+              <li>Press <strong>New company</strong> at the top right of Books.</li>
+              <li>Enter the company name, the month its financial year starts, and the date the books start. Starting on the first day of a financial year, such as 1 January, lets the pack include a cash flow statement.</li>
+              <li>Tick <strong>Registered for VAT</strong> if the company is VAT registered, and press <strong>Save</strong>.</li>
+            </ol>
+            <p>You can keep books for as many companies as you like. Switch between them with the company list at the top right. Under <strong>Setup</strong> you can later change the name, financial year, start date, invoice numbering and currency.</p>
+            <p>Every company starts with a chart of accounts built for Rwandan businesses, including bank, MoMo and petty cash, VAT payable to RRA, PAYE and RSSB, and income tax payable. In <strong>Setup → Chart of accounts</strong> you can rename accounts, add your own, and choose which line of the management pack each one feeds. Accounts Acivaz relies on, such as Trade receivables and VAT payable, can be renamed but not deleted.</p>
+
+            <h3 id="m-books-opening">Opening balances</h3>
+            <p>Opening balances carry over the balance sheet from last year's accounts. They're dated the day before the books start.</p>
+            <ol>
+              <li>Go to <strong>Setup</strong> and press <strong>Enter opening balances</strong>.</li>
+              <li>Enter each balance from last year's balance sheet: debit for assets, credit for liabilities and equity. Leave out trade receivables and trade payables.</li>
+              <li>Press <strong>Unpaid customer invoice</strong> for each invoice customers still owed at the start, and <strong>Unpaid supplier bill</strong> for each bill you still owed. Entering them one by one lets you record payments against them later.</li>
+            </ol>
+            <p>Until everything is entered, the difference sits in an account called <strong>Opening balance equity</strong>. When it reaches zero, the check in Setup turns to <strong>Complete</strong>. If it doesn't, compare your entries with last year's balance sheet.</p>
+
+            <h3 id="m-books-sales">Sales and customers</h3>
+            <p>To record a sale on credit:</p>
+            <ol>
+              <li>In <strong>Sales</strong>, press <strong>New sales invoice</strong>.</li>
+              <li>Enter the customer. Names you've used before are suggested as you type. The invoice number fills in automatically and the due date is set 30 days after the invoice date; change either if you need to.</li>
+              <li>Add a line for each item: choose the income account, describe it, enter the amount and choose the VAT treatment. Tick <strong>Amounts include VAT</strong> if your prices already include VAT.</li>
+              <li>Check the net, VAT and total at the bottom, then press <strong>Save</strong>.</li>
+            </ol>
+            <p>When the customer pays, press <strong>Receive</strong> next to the invoice, or <strong>Payment received</strong>. Choose the account the money went into, such as the bank or MoMo, and enter the amount and a reference, such as the MoMo transaction ID. Part payments are fine. The invoice shows as <strong>Part paid</strong> until the rest arrives.</p>
+            <p>The list shows each invoice's status: <strong>Unpaid</strong>, <strong>Part paid</strong>, <strong>Overdue</strong> or <strong>Paid</strong>. Below it, <strong>What customers owe, by age</strong> groups the balances into not yet due, 1–30, 31–60, 61–90 and over 90 days, so you can see who to chase.</p>
+            <p>For a cash or MoMo sale with no invoice, use <strong>Money in</strong> instead.</p>
+
+            <h3 id="m-books-purchases">Bills and suppliers</h3>
+            <p><strong>Purchases</strong> works the same way for suppliers. Press <strong>New supplier bill</strong> to record a bill you'll pay later, then <strong>Pay</strong> when you pay it. Choose an expense account for costs, or an asset account such as Property, plant and equipment for equipment. <strong>What you owe suppliers, by age</strong> shows what's due and when.</p>
+
+            <h3 id="m-books-money">Money in, money out, transfers</h3>
+            <ul>
+              <li><strong>Money in</strong>: cash sales, other income, a loan received or capital put in. Choose the account the money went into and the account it relates to.</li>
+              <li><strong>Money out</strong>: rent, salaries, utilities, loan repayments, VAT or PAYE paid to RRA, and anything else paid without a bill. One payment can be split over several lines, for example a loan repayment split between the loan and the interest.</li>
+              <li><strong>Transfer</strong>: moving money between your own accounts, such as from MoMo to the bank.</li>
+            </ul>
+            <p>All three are in <strong>Bank</strong> and on the Overview. To change an entry, press <strong>Edit</strong>. To remove it, press <strong>Delete</strong> and then <strong>Confirm</strong>. An invoice or bill with payments against it can only be deleted after its payments.</p>
+
+            <h3 id="m-books-journal">Journal entries</h3>
+            <p>Use a journal for entries no other form covers: depreciation, accruals, prepayments, reclassifications and corrections. Press <strong>Journal entry</strong>, then enter each account with an amount in either Debit or Credit. Debits must equal credits before it saves.</p>
+            <p>For example, monthly depreciation of 420,000: debit <strong>6300 Depreciation</strong> 420,000 and credit <strong>1590 Accumulated depreciation</strong> 420,000.</p>
+            <p><strong>All entries</strong> lists every transaction, newest first, with a filter by type.</p>
+
+            <h3 id="m-books-vat">VAT</h3>
+            <p>For a VAT-registered company, every line on an invoice, bill, money in or money out has a VAT treatment:</p>
+            <table class="st narrow">
+              <thead><tr><th>Choice</th><th>Use it for</th></tr></thead>
+              <tbody>
+                <tr><td class="lbl"><strong>18%</strong></td><td class="lbl">Standard-rated sales and purchases. VAT is added, or taken out of the amount if it includes VAT.</td></tr>
+                <tr><td class="lbl"><strong>Zero-rated</strong></td><td class="lbl">Supplies taxed at 0%, such as exports.</td></tr>
+                <tr><td class="lbl"><strong>Exempt</strong></td><td class="lbl">Supplies the law exempts from VAT.</td></tr>
+                <tr><td class="lbl"><strong>No VAT</strong></td><td class="lbl">Items outside VAT, such as salaries, loan repayments, bank charges and taxes paid.</td></tr>
+              </tbody>
+            </table>
+            <p>Acivaz suggests a treatment from the account you choose; change it whenever it's wrong. Output VAT on sales and input VAT on purchases both go to <strong>VAT payable (RRA)</strong>.</p>
+            <p>The <strong>VAT</strong> section summarises any period. Press <strong>Last month</strong>, <strong>This month</strong>, <strong>Last quarter</strong> or <strong>This year</strong>, or set your own dates. It shows standard-rated, zero-rated and exempt sales, purchases at 18%, and the net VAT payable or refundable. Open <strong>Show the lines behind these figures</strong> to check every entry. When you pay RRA, press <strong>Record VAT payment</strong>.</p>
+            <div class="m-tip m-warn">Input VAT on costs that relate to exempt sales may not be claimable. Check before you file the return.</div>
+            <p>If the company isn't registered, untick <strong>Registered for VAT</strong> in Setup and no VAT is added anywhere.</p>
+
+            <h3 id="m-books-tax">Income tax at 28%</h3>
+            <p>Acivaz uses Rwanda's corporate income tax rate of 28%. The Overview shows the estimated tax on profit so far, and <strong>Reports → Corporate income tax at 28%</strong> compares it with the tax already provided in the books. Press <strong>Post provision</strong> to record the difference as a journal: debit Income tax expense, credit Income tax payable.</p>
+            <p>The estimate uses accounting profit. Taxable profit can differ, for example through expenses that aren't deductible or tax depreciation, so treat it as a provision rather than the tax return. The forecast also uses 28% unless you change it, and the tax note in the pack compares the effective rate with 28%.</p>
+
+            <h3 id="m-books-recon">Bank reconciliation</h3>
+            <ol>
+              <li>In <strong>Bank</strong>, choose the account by clicking its tile, for example Cash at bank or MoMo.</li>
+              <li>Under <strong>Reconcile with the bank statement</strong>, enter the statement date and the closing balance on the statement.</li>
+              <li>Tick each entry that appears on the statement, in the main list or under <strong>Entries not yet ticked</strong>.</li>
+              <li>When <strong>Difference to explain</strong> reaches zero, the account is reconciled. Press <strong>Save reconciliation</strong> to keep a record.</li>
+            </ol>
+            <p>If a difference remains, look for entries on the statement that aren't in the books, such as bank charges, and entries recorded with the wrong amount or date.</p>
+
+            <h3 id="m-books-reports">Reports</h3>
+            <p><strong>Reports</strong> shows, as at the date you choose: profit or loss for the year to date, the income tax estimate, the trial balance, and an account ledger with a running balance for any account. Income and expense accounts show the current year; profit from earlier years is included in retained earnings automatically, so you never need closing entries.</p>
+            <p><strong>Excel</strong> at the top of Books downloads the trial balance, day book, sales invoices, supplier bills, VAT summary and chart of accounts.</p>
+
+            <h3 id="m-books-backup">Backup and restore</h3>
+            <div class="m-tip m-warn"><strong>Back up after every session.</strong> Books are stored in this browser only. Clearing browser data, a new computer or a different browser starts empty.</div>
+            <ol>
+              <li>Press <strong>Back up</strong> at the top of Books. A file named like <strong>Acivaz books backup 2026-10-26.json</strong> is saved, containing every company.</li>
+              <li>Keep it somewhere safe, such as Google Drive or your email.</li>
+              <li>To restore, press <strong>Restore</strong>, choose the file, and confirm <strong>Replace with backup</strong>. This replaces all the books in that browser with the ones in the file.</li>
+            </ol>
+            <p>Backups never count towards your free downloads. Use the same steps to move your books to another computer.</p>
+
+            <h3 id="m-books-pack">From books to pack</h3>
+            <p>Press <strong>Build management pack</strong> at the top of Books or under the trial balance in Reports. Acivaz turns the books into a trial balance as at your chosen date and opens the Pack with every statement filled in. The comparative column is the same date a year earlier, if the books go back that far. The cash flow statement needs the books to start at the beginning of the financial year, with opening balances entered.</p>
+          </section>
+
+          <section id="m-data">
+            <h2>2 · Data</h2>
+            <p>Use Data when the books are kept in other software. Export a trial balance and load it here.</p>
+            <ol>
+              <li>Drop an Excel or CSV file on the box, press <strong>Choose file</strong>, or copy the rows in Excel and paste them, including the header row, then press <strong>Read pasted rows</strong>.</li>
+              <li>Under <strong>Match your columns</strong>, check the account code, account name, this period's balance and the comparative balance. Budget and opening balances are optional.</li>
+              <li>Press <strong>Use these columns</strong>.</li>
+              <li>Fill in <strong>Pack settings</strong>: company name, period labels, the number of months covered, and whether to show amounts in millions, thousands or units.</li>
+            </ol>
+            <p>The file needs one row per account. Debits are positive and credits negative, so sales appear as, for example, -612,400,000. If your export shows credits as positive, tick <strong>flip all signs</strong>.</p>
+            <p>Use year-to-date balances before closing entries, so that profit is added to equity and the balance sheet ties. For the cash flow statement, add an <strong>opening balances</strong> column, the trial balance at the start of the year. If your comparative column is last year's closing balance, tick the option to use it as the opening balance sheet instead.</p>
+            <p><strong>Download template</strong> gives you a file in the right layout.</p>
+          </section>
+
+          <section id="m-mapping">
+            <h2>3 · Mapping</h2>
+            <p>Mapping decides which line of the statements each account belongs to, for example Revenue, Cost of sales, Trade receivables or Long-term borrowings. Acivaz maps accounts automatically from their names and codes. Accounts it can't place are highlighted, and the Mapping tab shows how many need attention.</p>
+            <p>Choose a pack line for any account that needs one, or correct one that's wrong. Tick <strong>Show only accounts that need a line</strong> to focus on the gaps. Your choices are remembered for that company in this browser, so next month's upload maps itself. Accounts from the Books step are mapped already.</p>
+          </section>
+
+          <section id="m-pack">
+            <h2>4 · Pack</h2>
+            <p>The Pack is the management accounts. It opens with four checks: the trial balance balances, every account is mapped, the balance sheet ties, and the cash flow reconciles to cash. Fix any check that isn't green before sending the pack.</p>
+            <ul>
+              <li><strong>Compare with</strong> switches the comparison between the comparative period and the budget.</li>
+              <li><strong>Key figures</strong>: revenue, gross margin, net profit and cash.</li>
+              <li><strong>Charts</strong>: results against the comparison, what moved net profit, where each 100 of income went, and how cash moved.</li>
+              <li><strong>Commentary</strong>: press <strong>Rebuild basic draft</strong> for a draft written from the figures, then fill in the notes in square brackets with the real reasons. Edit it freely; it goes into the PDF exactly as written. When Acivaz is opened inside Claude, <strong>Draft with Claude</strong> writes a fuller version.</li>
+              <li><strong>Financial statements</strong>: profit or loss, financial position, and cash flows using the indirect method, with note references.</li>
+              <li><strong>Ratios</strong>: ten ratios with a guide value and a flag of Healthy, Watch or Act.</li>
+              <li><strong>Notes</strong>: account-level breakdowns of each line, the property and equipment movement, and the effective tax rate. Note 1, the basis of preparation, can be edited, and <strong>Reset to standard wording</strong> restores it.</li>
+            </ul>
+            <p><strong>Download PDF pack</strong> and <strong>Excel</strong> in the top bar download the whole pack.</p>
+          </section>
+
+          <section id="m-forecast">
+            <h2>5 · Forecast</h2>
+            <p>A three-year forecast of the profit or loss, balance sheet and cash flow, starting from this year's actuals scaled up to a full year. Every assumption starts from the company's own figures, such as growth, gross margin and debtor days. Change any of them and the forecast updates as you type. <strong>Reset from actuals</strong> puts them back.</p>
+            <p>Choose a <strong>Scenario</strong>: Base, Downside or Upside. The downside and upside cases change growth, gross margin and debtor days by the amounts you set at the bottom of the assumptions. The chart of closing cash shows all three cases together, and a warning appears if cash goes negative in any year, which signals a funding need.</p>
+          </section>
+
+          <section id="m-budget">
+            <h2>6 · Budget</h2>
+            <p>The budget spreads the first forecast year over twelve months, using the scenario chosen in the Forecast. Choose the month the financial year starts, then give each month a weight for how much of the year's revenue falls in it. Cost of sales, selling costs and other income follow revenue; staff, administration, depreciation, interest and tax are spread evenly. <strong>Spread evenly</strong> resets the weights.</p>
+          </section>
+
+          <section id="m-valuation">
+            <h2>7 · Valuation</h2>
+            <p>A discounted cash flow valuation built on the forecast. Set the <strong>discount rate (WACC)</strong>, meaning the return lenders and investors expect from a business of this size and risk, and the <strong>long-term growth</strong> after year 3.</p>
+            <p>The result shows enterprise value, equity value after deducting borrowings less cash, the share of value coming from after year 3, and value as a multiple of EBITDA. The sensitivity table shows equity value across a range of discount and growth rates. With a three-year forecast, most of the value usually comes from after year 3, so read the result as a range rather than a price.</p>
+          </section>
+
+          <section id="m-appraisal">
+            <h2>8 · Loans and projects</h2>
+            <p><strong>Loan repayment schedule</strong>: enter the amount, interest rate, term in months and any interest-only grace period, then choose equal monthly instalments or equal principal repayments. It shows the instalment, total interest, a year-by-year summary and the full monthly schedule.</p>
+            <p><strong>Investment appraisal</strong>: enter the initial investment, useful life, the net cash inflow in year 1, how fast it grows, the value at the end of its life, and the discount rate. It shows net present value, internal rate of return, payback, discounted payback and the profitability index. A positive NPV means the project earns more than the discount rate.</p>
+            <p>Steps 5 to 8 each have their own <strong>Excel</strong> and <strong>Download PDF</strong> buttons. Tick <strong>Also add the forecast, budget, valuation, and loans and projects</strong> to include them in the full pack downloads.</p>
+          </section>
+
+          <section id="m-downloads">
+            <h2>Downloads and unlocking</h2>
+            <p>Everything on screen is free. On the public website, each device gets 4 free downloads, counting every PDF or Excel file. The footer shows how many are left. Book backups never count.</p>
+            <p>On the 5th download, a payment screen opens. Unlimited downloads cost RWF 20,000 a month.</p>
+            <ol>
+              <li>Pay RWF 20,000 by MTN MoMo to <strong>0784 551 341</strong> (Anicet Safari).</li>
+              <li>Send your <strong>device ID</strong>, shown on the payment screen, and the <strong>MoMo transaction ID</strong> on WhatsApp to the same number. The <strong>Open WhatsApp</strong> button writes the message for you.</li>
+              <li>Paste the unlock code you receive into the payment screen and press <strong>Unlock</strong>.</li>
+            </ol>
+            <p>An unlock code works on that device only, until the date shown, so it can't be shared. When it ends, the payment screen opens again on your next download. Using another computer or browser needs its own code; send that device's ID when you pay.</p>
+          </section>
+
+          <section id="m-install">
+            <h2>Install and offline use</h2>
+            <p>Acivaz can be installed like an app. In Chrome or Edge on a computer, press <strong>Install app</strong> in the top bar. On a phone, open the browser menu and choose <strong>Add to Home Screen</strong>. It then opens from its own icon, in its own window, and works offline after the first visit.</p>
+          </section>
+
+          <section id="m-built">
+            <h2>How Acivaz is built</h2>
+            <p>Acivaz is a single web page that runs entirely in the browser. Nothing a customer enters is sent to a server, which keeps client data private and means there are no hosting costs beyond the free GitHub Pages site.</p>
+            <figure class="m-fig"><div class="fig-box"><svg viewBox="0 0 800 410" role="img" aria-label="Acivaz runs in the browser on the customer's device; GitHub Pages and cdnjs only deliver the page and libraries; books and files stay on the device; unlock codes are signed by your private generator and checked in the app" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-size="12"><defs><marker id="mfb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker></defs><rect x="230" y="20" width="550" height="270" rx="6" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="6 5"/><text x="246" y="42" font-weight="600" font-size="12" fill="var(--accent)">Customer's computer or phone</text><rect x="290" y="58" width="220" height="210" rx="4" fill="var(--accent)" fill-opacity=".13" stroke="var(--accent)" stroke-width="1.5"/><text x="304" y="84" font-weight="700" font-size="13" fill="var(--ink)">Acivaz app</text><text x="304" y="102" font-size="11.5" fill="var(--muted)">One web page</text><text x="304" y="124" fill="var(--ink)">Books engine</text><text x="304" y="143" fill="var(--ink)">Pack and notes builder</text><text x="304" y="162" fill="var(--ink)">Forecast, budget,</text><text x="304" y="181" fill="var(--ink)">valuation, loans</text><text x="304" y="200" fill="var(--ink)">PDF and Excel export</text><text x="304" y="219" fill="var(--ink)">Unlock check</text><rect x="600" y="58" width="160" height="62" rx="4" fill="var(--seg1)" fill-opacity=".13" stroke="var(--seg1)" stroke-width="1.5"/><text x="614" y="84" font-weight="700" font-size="13" fill="var(--ink)">Browser storage</text><text x="614" y="106" fill="var(--ink)">Books, mappings, code</text><rect x="600" y="136" width="160" height="62" rx="4" fill="var(--seg1)" fill-opacity=".13" stroke="var(--seg1)" stroke-width="1.5"/><text x="614" y="162" font-weight="700" font-size="13" fill="var(--ink)">Your files</text><text x="614" y="184" fill="var(--ink)">Excel or CSV</text><rect x="600" y="214" width="160" height="54" rx="4" fill="var(--seg1)" fill-opacity=".13" stroke="var(--seg1)" stroke-width="1.5"/><text x="614" y="240" font-weight="700" font-size="13" fill="var(--ink)">Backup file</text><text x="614" y="262" fill="var(--ink)">.json, kept by you</text><rect x="20" y="58" width="160" height="62" rx="4" fill="var(--seg5)" fill-opacity=".13" stroke="var(--seg5)" stroke-width="1.5"/><text x="34" y="84" font-weight="700" font-size="13" fill="var(--ink)">GitHub Pages</text><text x="34" y="106" fill="var(--ink)">anicet-safari.github.io</text><rect x="20" y="158" width="160" height="62" rx="4" fill="var(--seg5)" fill-opacity=".13" stroke="var(--seg5)" stroke-width="1.5"/><text x="34" y="184" font-weight="700" font-size="13" fill="var(--ink)">cdnjs</text><text x="34" y="206" fill="var(--ink)">PDF, Excel libraries</text><path d="M510 90 H599" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfb)" marker-start="url(#mfb)"/><text x="555" y="82" text-anchor="middle" font-size="11" fill="var(--muted)">saves, reads</text><path d="M600 167 H511" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfb)"/><text x="555" y="159" text-anchor="middle" font-size="11" fill="var(--muted)">read here</text><path d="M510 241 H599" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfb)" marker-start="url(#mfb)"/><text x="555" y="233" text-anchor="middle" font-size="11" fill="var(--muted)">backup, restore</text><path d="M180 89 H289" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfb)"/><text x="205" y="81" text-anchor="middle" font-size="11" fill="var(--muted)">the page</text><path d="M180 189 H289" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfb)"/><text x="205" y="181" text-anchor="middle" font-size="11" fill="var(--muted)">libraries</text><text x="20" y="322" font-weight="600" font-size="12" fill="var(--muted)">Unlocking downloads</text><rect x="20" y="336" width="150" height="60" rx="4" fill="var(--seg2)" fill-opacity=".13" stroke="var(--seg2)" stroke-width="1.5"/><text x="34" y="362" font-weight="700" font-size="13" fill="var(--ink)">Customer</text><text x="34" y="384" fill="var(--ink)">pays by MTN MoMo</text><rect x="240" y="336" width="160" height="60" rx="4" fill="var(--seg2)" fill-opacity=".13" stroke="var(--seg2)" stroke-width="1.5"/><text x="254" y="362" font-weight="700" font-size="13" fill="var(--ink)">You</text><text x="254" y="384" fill="var(--ink)">check the MoMo SMS</text><rect x="470" y="336" width="210" height="60" rx="4" fill="var(--seg2)" fill-opacity=".13" stroke="var(--seg2)" stroke-width="1.5"/><text x="484" y="362" font-weight="700" font-size="13" fill="var(--ink)">Unlock-code generator</text><text x="484" y="384" fill="var(--ink)">private key, your device</text><path d="M170 366 H239" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfb)"/><text x="205" y="358" text-anchor="middle" font-size="11" fill="var(--muted)">WhatsApp</text><path d="M400 366 H469" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfb)"/><text x="435" y="358" text-anchor="middle" font-size="11" fill="var(--muted)">create code</text><path d="M490 336 V269" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfb)"/><text x="500" y="305" text-anchor="start" font-size="11" fill="var(--muted)">code sent by WhatsApp</text><text x="500" y="321" text-anchor="start" font-size="11" fill="var(--muted)">checked with public key</text></svg></div>
+              <figcaption>GitHub Pages delivers the page once, and cdnjs supplies the PDF and Excel libraries. After the first visit the app works offline. Books, mappings and the unlock code are saved in the browser's own storage, and backups are files the customer keeps. Unlock codes are signed by your private generator and checked in the app with the matching public key, so a code can't be faked or moved to another device.</figcaption></figure>
+            <p>Because everything lives in the browser, two limits follow: clearing browser data erases the books unless they're backed up, and the free-download count resets if someone clears it. Proper user accounts would need a server, which belongs in a later paid version.</p>
+          </section>
+
+          <section id="m-faq">
+            <h2>Problems and questions</h2>
+            <h3>The trial balance doesn't balance</h3>
+            <p>Check that the file includes every account, including retained earnings, and that there are no subtotal rows. If the signs are reversed, tick <strong>flip all signs</strong> in Data. A pack built from Books always balances.</p>
+            <h3>The balance sheet doesn't tie</h3>
+            <p>Usually an account is mapped to an income or expense line when it belongs on the balance sheet, or the reverse. Check Mapping, and make sure the balances are year to date and before closing entries.</p>
+            <h3>There is no cash flow statement</h3>
+            <p>It needs an opening balance sheet. In Data, add an opening balances column. In Books, start the books at the beginning of the financial year and enter opening balances.</p>
+            <h3>My books have disappeared</h3>
+            <p>Books live in the browser where you entered them. Check you're using the same browser and computer. If browser data was cleared, press <strong>Restore</strong> and choose your latest backup.</p>
+            <h3>My unlock code doesn't work</h3>
+            <p>Make sure you copied the whole code, and that the device ID you sent matches the one on the payment screen. Codes only work on the device they were made for. If it has expired, ask for a new one.</p>
+            <h3>Can I change an entry after saving it?</h3>
+            <p>Yes. Press <strong>Edit</strong> next to it in Sales, Purchases, Bank or All entries. The statements and reports update straight away.</p>
+          </section>
+        </article>
+      </div>
+    </section>
+
     <!-- MAPPING -->
     <section class="view" id="view-map" hidden>
       <div class="panel">
@@ -676,7 +957,7 @@ img { max-width: 100%; }
     </ol>
   </div>
 </div>
-<footer class="gutter"><div class="wrap foot"><span>Acivaz</span><span id="plan-status"></span><span>Your files are processed on this device. Nothing is uploaded.</span><span>Management accounts are unaudited. Check every figure before you send a pack.</span></div></footer>
+<footer class="gutter"><div class="wrap foot"><span>Acivaz</span><span id="plan-status"></span><span>Your files are processed on this device. Nothing is uploaded.</span><button class="linkish" type="button" data-goto="manual">Read the manual</button><span>Management accounts are unaudited. Check every figure before you send a pack.</span></div></footer>
 <div class="toast" id="toast" hidden></div>
 
 <script>
@@ -3235,9 +3516,9 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !$("bk-mod
 function show(view) {
   const isModel = MODEL_VIEWS.includes(view);
   if (isModel) modelView = view;
-  for (const v of ["pack", "data", "map", "books"]) $("view-" + v).hidden = v !== view;
+  for (const v of ["pack", "data", "map", "books", "manual"]) $("view-" + v).hidden = v !== view;
   $("view-model").hidden = !isModel;
-  for (const v of ["books", "pack", "data", "map", ...MODEL_VIEWS]) $("tab-" + v).setAttribute("aria-selected", v === view);
+  for (const v of ["books", "pack", "data", "map", "manual", ...MODEL_VIEWS]) $("tab-" + v).setAttribute("aria-selected", v === view);
   if (view === "map") renderMapping();
   if (view === "pack") renderPack();
   if (isModel) renderModel();
