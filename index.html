@@ -6,7 +6,7 @@
 <meta name="description" content="Turn a trial balance into a board-ready management pack: three financial statements, notes, charts, ratios and commentary, exported to PDF or Excel.">
 <meta name="theme-color" content="#1F3A5F">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Acivaz">
+<meta name="apple-mobile-web-app-title" content="Pack Builder">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" href="favicon-32.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -261,6 +261,62 @@ table.st td.chk, table.st th.chk { text-align: center; width: 92px; }
 #bk-body { gap: 18px; }
 #bk-body .kpis { grid-template-columns: repeat(auto-fit, minmax(min(100%, 165px), 1fr)); }
 #bk-body .kpi .v { font-size: 25px; }
+/* dashboards */
+.hbars { display: grid; grid-template-columns: minmax(96px, 36%) minmax(60px, 1fr) auto; gap: 9px 12px; align-items: center; margin-top: 6px; font-size: 13px; }
+.hb { display: contents; }
+.hb.head > * { font-size: 11px; color: var(--muted); font-weight: 600; }
+.hb.head .v { color: var(--muted); }
+.hb .l { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hb .l i { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 6px; }
+.hb .t { position: relative; height: 14px; }
+.hb .t b { position: absolute; left: 0; top: 0; height: 14px; border-radius: 0 2px 2px 0; min-width: 2px; }
+.hb .t.pair { height: 19px; }
+.hb .t.pair b { height: 11px; }
+.hb .t.pair b.c { top: 13px; height: 6px; opacity: .45; }
+.hb .v { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.hb .v small { color: var(--muted); font-size: 12px; margin-left: 6px; }
+.hb .v small.up { color: var(--bad); }
+.hb .v small.down { color: var(--good); }
+.score { display: grid; }
+.sc-row { display: grid; grid-template-columns: minmax(140px, 1.15fr) minmax(110px, 2fr) 96px 70px; grid-template-areas: "l t v s"; gap: 6px 14px; align-items: center; padding: 9px 0; border-top: 1px solid var(--line-soft); font-size: 13px; }
+.sc-row:first-child { border-top: 0; }
+.sc-l { grid-area: l; min-width: 0; }
+.sc-l strong { display: block; font-weight: 600; }
+.sc-l span { display: block; color: var(--muted); font-size: 12px; }
+.sc-track { grid-area: t; position: relative; height: 16px; }
+.sc-track .z { position: absolute; top: 4px; height: 8px; }
+.sc-track .z::before { content: ""; position: absolute; inset: 0; opacity: .32; }
+.sc-track .z.good::before { background: var(--good); }
+.sc-track .z.warn::before { background: var(--warn); }
+.sc-track .z.bad::before { background: var(--bad); }
+.sc-track .z:first-child::before { border-radius: 3px 0 0 3px; }
+.sc-track .z:last-of-type::before { border-radius: 0 3px 3px 0; }
+.sc-track .mk { position: absolute; top: 50%; width: 14px; height: 14px; margin: -7px 0 0 -7px; border-radius: 50%; background: var(--accent); border: 2px solid var(--surface); box-sizing: border-box; box-shadow: 0 0 0 1px var(--accent); }
+.sc-track .mk.c { width: 11px; height: 11px; margin: -5.5px 0 0 -5.5px; background: var(--surface); border: 2px solid var(--muted); box-shadow: none; }
+.sc-v { grid-area: v; text-align: right; font-variant-numeric: tabular-nums; }
+.sc-v strong { display: block; font-weight: 600; }
+.sc-v span { color: var(--muted); font-size: 12px; white-space: nowrap; }
+.sc-s { grid-area: s; justify-self: end; }
+.legend i.dot { background: var(--accent); border-radius: 50%; }
+.legend i.ring { background: transparent; border: 2px solid var(--muted); border-radius: 50%; box-sizing: border-box; }
+.legend i.zone { opacity: .45; }
+.age-row { display: grid; grid-template-columns: minmax(110px, 30%) 1fr auto; gap: 12px; align-items: center; margin: 12px 0; font-size: 13px; }
+.age-row strong { font-variant-numeric: tabular-nums; font-weight: 600; }
+.stack { display: flex; gap: 2px; height: 22px; }
+.stack b { display: block; height: 100%; min-width: 3px; }
+.stack b:first-child { border-radius: 3px 0 0 3px; }
+.stack b:last-child { border-radius: 0 3px 3px 0; }
+.stack .none { align-self: center; color: var(--muted); font-size: 12px; }
+.kpi .spark { display: block; width: 100%; height: 30px; margin-top: 8px; overflow: visible; }
+.dash-note { font-size: 12px; color: var(--muted); margin-top: 8px; }
+@media (max-width: 640px) {
+  .sc-row { grid-template-columns: 1fr auto; grid-template-areas: "l v" "t s"; }
+  .hbars { grid-template-columns: minmax(50px, 1fr) auto; gap: 3px 10px; }
+  .hb .l { grid-column: 1 / -1; margin-top: 6px; }
+  .hb.head .l { margin-top: 0; }
+  .age-row { grid-template-columns: 1fr auto; }
+  .age-row .stack { grid-column: 1 / -1; order: 3; }
+}
 @media (max-width: 640px) { .pack-title > div[style] { align-items: flex-start !important; } }
 .manual { display: grid; grid-template-columns: 230px minmax(0, 1fr); gap: 32px; align-items: start; }
 .m-toc { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 118px); display: flex; flex-direction: column; gap: 1px; max-height: calc(100vh - 140px); overflow: auto; padding: 4px 0; border-left: 1px solid var(--line); }
@@ -368,6 +424,7 @@ img { max-width: 100%; }
           </div>
           <div class="pack-nav">
             <button type="button" data-jump="sec-charts">Charts</button>
+            <button type="button" data-jump="sec-dash">Scorecard</button>
             <button type="button" data-jump="sec-commentary">Commentary</button>
             <button type="button" data-jump="sec-statements">Statements</button>
             <button type="button" data-jump="sec-notes">Notes</button>
@@ -398,6 +455,19 @@ img { max-width: 100%; }
           <div class="panel-head"><h3>How cash moved</h3><span class="sub" id="cash-sub"></span></div>
           <div class="chart-box" id="chart-cash"></div>
           <div class="legend" id="cash-legend"><span><i style="background:var(--pos)"></i>Cash in</span><span><i style="background:var(--neg)"></i>Cash out</span><span><i style="background:var(--accent)"></i>Cash balance</span></div>
+        </div>
+      </div>
+
+      <div class="grid-2" id="sec-dash" style="scroll-margin-top:90px">
+        <div class="panel">
+          <div class="panel-head"><h3>Ratio scorecard</h3><span class="sub" id="score-sub"></span></div>
+          <div class="score" id="score"></div>
+          <div class="legend"><span><i class="zone" style="background:var(--good)"></i>Healthy</span><span><i class="zone" style="background:var(--warn)"></i>Watch</span><span><i class="zone" style="background:var(--bad)"></i>Act</span><span><i class="dot"></i>This period</span><span id="score-ring"><i class="ring"></i>Comparative</span></div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><h3>Cost lines per 100 of revenue</h3><span class="sub" id="costlines-sub"></span></div>
+          <div id="costlines"></div>
+          <p class="dash-note" id="costlines-note"></p>
         </div>
       </div>
 
@@ -531,6 +601,7 @@ img { max-width: 100%; }
       </div>
       <nav class="bk-nav" role="tablist" aria-label="Books sections" id="bk-nav">
         <button type="button" role="tab" data-act="bk-tab" data-bk="overview">Overview</button>
+        <button type="button" role="tab" data-act="bk-tab" data-bk="dashboard">Dashboard</button>
         <button type="button" role="tab" data-act="bk-tab" data-bk="sales">Sales</button>
         <button type="button" role="tab" data-act="bk-tab" data-bk="purchases">Purchases</button>
         <button type="button" role="tab" data-act="bk-tab" data-bk="bank">Bank</button>
@@ -675,6 +746,7 @@ img { max-width: 100%; }
         <nav class="m-toc" aria-label="Manual contents">
           <button type="button" data-jump="m-start">Getting started</button>
           <button type="button" data-jump="m-books">1 · Books</button>
+          <button type="button" class="lvl2" data-jump="m-books-dash">Dashboard</button>
           <button type="button" class="lvl2" data-jump="m-books-setup">Set up a company</button>
           <button type="button" class="lvl2" data-jump="m-books-opening">Opening balances</button>
           <button type="button" class="lvl2" data-jump="m-books-sales">Sales and customers</button>
@@ -714,8 +786,18 @@ img { max-width: 100%; }
 
           <section id="m-books">
             <h2>1 · Books</h2>
-            <p>The Books step is a complete set of double-entry books. You fill in plain forms and Acivaz posts the debits and credits for you. Its sections run along the second row of tabs: <strong>Overview, Sales, Purchases, Bank, All entries, VAT, Reports</strong> and <strong>Setup</strong>.</p>
+            <p>The Books step is a complete set of double-entry books. You fill in plain forms and Acivaz posts the debits and credits for you. Its sections run along the second row of tabs: <strong>Overview, Dashboard, Sales, Purchases, Bank, All entries, VAT, Reports</strong> and <strong>Setup</strong>.</p>
             <p>The <strong>Overview</strong> shows cash, what customers owe, what you owe suppliers, profit before tax this year, VAT payable and estimated income tax, all as at the date you choose. Below them are buttons for every type of transaction, a chart of income and expenses by month, and the latest entries.</p>
+
+            <h3 id="m-books-dash">Dashboard</h3>
+            <p>The <strong>Dashboard</strong> shows the year so far at a glance, as at the date you choose. Four tiles give revenue, gross margin, profit before tax and cash, each with a small line of the monthly trend. Below them:</p>
+            <ul>
+              <li><strong>Revenue and profit by month</strong> and <strong>Margins by month</strong>, so a weak month stands out.</li>
+              <li><strong>Cash at each month end</strong>, for the bank, MoMo and petty cash accounts and in total.</li>
+              <li><strong>Who owes what, by age</strong>: what customers owe you and what you owe suppliers, split into not yet due, 1–30, 31–60, 61–90 and over 90 days overdue.</li>
+              <li><strong>Top customers</strong> by sales, with what each still owes, and the <strong>biggest costs</strong> as a share of revenue.</li>
+            </ul>
+            <p>The <strong>VAT and tax tracker</strong> at the bottom shows output VAT, input VAT and VAT paid to RRA for each month, with the amount owed at each month end. Next to it, income tax at 28% of profit to date is drawn against the tax provided in the books. If they differ, press <strong>Post provision</strong> to bring the provision up to date.</p>
             <p>The green check <strong>Debits equal credits</strong> confirms the books balance. A warning appears if opening balances are incomplete or if you haven't backed up recent changes.</p>
             <div class="actions"><button class="btn small" type="button" data-goto="books">Open Books</button></div>
 
@@ -838,6 +920,8 @@ img { max-width: 100%; }
               <li><strong>Compare with</strong> switches the comparison between the comparative period and the budget.</li>
               <li><strong>Key figures</strong>: revenue, gross margin, net profit and cash.</li>
               <li><strong>Charts</strong>: results against the comparison, what moved net profit, where each 100 of income went, and how cash moved.</li>
+              <li><strong>Ratio scorecard</strong>: each ratio placed on a band of Healthy, Watch and Act zones, with this period as a dot and the comparative as a ring, so you can see which way it moved.</li>
+              <li><strong>Cost lines per 100 of revenue</strong>: every cost account as a share of revenue, this period against the comparative. A red change means that cost took a bigger share. Both also go into the PDF and Excel.</li>
               <li><strong>Commentary</strong>: press <strong>Rebuild basic draft</strong> for a draft written from the figures, then fill in the notes in square brackets with the real reasons. Edit it freely; it goes into the PDF exactly as written. When Acivaz is opened inside Claude, <strong>Draft with Claude</strong> writes a fuller version.</li>
               <li><strong>Financial statements</strong>: profit or loss, financial position, and cash flows using the indirect method, with note references.</li>
               <li><strong>Ratios</strong>: ten ratios with a guide value and a flag of Healthy, Watch or Act.</li>
@@ -957,7 +1041,7 @@ img { max-width: 100%; }
     </ol>
   </div>
 </div>
-<footer class="gutter"><div class="wrap foot"><span>Acivaz</span><span id="plan-status"></span><span>Your files are processed on this device. Nothing is uploaded.</span><button class="linkish" type="button" data-goto="manual">Read the manual</button><span>Management accounts are unaudited. Check every figure before you send a pack.</span></div></footer>
+<footer class="gutter"><div class="wrap foot"><span>Pack Builder</span><span id="plan-status"></span><span>Your files are processed on this device. Nothing is uploaded.</span><button class="linkish" type="button" data-goto="manual">Read the manual</button><span>Management accounts are unaudited. Check every figure before you send a pack.</span></div></footer>
 <div class="toast" id="toast" hidden></div>
 
 <script>
@@ -1282,16 +1366,16 @@ function cashFlow(cur, open) {
 }
 const days = () => (Number(S.months) || 12) * 365 / 12;
 const RATIOS = [
-  { k: "gm", l: "Gross margin", f: r => r.gp / r.rev, fmt: "pct", good: v => v >= 0.25, warn: v => v >= 0.15, bench: "Healthy at 25% or more" },
-  { k: "nm", l: "Net margin", f: r => r.np / r.rev, fmt: "pct", good: v => v >= 0.05, warn: v => v >= 0, bench: "5% or more" },
-  { k: "ox", l: "Operating costs to revenue", f: r => r.opex / r.rev, fmt: "pct", good: v => v <= 0.2, warn: v => v <= 0.3, bench: "20% or less" },
-  { k: "cr", l: "Current ratio", f: r => r.ca / r.cl, fmt: "x", bs: true, good: v => v >= 1.5, warn: v => v >= 1, bench: "1.5 or more" },
-  { k: "qr", l: "Quick ratio", f: r => (r.ca - r.inv) / r.cl, fmt: "x", bs: true, good: v => v >= 1, warn: v => v >= 0.7, bench: "1.0 or more" },
-  { k: "dd", l: "Debtor days", f: r => r.rec / r.rev * days(), fmt: "d", bs: true, good: v => v <= 45, warn: v => v <= 75, bench: "45 days or fewer" },
-  { k: "id", l: "Inventory days", f: r => r.inv / r.cos * days(), fmt: "d", bs: true, good: v => v <= 60, warn: v => v <= 90, bench: "60 days or fewer" },
-  { k: "cd", l: "Creditor days", f: r => r.pay / r.cos * days(), fmt: "d", bs: true, good: v => v >= 30 && v <= 60, warn: v => v >= 20 && v <= 90, bench: "30 to 60 days" },
-  { k: "de", l: "Debt to equity", f: r => r.ncl / r.teq, fmt: "x", bs: true, good: v => v <= 1, warn: v => v <= 2, bench: "1.0 or less" },
-  { k: "ic", l: "Interest cover", f: r => r.op / r.fin, fmt: "x", good: v => v >= 3, warn: v => v >= 1.5, bench: "3 times or more" }
+  { k: "gm", sc: [0, 0.6, 0.15, 0.25], l: "Gross margin", f: r => r.gp / r.rev, fmt: "pct", good: v => v >= 0.25, warn: v => v >= 0.15, bench: "Healthy at 25% or more" },
+  { k: "nm", sc: [-0.1, 0.25, 0, 0.05], l: "Net margin", f: r => r.np / r.rev, fmt: "pct", good: v => v >= 0.05, warn: v => v >= 0, bench: "5% or more" },
+  { k: "ox", sc: [0, 0.5, 0.2, 0.3], l: "Operating costs to revenue", f: r => r.opex / r.rev, fmt: "pct", good: v => v <= 0.2, warn: v => v <= 0.3, bench: "20% or less" },
+  { k: "cr", sc: [0, 3, 1, 1.5], l: "Current ratio", f: r => r.ca / r.cl, fmt: "x", bs: true, good: v => v >= 1.5, warn: v => v >= 1, bench: "1.5 or more" },
+  { k: "qr", sc: [0, 2.5, 0.7, 1], l: "Quick ratio", f: r => (r.ca - r.inv) / r.cl, fmt: "x", bs: true, good: v => v >= 1, warn: v => v >= 0.7, bench: "1.0 or more" },
+  { k: "dd", sc: [0, 120, 45, 75], l: "Debtor days", f: r => r.rec / r.rev * days(), fmt: "d", bs: true, good: v => v <= 45, warn: v => v <= 75, bench: "45 days or fewer" },
+  { k: "id", sc: [0, 150, 60, 90], l: "Inventory days", f: r => r.inv / r.cos * days(), fmt: "d", bs: true, good: v => v <= 60, warn: v => v <= 90, bench: "60 days or fewer" },
+  { k: "cd", sc: [0, 120, 20, 30, 60, 90], l: "Creditor days", f: r => r.pay / r.cos * days(), fmt: "d", bs: true, good: v => v >= 30 && v <= 60, warn: v => v >= 20 && v <= 90, bench: "30 to 60 days" },
+  { k: "de", sc: [0, 3, 1, 2], l: "Debt to equity", f: r => r.ncl / r.teq, fmt: "x", bs: true, good: v => v <= 1, warn: v => v <= 2, bench: "1.0 or less" },
+  { k: "ic", sc: [0, 10, 1.5, 3], l: "Interest cover", f: r => r.op / r.fin, fmt: "x", good: v => v >= 3, warn: v => v >= 1.5, bench: "3 times or more" }
 ];
 const RATIO = Object.fromEntries(RATIOS.map(d => [d.k, d]));
 function ratioVal(def, r) {
@@ -1681,6 +1765,117 @@ function renderCost(cur, cmp, bud) {
   });
   $("cost-key").innerHTML = key + `</tbody></table>`;
 }
+/* ratio scorecard and cost lines */
+function scoreZones(d) {
+  const [lo, hi, ...br] = d.sc, pts = [lo, ...br, hi], z = [];
+  for (let i = 0; i < pts.length - 1; i++) z.push({ a: (pts[i] - lo) / (hi - lo), b: (pts[i + 1] - lo) / (hi - lo), st: ratioStatus(d, (pts[i] + pts[i + 1]) / 2) });
+  return z;
+}
+const scPos = (d, v) => Math.max(0.015, Math.min(0.985, (v - d.sc[0]) / (d.sc[1] - d.sc[0])));
+function renderScorecard(cur, cmp) {
+  $("score-sub").textContent = cmp ? `${S.cur} against ${S.cmp}` : S.cur;
+  let h = "";
+  for (const d of RATIOS) {
+    const v = ratioVal(d, cur), c = cmp ? ratioVal(d, cmp) : null, st = ratioStatus(d, v);
+    const zones = scoreZones(d).map(z => `<span class="z ${z.st}" style="left:${(z.a * 100).toFixed(2)}%;width:${((z.b - z.a) * 100).toFixed(2)}%" title="${STATUS_TEXT[z.st]}"></span>`).join("");
+    const mk = (x, cls, who) => x === null ? "" : `<i class="mk${cls}" style="left:${(scPos(d, x) * 100).toFixed(2)}%" title="${esc(who)}: ${esc(ratioFmt(d, x))}"></i>`;
+    const label = `${d.l} ${ratioFmt(d, v)}${st ? ", " + STATUS_TEXT[st] : ""}${c !== null ? `; ${S.cmp} ${ratioFmt(d, c)}` : ""}`;
+    h += `<div class="sc-row"><div class="sc-l"><strong>${esc(d.l)}</strong><span>${esc(d.bench)}</span></div><div class="sc-track" role="img" aria-label="${esc(label)}">${zones}${mk(c, " c", S.cmp)}${mk(v, "", S.cur)}</div><div class="sc-v"><strong>${ratioFmt(d, v)}</strong>${cmp ? `<span>was ${ratioFmt(d, c)}</span>` : ""}</div><div class="sc-s">${st ? `<span class="chip ${st}">${STATUS_TEXT[st]}</span>` : `<span class="chip plain">n/a</span>`}</div></div>`;
+  }
+  $("score").innerHTML = h;
+  $("score-ring").hidden = !cmp;
+}
+const COST_LINE_CATS = ["cos", "staff", "selling", "admin", "dep", "fin"];
+const COST_SEG_OF = Object.fromEntries(COST_SEGS.map(([k], i) => [k, i]));
+function costLines(cur, cmp) {
+  const share = (v, r) => r && r.rev ? (v || 0) / r.rev : null;
+  let rows = A.filter(a => COST_LINE_CATS.includes(a.cat) && (Math.abs(a.cur || 0) >= 0.5 || (cmp && Math.abs(a.cmp || 0) >= 0.5)))
+    .map(a => ({ l: a.name, cat: a.cat, c: share(a.cur, cur), p: cmp ? share(a.cmp, cmp) : null }));
+  rows.sort((x, y) => (y.c || 0) - (x.c || 0));
+  if (rows.length > 14) {
+    const rest = rows.slice(13), sum = k => rest.some(r => r[k] !== null) ? rest.reduce((t, r) => t + (r[k] || 0), 0) : null;
+    rows = rows.slice(0, 13).concat([{ l: `Other cost lines (${rest.length})`, cat: null, c: sum("c"), p: sum("p") }]);
+  }
+  const tot = k => rows.some(r => r[k] !== null) ? rows.reduce((t, r) => t + (r[k] || 0), 0) : null;
+  return { rows, totC: tot("c"), totP: cmp ? tot("p") : null };
+}
+const segVar = cat => cat && COST_SEG_OF[cat] !== undefined ? `var(${COST_SEGS[COST_SEG_OF[cat]][2]})` : "var(--seg5)";
+function renderCostLines(cur, cmp) {
+  const { rows, totC, totP } = costLines(cur, cmp);
+  $("costlines-sub").textContent = cmp ? `${S.cur} against ${S.cmp}` : S.cur;
+  if (!rows.length || !cur.rev) { $("costlines").innerHTML = `<p class="help">No cost lines to show yet. Map expense accounts and revenue first.</p>`; $("costlines-note").textContent = ""; return; }
+  const max = Math.max(0.0001, ...rows.flatMap(r => [r.c, r.p]).filter(v => v !== null && isFinite(v)));
+  const w = v => v === null ? 0 : Math.max(0, v) / max * 100;
+  let h = `<div class="hb head"><span class="l">Account</span><span></span><span class="v">Per 100${cmp ? " · change" : ""}</span></div>`;
+  for (const r of rows) {
+    const col = segVar(r.cat), ch = r.c !== null && r.p !== null ? (r.c - r.p) * 100 : null;
+    const chTxt = ch === null ? "" : Math.abs(ch) < 0.05 ? `<small>0.0</small>` : `<small class="${ch > 0 ? "up" : "down"}">${ch > 0 ? "+" : "−"}${Math.abs(ch).toFixed(1)}</small>`;
+    const tip = `${r.l}: ${r.c === null ? "–" : (r.c * 100).toFixed(1)} per 100 of revenue${r.p !== null ? `, ${S.cmp} ${(r.p * 100).toFixed(1)}` : ""}`;
+    h += `<div class="hb"><span class="l" title="${esc(r.l)}"><i style="background:${col}"></i>${esc(r.l)}</span><span class="t pair" title="${esc(tip)}"><b style="width:${w(r.c).toFixed(2)}%;background:${col}"></b>${cmp ? `<b class="c" style="width:${w(r.p).toFixed(2)}%;background:${col}"></b>` : ""}</span><span class="v">${r.c === null ? "–" : (r.c * 100).toFixed(1)}${cmp ? chTxt : ""}</span></div>`;
+  }
+  $("costlines").innerHTML = `<div class="hbars">${h}</div>`;
+  $("costlines-note").textContent = `Costs before tax took ${(totC * 100).toFixed(1)} of every 100 of revenue${totP !== null ? `, against ${(totP * 100).toFixed(1)} in ${S.cmp}` : ""}. Solid bars are ${S.cur}${cmp ? `, faint bars ${S.cmp}. A red change means the line took a bigger share of revenue` : ""}.`;
+}
+const PDF_SEG = [[91, 130, 176], [192, 138, 43], [110, 133, 64], [140, 107, 160], [154, 165, 177], [166, 71, 59], [217, 188, 128], [63, 138, 92]];
+const PDF_ST = { good: [47, 122, 77], warn: [154, 106, 18], bad: [178, 58, 44] };
+const PDF_ZONE = { good: [208, 230, 214], warn: [240, 225, 196], bad: [240, 208, 202] };
+function pdfScorecard(doc, X, Y, Wd, cur, cmp) {
+  const plain = s => String(s ?? "").replace(/[−]/g, "-").replace(/[×]/g, "x").replace(/[–—]/g, "-");
+  const tx = X + 62, tw = Wd - 62 - 54, rh = 8.2;
+  doc.setFont("helvetica", "normal"); doc.setFontSize(6.4); doc.setTextColor(90, 90, 90);
+  let lx = X;
+  for (const [k, l] of [["good", "Healthy"], ["warn", "Watch"], ["bad", "Act"]]) { doc.setFillColor(...PDF_ZONE[k]); doc.rect(lx, Y - 2.2, 4, 2.4, "F"); doc.text(l, lx + 5, Y); lx += 7 + doc.getTextWidth(l); }
+  doc.setFillColor(...PC.navy); doc.circle(lx + 1.3, Y - 1, 1.3, "F"); doc.text(plain(S.cur), lx + 3.6, Y); lx += 7 + doc.getTextWidth(plain(S.cur));
+  if (cmp) { doc.setDrawColor(110, 120, 135); doc.setFillColor(255, 255, 255); doc.setLineWidth(0.35); doc.circle(lx + 1.1, Y - 1, 1.05, "FD"); doc.text(plain(S.cmp), lx + 3.4, Y); }
+  doc.setFont("helvetica", "bold"); doc.setTextColor(0, 0, 0);
+  doc.text(plain(S.cur), X + Wd - 36, Y + 6, { align: "right" }); if (cmp) doc.text(plain(S.cmp), X + Wd - 18, Y + 6, { align: "right" }); doc.text("Status", X + Wd - 15, Y + 6);
+  let yy = Y + 10;
+  for (const d of RATIOS) {
+    const v = ratioVal(d, cur), c = cmp ? ratioVal(d, cmp) : null, st = ratioStatus(d, v);
+    doc.setFont("helvetica", "bold"); doc.setFontSize(7.4); doc.setTextColor(0, 0, 0); doc.text(plain(d.l), X, yy + 1.2);
+    doc.setFont("helvetica", "normal"); doc.setFontSize(5.9); doc.setTextColor(100, 100, 100); doc.text(plain(d.bench), X, yy + 4.2);
+    for (const z of scoreZones(d)) { doc.setFillColor(...PDF_ZONE[z.st]); doc.rect(tx + z.a * tw, yy - 0.8, (z.b - z.a) * tw, 2.8, "F"); }
+    if (c !== null) { doc.setDrawColor(110, 120, 135); doc.setFillColor(255, 255, 255); doc.setLineWidth(0.35); doc.circle(tx + scPos(d, c) * tw, yy + 0.6, 1.05, "FD"); }
+    if (v !== null) { doc.setFillColor(...PC.navy); doc.circle(tx + scPos(d, v) * tw, yy + 0.6, 1.4, "F"); }
+    doc.setFontSize(7.4); doc.setTextColor(0, 0, 0); doc.setFont("helvetica", "bold"); doc.text(plain(ratioFmt(d, v)), X + Wd - 36, yy + 1.4, { align: "right" });
+    doc.setFont("helvetica", "normal"); doc.setTextColor(90, 90, 90); if (cmp) doc.text(plain(ratioFmt(d, c)), X + Wd - 18, yy + 1.4, { align: "right" });
+    doc.setFont("helvetica", "bold"); doc.setTextColor(...(st ? PDF_ST[st] : [90, 90, 90])); doc.text(st ? STATUS_TEXT[st] : "n/a", X + Wd - 15, yy + 1.4);
+    yy += rh;
+  }
+  doc.setTextColor(0, 0, 0); doc.setDrawColor(0, 0, 0);
+  return yy - Y;
+}
+function pdfCostLines(doc, X, Y, Wd, cur, cmp) {
+  const plain = s => String(s ?? "").replace(/[−]/g, "-").replace(/[–—]/g, "-");
+  const { rows, totC, totP } = costLines(cur, cmp);
+  if (!rows.length || !cur.rev) { doc.setFont("helvetica", "normal"); doc.setFontSize(8.5); doc.text("No cost lines to show.", X, Y); return 6; }
+  const bx = X + 62, bw = Wd - 62 - 58, max = Math.max(0.0001, ...rows.flatMap(r => [r.c, r.p]).filter(v => v !== null && isFinite(v)));
+  doc.setFont("helvetica", "bold"); doc.setFontSize(6.6); doc.setTextColor(0, 0, 0);
+  doc.text("Per 100 of revenue", X, Y); doc.text(plain(S.cur), X + Wd - 40, Y, { align: "right" });
+  if (cmp) { doc.text(plain(S.cmp), X + Wd - 20, Y, { align: "right" }); doc.text("Change", X + Wd, Y, { align: "right" }); }
+  let yy = Y + 5.5;
+  for (const r of rows) {
+    const fill = r.cat && COST_SEG_OF[r.cat] !== undefined ? PDF_SEG[COST_SEG_OF[r.cat]] : PDF_SEG[4];
+    doc.setFont("helvetica", "normal"); doc.setFontSize(7.2); doc.setTextColor(0, 0, 0);
+    doc.text(doc.splitTextToSize(plain(r.l), 58)[0], X, yy + 1.6);
+    doc.setFillColor(...fill); doc.rect(bx, yy - 0.6, Math.max(0.3, Math.max(0, r.c || 0) / max * bw), 2.6, "F");
+    if (cmp && r.p !== null) { doc.setFillColor(...fill.map(c => Math.round(c + (255 - c) * 0.55))); doc.rect(bx, yy + 2.2, Math.max(0.3, Math.max(0, r.p) / max * bw), 1.3, "F"); }
+    doc.setFont("helvetica", "bold"); doc.text(r.c === null ? "-" : (r.c * 100).toFixed(1), X + Wd - 40, yy + 1.6, { align: "right" });
+    if (cmp) {
+      doc.setFont("helvetica", "normal"); doc.setTextColor(90, 90, 90); doc.text(r.p === null ? "-" : (r.p * 100).toFixed(1), X + Wd - 20, yy + 1.6, { align: "right" });
+      if (r.c !== null && r.p !== null) { const ch = (r.c - r.p) * 100; doc.setTextColor(...(Math.abs(ch) < 0.05 ? [90, 90, 90] : ch > 0 ? PDF_ST.bad : PDF_ST.good)); doc.text((ch > 0.049 ? "+" : "") + ch.toFixed(1), X + Wd, yy + 1.6, { align: "right" }); }
+    }
+    yy += 6.2;
+  }
+  doc.setDrawColor(0, 0, 0); doc.setLineWidth(0.2); doc.line(X, yy - 2.6, X + Wd, yy - 2.6);
+  doc.setTextColor(0, 0, 0); doc.setFont("helvetica", "bold"); doc.setFontSize(7.2);
+  doc.text("All cost lines before tax", X, yy + 1.2); doc.text((totC * 100).toFixed(1), X + Wd - 40, yy + 1.2, { align: "right" });
+  if (cmp && totP !== null) { doc.text((totP * 100).toFixed(1), X + Wd - 20, yy + 1.2, { align: "right" }); const ch = (totC - totP) * 100; doc.setTextColor(...(Math.abs(ch) < 0.05 ? [90, 90, 90] : ch > 0 ? PDF_ST.bad : PDF_ST.good)); doc.text((ch > 0.049 ? "+" : "") + (Math.abs(ch) < 0.05 ? 0 : ch).toFixed(1), X + Wd, yy + 1.2, { align: "right" }); }
+  doc.setTextColor(90, 90, 90); doc.setFont("helvetica", "normal"); doc.setFontSize(6.2);
+  doc.text(plain(cmp ? `Dark bars ${S.cur}, light bars ${S.cmp}. A red change means the line took a bigger share of revenue.` : "Each cost line as a share of revenue."), X, yy + 6);
+  doc.setTextColor(0, 0, 0);
+  return yy + 8 - Y;
+}
 function renderRatios(cur, cmp) {
   $("ratio-sub").textContent = `${S.cur} against ${S.cmp}`;
   let h = `<thead><tr><th>Ratio</th><th class="n">${esc(S.cur)}</th><th class="n">${esc(S.cmp)}</th><th>Status</th></tr></thead><tbody>`;
@@ -1719,6 +1914,8 @@ function renderPack() {
   renderBS(cur, cmp, open, built.noteOf);
   renderCF(cf);
   renderRatios(cur, cmp);
+  renderScorecard(cur, cmp);
+  renderCostLines(cur, cmp);
   renderNotes(built, cmp);
   const ck = commKey();
   if (!$("commentary").value.trim() || renderPack.lastKey !== ck) $("commentary").value = store.get(ck) || basicDraft();
@@ -2021,7 +2218,7 @@ function groupedBarsSVG(cats, series, aria, fmt = amt, unitLbl) {
   });
   return svg + `</svg>`;
 }
-function linesSVG(cats, series, aria) {
+function linesSVG(cats, series, aria, fmt = amt) {
   const W = 760, H = 300, left = 24, right = 150, top = 24, bottom = 40;
   const vals = series.flatMap(s => s.vals);
   let hi = Math.max(0, ...vals), lo = Math.min(0, ...vals);
@@ -2037,9 +2234,9 @@ function linesSVG(cats, series, aria) {
   for (const s of series) {
     const d = s.vals.map((v, i) => `${i ? "L" : "M"}${x(i).toFixed(1)} ${y(v).toFixed(1)}`).join(" ");
     svg += `<path d="${d}" fill="none" stroke="${s.stroke}" stroke-width="${s.bold ? 3 : 1.6}" ${s.dash ? `stroke-dasharray="${s.dash}"` : ""}/>`;
-    s.vals.forEach((v, i) => { svg += `<circle cx="${x(i).toFixed(1)}" cy="${y(v).toFixed(1)}" r="${s.bold ? 4 : 3}" fill="${s.stroke}"><title>${esc(s.l)}, ${esc(cats[i])}: ${esc(amt(v))} ${esc(unitShort())}</title></circle>`; });
+    s.vals.forEach((v, i) => { svg += `<circle cx="${x(i).toFixed(1)}" cy="${y(v).toFixed(1)}" r="${s.bold ? 4 : 3}" fill="${s.stroke}"><title>${esc(s.l)}, ${esc(cats[i])}: ${esc(fmt(v))}</title></circle>`; });
   }
-  for (const e of ends) svg += `<text x="${x(cats.length - 1) + 10}" y="${(e.y + 4).toFixed(1)}" fill="${e.s.bold ? "var(--ink)" : "var(--muted)"}" font-weight="${e.s.bold ? 600 : 400}" style="font-variant-numeric:tabular-nums">${esc(e.s.l)}: ${esc(amt(e.v))}</text>`;
+  for (const e of ends) svg += `<text x="${x(cats.length - 1) + 10}" y="${(e.y + 4).toFixed(1)}" fill="${e.s.bold ? "var(--ink)" : "var(--muted)"}" font-weight="${e.s.bold ? 600 : 400}" style="font-variant-numeric:tabular-nums">${esc(e.s.l)}: ${esc(fmt(e.v))}</text>`;
   return svg + `</svg>`;
 }
 function signedBarsSVG(cats, vals, aria) {
@@ -2454,6 +2651,11 @@ async function exportPDF(only) {
   if (cf) pdfWaterfall(doc, M + cw + 8, y + 2, cw, ch, "How cash moved", { l: "Opening cash", v: cf.openCash }, [{ l: "Operating", v: cf.op }, { l: "Investing", v: cf.iv }, { l: "Financing", v: cf.fi }], { l: "Closing cash", v: cf.closeCalc });
   y += ch + 10;
   font("normal", 7.5); doc.setTextColor(90, 90, 90); doc.text(plain(`All charts in ${unitText()}.`), M, y); doc.setTextColor(0, 0, 0); y += 6;
+  heading("Ratio scorecard", true);
+  y += pdfScorecard(doc, M, y + 1, R - M, cur, cmp) + 6;
+  ensure(30 + costLines(cur, cmp).rows.length * 6.2);
+  heading("Cost lines per 100 of revenue");
+  y += pdfCostLines(doc, M, y + 1, R - M, cur, cmp) + 4;
   // Statements
   const noteOf = built.noteOf;
   heading("Statement of profit or loss", true);
@@ -2633,6 +2835,9 @@ async function exportXLSX(only) {
   add(cfRows, "Cash flows", [52, 16]);
   add(nRows, "Notes", [52, 16, 16]);
   add(rRows, "Ratios", [28, 14, 14, 22, 10]);
+  { const { rows, totC, totP } = costLines(cur, cmp), f = v => v === null || !isFinite(v) ? "" : Math.round(v * 1000) / 10, chg = (a, c) => a === null || c === null ? "" : Math.round((a - c) * 1000) / 10;
+    const clRows = [["Cost line, per 100 of revenue", "Pack line", S.cur].concat(cmp ? [S.cmp, "Change (points)"] : [])].concat(rows.map(r => [r.l, r.cat ? catLabel(r.cat) : "Several", f(r.c)].concat(cmp ? [f(r.p), chg(r.c, r.p)] : [])), [["All cost lines before tax", "", f(totC)].concat(cmp ? [f(totP), chg(totC, totP)] : [])]);
+    add(clRows, "Cost lines", [36, 26, 14, 14, 16]); }
   add(mRows, "Mapping", [14, 40, 16, 16, 16, 16, 28]);
   }
   if (only || S.pdfModel === true) {
@@ -2987,8 +3192,109 @@ function renderBooks() {
   else if (b.changedAt && b.changedAt > b.lastBackup) chips.push(`<span class="chip warn">Changes since your backup on ${niceISO(b.lastBackup.slice(0, 10))} <button class="linkish" type="button" data-act="backup">Back up now</button></span>`);
   else chips.push(`<span class="chip good">Backed up ${niceISO(b.lastBackup.slice(0, 10))}</span>`);
   $("bk-checks").innerHTML = chips.join("");
-  const views = { overview: bkOverview, sales: x => bkDocs(x, "invoice"), purchases: x => bkDocs(x, "bill"), bank: bkBankView, journal: bkJournal, vat: bkVatView, reports: bkReports, setup: bkSetup };
+  const views = { overview: bkOverview, dashboard: bkDashboard, sales: x => bkDocs(x, "invoice"), purchases: x => bkDocs(x, "bill"), bank: bkBankView, journal: bkJournal, vat: bkVatView, reports: bkReports, setup: bkSetup };
   $("bk-body").innerHTML = (views[bkView] || bkOverview)(b);
+}
+/* Books dashboard and VAT and tax tracker */
+function bkMonthList(fs, d) {
+  const out = []; let y = +fs.slice(0, 4), mo = +fs.slice(5, 7); const ey = +d.slice(0, 4), em = +d.slice(5, 7);
+  while (y < ey || (y === ey && mo <= em)) { out.push(`${y}-${pad2(mo)}`); if (++mo > 12) { mo = 1; y++; } }
+  return out;
+}
+function bkMonthly(b, d) {
+  const fs = fyStartFor(b, d), months = bkMonthList(fs, d), cat = {}, vatC = roleCode(b, "vat"), citC = roleCode(b, "cit");
+  for (const a of b.accounts) cat[a.code] = a.cat;
+  const M = Object.fromEntries(months.map(k => [k, { rev: 0, inc: 0, cos: 0, exp: 0, tax: 0, vatPaid: 0 }]));
+  const sales = {}, costs = {};
+  for (const t of b.txns) {
+    if (t.date < fs || t.date > d) continue;
+    const m = M[t.date.slice(0, 7)]; if (!m) continue;
+    for (const p of postings(t, b)) {
+      const c = cat[p.code], ty = c ? typeOf(c) : null;
+      if (ty === "income") { m.inc -= p.v; if (c === "rev") { m.rev -= p.v; if (t.contact && (t.kind === "invoice" || t.kind === "moneyin")) sales[t.contact] = (sales[t.contact] || 0) - p.v; } }
+      else if (ty === "expense") { if (c === "tax") m.tax += p.v; else { m.exp += p.v; costs[p.code] = (costs[p.code] || 0) + p.v; if (c === "cos") m.cos += p.v; } }
+      else if (p.code === vatC && t.kind === "moneyout" && p.v > 0) m.vatPaid += p.v;
+    }
+  }
+  const cashAccts = bankAccts(b), ends = months.map(k => { const e = monthEnd(+k.slice(0, 4), +k.slice(5, 7)); return e > d ? d : e; });
+  const cashBy = cashAccts.map(() => []), vatOwed = [], vatOut = [], vatIn = [], citOwed = [];
+  ends.forEach((e, i) => {
+    const bal = tbAt(b, e);
+    cashAccts.forEach((a, j) => cashBy[j].push(bal[a.code] || 0));
+    vatOwed.push(-(bal[vatC] || 0)); citOwed.push(-(bal[citC] || 0));
+    const v = vatSummary(b, months[i] + "-01", e); vatOut.push(v.oV); vatIn.push(v.iV);
+  });
+  const rows = months.map(k => M[k]);
+  return { fs, months, ends, rows, cashAccts, cashBy, cashTot: ends.map((_, i) => cashBy.reduce((t, s) => t + s[i], 0)), vatOwed, vatOut, vatIn, citOwed, sales, costs };
+}
+function sparkSVG(vals, color = "var(--accent)") {
+  const v = vals.map(x => (x === null || !isFinite(x)) ? null : x), ok = v.filter(x => x !== null);
+  if (ok.length < 2) return "";
+  const W = 120, H = 30, lo = Math.min(0, ...ok), hi = Math.max(...ok), rng = hi - lo || 1;
+  const x = i => (i / (v.length - 1)) * W, y = val => H - 3 - (val - lo) / rng * (H - 6);
+  let d = "", pen = false;
+  v.forEach((val, i) => { if (val === null) { pen = false; return; } d += `${pen ? "L" : "M"}${x(i).toFixed(1)} ${y(val).toFixed(1)}`; pen = true; });
+  const li = v.length - 1 - [...v].reverse().findIndex(x => x !== null);
+  const zero = lo < 0 ? `<line x1="0" x2="${W}" y1="${y(0).toFixed(1)}" y2="${y(0).toFixed(1)}" stroke="var(--line)" vector-effect="non-scaling-stroke"/>` : "";
+  return `<svg class="spark" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true">${zero}<path d="${d}" fill="none" stroke="${color}" stroke-width="2" vector-effect="non-scaling-stroke" stroke-linejoin="round"/><circle cx="${x(li).toFixed(1)}" cy="${y(v[li]).toFixed(1)}" r="2.6" fill="${color}"/></svg>`;
+}
+const dashTile = (l, v, s, d, spark) => `<div class="kpi"><span class="eyebrow">${esc(l)}</span><span class="v">${v}<small>${esc(s || "")}</small></span>${d ? `<span class="d">${d}</span>` : ""}${spark || ""}</div>`;
+const AGE_FILL = ["var(--seg1)", "var(--seg7)", "var(--seg2)", "var(--neg)", "var(--seg6)"];
+function ageSums(items) { const s = [0, 0, 0, 0, 0]; for (const o of items) if (o.out >= 1) s[ageBand(o.over)] += o.out; return s; }
+function ageRow(label, sums) {
+  const tot = sums.reduce((t, v) => t + v, 0);
+  const bars = tot >= 1 ? sums.map((v, i) => v >= 1 ? `<b style="flex:${v};background:${AGE_FILL[i]}" title="${esc(AGE_BANDS[i])}: ${rwf(v)}"></b>` : "").join("") : `<span class="none">Nothing outstanding</span>`;
+  return `<div class="age-row"><span>${esc(label)}</span><div class="stack" role="img" aria-label="${esc(label)}: ${sums.map((v, i) => `${AGE_BANDS[i]} ${rwf(v)}`).join(", ")}">${bars}</div><strong>${rwf(tot)}</strong></div>`;
+}
+function hbarList(items, fmtV) {
+  const max = Math.max(1, ...items.map(x => x.v));
+  return `<div class="hbars">${items.map(x => `<div class="hb"><span class="l" title="${esc(x.l)}">${x.col ? `<i style="background:${x.col}"></i>` : ""}${esc(x.l)}</span><span class="t" title="${esc(x.l)}: ${rwf(x.v)}"><b style="width:${(Math.max(0, x.v) / max * 100).toFixed(2)}%;background:${x.col || "var(--seg1)"}"></b></span><span class="v">${fmtV(x)}</span></div>`).join("")}</div>`;
+}
+function bkDashboard(b) {
+  const d = bkAsAt, D = bkMonthly(b, d), cur = b.currency;
+  let h = asAtField("Figures as at");
+  if (!D.months.length || d < b.start) return h + `<div class="panel"><p class="help">Choose a date on or after the start of the books to see the dashboard.</p></div>`;
+  const cats = D.months.map(k => MONTHS[+k.slice(5, 7) - 1]), R = D.rows;
+  const pbt = R.map(r => r.inc - r.exp), gm = R.map(r => r.rev ? (r.rev - r.cos) / r.rev : null), nm = R.map((r, i) => r.rev ? pbt[i] / r.rev : null);
+  const sum = a => a.reduce((t, v) => t + (v || 0), 0), totRev = sum(R.map(r => r.rev)), totCos = sum(R.map(r => r.cos)), totPbt = sum(pbt);
+  const lastM = cats[cats.length - 1], last = i => i[i.length - 1];
+  const cashNow = sumWhere(b, tbAt(b, d), a => a.cat === "cash");
+  h += `<div class="kpis">` + [
+    dashTile("Revenue this year", rwf(totRev), cur, `<span class="flat">${lastM}: ${rwf(last(R).rev)}</span>`, sparkSVG(R.map(r => r.rev), "var(--seg1)")),
+    dashTile("Gross margin", pct(totRev ? (totRev - totCos) / totRev : null), "", `<span class="flat">${lastM}: ${pct(last(gm))}</span>`, sparkSVG(gm, "var(--seg3)")),
+    dashTile("Profit before tax", rwf(totPbt), cur, `<span class="${last(pbt) < 0 ? "down" : "flat"}">${lastM}: ${rwf(last(pbt))}</span>`, sparkSVG(pbt, "var(--accent)")),
+    dashTile("Cash and bank", rwf(cashNow), cur, `<span class="flat">At ${niceISO(d)}</span>`, sparkSVG(D.cashTot, "var(--seg2)"))
+  ].join("") + `</div>`;
+  h += `<div class="grid-2"><div class="panel"><div class="panel-head"><h3>Revenue and profit by month</h3><span class="sub">${esc(cur)}</span></div><div class="chart-box">${groupedBarsSVG(cats, [{ l: "Revenue", vals: R.map(r => r.rev), fill: "var(--seg1)" }, { l: "Profit before tax", vals: pbt, fill: "var(--seg3)" }], "Revenue and profit before tax by month", fmtM, cur)}</div><div class="legend"><span><i style="background:var(--seg1)"></i>Revenue</span><span><i style="background:var(--seg3)"></i>Profit before tax</span></div></div>`;
+  h += `<div class="panel"><div class="panel-head"><h3>Margins by month</h3><span class="sub">Share of revenue</span></div><div class="chart-box">${linesSVG(cats, [{ l: "Gross", vals: gm.map(v => v || 0), stroke: "var(--seg3)", bold: true }, { l: "Before tax", vals: nm.map(v => v || 0), stroke: "var(--accent)" }], "Gross margin and profit before tax as a share of revenue, by month", v => pct(v, 0))}</div></div></div>`;
+  const cashSeries = [{ l: "Total", vals: D.cashTot, stroke: "var(--accent)", bold: true }];
+  const cc = ["var(--seg1)", "var(--seg2)", "var(--seg5)", "var(--seg4)", "var(--seg3)"];
+  D.cashAccts.forEach((a, j) => { if (D.cashBy[j].some(v => Math.abs(v) >= 1)) cashSeries.push({ l: a.name.replace(/\s*\(.*?\)/g, ""), vals: D.cashBy[j], stroke: cc[j % cc.length] }); });
+  const ar = openItems(b, "invoice", d), ap = openItems(b, "bill", d), arS = ageSums(ar), apS = ageSums(ap);
+  h += `<div class="grid-2"><div class="panel"><div class="panel-head"><h3>Cash at each month end</h3><span class="sub">${esc(cur)}</span></div><div class="chart-box">${linesSVG(cats, cashSeries.length === 2 ? cashSeries.slice(0, 1) : cashSeries, "Cash and bank balances at each month end", fmtM)}</div></div>`;
+  h += `<div class="panel"><div class="panel-head"><h3>Who owes what, by age</h3><span class="sub">At ${niceISO(d)}, ${esc(cur)}</span></div>${ageRow("Customers owe you", arS)}${ageRow("You owe suppliers", apS)}<table class="seg-key"><thead><tr><th>Age</th><th>Customers</th><th>Suppliers</th></tr></thead><tbody>${AGE_BANDS.map((l, i) => `<tr><td><i style="background:${AGE_FILL[i]}"></i>${esc(l)}</td><td class="n">${rwf(arS[i])}</td><td class="n">${rwf(apS[i])}</td></tr>`).join("")}</tbody></table><div class="actions" style="margin-top:10px"><button class="btn small" type="button" data-act="bk-tab" data-bk="sales">See invoices</button><button class="btn small" type="button" data-act="bk-tab" data-bk="purchases">See bills</button></div></div></div>`;
+  const owes = {}; for (const o of ar) if (o.out >= 1) owes[o.t.contact] = (owes[o.t.contact] || 0) + o.out;
+  const topC = Object.entries(D.sales).filter(([, v]) => v >= 1).sort((x, y) => y[1] - x[1]).slice(0, 6).map(([l, v]) => ({ l, v, owes: owes[l] || 0 }));
+  const topX = Object.entries(D.costs).filter(([, v]) => v >= 1).sort((x, y) => y[1] - x[1]).slice(0, 7).map(([code, v]) => { const a = acctOf(b, code) || {}; return { l: a.name || code, v, col: segVar(a.cat) }; });
+  h += `<div class="grid-2"><div class="panel"><div class="panel-head"><h3>Top customers this year</h3><span class="sub">Sales before VAT, ${esc(cur)}</span></div>${topC.length ? hbarList(topC.map(x => ({ ...x, col: "var(--seg1)" })), x => `${rwf(x.v)}${x.owes ? `<small>owes ${rwf(x.owes)}</small>` : ""}`) : `<p class="help">No sales recorded this year yet.</p>`}<p class="dash-note">${esc(D.sales["Counter sales"] ? "Counter sales are cash sales without a named customer." : "Ranked by sales since " + niceISO(D.fs) + ".")}</p></div>`;
+  h += `<div class="panel"><div class="panel-head"><h3>Biggest costs this year</h3><span class="sub">Before VAT, ${esc(cur)}</span></div>${topX.length ? hbarList(topX, x => `${rwf(x.v)}${totRev ? `<small>${(x.v / totRev * 100).toFixed(1)}% of revenue</small>` : ""}`) : `<p class="help">No costs recorded this year yet.</p>`}<p class="dash-note">Colours follow the cost groups used in the management pack.</p></div></div>`;
+  // VAT and tax tracker
+  h += `<div class="section-title" id="bk-taxtrack" style="margin-top:8px"><h2>VAT and tax tracker</h2><span class="muted" style="font-size:13px">${niceISO(D.fs)} to ${niceISO(d)}</span></div>`;
+  h += `<div class="grid-2">`;
+  if (b.vatReg) {
+    const net = D.vatOut.map((v, i) => v - D.vatIn[i]), paid = R.map(r => r.vatPaid);
+    h += `<div class="panel"><div class="panel-head"><h3>VAT by month</h3><button class="linkish" type="button" data-act="bk-tab" data-bk="vat">Open VAT return</button></div><div class="chart-box">${groupedBarsSVG(cats, [{ l: "Output VAT", vals: D.vatOut, fill: "var(--seg1)" }, { l: "Input VAT", vals: D.vatIn, fill: "var(--seg3)" }, { l: "Paid to RRA", vals: paid, fill: "var(--seg2)" }], "Output VAT, input VAT and VAT paid to RRA by month", fmtM, cur)}</div><div class="legend"><span><i style="background:var(--seg1)"></i>Output VAT on sales</span><span><i style="background:var(--seg3)"></i>Input VAT on costs</span><span><i style="background:var(--seg2)"></i>Paid to RRA</span></div>
+    <div class="table-box" style="margin-top:10px"><table class="st narrow"><thead><tr><th>${esc(cur)}</th><th class="n">Output</th><th class="n">Input</th><th class="n">Paid to RRA</th><th class="n">Owed at end</th></tr></thead><tbody>${cats.map((c, i) => `<tr><td>${c}</td><td class="n">${rwf(D.vatOut[i])}</td><td class="n">${rwf(D.vatIn[i])}</td><td class="n">${rwf(paid[i])}</td><td class="n">${rwf(D.vatOwed[i])}</td></tr>`).join("")}<tr class="total"><td class="lbl">Year to date</td><td class="n">${rwf(sum(D.vatOut))}</td><td class="n">${rwf(sum(D.vatIn))}</td><td class="n">${rwf(sum(paid))}</td><td class="n">${rwf(last(D.vatOwed))}</td></tr></tbody></table></div>
+    <p class="dash-note">Each month's VAT is normally paid to RRA by the 15th of the next month, so the amount owed at the end of a month should equal that month's output VAT less input VAT, less any credit carried forward from an earlier month.</p></div>`;
+  } else h += `<div class="panel"><div class="panel-head"><h3>VAT by month</h3></div><p class="help">This company isn't registered for VAT, so there is nothing to track. Turn VAT on in Setup if it registers.</p></div>`;
+  let cum = 0, cumT = 0; const est = [], prov = [];
+  R.forEach((r, i) => { cum += pbt[i]; cumT += r.tax; est.push(Math.max(0, cum) * CIT_RATE); prov.push(cumT); });
+  const gap = Math.round(last(est) - last(prov));
+  h += `<div class="panel"><div class="panel-head"><h3>Income tax at 28%</h3><button class="linkish" type="button" data-act="bk-tab" data-bk="reports">Open reports</button></div><div class="chart-box">${linesSVG(cats, [{ l: "Provided", vals: prov, stroke: "var(--accent)", bold: true }, { l: "28% of profit", vals: est, stroke: "var(--seg2)", dash: "6 4" }], "Income tax at 28% of profit to date against tax provided in the books", fmtM)}</div>
+    <div class="table-box" style="margin-top:10px"><table class="st narrow"><tbody><tr><td class="lbl">Profit before tax, year to date</td><td class="n">${rwf(totPbt)}</td></tr><tr><td class="lbl">Income tax at 28%</td><td class="n">${rwf(last(est))}</td></tr><tr><td class="lbl">Provided in the books</td><td class="n">${rwf(last(prov))}</td></tr><tr class="total"><td class="lbl">${gap >= 0 ? "Still to provide" : "Over-provided"}</td><td class="n">${rwf(Math.abs(gap))}</td></tr><tr><td class="lbl muted">Income tax payable account</td><td class="n muted">${rwf(last(D.citOwed))}</td></tr></tbody></table></div>
+    <div class="actions" style="margin-top:10px">${Math.abs(gap) >= 1 ? `<button class="btn small primary" type="button" data-act="post-tax">${gap > 0 ? "Post provision" : "Reverse over-provision"} of ${rwf(Math.abs(gap))}</button>` : `<span class="chip good">Provision is up to date</span>`}</div>
+    <p class="dash-note">The dashed line is 28% of accounting profit to each month end. Taxable profit can differ, so treat this as a provision, not the tax return.</p></div></div>`;
+  return h;
 }
 function bkOverview(b) {
   const d = bkAsAt, bal = tbAt(b, d), fs = fyStartFor(b, d), pl = plFrom(b, bal);
@@ -3014,7 +3320,7 @@ function bkOverview(b) {
     for (const p of postings(t, b)) { if (ty[p.code] === "income") inc[k] = (inc[k] || 0) - p.v; else if (ty[p.code] === "expense" && !isTax[p.code]) exp[k] = (exp[k] || 0) + p.v; }
   }
   const cats = months.map(k => MONTHS[+k.slice(5, 7) - 1]);
-  h += `<div class="grid-2"><div class="panel"><div class="panel-head"><h3>Income and expenses by month</h3><span class="sub">${esc(b.currency)}</span></div><div class="chart-box">${groupedBarsSVG(cats, [{ l: "Income", vals: months.map(k => inc[k] || 0), fill: "var(--seg1)" }, { l: "Expenses", vals: months.map(k => exp[k] || 0), fill: "var(--seg2)" }], "Income and expenses by month", fmtM, b.currency)}</div><div class="legend"><span><i style="background:var(--seg1)"></i>Income</span><span><i style="background:var(--seg2)"></i>Expenses before tax</span></div></div>`;
+  h += `<div class="grid-2"><div class="panel"><div class="panel-head"><h3>Income and expenses by month</h3><button class="linkish" type="button" data-act="bk-tab" data-bk="dashboard">Open dashboard</button></div><div class="chart-box">${groupedBarsSVG(cats, [{ l: "Income", vals: months.map(k => inc[k] || 0), fill: "var(--seg1)" }, { l: "Expenses", vals: months.map(k => exp[k] || 0), fill: "var(--seg2)" }], "Income and expenses by month", fmtM, b.currency)}</div><div class="legend"><span><i style="background:var(--seg1)"></i>Income</span><span><i style="background:var(--seg2)"></i>Expenses before tax</span></div></div>`;
   const recent = b.txns.filter(t => t.date <= d).slice().sort((x, y) => byDate(y, x)).slice(0, 10);
   h += `<div class="panel"><div class="panel-head"><h3>Latest entries</h3><button class="linkish" type="button" data-act="bk-tab" data-bk="journal">See all entries</button></div><div class="table-box"><table class="st narrow"><thead><tr><th>Date</th><th>Entry</th><th class="n">Amount</th></tr></thead><tbody>${recent.map(t => `<tr><td>${niceISO(t.date)}</td><td class="lbl"><strong>${KIND_LABEL[t.kind]}</strong> <span class="muted">${esc(txnDesc(t, b))}</span></td><td class="n">${rwf(txnTotals(t, b).gross)}</td></tr>`).join("") || `<tr><td colspan="3" class="muted">No entries yet.</td></tr>`}</tbody></table></div></div></div>`;
   return h;
@@ -3610,7 +3916,7 @@ $("btn-install").onclick = async () => {
   try { await installEvt.userChoice; } catch (e) {}
   installEvt = null; $("btn-install").hidden = true;
 };
-window.addEventListener("appinstalled", () => { $("btn-install").hidden = true; toast("Installed. Open Acivaz from your apps."); });
+window.addEventListener("appinstalled", () => { $("btn-install").hidden = true; toast("Installed. Open Pack Builder from your apps."); });
 if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js").catch(() => {});
 })();
 </script>
