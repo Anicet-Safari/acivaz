@@ -233,6 +233,35 @@ table.map select.unset { border-color: var(--bad); }
 table.st td.hl { background: var(--accent-soft); color: var(--accent); font-weight: 700; }
 table.st td.dim, table.st th.dim { color: var(--muted); }
 details.sched summary { cursor: pointer; font-size: 13px; color: var(--accent); margin-top: 6px; }
+.bk-nav { display: flex; gap: 2px; overflow-x: auto; border-bottom: 1px solid var(--line); }
+.bk-nav button { flex: none; border: 0; border-bottom: 2px solid transparent; background: none; padding: 8px 12px 6px; cursor: pointer; color: var(--muted); font-weight: 500; white-space: nowrap; font-size: 14px; }
+.bk-nav button:hover { color: var(--ink); }
+.bk-nav button[aria-selected="true"] { color: var(--accent); border-bottom-color: var(--accent); font-weight: 600; }
+.bk-select, .cell-in { padding: 5px 8px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); max-width: 260px; min-width: 0; }
+.cell-in { width: 100%; max-width: none; }
+.bk-quick { display: flex; flex-wrap: wrap; gap: 8px; }
+.kpi-btn { text-align: left; cursor: pointer; font: inherit; color: inherit; }
+.kpi-btn.sel { outline: 2px solid var(--accent); outline-offset: -2px; }
+.modal.wide { max-width: 900px; }
+.fgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr)); gap: 10px 12px; }
+.fgrid label { display: block; font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 3px; }
+.fgrid input, .fgrid select { width: 100%; padding: 7px 9px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); min-width: 0; }
+.fgrid input[readonly] { background: var(--bg); color: var(--muted); }
+table.lines { width: 100%; border-collapse: collapse; min-width: 620px; }
+table.lines th { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); text-align: left; padding: 4px 6px; border-bottom: 1px solid var(--line); font-weight: 600; }
+table.lines td { padding: 4px 6px; border-bottom: 1px solid var(--line-soft); }
+table.lines input, table.lines select { width: 100%; padding: 6px 7px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); min-width: 0; }
+table.lines input.n, .fgrid input[inputmode="decimal"] { text-align: right; font-variant-numeric: tabular-nums; }
+.totals { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px 24px; font-variant-numeric: tabular-nums; color: var(--muted); }
+.totals strong { color: var(--ink); font-size: 16px; margin-left: 4px; }
+.row-actions { display: flex; gap: 6px; justify-content: flex-end; }
+.btn.tiny { padding: 2px 8px; font-size: 12px; }
+.btn.danger { color: var(--bad); border-color: currentColor; }
+table.st td.chk, table.st th.chk { text-align: center; width: 92px; }
+#bk-body { gap: 18px; }
+#bk-body .kpis { grid-template-columns: repeat(auto-fit, minmax(min(100%, 165px), 1fr)); }
+#bk-body .kpi .v { font-size: 25px; }
+@media (max-width: 640px) { .pack-title > div[style] { align-items: flex-start !important; } }
 .modal-back { position: fixed; inset: 0; z-index: 30; background: rgba(8, 18, 15, .55); display: flex; align-items: center; justify-content: center; padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
 .modal { position: relative; background: var(--surface); border: 1px solid var(--line); border-top: 4px solid var(--accent); border-radius: var(--radius); width: 100%; max-width: 540px; max-height: 100%; overflow: auto; padding: 22px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 20px 50px rgba(0,0,0,.25); }
 .modal h2 { font-size: 22px; padding-right: 28px; }
@@ -267,13 +296,14 @@ img { max-width: 100%; }
       <div class="brand-co" id="brand-co"></div>
     </div>
     <nav class="tabs" role="tablist" aria-label="Steps">
-      <button class="tab" role="tab" id="tab-data" aria-selected="false" data-view="data"><span class="step">1</span>Data</button>
-      <button class="tab" role="tab" id="tab-map" aria-selected="false" data-view="map"><span class="step">2</span>Mapping <span class="count" id="unmapped-count" hidden></span></button>
-      <button class="tab" role="tab" id="tab-pack" aria-selected="true" data-view="pack"><span class="step">3</span>Pack</button>
-      <button class="tab" role="tab" id="tab-forecast" aria-selected="false" data-view="forecast"><span class="step">4</span>Forecast</button>
-      <button class="tab" role="tab" id="tab-budget" aria-selected="false" data-view="budget"><span class="step">5</span>Budget</button>
-      <button class="tab" role="tab" id="tab-valuation" aria-selected="false" data-view="valuation"><span class="step">6</span>Valuation</button>
-      <button class="tab" role="tab" id="tab-appraisal" aria-selected="false" data-view="appraisal"><span class="step">7</span>Loans and projects</button>
+      <button class="tab" role="tab" id="tab-books" aria-selected="false" data-view="books"><span class="step">1</span>Books</button>
+      <button class="tab" role="tab" id="tab-data" aria-selected="false" data-view="data"><span class="step">2</span>Data</button>
+      <button class="tab" role="tab" id="tab-map" aria-selected="false" data-view="map"><span class="step">3</span>Mapping <span class="count" id="unmapped-count" hidden></span></button>
+      <button class="tab" role="tab" id="tab-pack" aria-selected="true" data-view="pack"><span class="step">4</span>Pack</button>
+      <button class="tab" role="tab" id="tab-forecast" aria-selected="false" data-view="forecast"><span class="step">5</span>Forecast</button>
+      <button class="tab" role="tab" id="tab-budget" aria-selected="false" data-view="budget"><span class="step">6</span>Budget</button>
+      <button class="tab" role="tab" id="tab-valuation" aria-selected="false" data-view="valuation"><span class="step">7</span>Valuation</button>
+      <button class="tab" role="tab" id="tab-appraisal" aria-selected="false" data-view="appraisal"><span class="step">8</span>Loans and projects</button>
     </nav>
     <div class="actions" id="export-actions">
       <button class="btn" id="btn-install" type="button" hidden>Install app</button>
@@ -386,6 +416,7 @@ img { max-width: 100%; }
       <div class="grid-2">
         <div class="panel">
           <div class="panel-head"><h2>Load a trial balance</h2></div>
+          <p class="help" style="margin-bottom:12px">Keeping your books in Acivaz? Open <button class="linkish" type="button" data-goto="books">Books</button> and choose Build management pack. There is nothing to upload.</p>
           <div class="drop" id="drop">
             <p><strong>Drop an Excel or CSV export here</strong></p>
             <p class="muted">From Tally, Odoo, QuickBooks, Sage or your own workbook.</p>
@@ -441,6 +472,46 @@ img { max-width: 100%; }
           </div>
         </div>
       </div>
+    </section>
+
+    <!-- BOOKS -->
+    <section class="view" id="view-books" hidden>
+      <div class="notice" id="bk-example-note" hidden>
+        <span><strong>Example books.</strong> Inzozi Bakery Ltd is a fictional bakery with January to October 2026 entered, so you can see how the bookkeeping works.</span>
+        <button class="linkish" type="button" data-act="new-company">Start books for your own company</button>
+      </div>
+      <div class="pack-title">
+        <div>
+          <div class="eyebrow">Step 1 · Books</div>
+          <h1 id="bk-title">Books</h1>
+          <div class="sub" id="bk-sub"></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">
+          <div class="actions">
+            <select id="bk-company" class="bk-select" aria-label="Company"></select>
+            <button class="btn small" type="button" data-act="new-company">New company</button>
+          </div>
+          <div class="actions">
+            <button class="btn small" type="button" data-act="backup">Back up</button>
+            <label class="btn small" for="bk-restore-file">Restore</label>
+            <input type="file" id="bk-restore-file" accept=".json,application/json" hidden>
+            <button class="btn small" type="button" data-act="xlsx">Excel</button>
+            <button class="btn small primary" type="button" data-act="to-pack">Build management pack</button>
+          </div>
+        </div>
+      </div>
+      <nav class="bk-nav" role="tablist" aria-label="Books sections" id="bk-nav">
+        <button type="button" role="tab" data-act="bk-tab" data-bk="overview">Overview</button>
+        <button type="button" role="tab" data-act="bk-tab" data-bk="sales">Sales</button>
+        <button type="button" role="tab" data-act="bk-tab" data-bk="purchases">Purchases</button>
+        <button type="button" role="tab" data-act="bk-tab" data-bk="bank">Bank</button>
+        <button type="button" role="tab" data-act="bk-tab" data-bk="journal">All entries</button>
+        <button type="button" role="tab" data-act="bk-tab" data-bk="vat">VAT</button>
+        <button type="button" role="tab" data-act="bk-tab" data-bk="reports">Reports</button>
+        <button type="button" role="tab" data-act="bk-tab" data-bk="setup">Setup</button>
+      </nav>
+      <div class="checks" id="bk-checks"></div>
+      <div class="view" id="bk-body"></div>
     </section>
 
     <!-- MODEL -->
@@ -580,6 +651,14 @@ img { max-width: 100%; }
 
   </div>
 </main>
+<div class="modal-back" id="bk-modal" hidden>
+  <div class="modal wide" role="dialog" aria-modal="true" aria-labelledby="bk-m-title">
+    <button class="modal-x" type="button" data-act="close-modal" aria-label="Close">×</button>
+    <h2 id="bk-m-title">Entry</h2>
+    <div id="bk-m-body"></div>
+    <div class="actions" style="align-items:center"><button class="btn primary" type="button" id="bk-m-save">Save</button><button class="btn" type="button" data-act="close-modal">Cancel</button><span class="status" id="bk-m-status" style="color:var(--bad)"></span></div>
+  </div>
+</div>
 <div class="modal-back" id="paywall" hidden>
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="pw-title">
     <button class="modal-x" type="button" id="pw-close" aria-label="Close">×</button>
@@ -837,7 +916,7 @@ const acctKey = a => (a.code || "") + "|" + a.name.toLowerCase();
 function autoMap(keepEdits) {
   const saved = store.get(mapKey()) || {};
   for (const a of A) {
-    if (keepEdits && a.src === "edited") continue;
+    if (a.src === "books" || (keepEdits && a.src === "edited")) continue;
     const s = saved[acctKey(a)];
     if (s && CATS.some(c => c.k === s)) { a.cat = s; a.src = "saved"; }
     else { a.cat = guessCat(a.code, a.name, a.cur); a.src = "auto"; }
@@ -1006,10 +1085,12 @@ function buildNotes(cur, cmp, open) {
         title: "Effective tax rate", rows: [
           { l: "Profit before tax", cur: cur.pbt, cmp: cmp ? cmp.pbt : null },
           { l: "Income tax expense", cur: cur.tax, cmp: cmp ? cmp.tax : null },
-          { l: "Effective tax rate", cur: cur.pbt ? cur.tax / cur.pbt : null, cmp: cmp && cmp.pbt ? cmp.tax / cmp.pbt : null, pct: true, sub: true }
+          { l: "Effective tax rate", cur: cur.pbt ? cur.tax / cur.pbt : null, cmp: cmp && cmp.pbt ? cmp.tax / cmp.pbt : null, pct: true, sub: true },
+          { l: "Corporate income tax rate", cur: 0.28, cmp: cmp ? 0.28 : null, pct: true },
+          { l: "Tax at 28% on profit before tax", cur: Math.max(0, cur.pbt) * 0.28, cmp: cmp ? Math.max(0, cmp.pbt) * 0.28 : null }
         ]
       });
-      note.text = "The effective rate is the tax expense in the trial balance divided by profit before tax. Compare it with the statutory rate and explain material differences.";
+      note.text = "The corporate income tax rate in Rwanda is 28%. The effective rate is the tax expense divided by profit before tax. Explain any material difference from 28%, such as expenses that are not deductible or tax depreciation.";
     }
     if (def.id === "nca") {
       if (open) {
@@ -1374,7 +1455,7 @@ function renderMapping() {
   let h = `<thead><tr><th>Code</th><th>Account</th><th class="n" style="text-align:right">${esc(S.cur)} (${esc(unitShort())})</th><th>Pack line</th><th>Source</th></tr></thead><tbody>`;
   A.forEach((a, i) => {
     if (only && a.cat) return;
-    const src = !a.cat ? `<span class="chip bad">Needs a line</span>` : a.src === "edited" ? `<span class="chip plain">Your choice</span>` : a.src === "saved" ? `<span class="chip plain">Remembered</span>` : `<span class="chip good">Automatic</span>`;
+    const src = !a.cat ? `<span class="chip bad">Needs a line</span>` : a.src === "books" ? `<span class="chip good">From your books</span>` : a.src === "edited" ? `<span class="chip plain">Your choice</span>` : a.src === "saved" ? `<span class="chip plain">Remembered</span>` : `<span class="chip good">Automatic</span>`;
     h += `<tr class="${a.cat ? "" : "unmapped"}"><td class="code">${esc(a.code)}</td><td>${esc(a.name)}</td><td class="n">${amt(a.cur)}</td><td><select data-i="${i}" id="map-${i}" class="${a.cat ? "" : "unset"}" aria-label="Pack line for ${esc(a.name)}">${optHtml(a.cat)}</select></td><td>${src}</td></tr>`;
   });
   $("map").innerHTML = h + "</tbody>";
@@ -1528,7 +1609,7 @@ function modelDefaults() {
     ocaPct: r1(cur.oca / rev * 100), oclPct: r1(cur.ocl / rev * 100),
     rate: avgDebt > 0 ? r05(b.fin / avgDebt * 100) : 15,
     repay: roundM(Math.min(repayAnn, cur.ncl)), newDebt: 0,
-    tax: r05(clamp(eff, 0, 40)), div: 0,
+    tax: 28, div: 0,
     scen: { down: { g: -10, gm: -2, dd: 15 }, up: { g: 5, gm: 1, dd: -5 } },
     val: { wacc: 18, tg: 5 },
     fyStart: 1, season: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
@@ -1639,7 +1720,7 @@ function projAppraisal(p) {
 }
 
 /* model charts */
-function groupedBarsSVG(cats, series, aria) {
+function groupedBarsSVG(cats, series, aria, fmt = amt, unitLbl) {
   const W = 760, H = 300, left = 16, right = 16, top = 26, bottom = 40;
   const vals = series.flatMap(s => s.vals);
   const hi = Math.max(0, ...vals) * 1.14 || 1, lo = Math.min(0, ...vals) * 1.14;
@@ -1652,8 +1733,8 @@ function groupedBarsSVG(cats, series, aria) {
     const gx = left + ci * gw + (gw - bw * series.length - 3 * (series.length - 1)) / 2;
     series.forEach((s, si) => {
       const v = s.vals[ci], x = gx + si * (bw + 3), y1 = y(Math.max(0, v)), y2 = y(Math.min(0, v));
-      svg += `<rect x="${x.toFixed(1)}" y="${y1.toFixed(1)}" width="${bw.toFixed(1)}" height="${Math.max(1, y2 - y1).toFixed(1)}" fill="${s.fill}"><title>${esc(c)}, ${esc(s.l)}: ${esc(amt(v))} ${esc(unitShort())}</title></rect>`;
-      if (showLabels) svg += `<text x="${(x + bw / 2).toFixed(1)}" y="${(v >= 0 ? y1 - 5 : y2 + 13).toFixed(1)}" text-anchor="middle" fill="${si === series.length - 1 ? "var(--ink)" : "var(--muted)"}" font-size="10.5" style="font-variant-numeric:tabular-nums">${esc(amt(v))}</text>`;
+      svg += `<rect x="${x.toFixed(1)}" y="${y1.toFixed(1)}" width="${bw.toFixed(1)}" height="${Math.max(1, y2 - y1).toFixed(1)}" fill="${s.fill}"><title>${esc(c)}, ${esc(s.l)}: ${esc(fmt(v))} ${esc(unitLbl || unitShort())}</title></rect>`;
+      if (showLabels) svg += `<text x="${(x + bw / 2).toFixed(1)}" y="${(v >= 0 ? y1 - 5 : y2 + 13).toFixed(1)}" text-anchor="middle" fill="${si === series.length - 1 ? "var(--ink)" : "var(--muted)"}" font-size="10.5" style="font-variant-numeric:tabular-nums">${esc(fmt(v))}</text>`;
     });
     svg += `<text x="${(left + ci * gw + gw / 2).toFixed(1)}" y="${H - bottom + 20}" text-anchor="middle" fill="var(--ink)" font-size="11">${esc(c)}</text>`;
   });
@@ -1758,7 +1839,7 @@ function renderModelResults() {
   const { m, runs, years, labels, val, budget, loan, proj } = modelSnapshot();
   const scen = SCEN_LABEL[modelScen];
   const titles = { forecast: "Three-year forecast", budget: `Budget for ${labels[1]}`, valuation: "Business valuation", appraisal: "Loans and projects" };
-  $("model-eyebrow").textContent = { forecast: "Step 4 · Forecast", budget: "Step 5 · Budget", valuation: "Step 6 · Valuation", appraisal: "Step 7 · Loans and projects" }[modelView];
+  $("model-eyebrow").textContent = { forecast: "Step 5 · Forecast", budget: "Step 6 · Budget", valuation: "Step 7 · Valuation", appraisal: "Step 8 · Loans and projects" }[modelView];
   $("model-title").textContent = titles[modelView];
   $("model-sub").textContent = modelView === "appraisal" ? `${S.company} · amounts in ${unitText()}` : `${S.company} · ${scen} case · built from ${S.cur}, annualised from ${S.months} month${Number(S.months) === 1 ? "" : "s"}`;
   document.querySelectorAll(".unit-label").forEach(e => e.textContent = "Amounts in " + unitText());
@@ -2309,7 +2390,7 @@ async function exportXLSX(only) {
 }
 async function saveFile(filename, data) {
   try {
-    const type = /\.pdf$/i.test(filename) ? "application/pdf" : /\.xlsx$/i.test(filename) ? "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" : "text/csv";
+    const type = /\.pdf$/i.test(filename) ? "application/pdf" : /\.xlsx$/i.test(filename) ? "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" : /\.json$/i.test(filename) ? "application/json" : "text/csv";
     const blob = data instanceof Blob && data.type ? data : new Blob([data], { type });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -2317,7 +2398,8 @@ async function saveFile(filename, data) {
     document.body.appendChild(a); a.click(); a.remove();
     setTimeout(() => URL.revokeObjectURL(url), 5000);
     toast("Downloaded " + filename);
-  } catch (e) { toast("That file couldn't be saved. Try again."); }
+    return true;
+  } catch (e) { toast("That file couldn't be saved. Try again."); return false; }
 }
 
 /* ---------- Loading user data ---------- */
@@ -2376,16 +2458,790 @@ function readSettingsForm() {
   return prevKey !== mapKey();
 }
 
+/* ---------- Bookkeeping ---------- */
+const BK_KEY = "acv:books";
+const CIT_RATE = 0.28, VAT_RATE = 0.18;
+const VAT_OPTS = [["S", "18%"], ["Z", "Zero-rated"], ["E", "Exempt"], ["N", "No VAT"]];
+const KIND_LABEL = { invoice: "Sales invoice", bill: "Supplier bill", receipt: "Payment received", billpay: "Bill paid", moneyin: "Money in", moneyout: "Money out", transfer: "Transfer", journal: "Journal", opening: "Opening balances" };
+const FORM_TITLE = { invoice: "sales invoice", bill: "supplier bill", receipt: "payment received", billpay: "bill payment", moneyin: "money in", moneyout: "money out", transfer: "transfer", journal: "journal entry", opening: "opening balances" };
+const PL_TYPES = new Set(["income", "expense"]);
+const typeOf = cat => ["rev", "oi"].includes(cat) ? "income" : ["cos", "staff", "selling", "admin", "dep", "fin", "tax"].includes(cat) ? "expense" : ["nca", "inv", "rec", "oca", "cash"].includes(cat) ? "asset" : cat === "eq" ? "equity" : "liability";
+const TYPE_GROUP = { income: "Income", expense: "Expenses", asset: "Assets", liability: "Liabilities", equity: "Equity" };
+const DEFAULT_COA = [
+  ["1000", "Cash at bank", "cash"], ["1010", "Mobile money (MoMo)", "cash"], ["1020", "Petty cash", "cash"],
+  ["1100", "Trade receivables", "rec", "ar"], ["1200", "Inventory", "inv"], ["1300", "Prepayments and deposits", "oca"],
+  ["1500", "Property, plant and equipment", "nca"], ["1590", "Accumulated depreciation", "nca"],
+  ["2000", "Trade payables", "pay", "ap"], ["2100", "VAT payable (RRA)", "ocl", "vat"], ["2150", "PAYE and RSSB payable", "ocl"], ["2200", "Income tax payable", "ocl", "cit"], ["2300", "Accrued expenses", "ocl"], ["2500", "Bank loans", "ncl"],
+  ["3000", "Share capital", "eq"], ["3100", "Retained earnings", "eq", "re"], ["3900", "Opening balance equity", "eq", "obe"],
+  ["4000", "Sales", "rev"], ["4100", "Service income", "rev"], ["4900", "Other income", "oi"],
+  ["5000", "Purchases and cost of sales", "cos"], ["5100", "Direct labour", "cos"],
+  ["6000", "Salaries and wages", "staff"], ["6010", "RSSB contributions", "staff"], ["6100", "Transport and delivery", "selling"], ["6110", "Marketing and promotion", "selling"],
+  ["6200", "Rent", "admin"], ["6210", "Electricity and water", "admin"], ["6220", "Professional fees", "admin"], ["6230", "Repairs and maintenance", "admin"], ["6240", "Communication and internet", "admin"], ["6290", "Other expenses", "admin"], ["6300", "Depreciation", "dep"],
+  ["7000", "Interest on loans", "fin"], ["7010", "Bank charges", "fin"], ["8000", "Income tax expense", "tax"]
+].map(([code, name, cat, role]) => ({ code, name, cat, role: role || null }));
+let BK = null, bkView = "overview", bkF = null, bkAsAt = null, bkBank = null, bkVat = null, bkLedger = null, bkRestore = null, bkReconDate = null, bkReconBal = "", bkJFilter = "", bkJAll = false;
+const pad2 = n => String(n).padStart(2, "0"), pad4 = n => String(n).padStart(4, "0");
+const isoOf = d => `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+const todayISO = () => isoOf(new Date());
+const parseISO = s => { const [y, m, d] = String(s).split("-").map(Number); return new Date(y, (m || 1) - 1, d || 1); };
+const addDays = (s, n) => { const d = parseISO(s); d.setDate(d.getDate() + n); return isoOf(d); };
+const monthEnd = (y, m) => isoOf(new Date(y, m, 0));
+const niceISO = s => s ? parseISO(s).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" }) : "";
+const rwf = v => { if (v === null || v === undefined || !isFinite(v)) return "–"; const r = Math.round(v), t = Math.abs(r).toLocaleString("en-US"); return r < 0 ? `(${t})` : t; };
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+const isISO = s => /^\d{4}-\d{2}-\d{2}$/.test(String(s || ""));
+const byDate = (x, y) => x.date < y.date ? -1 : x.date > y.date ? 1 : 0;
+
+function newBook(name, o = {}) {
+  return { id: uid(), name, fyStart: o.fyStart || 1, start: o.start || `${new Date().getFullYear()}-01-01`, currency: "RWF", vatReg: o.vatReg !== false, invPrefix: "INV-", nextInv: 1, accounts: DEFAULT_COA.map(a => ({ ...a })), txns: [], recon: {}, recons: [], lastBackup: null, changedAt: null, example: false };
+}
+function bkWrite() {
+  try { localStorage.setItem(BK_KEY, JSON.stringify(BK)); return true; }
+  catch (e) { toast("Couldn't save: this browser's storage is full or blocked. Back up your books now."); return false; }
+}
+function bkLoad() {
+  let st = store.get(BK_KEY);
+  if (!st || !Array.isArray(st.books) || !st.books.length) { const ex = seedExample(); st = { v: 1, cur: ex.id, books: [ex] }; }
+  if (!st.books.some(b => b.id === st.cur)) st.cur = st.books[0].id;
+  BK = st; bkWrite();
+}
+const book = () => BK.books.find(b => b.id === BK.cur);
+function bkSave() { const b = book(); if (b) b.changedAt = new Date().toISOString(); bkWrite(); }
+const acctOf = (b, code) => b.accounts.find(a => a.code === code);
+const roleCode = (b, r) => (b.accounts.find(a => a.role === r) || {}).code;
+const bankAccts = b => b.accounts.filter(a => a.cat === "cash");
+const acctName = (b, code) => { const a = acctOf(b, code); return a ? a.name : code; };
+
+/* VAT and postings */
+function lineSplit(l, incl, b) {
+  const a = Math.round(Number(l.amt) || 0), code = b.vatReg ? (l.vat || "N") : "N";
+  if (code !== "S") return { net: a, vat: 0, code };
+  if (incl) { const v = Math.round(a * 18 / 118); return { net: a - v, vat: v, code }; }
+  return { net: a, vat: Math.round(a * VAT_RATE), code };
+}
+function txnTotals(t, b) {
+  if (["invoice", "bill", "moneyin", "moneyout"].includes(t.kind)) {
+    let net = 0, vat = 0;
+    for (const l of t.lines || []) { const s = lineSplit(l, t.incl, b); net += s.net; vat += s.vat; }
+    return { net, vat, gross: net + vat };
+  }
+  if (["receipt", "billpay", "transfer"].includes(t.kind)) { const a = Number(t.amount) || 0; return { net: a, vat: 0, gross: a }; }
+  const dr = (t.lines || []).reduce((s, l) => s + (Number(l.dr) || 0), 0), cr = (t.lines || []).reduce((s, l) => s + (Number(l.cr) || 0), 0);
+  return { net: Math.max(dr, cr), vat: 0, gross: Math.max(dr, cr), dr, cr };
+}
+function postings(t, b) {
+  const P = [], add = (code, v) => { v = Math.round(v); if (code && v) P.push({ code, v }); }, k = t.kind;
+  if (["invoice", "bill", "moneyin", "moneyout"].includes(k)) {
+    const sign = (k === "invoice" || k === "moneyin") ? -1 : 1;
+    let gross = 0;
+    for (const l of t.lines || []) { const s = lineSplit(l, t.incl, b); gross += s.net + s.vat; add(l.acct, sign * s.net); add(roleCode(b, "vat"), sign * s.vat); }
+    add(k === "invoice" ? roleCode(b, "ar") : k === "bill" ? roleCode(b, "ap") : t.bank, -sign * gross);
+  } else if (k === "receipt") { add(t.bank, t.amount); add(roleCode(b, "ar"), -t.amount); }
+  else if (k === "billpay") { add(roleCode(b, "ap"), t.amount); add(t.bank, -t.amount); }
+  else if (k === "transfer") { add(t.to, t.amount); add(t.from, -t.amount); }
+  else {
+    let sum = 0;
+    for (const l of t.lines || []) { const v = (Number(l.dr) || 0) - (Number(l.cr) || 0); sum += v; add(l.acct, v); }
+    if (k === "opening") add(roleCode(b, "obe"), -sum);
+  }
+  return P;
+}
+function fyStartFor(b, d) { const y = +d.slice(0, 4), m = +d.slice(5, 7), fy = m >= b.fyStart ? y : y - 1; return `${fy}-${pad2(b.fyStart)}-01`; }
+/* Balances at date d. Income and expense before the year start (or closeBefore) are closed into retained earnings. */
+function tbAt(b, d, closeBefore) {
+  const fs = closeBefore || fyStartFor(b, d), re = roleCode(b, "re"), bal = {}, pl = {};
+  for (const a of b.accounts) { bal[a.code] = 0; pl[a.code] = PL_TYPES.has(typeOf(a.cat)); }
+  for (const t of b.txns) {
+    if (t.date > d) continue;
+    for (const p of postings(t, b)) { if (!(p.code in bal)) continue; if (pl[p.code] && t.date < fs) bal[re] += p.v; else bal[p.code] += p.v; }
+  }
+  return bal;
+}
+const sumWhere = (b, bal, pred) => b.accounts.filter(pred).reduce((s, a) => s + (bal[a.code] || 0), 0);
+function plFrom(b, bal) {
+  const c = k => sumWhere(b, bal, a => a.cat === k);
+  const r = { rev: -c("rev"), cos: c("cos"), staff: c("staff"), selling: c("selling"), admin: c("admin"), dep: c("dep"), oi: -c("oi"), fin: c("fin"), tax: c("tax") };
+  r.gp = r.rev - r.cos; r.op = r.gp - r.staff - r.selling - r.admin - r.dep + r.oi; r.pbt = r.op - r.fin; r.np = r.pbt - r.tax;
+  return r;
+}
+function openItems(b, kind, d, ageAt = d) {
+  const pk = kind === "invoice" ? "receipt" : "billpay", paid = {};
+  for (const t of b.txns) if (t.kind === pk && t.inv && t.date <= d) paid[t.inv] = (paid[t.inv] || 0) + (Number(t.amount) || 0);
+  return b.txns.filter(t => t.kind === kind && t.date <= d).map(t => {
+    const gross = txnTotals(t, b).gross, p = paid[t.id] || 0, out = gross - p, over = Math.round((parseISO(ageAt) - parseISO(t.due || t.date)) / 864e5);
+    return { t, gross, paid: p, out, over, status: out <= 0 ? "Paid" : over > 0 ? "Overdue" : p > 0 ? "Part paid" : "Unpaid" };
+  });
+}
+const paidAgainst = (b, id, exceptId) => b.txns.filter(x => x.inv === id && x.id !== exceptId).reduce((s, x) => s + (Number(x.amount) || 0), 0);
+const AGE_BANDS = ["Not yet due", "1–30 days", "31–60 days", "61–90 days", "Over 90 days"];
+const ageBand = over => over <= 0 ? 0 : over <= 30 ? 1 : over <= 60 ? 2 : over <= 90 ? 3 : 4;
+function bankLines(b, code) {
+  const rows = [];
+  for (const t of b.txns) { let v = 0; for (const p of postings(t, b)) if (p.code === code) v += p.v; if (v) rows.push({ t, v, key: t.id + "|" + code }); }
+  rows.sort((x, y) => byDate(x.t, y.t) || ((y.t.kind === "opening") - (x.t.kind === "opening")));
+  let run = 0; for (const r of rows) { run += r.v; r.bal = run; }
+  return rows;
+}
+function txnDesc(t, b) {
+  const first = (t.lines || []).map(l => l.desc).find(Boolean), bits = [];
+  if (t.kind === "receipt" || t.kind === "billpay") { const d = b.txns.find(x => x.id === t.inv); bits.push((t.kind === "receipt" ? "From " : "To ") + (t.contact || "")); if (d) bits.push(`for ${d.ref || "invoice"}`); if (t.ref) bits.push(t.ref); }
+  else if (t.kind === "transfer") bits.push(`${acctName(b, t.from)} to ${acctName(b, t.to)}`);
+  else { if (t.contact) bits.push(t.contact); if (t.memo || first) bits.push(t.memo || first); }
+  return bits.join(" · ");
+}
+function vatSummary(b, from, to) {
+  const r = { sS: 0, oV: 0, sZ: 0, sE: 0, pS: 0, iV: 0, pZ: 0, pE: 0, rows: [] };
+  for (const t of b.txns) {
+    if (t.date < from || t.date > to || t.opening || !["invoice", "bill", "moneyin", "moneyout"].includes(t.kind)) continue;
+    const sale = t.kind === "invoice" || t.kind === "moneyin";
+    for (const l of t.lines || []) {
+      const s = lineSplit(l, t.incl, b);
+      if (s.code === "N") continue;
+      if (sale) { if (s.code === "S") { r.sS += s.net; r.oV += s.vat; } else if (s.code === "Z") r.sZ += s.net; else r.sE += s.net; }
+      else { if (s.code === "S") { r.pS += s.net; r.iV += s.vat; } else if (s.code === "Z") r.pZ += s.net; else r.pE += s.net; }
+      r.rows.push({ t, l, s, sale });
+    }
+  }
+  r.net = r.oV - r.iV;
+  return r;
+}
+
+/* Example company: a fictional bakery, January to October 2026 */
+function seedExample() {
+  const b = newBook("Inzozi Bakery Ltd (example)", { start: "2026-01-01", fyStart: 1 });
+  b.example = true;
+  let sd = 20261026;
+  const rnd = () => { sd = (sd * 1664525 + 1013904223) % 4294967296; return sd / 4294967296; };
+  const amtB = (lo, hi, st = 10000) => Math.round((lo + rnd() * (hi - lo)) / st) * st;
+  const D = (m, d) => `2026-${pad2(m)}-${pad2(d)}`, END = "2026-10-20";
+  const add = t => { t.id = uid(); if (t.date <= END) b.txns.push(t); return t; };
+  add({ kind: "opening", date: "2025-12-31", ref: "", memo: "Balances brought forward from the 2025 accounts", lines: [
+    ["1000", 9500000, 0], ["1010", 850000, 0], ["1200", 4100000, 0], ["1500", 28000000, 0], ["1590", 0, 6300000],
+    ["2100", 0, 900000], ["2150", 0, 650000], ["2500", 0, 12000000], ["3000", 0, 10000000], ["3100", 0, 13200000]
+  ].map(([acct, dr, cr]) => ({ acct, desc: "", dr, cr })) });
+  const oi1 = add({ kind: "invoice", opening: true, date: "2025-12-12", due: "2026-01-11", ref: "INV-0098", contact: "Umurage Hotel", lines: [{ acct: "3900", desc: "Unpaid at start of books", amt: 1500000, vat: "N" }] });
+  const oi2 = add({ kind: "invoice", opening: true, date: "2025-12-20", due: "2026-01-19", ref: "INV-0099", contact: "Isoko Mini-market", lines: [{ acct: "3900", desc: "Unpaid at start of books", amt: 900000, vat: "N" }] });
+  const ob1 = add({ kind: "bill", opening: true, date: "2025-12-18", due: "2026-01-17", ref: "IFM-5598", contact: "Ikirezi Flour Mills", lines: [{ acct: "3900", desc: "Unpaid at start of books", amt: 1800000, vat: "N" }] });
+  add({ kind: "receipt", date: "2026-01-14", inv: oi1.id, contact: oi1.contact, bank: "1000", amount: 1500000, ref: "" });
+  add({ kind: "receipt", date: "2026-01-23", inv: oi2.id, contact: oi2.contact, bank: "1010", amount: 900000, ref: "" });
+  add({ kind: "billpay", date: "2026-01-16", inv: ob1.id, contact: ob1.contact, bank: "1000", amount: 1800000, ref: "" });
+  add({ kind: "moneyout", date: "2026-01-15", bank: "1000", contact: "RRA and RSSB", lines: [{ acct: "2150", desc: "PAYE and RSSB for December 2025", amt: 650000, vat: "N" }] });
+  add({ kind: "moneyout", date: "2026-01-15", bank: "1000", contact: "RRA", lines: [{ acct: "2100", desc: "VAT return for December 2025", amt: 900000, vat: "N" }] });
+  const cust = ["Umurage Hotel", "Isoko Mini-market", "Ubumwe School", "Imena Cafe"];
+  let no = 100;
+  for (let m = 1; m <= 10; m++) {
+    const last = new Date(2026, m, 0).getDate();
+    for (let i = 0; i < 3; i++) {
+      const date = D(m, 3 + i * 9 + Math.floor(rnd() * 3)), who = cust[(m + i) % 4];
+      const lines = [{ acct: "4000", desc: "Bread and pastries", amt: amtB(2200000, 3200000), vat: "S" }];
+      if (i === 2 && m % 3 === 0) lines.push({ acct: "4000", desc: "Export order to Goma", amt: amtB(600000, 900000), vat: "Z" });
+      const inv = add({ kind: "invoice", date, due: addDays(date, 30), ref: "INV-" + pad4(no++), contact: who, lines });
+      const pd = addDays(date, 22 + Math.floor(rnd() * 24));
+      if (pd <= END && !(who === "Ubumwe School" && m === 8)) add({ kind: "receipt", date: pd, inv: inv.id, contact: who, bank: rnd() < 0.8 ? "1000" : "1010", amount: txnTotals(inv, b).gross, ref: "" });
+    }
+    add({ kind: "moneyin", date: D(m, 26), bank: "1010", incl: true, contact: "Counter sales", lines: [{ acct: "4000", desc: "Counter sales for the month", amt: amtB(900000, 1400000), vat: "S" }] });
+    if (m % 2 === 0) add({ kind: "moneyin", date: D(m, 18), bank: "1010", contact: "Local farmers", lines: [{ acct: "4900", desc: "Bran sold to farmers", amt: amtB(120000, 220000, 5000), vat: "E" }] });
+    const fl = add({ kind: "bill", date: D(m, 2), due: addDays(D(m, 2), 30), ref: "IFM-" + (5600 + m), contact: "Ikirezi Flour Mills", lines: [{ acct: "5000", desc: "Wheat flour and sugar", amt: amtB(2400000, 3000000), vat: "S" }] });
+    const pk = add({ kind: "bill", date: D(m, 6), due: addDays(D(m, 6), 30), ref: "KPS-" + (310 + m), contact: "Kigali Pack Supplies", lines: [{ acct: "5000", desc: "Bags and boxes", amt: amtB(300000, 500000), vat: "S" }] });
+    for (const [bl, lag] of [[fl, 20 + Math.floor(rnd() * 12)], [pk, 25]]) { const pd = addDays(bl.date, lag); if (pd <= END) add({ kind: "billpay", date: pd, inv: bl.id, contact: bl.contact, bank: "1000", amount: txnTotals(bl, b).gross, ref: "" }); }
+    if (m === 4) add({ kind: "moneyin", date: D(4, 20), bank: "1000", contact: "Bank", lines: [{ acct: "2500", desc: "Equipment loan drawdown", amt: 6000000, vat: "N" }] });
+    if (m === 3) {
+      const ov = add({ kind: "bill", date: D(3, 10), due: D(4, 24), ref: "IME-0042", contact: "Imashini Equipment Ltd", lines: [{ acct: "1500", desc: "Industrial oven", amt: 6000000, vat: "S" }] });
+      add({ kind: "billpay", date: D(4, 22), inv: ov.id, contact: ov.contact, bank: "1000", amount: txnTotals(ov, b).gross, ref: "" });
+    }
+    const out = (day, bank, who, acct, desc, amt, vat, incl) => add({ kind: "moneyout", date: D(m, day), bank, contact: who, incl: !!incl, lines: [{ acct, desc, amt, vat }] });
+    out(1, "1000", "Landlord", "6200", "Bakery and shop rent", 900000, "N");
+    out(8, "1010", "Telecom provider", "6240", "Internet and airtime", 85000, "S", true);
+    out(12, "1000", "Utilities", "6210", "Electricity and water", amtB(330000, 450000, 5000), "S", true);
+    out(15, "1000", "RSSB", "6010", "RSSB contributions", 250000, "N");
+    out(20, "1010", "Delivery riders", "6100", "Delivery fuel and moto", amtB(150000, 300000, 5000), "S", true);
+    add({ kind: "moneyout", date: D(m, 25), bank: "1000", contact: "Bank", lines: [{ acct: "2500", desc: "Loan repayment", amt: 500000, vat: "N" }, { acct: "7000", desc: "Loan interest", amt: amtB(130000, 150000, 1000), vat: "N" }] });
+    out(28, "1000", "Staff", "6000", "Salaries for the month", 2100000, "N");
+    out(last, "1000", "Bank", "7010", "Bank charges", 15000, "N");
+    if (m === 4 || m === 9) out(10, "1010", "Radio station", "6110", "Radio advert", 350000, "S", true);
+    if (m === 6) out(17, "1000", "Technician", "6230", "Oven repair", 280000, "S", true);
+    if (m === 3) out(19, "1000", "Accounting firm", "6220", "2025 financial statements", 600000, "S");
+    add({ kind: "transfer", date: D(m, 27), from: "1010", to: "1000", amount: amtB(1800000, 2400000), ref: "" });
+    add({ kind: "journal", date: D(m, last), ref: "", memo: "Depreciation for the month", lines: [{ acct: "6300", desc: "", dr: 420000, cr: 0 }, { acct: "1590", desc: "", dr: 0, cr: 420000 }] });
+  }
+  for (let m = 2; m <= 10; m++) {
+    const v = vatSummary(b, D(m - 1, 1), monthEnd(2026, m - 1)).net;
+    if (v > 0) add({ kind: "moneyout", date: D(m, 15), bank: "1000", contact: "RRA", lines: [{ acct: "2100", desc: `VAT return for ${MONTHS[m - 2]} 2026`, amt: Math.round(v), vat: "N" }] });
+  }
+  const pbt = plFrom(b, tbAt(b, "2026-09-30")).pbt;
+  if (pbt > 0) { const tx = Math.round(pbt * CIT_RATE); add({ kind: "journal", date: "2026-09-30", ref: "", memo: "Income tax provision at 28% to 30 Sep 2026", lines: [{ acct: "8000", desc: "", dr: tx, cr: 0 }, { acct: "2200", desc: "", dr: 0, cr: tx }] }); }
+  b.txns.sort(byDate);
+  const op = b.txns.find(t => t.kind === "opening"), reLine = op.lines.find(l => l.acct === "3100");
+  for (const code of ["1000", "1010"]) {
+    const low = Math.min(...bankLines(b, code).map(r => r.bal));
+    if (low < 400000) { const top = Math.ceil((400000 - low) / 100000) * 100000; op.lines.find(l => l.acct === code).dr += top; reLine.cr += top; }
+  }
+  const rows = bankLines(b, "1000").filter(r => r.t.date <= "2026-09-30");
+  for (const r of rows) b.recon[r.key] = true;
+  if (rows.length) b.recons.push({ acct: "1000", date: "2026-09-30", balance: rows[rows.length - 1].bal, diff: 0 });
+  b.nextInv = no;
+  b.lastBackup = null; b.changedAt = null;
+  return b;
+}
+
+/* Screens */
+const bkTile = (l, v, s, d) => `<div class="kpi"><span class="eyebrow">${esc(l)}</span><span class="v">${v}<small>${esc(s || "")}</small></span>${d ? `<span class="d">${d}</span>` : ""}</div>`;
+const fmtM = v => Math.abs(v) >= 1e6 ? (v / 1e6).toFixed(1) + "m" : Math.round(v / 1e3) + "k";
+const asAtField = (label) => `<div class="fgrid" style="max-width:240px"><div><label for="bk-asat">${label}</label><input type="date" id="bk-asat" value="${bkAsAt}"></div></div>`;
+function renderBooks() {
+  if (!BK) bkLoad();
+  const b = book();
+  if (!bkAsAt) bkAsAt = todayISO();
+  $("bk-example-note").hidden = !b.example;
+  $("bk-title").textContent = b.name;
+  $("brand-co").textContent = b.name;
+  $("bk-sub").textContent = `Financial year starts ${MONTHS[b.fyStart - 1]} · books from ${niceISO(b.start)} · ${b.vatReg ? "VAT registered" : "Not registered for VAT"} · amounts in ${b.currency}`;
+  $("bk-company").innerHTML = BK.books.map(x => `<option value="${x.id}" ${x.id === b.id ? "selected" : ""}>${esc(x.name)}</option>`).join("");
+  document.querySelectorAll("#bk-nav [data-bk]").forEach(x => x.setAttribute("aria-selected", x.dataset.bk === bkView));
+  const all = tbAt(b, "9999-12-31"), sum = Object.values(all).reduce((s, v) => s + v, 0), obe = all[roleCode(b, "obe")] || 0;
+  const chips = [Math.abs(sum) < 1 ? `<span class="chip good">Debits equal credits</span>` : `<span class="chip bad">Books out by ${rwf(sum)}</span>`];
+  if (Math.abs(obe) >= 1) chips.push(`<span class="chip warn">Opening balances: ${rwf(Math.abs(obe))} still to explain <button class="linkish" type="button" data-act="bk-tab" data-bk="setup">Check</button></span>`);
+  if (b.example) chips.push(`<span class="chip plain">Example data</span>`);
+  else if (!b.lastBackup) chips.push(b.txns.length ? `<span class="chip warn">Not backed up yet <button class="linkish" type="button" data-act="backup">Back up now</button></span>` : `<span class="chip plain">No entries yet</span>`);
+  else if (b.changedAt && b.changedAt > b.lastBackup) chips.push(`<span class="chip warn">Changes since your backup on ${niceISO(b.lastBackup.slice(0, 10))} <button class="linkish" type="button" data-act="backup">Back up now</button></span>`);
+  else chips.push(`<span class="chip good">Backed up ${niceISO(b.lastBackup.slice(0, 10))}</span>`);
+  $("bk-checks").innerHTML = chips.join("");
+  const views = { overview: bkOverview, sales: x => bkDocs(x, "invoice"), purchases: x => bkDocs(x, "bill"), bank: bkBankView, journal: bkJournal, vat: bkVatView, reports: bkReports, setup: bkSetup };
+  $("bk-body").innerHTML = (views[bkView] || bkOverview)(b);
+}
+function bkOverview(b) {
+  const d = bkAsAt, bal = tbAt(b, d), fs = fyStartFor(b, d), pl = plFrom(b, bal);
+  const cash = sumWhere(b, bal, a => a.cat === "cash"), ar = bal[roleCode(b, "ar")] || 0, ap = -(bal[roleCode(b, "ap")] || 0), vat = -(bal[roleCode(b, "vat")] || 0);
+  const est = Math.max(0, pl.pbt) * CIT_RATE, od = openItems(b, "invoice", d).filter(o => o.status === "Overdue").reduce((s, o) => s + o.out, 0);
+  let h = asAtField("Figures as at");
+  h += `<div class="kpis">` + [
+    bkTile("Cash and bank", rwf(cash), b.currency),
+    bkTile("Customers owe you", rwf(ar), b.currency, od > 0 ? `<span class="down">${rwf(od)} overdue</span>` : `<span class="flat">Nothing overdue</span>`),
+    bkTile("You owe suppliers", rwf(ap), b.currency),
+    bkTile("Profit before tax this year", rwf(pl.pbt), b.currency, `<span class="flat">Since ${niceISO(fs)}</span>`),
+    b.vatReg ? bkTile("VAT payable to RRA", rwf(vat), b.currency) : "",
+    bkTile("Income tax at 28%", rwf(est), b.currency, `<span class="flat">Provided so far: ${rwf(pl.tax)}</span>`)
+  ].join("") + `</div>`;
+  h += `<div class="panel"><div class="panel-head"><h3>Record a transaction</h3></div><div class="bk-quick">` + [["invoice", "New sales invoice"], ["receipt", "Payment received"], ["bill", "New supplier bill"], ["billpay", "Pay a bill"], ["moneyin", "Money in"], ["moneyout", "Money out"], ["transfer", "Transfer between accounts"], ["journal", "Journal entry"]].map(([k, l], i) => `<button class="btn ${i === 0 ? "primary" : ""}" type="button" data-act="new" data-kind="${k}">${l}</button>`).join("") + `</div></div>`;
+  const months = [];
+  { let y = +fs.slice(0, 4), mo = +fs.slice(5, 7); const ey = +d.slice(0, 4), em = +d.slice(5, 7); while (y < ey || (y === ey && mo <= em)) { months.push(`${y}-${pad2(mo)}`); if (++mo > 12) { mo = 1; y++; } } }
+  const inc = {}, exp = {}, ty = {}, isTax = {};
+  for (const a of b.accounts) { ty[a.code] = typeOf(a.cat); isTax[a.code] = a.cat === "tax"; }
+  for (const t of b.txns) {
+    if (t.date < fs || t.date > d) continue;
+    const k = t.date.slice(0, 7);
+    for (const p of postings(t, b)) { if (ty[p.code] === "income") inc[k] = (inc[k] || 0) - p.v; else if (ty[p.code] === "expense" && !isTax[p.code]) exp[k] = (exp[k] || 0) + p.v; }
+  }
+  const cats = months.map(k => MONTHS[+k.slice(5, 7) - 1]);
+  h += `<div class="grid-2"><div class="panel"><div class="panel-head"><h3>Income and expenses by month</h3><span class="sub">${esc(b.currency)}</span></div><div class="chart-box">${groupedBarsSVG(cats, [{ l: "Income", vals: months.map(k => inc[k] || 0), fill: "var(--seg1)" }, { l: "Expenses", vals: months.map(k => exp[k] || 0), fill: "var(--seg2)" }], "Income and expenses by month", fmtM, b.currency)}</div><div class="legend"><span><i style="background:var(--seg1)"></i>Income</span><span><i style="background:var(--seg2)"></i>Expenses before tax</span></div></div>`;
+  const recent = b.txns.filter(t => t.date <= d).slice().sort((x, y) => byDate(y, x)).slice(0, 10);
+  h += `<div class="panel"><div class="panel-head"><h3>Latest entries</h3><button class="linkish" type="button" data-act="bk-tab" data-bk="journal">See all entries</button></div><div class="table-box"><table class="st narrow"><thead><tr><th>Date</th><th>Entry</th><th class="n">Amount</th></tr></thead><tbody>${recent.map(t => `<tr><td>${niceISO(t.date)}</td><td class="lbl"><strong>${KIND_LABEL[t.kind]}</strong> <span class="muted">${esc(txnDesc(t, b))}</span></td><td class="n">${rwf(txnTotals(t, b).gross)}</td></tr>`).join("") || `<tr><td colspan="3" class="muted">No entries yet.</td></tr>`}</tbody></table></div></div></div>`;
+  return h;
+}
+function ageingTable(items, who) {
+  const by = {};
+  for (const o of items) { if (o.out <= 0) continue; const k = o.t.contact || "(no name)"; by[k] = by[k] || { name: k, b: [0, 0, 0, 0, 0], tot: 0 }; by[k].b[ageBand(o.over)] += o.out; by[k].tot += o.out; }
+  const rows = Object.values(by).sort((x, y) => y.tot - x.tot);
+  if (!rows.length) return `<p class="muted">Nothing outstanding.</p>`;
+  const tot = [0, 0, 0, 0, 0]; rows.forEach(r => r.b.forEach((v, i) => { tot[i] += v; }));
+  return `<div class="table-box"><table class="st"><thead><tr><th>${who}</th>${AGE_BANDS.map(x => `<th class="n">${x}</th>`).join("")}<th class="n">Total</th></tr></thead><tbody>` +
+    rows.map(r => `<tr><td class="lbl">${esc(r.name)}</td>${r.b.map((v, i) => `<td class="n ${i >= 2 && v ? "adv" : ""}">${v ? rwf(v) : "–"}</td>`).join("")}<td class="n">${rwf(r.tot)}</td></tr>`).join("") +
+    `<tr class="total"><td class="lbl">Total</td>${tot.map(v => `<td class="n">${v ? rwf(v) : "–"}</td>`).join("")}<td class="n">${rwf(tot.reduce((s, v) => s + v, 0))}</td></tr></tbody></table></div>`;
+}
+function bkDocs(b, kind) {
+  const isInv = kind === "invoice", who = isInv ? "Customer" : "Supplier";
+  const list = openItems(b, kind, "9999-12-31", todayISO()).sort((x, y) => byDate(y.t, x.t));
+  const cls = { Paid: "good", "Part paid": "warn", Unpaid: "plain", Overdue: "bad" };
+  const outT = list.reduce((s, o) => s + Math.max(0, o.out), 0);
+  let h = `<div class="panel"><div class="panel-head"><h3>${isInv ? "Sales invoices" : "Supplier bills"}</h3><div class="actions"><button class="btn small primary" type="button" data-act="new" data-kind="${kind}">${isInv ? "New sales invoice" : "New supplier bill"}</button><button class="btn small" type="button" data-act="new" data-kind="${isInv ? "receipt" : "billpay"}">${isInv ? "Payment received" : "Pay a bill"}</button></div></div>`;
+  h += `<div class="table-box"><table class="st"><thead><tr><th>Date</th><th>Number</th><th>${who}</th><th>Due</th><th class="n">Total</th><th class="n">Outstanding</th><th>Status</th><th></th></tr></thead><tbody>` +
+    (list.map(o => `<tr><td>${niceISO(o.t.date)}</td><td>${esc(o.t.ref || "")}${o.t.opening ? ` <span class="muted">(at start)</span>` : ""}</td><td class="lbl">${esc(o.t.contact || "")}</td><td>${niceISO(o.t.due)}</td><td class="n">${rwf(o.gross)}</td><td class="n">${o.out > 0 ? rwf(o.out) : "–"}</td><td><span class="chip ${cls[o.status]}">${o.status}</span></td><td><div class="row-actions">${o.out > 0 ? `<button class="btn tiny" type="button" data-act="pay" data-id="${o.t.id}">${isInv ? "Receive" : "Pay"}</button>` : ""}<button class="btn tiny" type="button" data-act="edit" data-id="${o.t.id}">Edit</button><button class="btn tiny" type="button" data-act="del" data-id="${o.t.id}">Delete</button></div></td></tr>`).join("") || `<tr><td colspan="8" class="muted">None yet.</td></tr>`) +
+    `<tr class="total"><td colspan="5" class="lbl">Total outstanding</td><td class="n">${rwf(outT)}</td><td colspan="2"></td></tr></tbody></table></div></div>`;
+  h += `<div class="panel"><div class="panel-head"><h3>${isInv ? "What customers owe, by age" : "What you owe suppliers, by age"}</h3>${asAtField("As at")}</div>${ageingTable(openItems(b, kind, bkAsAt), who)}</div>`;
+  return h;
+}
+function bkBankView(b) {
+  const banks = bankAccts(b);
+  if (!banks.length) return `<div class="panel"><p class="muted">Add a bank or cash account in Setup first.</p></div>`;
+  if (!banks.some(a => a.code === bkBank)) bkBank = banks[0].code;
+  const bal = tbAt(b, todayISO()), a = acctOf(b, bkBank), rows = bankLines(b, bkBank);
+  let h = `<div class="kpis">` + banks.map(x => `<button type="button" class="kpi kpi-btn ${x.code === bkBank ? "sel" : ""}" data-act="pick-bank" data-code="${x.code}" aria-pressed="${x.code === bkBank}"><span class="eyebrow">${esc(x.name)}</span><span class="v">${rwf(bal[x.code])}<small>${esc(b.currency)}</small></span><span class="d flat">Balance today</span></button>`).join("") + `</div>`;
+  h += `<div class="panel"><div class="panel-head"><h3>${esc(a.name)}</h3><div class="actions"><button class="btn small primary" type="button" data-act="new" data-kind="moneyin">Money in</button><button class="btn small" type="button" data-act="new" data-kind="moneyout">Money out</button><button class="btn small" type="button" data-act="new" data-kind="transfer">Transfer</button></div></div>`;
+  const shown = rows.slice().reverse().slice(0, 120);
+  h += `<div class="table-box"><table class="st"><thead><tr><th>Date</th><th>Entry</th><th class="n">In</th><th class="n">Out</th><th class="n">Balance</th><th class="chk">On statement</th><th></th></tr></thead><tbody>${shown.map(r => `<tr><td>${niceISO(r.t.date)}</td><td class="lbl"><strong>${KIND_LABEL[r.t.kind]}</strong> <span class="muted">${esc(txnDesc(r.t, b))}</span></td><td class="n">${r.v > 0 ? rwf(r.v) : ""}</td><td class="n">${r.v < 0 ? rwf(-r.v) : ""}</td><td class="n ${r.bal < 0 ? "adv" : ""}">${rwf(r.bal)}</td><td class="chk"><input type="checkbox" data-recon="${r.key}" ${b.recon[r.key] ? "checked" : ""} aria-label="On the bank statement"></td><td><div class="row-actions"><button class="btn tiny" type="button" data-act="edit" data-id="${r.t.id}">Edit</button></div></td></tr>`).join("") || `<tr><td colspan="7" class="muted">No entries for this account yet.</td></tr>`}</tbody></table></div>${rows.length > 120 ? `<p class="help" style="margin-top:8px">Showing the latest 120 of ${rows.length} entries.</p>` : ""}</div>`;
+  const sdt = bkReconDate || todayISO(), upto = rows.filter(r => r.t.date <= sdt), bookBal = upto.length ? upto[upto.length - 1].bal : 0;
+  const cleared = upto.filter(r => b.recon[r.key]).reduce((s, r) => s + r.v, 0), unc = upto.filter(r => !b.recon[r.key]);
+  const stmt = bkReconBal === "" ? null : toNum(bkReconBal), diff = stmt === null ? null : stmt - cleared;
+  h += `<div class="panel"><div class="panel-head"><h3>Reconcile with the bank statement</h3>${diff === null ? "" : Math.abs(diff) < 1 ? `<span class="chip good">Reconciled</span>` : `<span class="chip bad">Difference of ${rwf(diff)}</span>`}</div>
+  <p class="help">Tick each entry that appears on the statement, then enter the statement's closing balance. When the difference is zero, the account is reconciled.</p>
+  <div class="fgrid" style="max-width:520px;margin-top:10px"><div><label for="bk-rec-date">Statement date</label><input type="date" id="bk-rec-date" value="${sdt}"></div><div><label for="bk-rec-bal">Closing balance on the statement</label><input type="text" inputmode="decimal" id="bk-rec-bal" value="${esc(bkReconBal)}" placeholder="e.g. 12,450,000"></div></div>
+  <div class="grid-2" style="margin-top:12px"><div><div class="table-box"><table class="st narrow"><tbody>
+   <tr><td class="lbl">Balance in your books at ${niceISO(sdt)}</td><td class="n">${rwf(bookBal)}</td></tr>
+   <tr><td class="lbl">Less entries not yet on the statement (${unc.length})</td><td class="n">${rwf(cleared - bookBal)}</td></tr>
+   <tr class="sub"><td class="lbl">Balance of ticked entries</td><td class="n">${rwf(cleared)}</td></tr>
+   <tr><td class="lbl">Closing balance on the statement</td><td class="n">${stmt === null ? "–" : rwf(stmt)}</td></tr>
+   <tr class="total"><td class="lbl">Difference to explain</td><td class="n ${diff !== null && Math.abs(diff) >= 1 ? "adv" : ""}">${diff === null ? "–" : rwf(diff)}</td></tr></tbody></table></div>
+   <div class="actions" style="margin-top:10px"><button class="btn small primary" type="button" data-act="save-recon" ${diff === null ? "disabled" : ""}>Save reconciliation</button></div></div>
+   <div><div class="eyebrow" style="margin-bottom:6px">Entries not yet ticked</div><div class="table-box"><table class="st narrow"><tbody>${unc.slice(-40).reverse().map(r => `<tr><td class="chk"><input type="checkbox" data-recon="${r.key}" aria-label="Tick as on the statement"></td><td>${niceISO(r.t.date)}</td><td class="lbl">${esc(KIND_LABEL[r.t.kind])} <span class="muted">${esc(txnDesc(r.t, b))}</span></td><td class="n">${rwf(r.v)}</td></tr>`).join("") || `<tr><td class="muted">Everything up to this date is ticked.</td></tr>`}</tbody></table></div></div></div>`;
+  const hist = b.recons.filter(x => x.acct === bkBank).slice(-6).reverse();
+  if (hist.length) h += `<div class="eyebrow" style="margin:16px 0 6px">Saved reconciliations</div><div class="table-box"><table class="st narrow"><thead><tr><th>Statement date</th><th class="n">Statement balance</th><th class="n">Difference</th></tr></thead><tbody>${hist.map(x => `<tr><td>${niceISO(x.date)}</td><td class="n">${rwf(x.balance)}</td><td class="n ${Math.abs(x.diff) >= 1 ? "adv" : ""}">${rwf(x.diff)}</td></tr>`).join("")}</tbody></table></div>`;
+  return h + `</div>`;
+}
+function bkJournal(b) {
+  const all = b.txns.filter(t => !bkJFilter || t.kind === bkJFilter).slice().sort((x, y) => byDate(y, x)), rows = bkJAll ? all : all.slice(0, 150);
+  let h = `<div class="panel"><div class="panel-head"><h3>All entries</h3><div class="actions"><select id="bk-jfilter" class="bk-select" aria-label="Show entries of type"><option value="">All types</option>${Object.entries(KIND_LABEL).map(([k, l]) => `<option value="${k}" ${bkJFilter === k ? "selected" : ""}>${l}</option>`).join("")}</select><button class="btn small primary" type="button" data-act="new" data-kind="journal">Journal entry</button></div></div>`;
+  h += `<div class="table-box"><table class="st"><thead><tr><th>Date</th><th>Type</th><th>Reference</th><th>Details</th><th class="n">Amount</th><th></th></tr></thead><tbody>${rows.map(t => `<tr><td>${niceISO(t.date)}</td><td>${KIND_LABEL[t.kind]}</td><td>${esc(t.ref || "")}</td><td class="lbl">${esc(txnDesc(t, b))}</td><td class="n">${rwf(txnTotals(t, b).gross)}</td><td><div class="row-actions"><button class="btn tiny" type="button" data-act="edit" data-id="${t.id}">Edit</button><button class="btn tiny" type="button" data-act="del" data-id="${t.id}">Delete</button></div></td></tr>`).join("") || `<tr><td colspan="6" class="muted">No entries.</td></tr>`}</tbody></table></div>`;
+  if (all.length > rows.length) h += `<div class="actions" style="margin-top:8px"><button class="btn small" type="button" data-act="j-all">Show all ${all.length} entries</button></div>`;
+  return h + `</div>`;
+}
+function bkVatPeriod(kind) {
+  const t = new Date(); let f, e;
+  if (kind === "this") { f = new Date(t.getFullYear(), t.getMonth(), 1); e = new Date(t.getFullYear(), t.getMonth() + 1, 0); }
+  else if (kind === "last") { f = new Date(t.getFullYear(), t.getMonth() - 1, 1); e = new Date(t.getFullYear(), t.getMonth(), 0); }
+  else if (kind === "quarter") { const q = Math.floor(t.getMonth() / 3); f = new Date(t.getFullYear(), q * 3 - 3, 1); e = new Date(t.getFullYear(), q * 3, 0); }
+  else { f = new Date(t.getFullYear(), 0, 1); e = t; }
+  return { from: isoOf(f), to: isoOf(e) };
+}
+function bkVatView(b) {
+  if (!b.vatReg) return `<div class="panel"><h3>VAT</h3><p class="help" style="margin-top:8px">This company is set as not registered for VAT, so no VAT is added to entries. Turn VAT on in Setup if it registers.</p><div class="actions" style="margin-top:10px"><button class="btn small" type="button" data-act="bk-tab" data-bk="setup">Open Setup</button></div></div>`;
+  if (!bkVat) bkVat = bkVatPeriod("last");
+  const v = vatSummary(b, bkVat.from, bkVat.to), vatBal = -(tbAt(b, bkVat.to)[roleCode(b, "vat")] || 0);
+  let h = `<div class="panel"><div class="panel-head"><h3>VAT return summary</h3><div class="actions">${[["last", "Last month"], ["this", "This month"], ["quarter", "Last quarter"], ["year", "This year"]].map(([k, l]) => `<button class="btn small" type="button" data-act="vat-period" data-p="${k}">${l}</button>`).join("")}</div></div>
+  <div class="fgrid" style="max-width:420px"><div><label for="bk-vat-from">From</label><input type="date" id="bk-vat-from" value="${bkVat.from}"></div><div><label for="bk-vat-to">To</label><input type="date" id="bk-vat-to" value="${bkVat.to}"></div></div>
+  <div class="table-box" style="margin-top:12px"><table class="st narrow"><thead><tr><th>${esc(b.currency)}</th><th class="n">Value excluding VAT</th><th class="n">VAT</th></tr></thead><tbody>
+  <tr class="sec"><td colspan="3">Sales (output VAT)</td></tr>
+  <tr><td class="lbl">Standard-rated sales at 18%</td><td class="n">${rwf(v.sS)}</td><td class="n">${rwf(v.oV)}</td></tr>
+  <tr><td class="lbl">Zero-rated sales</td><td class="n">${rwf(v.sZ)}</td><td class="n">0</td></tr>
+  <tr><td class="lbl">Exempt sales</td><td class="n">${rwf(v.sE)}</td><td class="n">–</td></tr>
+  <tr class="sub"><td class="lbl">Total sales</td><td class="n">${rwf(v.sS + v.sZ + v.sE)}</td><td class="n">${rwf(v.oV)}</td></tr>
+  <tr class="sec"><td colspan="3">Purchases (input VAT)</td></tr>
+  <tr><td class="lbl">Purchases at 18%</td><td class="n">${rwf(v.pS)}</td><td class="n">${rwf(v.iV)}</td></tr>
+  <tr><td class="lbl">Zero-rated and exempt purchases</td><td class="n">${rwf(v.pZ + v.pE)}</td><td class="n">–</td></tr>
+  <tr class="total"><td class="lbl">${v.net >= 0 ? "VAT payable to RRA" : "VAT refundable"}</td><td></td><td class="n">${rwf(Math.abs(v.net))}</td></tr></tbody></table></div>
+  <p class="help" style="margin-top:10px">Exempt sales carry no VAT. Input VAT on costs that relate to exempt sales may not be claimable, so check before filing. The VAT payable account stood at ${esc(b.currency)} ${rwf(vatBal)} on ${niceISO(bkVat.to)}.</p>
+  <div class="actions" style="margin-top:10px">${v.net > 0 ? `<button class="btn small primary" type="button" data-act="vat-pay">Record VAT payment of ${rwf(v.net)}</button>` : ""}</div>`;
+  h += `<details class="sched"><summary>Show the ${v.rows.length} lines behind these figures</summary><div class="table-box"><table class="st"><thead><tr><th>Date</th><th>Entry</th><th>Treatment</th><th class="n">Net</th><th class="n">VAT</th></tr></thead><tbody>${v.rows.map(x => `<tr><td>${niceISO(x.t.date)}</td><td class="lbl">${esc(KIND_LABEL[x.t.kind])} ${esc(x.t.ref || "")} <span class="muted">${esc(x.t.contact || "")} · ${esc(x.l.desc || "")}</span></td><td>${{ S: "Standard 18%", Z: "Zero-rated", E: "Exempt" }[x.s.code]}</td><td class="n">${rwf(x.sale ? x.s.net : -x.s.net)}</td><td class="n">${rwf(x.sale ? x.s.vat : -x.s.vat)}</td></tr>`).join("")}</tbody></table></div></details>`;
+  return h + `</div>`;
+}
+function bkReports(b) {
+  const d = bkAsAt, bal = tbAt(b, d), fs = fyStartFor(b, d), pl = plFrom(b, bal), est = Math.max(0, pl.pbt) * CIT_RATE, toPost = Math.round(est - pl.tax);
+  let h = asAtField("Reports as at");
+  const L = [["Revenue", pl.rev], ["Cost of sales", -pl.cos], ["Gross profit", pl.gp, 1], ["Staff costs", -pl.staff], ["Selling and distribution", -pl.selling], ["Administration and other", -pl.admin], ["Depreciation", -pl.dep], ["Other income", pl.oi], ["Operating profit", pl.op, 1], ["Finance costs", -pl.fin], ["Profit before tax", pl.pbt, 1], ["Income tax", -pl.tax], ["Net profit", pl.np, 2]];
+  h += `<div class="grid-2"><div class="panel"><div class="panel-head"><h3>Profit or loss</h3><span class="sub">${niceISO(fs)} to ${niceISO(d)}, ${esc(b.currency)}</span></div><div class="table-box"><table class="st narrow"><tbody>${L.map(([l, v, s]) => `<tr class="${s === 2 ? "total" : s ? "sub" : ""}"><td class="lbl">${l}</td><td class="n">${rwf(v)}</td></tr>`).join("")}</tbody></table></div></div>`;
+  h += `<div class="panel"><div class="panel-head"><h3>Corporate income tax at 28%</h3></div><div class="table-box"><table class="st narrow"><tbody>
+   <tr><td class="lbl">Profit before tax for the year so far</td><td class="n">${rwf(pl.pbt)}</td></tr>
+   <tr><td class="lbl">Income tax at 28%</td><td class="n">${rwf(est)}</td></tr>
+   <tr><td class="lbl">Already provided in the books</td><td class="n">${rwf(pl.tax)}</td></tr>
+   <tr class="total"><td class="lbl">${toPost >= 0 ? "Provision still to post" : "Over-provided"}</td><td class="n">${rwf(Math.abs(toPost))}</td></tr></tbody></table></div>
+   <p class="help" style="margin-top:10px">This estimate uses accounting profit. Taxable profit can differ, for example through expenses that aren't deductible or tax depreciation, so treat it as a provision, not the tax return.</p>
+   <div class="actions" style="margin-top:10px">${Math.abs(toPost) >= 1 ? `<button class="btn small primary" type="button" data-act="post-tax">${toPost > 0 ? "Post provision" : "Reverse over-provision"} of ${rwf(Math.abs(toPost))}</button>` : `<span class="chip good">Provision is up to date</span>`}</div></div></div>`;
+  const rows = b.accounts.filter(a => Math.abs(bal[a.code] || 0) >= 1);
+  let dr = 0, cr = 0; rows.forEach(a => { const v = bal[a.code]; if (v > 0) dr += v; else cr -= v; });
+  h += `<div class="grid-2"><div class="panel"><div class="panel-head"><h3>Trial balance at ${niceISO(d)}</h3>${Math.abs(dr - cr) < 1 ? `<span class="chip good">Balances</span>` : `<span class="chip bad">Out by ${rwf(dr - cr)}</span>`}</div><div class="table-box"><table class="st narrow"><thead><tr><th>Account</th><th class="n">Debit</th><th class="n">Credit</th></tr></thead><tbody>${rows.map(a => { const v = bal[a.code]; return `<tr><td class="lbl"><span class="muted">${esc(a.code)}</span> ${esc(a.name)}</td><td class="n">${v > 0 ? rwf(v) : ""}</td><td class="n">${v < 0 ? rwf(-v) : ""}</td></tr>`; }).join("")}<tr class="total"><td class="lbl">Total</td><td class="n">${rwf(dr)}</td><td class="n">${rwf(cr)}</td></tr></tbody></table></div><p class="help" style="margin-top:8px">Income and expense accounts show the year to date. Profit from earlier years is included in retained earnings.</p><div class="actions" style="margin-top:8px"><button class="btn small primary" type="button" data-act="to-pack">Build management pack from this</button></div></div>`;
+  if (!bkLedger || !acctOf(b, bkLedger)) bkLedger = (bankAccts(b)[0] || b.accounts[0]).code;
+  const la = acctOf(b, bkLedger), isPL = PL_TYPES.has(typeOf(la.cat)), lr = [];
+  let run = 0;
+  for (const t of b.txns.slice().sort(byDate)) {
+    if (t.date > d || (isPL && t.date < fs)) continue;
+    let v = 0; for (const p of postings(t, b)) if (p.code === bkLedger) v += p.v;
+    if (!v) continue;
+    run += v; lr.push({ t, v, run });
+  }
+  h += `<div class="panel"><div class="panel-head"><h3>Account ledger</h3><select id="bk-ledger" class="bk-select" aria-label="Account">${b.accounts.map(a => `<option value="${a.code}" ${a.code === bkLedger ? "selected" : ""}>${esc(a.code)} ${esc(a.name)}</option>`).join("")}</select></div><div class="table-box"><table class="st narrow"><thead><tr><th>Date</th><th>Entry</th><th class="n">Debit</th><th class="n">Credit</th><th class="n">Balance</th></tr></thead><tbody>${lr.slice(-200).map(x => `<tr><td>${niceISO(x.t.date)}</td><td class="lbl">${esc(KIND_LABEL[x.t.kind])} <span class="muted">${esc(txnDesc(x.t, b))}</span></td><td class="n">${x.v > 0 ? rwf(x.v) : ""}</td><td class="n">${x.v < 0 ? rwf(-x.v) : ""}</td><td class="n">${rwf(x.run)}</td></tr>`).join("") || `<tr><td colspan="5" class="muted">No entries${isPL ? " this year" : ""}.</td></tr>`}</tbody></table></div>${isPL ? `<p class="help" style="margin-top:8px">Shows ${niceISO(fs)} to ${niceISO(d)}.</p>` : ""}</div></div>`;
+  return h;
+}
+function bkSetup(b) {
+  let h = "";
+  if (bkRestore) {
+    const n = bkRestore.store.books;
+    h += `<div class="panel" style="border-top:3px solid var(--warn)"><h3>Restore from backup</h3><p style="margin:8px 0">The backup from ${esc(new Date(bkRestore.exported).toLocaleString("en-GB"))} has ${n.length} compan${n.length === 1 ? "y" : "ies"}: ${n.map(x => esc(x.name)).join(", ")}. Restoring replaces all the books in this browser.</p><div class="actions"><button class="btn primary" type="button" data-act="restore-yes">Replace with backup</button><button class="btn" type="button" data-act="restore-no">Cancel</button></div></div>`;
+  }
+  const obe = tbAt(b, "9999-12-31")[roleCode(b, "obe")] || 0;
+  h += `<div class="grid-2"><div class="panel"><div class="panel-head"><h3>Company</h3></div><div class="fgrid">
+   <div style="grid-column:1/-1"><label for="bk-s-name">Company name</label><input id="bk-s-name" type="text" value="${esc(b.name)}"></div>
+   <div><label for="bk-s-fy">Financial year starts in</label><select id="bk-s-fy">${MONTHS.map((m, i) => `<option value="${i + 1}" ${b.fyStart === i + 1 ? "selected" : ""}>${m}</option>`).join("")}</select></div>
+   <div><label for="bk-s-start">Books start on</label><input id="bk-s-start" type="date" value="${b.start}"></div>
+   <div><label for="bk-s-prefix">Invoice number prefix</label><input id="bk-s-prefix" type="text" value="${esc(b.invPrefix)}"></div>
+   <div><label for="bk-s-next">Next invoice number</label><input id="bk-s-next" type="number" min="1" step="1" value="${b.nextInv}"></div>
+   <div><label for="bk-s-cur">Currency</label><input id="bk-s-cur" type="text" maxlength="5" value="${esc(b.currency)}"></div></div>
+   <label class="check" style="margin-top:12px"><input type="checkbox" id="bk-s-vat" ${b.vatReg ? "checked" : ""}><span>Registered for VAT: 18% standard rate, with zero-rated and exempt options. Changing this recalculates VAT on all entries.</span></label>
+   <div class="actions" style="margin-top:12px"><button class="btn primary small" type="button" data-act="save-settings">Save company settings</button></div></div>`;
+  const op = b.txns.find(t => t.kind === "opening"), oinv = b.txns.filter(t => t.opening && t.kind === "invoice").length, obill = b.txns.filter(t => t.opening && t.kind === "bill").length;
+  h += `<div class="panel"><div class="panel-head"><h3>Opening balances</h3>${Math.abs(obe) < 1 ? (op ? `<span class="chip good">Complete</span>` : "") : `<span class="chip warn">${rwf(Math.abs(obe))} still to explain</span>`}</div>
+   <p class="help">Enter the balance sheet at the end of ${niceISO(addDays(b.start, -1))}, from last year's accounts. Leave out trade receivables and payables: add each unpaid customer invoice and supplier bill instead, so you can track who owes what.</p>
+   <div class="actions" style="margin-top:12px"><button class="btn small primary" type="button" data-act="${op ? "edit" : "new"}" ${op ? `data-id="${op.id}"` : `data-kind="opening"`}>${op ? "Edit opening balances" : "Enter opening balances"}</button><button class="btn small" type="button" data-act="new-open-item" data-kind="invoice">Unpaid customer invoice</button><button class="btn small" type="button" data-act="new-open-item" data-kind="bill">Unpaid supplier bill</button></div>
+   <p class="help" style="margin-top:10px">${op ? "Opening balances entered." : "No opening balances yet."} ${oinv} unpaid invoice${oinv === 1 ? "" : "s"} and ${obill} unpaid bill${obill === 1 ? "" : "s"} at the start. Any difference sits in Opening balance equity until everything is entered. When it reaches zero, the opening position is complete.</p></div></div>`;
+  const used = new Set();
+  for (const t of b.txns) { for (const p of postings(t, b)) used.add(p.code); for (const l of t.lines || []) used.add(l.acct); ["bank", "from", "to"].forEach(k => { if (t[k]) used.add(t[k]); }); }
+  const catOpts = sel => CATS.filter(c => c.k !== "ign").map(c => `<option value="${c.k}" ${c.k === sel ? "selected" : ""}>${esc(c.l)}</option>`).join("");
+  h += `<div class="panel"><div class="panel-head"><h3>Chart of accounts</h3><span class="sub">Each account feeds a line in the management pack.</span></div><div class="table-box"><table class="st"><thead><tr><th>Code</th><th>Name</th><th>Pack line</th><th></th></tr></thead><tbody>${b.accounts.map(a => `<tr><td>${esc(a.code)}</td><td><input class="cell-in" data-acct-name="${esc(a.code)}" value="${esc(a.name)}" aria-label="Name of account ${esc(a.code)}"></td><td>${a.role ? `<span class="muted">${esc(catLabel(a.cat))} (used by Acivaz)</span>` : `<select class="cell-in" data-acct-cat="${esc(a.code)}" aria-label="Pack line for account ${esc(a.code)}">${catOpts(a.cat)}</select>`}</td><td>${!a.role && !used.has(a.code) ? `<button class="btn tiny" type="button" data-act="del-acct" data-code="${esc(a.code)}">Delete</button>` : ""}</td></tr>`).join("")}</tbody></table></div>
+   <div class="fgrid" style="margin-top:12px;max-width:640px"><div><label for="bk-na-code">New account code</label><input id="bk-na-code" type="text"></div><div><label for="bk-na-name">Name</label><input id="bk-na-name" type="text"></div><div><label for="bk-na-cat">Pack line</label><select id="bk-na-cat">${catOpts("admin")}</select></div></div>
+   <div class="actions" style="margin-top:10px"><button class="btn small" type="button" data-act="add-acct">Add account</button></div></div>`;
+  h += `<div class="grid-2"><div class="panel"><div class="panel-head"><h3>Backup</h3></div><p class="help">Your books are kept in this browser only. Clearing browser data erases them. Back up after each session and keep the file somewhere safe, such as Google Drive or your email. A backup includes every company.</p><div class="actions" style="margin-top:10px"><button class="btn small primary" type="button" data-act="backup">Back up now</button><label class="btn small" for="bk-restore-file">Restore from a backup</label></div><p class="help" style="margin-top:8px">${b.lastBackup ? "Last backed up " + esc(new Date(b.lastBackup).toLocaleString("en-GB")) : "Not backed up yet."}</p></div>
+   <div class="panel"><div class="panel-head"><h3>Delete this company</h3></div><p class="help">Removes ${esc(b.name)} and all its entries from this browser. Back up first if you might need them.</p><div class="actions" style="margin-top:10px"><button class="btn small" type="button" data-act="del-company">Delete company</button></div></div></div>`;
+  return h;
+}
+
+/* Entry forms */
+function defaultVat(b, code) { if (!b.vatReg) return "N"; const a = acctOf(b, code); return a && ["rev", "cos", "selling", "admin", "nca", "inv"].includes(a.cat) ? "S" : "N"; }
+const blankLine = (b, kind) => ["journal", "opening"].includes(kind) ? { acct: "", desc: "", dr: "", cr: "" } : { acct: "", desc: "", amt: "", vat: b.vatReg && (kind === "invoice" || kind === "bill") ? "S" : "N" };
+function openForm(kind, init = {}) {
+  const b = book(), t0 = todayISO(), d0 = t0 < b.start ? b.start : t0;
+  const F = Object.assign({ kind, date: d0, ref: "", contact: "", due: addDays(d0, 30), bank: (bankAccts(b)[0] || {}).code || "", incl: false, memo: "", lines: [], amount: "", inv: "", from: "", to: "", opening: false }, JSON.parse(JSON.stringify(init)));
+  F.kind = kind;
+  if (kind === "invoice" && !F.id && !F.ref && !F.opening) F.ref = b.invPrefix + pad4(b.nextInv);
+  if (F.opening && !F.id) { F.date = addDays(b.start, -1); F.due = addDays(b.start, 29); }
+  if (F.opening && F.id) F.amount = (F.lines[0] || {}).amt || "";
+  if (kind === "opening") F.date = addDays(b.start, -1);
+  F.lines.forEach(l => { if ("amt" in l) l.vatTouched = true; });
+  if (["invoice", "bill", "moneyin", "moneyout", "journal", "opening"].includes(kind) && !F.opening && !F.lines.length) F.lines = ["journal", "opening"].includes(kind) ? [blankLine(b, kind), blankLine(b, kind)] : [blankLine(b, kind)];
+  if (kind === "transfer" && !F.from) { const bs = bankAccts(b); F.from = (bs[1] || bs[0] || {}).code || ""; F.to = (bs[0] || {}).code || ""; }
+  if (kind === "company") Object.assign(F, { name: init.name || "", fyStart: 1, start: `${new Date().getFullYear()}-01-01`, vatReg: true });
+  bkF = F; renderForm(); $("bk-modal").hidden = false;
+  setTimeout(() => { const f = $("bk-m-body").querySelector("input:not([readonly]):not([type=checkbox]),select"); if (f) f.focus(); }, 30);
+}
+function acctOptions(b, kind, sel) {
+  const ar = roleCode(b, "ar"), ap = roleCode(b, "ap"), obe = roleCode(b, "obe");
+  let list = b.accounts.filter(a => a.code !== obe);
+  if (kind === "invoice") list = list.filter(a => typeOf(a.cat) === "income");
+  else if (kind === "bill") list = list.filter(a => ["expense", "asset"].includes(typeOf(a.cat)) && a.cat !== "cash" && a.code !== ar);
+  else if (kind === "moneyin" || kind === "moneyout") list = list.filter(a => a.cat !== "cash" && a.code !== ar && a.code !== ap);
+  else if (kind === "opening") list = list.filter(a => a.code !== ar && a.code !== ap);
+  const groups = {};
+  for (const a of list) (groups[typeOf(a.cat)] = groups[typeOf(a.cat)] || []).push(a);
+  return `<option value="">Choose…</option>` + ["income", "expense", "asset", "liability", "equity"].filter(g => groups[g]).map(g => `<optgroup label="${TYPE_GROUP[g]}">${groups[g].map(a => `<option value="${esc(a.code)}" ${a.code === sel ? "selected" : ""}>${esc(a.code)} ${esc(a.name)}</option>`).join("")}</optgroup>`).join("");
+}
+function linesHTML(b, F) {
+  const jr = F.kind === "journal" || F.kind === "opening", vat = !jr && b.vatReg;
+  let h = vat ? `<label class="check" style="margin-top:12px"><input type="checkbox" id="bkf-incl" data-f="incl" ${F.incl ? "checked" : ""}><span>Amounts include VAT</span></label>` : "";
+  h += `<div class="table-box" style="margin-top:10px"><table class="lines"><thead><tr><th style="width:32%">Account</th><th>Description</th>${jr ? `<th style="width:16%">Debit</th><th style="width:16%">Credit</th>` : `<th style="width:18%">Amount</th>${vat ? `<th style="width:14%">VAT</th>` : ""}`}<th style="width:40px"></th></tr></thead><tbody>`;
+  F.lines.forEach((l, i) => {
+    h += `<tr><td><select data-l="${i}" data-lf="acct" aria-label="Account, line ${i + 1}">${acctOptions(b, F.kind, l.acct)}</select></td><td><input data-l="${i}" data-lf="desc" value="${esc(l.desc || "")}" aria-label="Description, line ${i + 1}"></td>`;
+    if (jr) h += `<td><input class="n" inputmode="decimal" data-l="${i}" data-lf="dr" value="${esc(l.dr ?? "")}" aria-label="Debit, line ${i + 1}"></td><td><input class="n" inputmode="decimal" data-l="${i}" data-lf="cr" value="${esc(l.cr ?? "")}" aria-label="Credit, line ${i + 1}"></td>`;
+    else { h += `<td><input class="n" inputmode="decimal" data-l="${i}" data-lf="amt" value="${esc(l.amt ?? "")}" aria-label="Amount, line ${i + 1}"></td>`; if (vat) h += `<td><select data-l="${i}" data-lf="vat" aria-label="VAT, line ${i + 1}">${VAT_OPTS.map(([c, n]) => `<option value="${c}" ${(l.vat || "N") === c ? "selected" : ""}>${n}</option>`).join("")}</select></td>`; }
+    h += `<td><button class="btn tiny" type="button" data-act="rm-line" data-i="${i}" aria-label="Remove line ${i + 1}" ${F.lines.length <= 1 ? "disabled" : ""}>×</button></td></tr>`;
+  });
+  return h + `</tbody></table></div><div class="actions" style="margin-top:8px"><button class="btn small" type="button" data-act="add-line">Add a line</button></div>`;
+}
+function renderForm() {
+  const b = book(), F = bkF, k = F.kind;
+  $("bk-m-title").textContent = k === "company" ? "New company" : F.opening ? `Unpaid ${k === "invoice" ? "customer invoice" : "supplier bill"} at the start` : `${F.id ? "Edit" : "New"} ${FORM_TITLE[k]}`;
+  $("bk-m-status").textContent = "";
+  const I = (name, type, val, extra = "") => `<input id="bkf-${name}" data-f="${name}" type="${type}" value="${esc(val ?? "")}" ${extra}>`;
+  const L = (label, name, html, wide) => `<div${wide ? ' style="grid-column:1/-1"' : ""}><label for="bkf-${name}">${label}</label>${html}</div>`;
+  const bankSel = (name, val) => `<select id="bkf-${name}" data-f="${name}">${bankAccts(b).map(a => `<option value="${esc(a.code)}" ${a.code === val ? "selected" : ""}>${esc(a.name)}</option>`).join("")}</select>`;
+  const names = kinds => [...new Set(b.txns.filter(t => kinds.includes(t.kind) && t.contact).map(t => t.contact))].sort();
+  const dl = kinds => `<datalist id="bk-dl">${names(kinds).map(c => `<option value="${esc(c)}">`).join("")}</datalist>`;
+  let h = "";
+  if (k === "company") {
+    h = `<div class="fgrid">${L("Company name", "name", I("name", "text", F.name), true)}${L("Financial year starts in", "fyStart", `<select id="bkf-fyStart" data-f="fyStart">${MONTHS.map((m, i) => `<option value="${i + 1}" ${+F.fyStart === i + 1 ? "selected" : ""}>${m}</option>`).join("")}</select>`)}${L("Books start on", "start", I("start", "date", F.start))}</div><label class="check" style="margin-top:12px"><input type="checkbox" id="bkf-vatReg" data-f="vatReg" ${F.vatReg ? "checked" : ""}><span>Registered for VAT</span></label><p class="help" style="margin-top:10px">Start on the first day of a financial year if you can, so the pack can include a cash flow statement. Then enter the opening balances from last year's accounts in Setup.</p>`;
+  } else if (k === "invoice" || k === "bill") {
+    const who = k === "invoice" ? "Customer" : "Supplier";
+    h = dl(k === "invoice" ? ["invoice", "receipt"] : ["bill", "billpay"]) + `<div class="fgrid">${L(who, "contact", I("contact", "text", F.contact, 'list="bk-dl" autocomplete="off"'))}${L(k === "invoice" ? "Invoice number" : "Supplier's bill number", "ref", I("ref", "text", F.ref))}${L(F.opening ? "Original date" : "Date", "date", I("date", "date", F.date))}${L("Due date", "due", I("due", "date", F.due))}${F.opening ? L(`Amount still unpaid (${esc(b.currency)})`, "amount", I("amount", "text", F.amount, 'inputmode="decimal"')) : ""}</div>`;
+    if (!F.opening) h += linesHTML(b, F);
+  } else if (k === "moneyin" || k === "moneyout") {
+    h = dl(["moneyin", "moneyout", "invoice", "bill"]) + `<div class="fgrid">${L("Date", "date", I("date", "date", F.date))}${L(k === "moneyin" ? "Into account" : "From account", "bank", bankSel("bank", F.bank))}${L(k === "moneyin" ? "Received from" : "Paid to", "contact", I("contact", "text", F.contact, 'list="bk-dl" autocomplete="off"'))}${L("Reference", "ref", I("ref", "text", F.ref))}</div>` + linesHTML(b, F);
+  } else if (k === "receipt" || k === "billpay") {
+    const items = openItems(b, k === "receipt" ? "invoice" : "bill", "9999-12-31").filter(o => o.out > 0 || o.t.id === F.inv);
+    const who = [...new Set(items.map(o => o.t.contact))].sort();
+    if (!who.includes(F.contact) && who.length) F.contact = who[0];
+    const mine = items.filter(o => o.t.contact === F.contact);
+    if (!mine.some(o => o.t.id === F.inv)) { F.inv = mine[0] ? mine[0].t.id : ""; if (mine[0] && !F.id) F.amount = mine[0].out; }
+    h = who.length ? `<div class="fgrid">${L(k === "receipt" ? "Customer" : "Supplier", "contact", `<select id="bkf-contact" data-f="contact">${who.map(n => `<option ${n === F.contact ? "selected" : ""}>${esc(n)}</option>`).join("")}</select>`)}${L(k === "receipt" ? "Invoice" : "Bill", "inv", `<select id="bkf-inv" data-f="inv">${mine.map(o => `<option value="${o.t.id}" ${o.t.id === F.inv ? "selected" : ""}>${esc(o.t.ref || niceISO(o.t.date))} · ${rwf(o.out + (F.id && o.t.id === F.inv ? Number(toNum(F.amount)) || 0 : 0))} outstanding</option>`).join("")}</select>`)}${L("Date", "date", I("date", "date", F.date))}${L(k === "receipt" ? "Into account" : "From account", "bank", bankSel("bank", F.bank))}${L(`Amount (${esc(b.currency)})`, "amount", I("amount", "text", F.amount, 'inputmode="decimal"'))}${L("Reference, such as a MoMo transaction ID", "ref", I("ref", "text", F.ref))}</div>` : `<p class="help">There are no unpaid ${k === "receipt" ? "invoices" : "bills"}. Record ${k === "receipt" ? "a sales invoice" : "a supplier bill"} first, or use ${k === "receipt" ? "Money in" : "Money out"} for a payment without one.</p>`;
+  } else if (k === "transfer") {
+    h = `<div class="fgrid">${L("Date", "date", I("date", "date", F.date))}${L("From", "from", bankSel("from", F.from))}${L("To", "to", bankSel("to", F.to))}${L(`Amount (${esc(b.currency)})`, "amount", I("amount", "text", F.amount, 'inputmode="decimal"'))}${L("Reference", "ref", I("ref", "text", F.ref))}</div>`;
+  } else {
+    h = `<div class="fgrid">${L(k === "opening" ? "Balances at the end of" : "Date", "date", I("date", "date", F.date, k === "opening" ? "readonly" : ""))}${L("Description", "memo", I("memo", "text", F.memo), true)}</div>`;
+    if (k === "opening") h += `<p class="help" style="margin-top:8px">Debit assets, credit liabilities and equity. Leave out trade receivables and payables, and add unpaid invoices and bills from Setup instead. A difference is allowed: it goes to Opening balance equity until those are entered.</p>`;
+    h += linesHTML(b, F);
+  }
+  h += `<div class="totals" id="bk-m-totals" style="margin-top:12px"></div>`;
+  $("bk-m-body").innerHTML = h;
+  updateFormTotals();
+}
+function updateFormTotals() {
+  const b = book(), F = bkF, el = $("bk-m-totals");
+  if (!el || !F) return;
+  if (["invoice", "bill", "moneyin", "moneyout"].includes(F.kind) && !F.opening) {
+    const t = txnTotals({ ...F, lines: F.lines.map(l => ({ ...l, amt: toNum(l.amt) || 0 })) }, b);
+    el.innerHTML = `<span>Net <strong>${rwf(t.net)}</strong></span>${b.vatReg ? `<span>VAT <strong>${rwf(t.vat)}</strong></span>` : ""}<span>Total <strong>${rwf(t.gross)}</strong></span>`;
+  } else if (F.kind === "journal" || F.kind === "opening") {
+    const dr = F.lines.reduce((s, l) => s + (toNum(l.dr) || 0), 0), cr = F.lines.reduce((s, l) => s + (toNum(l.cr) || 0), 0), diff = dr - cr;
+    el.innerHTML = `<span>Debits <strong>${rwf(dr)}</strong></span><span>Credits <strong>${rwf(cr)}</strong></span><span class="${Math.abs(diff) >= 1 && F.kind === "journal" ? "down" : ""}">Difference <strong>${rwf(diff)}</strong>${F.kind === "opening" && Math.abs(diff) >= 1 ? " to opening balance equity" : ""}</span>`;
+  } else el.innerHTML = "";
+}
+function closeForm() { $("bk-modal").hidden = true; bkF = null; }
+function saveForm() {
+  const b = book(), F = bkF, k = F.kind, err = m => { $("bk-m-status").textContent = m; return false; }, num = v => Math.round(toNum(v) || 0);
+  if (k === "company") {
+    const name = String(F.name || "").trim();
+    if (!name) return err("Give the company a name.");
+    if (!isISO(F.start)) return err("Choose the date the books start.");
+    const nb = newBook(name, { fyStart: +F.fyStart || 1, start: F.start, vatReg: !!F.vatReg });
+    BK.books.push(nb); BK.cur = nb.id; bkWrite(); closeForm();
+    bkView = "setup"; bkBank = null; bkLedger = null; renderBooks(); toast(`${name} created. Enter its opening balances next.`);
+    return true;
+  }
+  if (!isISO(F.date)) return err("Enter a date.");
+  const openItem = !!F.opening;
+  if (!openItem && k !== "opening" && F.date < b.start) return err(`That date is before the books start on ${niceISO(b.start)}. Change the start date in Setup if you need to.`);
+  if (openItem && F.date >= b.start) return err(`Unpaid items at the start must be dated before ${niceISO(b.start)}.`);
+  const t = { id: F.id || uid(), kind: k, date: F.date, ref: String(F.ref || "").trim(), memo: String(F.memo || "").trim() };
+  const clean = () => F.lines.filter(l => l.acct || num(l.amt)).map(l => ({ acct: l.acct, desc: String(l.desc || "").trim(), amt: num(l.amt), vat: b.vatReg ? (l.vat || "N") : "N" }));
+  const checkLines = ls => !ls.length ? "Add at least one line." : ls.some(l => !l.acct) ? "Choose an account on every line." : ls.some(l => l.amt <= 0) ? "Amounts must be more than zero." : "";
+  if (k === "invoice" || k === "bill") {
+    t.contact = String(F.contact || "").trim();
+    if (!t.contact) return err(`Enter the ${k === "invoice" ? "customer" : "supplier"}.`);
+    if (!isISO(F.due) || F.due < F.date) return err("The due date must be on or after the date.");
+    t.due = F.due;
+    if (openItem) { const a = num(F.amount); if (a <= 0) return err("Enter the amount still unpaid."); t.opening = true; t.lines = [{ acct: roleCode(b, "obe"), desc: "Unpaid at start of books", amt: a, vat: "N" }]; }
+    else { const ls = clean(), e = checkLines(ls); if (e) return err(e); t.lines = ls; t.incl = !!F.incl; }
+    if (k === "invoice" && t.ref && b.txns.some(x => x.kind === "invoice" && x.ref === t.ref && x.id !== t.id)) return err(`Invoice number ${t.ref} is already used.`);
+    if (F.id) { const paid = paidAgainst(b, t.id); if (paid > txnTotals(t, b).gross) return err(`Payments of ${rwf(paid)} are already recorded against this, more than the new total.`); }
+  } else if (k === "moneyin" || k === "moneyout") {
+    if (!F.bank) return err("Choose the bank or cash account.");
+    const ls = clean(), e = checkLines(ls); if (e) return err(e);
+    Object.assign(t, { bank: F.bank, contact: String(F.contact || "").trim(), incl: !!F.incl, lines: ls });
+  } else if (k === "receipt" || k === "billpay") {
+    const doc = b.txns.find(x => x.id === F.inv);
+    if (!doc) return err(`Choose the ${k === "receipt" ? "invoice" : "bill"}.`);
+    const a = num(F.amount), avail = txnTotals(doc, b).gross - paidAgainst(b, doc.id, t.id);
+    if (a <= 0) return err("Enter the amount.");
+    if (a > avail) return err(`That is more than the ${rwf(avail)} outstanding.`);
+    if (F.date < doc.date) return err(`The payment can't be dated before the ${k === "receipt" ? "invoice" : "bill"} (${niceISO(doc.date)}).`);
+    if (!F.bank) return err("Choose the bank or cash account.");
+    Object.assign(t, { inv: doc.id, contact: doc.contact, bank: F.bank, amount: a });
+  } else if (k === "transfer") {
+    const a = num(F.amount);
+    if (!F.from || !F.to || F.from === F.to) return err("Choose two different accounts.");
+    if (a <= 0) return err("Enter the amount.");
+    Object.assign(t, { from: F.from, to: F.to, amount: a });
+  } else {
+    const ls = F.lines.filter(l => l.acct || num(l.dr) || num(l.cr)).map(l => ({ acct: l.acct, desc: String(l.desc || "").trim(), dr: num(l.dr), cr: num(l.cr) }));
+    if (ls.some(l => !l.acct)) return err("Choose an account on every line.");
+    if (ls.some(l => l.dr && l.cr)) return err("Put each amount in either Debit or Credit, not both.");
+    if (ls.some(l => l.dr < 0 || l.cr < 0)) return err("Use positive amounts.");
+    const dr = ls.reduce((s, l) => s + l.dr, 0), cr = ls.reduce((s, l) => s + l.cr, 0);
+    if (k === "journal") { if (ls.length < 2) return err("A journal needs at least two lines."); if (!dr) return err("Enter the amounts."); if (dr !== cr) return err(`Debits and credits differ by ${rwf(dr - cr)}.`); }
+    else { if (!ls.length) return err("Enter at least one balance."); const ex = b.txns.find(x => x.kind === "opening" && x.id !== t.id); if (ex) t.id = ex.id; t.date = addDays(b.start, -1); }
+    t.lines = ls;
+  }
+  if (k === "invoice" && !openItem && !F.id && t.ref === b.invPrefix + pad4(b.nextInv)) b.nextInv++;
+  const i = b.txns.findIndex(x => x.id === t.id);
+  if (i >= 0) b.txns[i] = t; else b.txns.push(t);
+  b.txns.sort(byDate);
+  bkSave(); closeForm(); renderBooks(); toast(`${KIND_LABEL[k]} saved.`);
+  return true;
+}
+function bkDelete(id) {
+  const b = book(), t = b.txns.find(x => x.id === id);
+  if (!t) return;
+  if ((t.kind === "invoice" || t.kind === "bill") && b.txns.some(x => x.inv === id)) { toast("Delete the payments recorded against this first."); return; }
+  b.txns = b.txns.filter(x => x.id !== id);
+  for (const key of Object.keys(b.recon)) if (key.startsWith(id + "|")) delete b.recon[key];
+  bkSave(); renderBooks(); toast(`${KIND_LABEL[t.kind]} deleted.`);
+}
+function bkSaveSettings() {
+  const b = book(), name = $("bk-s-name").value.trim(), start = $("bk-s-start").value;
+  if (!name) { toast("Give the company a name."); return; }
+  if (!isISO(start)) { toast("Choose the date the books start."); return; }
+  if (b.txns.some(t => t.date < start && t.kind !== "opening" && !t.opening)) { toast(`Some entries are dated before ${niceISO(start)}. Move them first, or choose an earlier start date.`); return; }
+  b.name = name; b.fyStart = +$("bk-s-fy").value || 1;
+  if (start !== b.start) { b.start = start; const op = b.txns.find(t => t.kind === "opening"); if (op) op.date = addDays(start, -1); }
+  b.invPrefix = $("bk-s-prefix").value;
+  b.nextInv = Math.max(1, parseInt($("bk-s-next").value, 10) || 1);
+  b.currency = ($("bk-s-cur").value.trim() || "RWF").toUpperCase();
+  b.vatReg = $("bk-s-vat").checked;
+  b.txns.sort(byDate);
+  bkSave(); renderBooks(); toast("Company settings saved.");
+}
+function bkAddAccount() {
+  const b = book(), code = $("bk-na-code").value.trim(), name = $("bk-na-name").value.trim(), cat = $("bk-na-cat").value;
+  if (!code || !name) { toast("Enter a code and a name for the account."); return; }
+  if (acctOf(b, code)) { toast(`Code ${code} is already used.`); return; }
+  b.accounts.push({ code, name, cat, role: null });
+  b.accounts.sort((x, y) => x.code.localeCompare(y.code, undefined, { numeric: true }));
+  bkSave(); renderBooks(); toast(`Account ${code} ${name} added.`);
+}
+async function bkBackup() {
+  const now = new Date().toISOString(), snap = JSON.parse(JSON.stringify(BK));
+  snap.books.forEach(x => { x.lastBackup = now; });
+  const ok = await saveFile(`Acivaz books backup ${todayISO()}.json`, JSON.stringify({ app: "Acivaz", kind: "books-backup", v: 1, exported: now, store: snap }));
+  if (ok) { BK.books.forEach(x => { x.lastBackup = now; }); bkWrite(); renderBooks(); }
+}
+async function bkExportXLSX() {
+  if (!window.XLSX) { toast("The Excel tool didn't load. Check your connection and reload."); return; }
+  if (!canDownload()) return;
+  const b = book(), d = bkAsAt || todayISO(), bal = tbAt(b, d), wb = XLSX.utils.book_new();
+  const add = (rows, name, w) => { const ws = XLSX.utils.aoa_to_sheet(rows); ws["!cols"] = w.map(x => ({ wch: x })); XLSX.utils.book_append_sheet(wb, ws, name); };
+  const tb = [[`Trial balance at ${d} (${b.currency})`, "Account", "Debit", "Credit"]];
+  let dr = 0, cr = 0;
+  for (const a of b.accounts) { const v = Math.round(bal[a.code] || 0); if (!v) continue; tb.push([a.code, a.name, v > 0 ? v : "", v < 0 ? -v : ""]); if (v > 0) dr += v; else cr -= v; }
+  tb.push(["", "Total", dr, cr]);
+  add(tb, "Trial balance", [14, 36, 16, 16]);
+  const db = [["Date", "Type", "Reference", "Contact", "Account code", "Account", "Debit", "Credit", "Details"]];
+  for (const t of b.txns) for (const p of postings(t, b)) db.push([t.date, KIND_LABEL[t.kind], t.ref || "", t.contact || "", p.code, acctName(b, p.code), p.v > 0 ? p.v : "", p.v < 0 ? -p.v : "", txnDesc(t, b)]);
+  add(db, "Day book", [12, 16, 12, 22, 10, 30, 14, 14, 40]);
+  for (const [kind, name] of [["invoice", "Sales invoices"], ["bill", "Supplier bills"]]) {
+    const r = [["Date", "Number", kind === "invoice" ? "Customer" : "Supplier", "Due", "Net", "VAT", "Total", "Paid", "Outstanding", "Status"]];
+    for (const o of openItems(b, kind, "9999-12-31", todayISO())) { const tt = txnTotals(o.t, b); r.push([o.t.date, o.t.ref || "", o.t.contact || "", o.t.due || "", tt.net, tt.vat, tt.gross, o.paid, o.out, o.status]); }
+    add(r, name, [12, 12, 26, 12, 14, 12, 14, 14, 14, 10]);
+  }
+  if (b.vatReg) {
+    const p = bkVat || bkVatPeriod("last"), v = vatSummary(b, p.from, p.to);
+    add([[`VAT summary ${p.from} to ${p.to}`, "Value excluding VAT", "VAT"], ["Standard-rated sales at 18%", v.sS, v.oV], ["Zero-rated sales", v.sZ, 0], ["Exempt sales", v.sE, ""], ["Purchases at 18%", v.pS, v.iV], ["Zero-rated and exempt purchases", v.pZ + v.pE, ""], [v.net >= 0 ? "VAT payable" : "VAT refundable", "", Math.abs(v.net)]], "VAT summary", [36, 20, 14]);
+  }
+  add([["Code", "Name", "Pack line"]].concat(b.accounts.map(a => [a.code, a.name, catLabel(a.cat)])), "Accounts", [10, 36, 28]);
+  const buf = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+  await saveFile(`${b.name.replace(/[^\w\- ]+/g, "").trim()} - books to ${d}.xlsx`, new Blob([buf]));
+  noteDownload();
+}
+function sendBooksToPack() {
+  const b = book(), d = bkAsAt || todayISO(), fs = fyStartFor(b, d), y = +d.slice(0, 4), m = +d.slice(5, 7);
+  const d1 = isoOf(new Date(y - 1, m - 1, Math.min(+d.slice(8, 10), new Date(y - 1, m, 0).getDate())));
+  const cur = tbAt(b, d), cmp = b.txns.some(t => t.date <= d1) ? tbAt(b, d1) : null, opn = b.txns.some(t => t.date < fs) ? tbAt(b, addDays(fs, -1), fs) : null;
+  const months = (y - +fs.slice(0, 4)) * 12 + (m - +fs.slice(5, 7)) + 1;
+  const rows = b.accounts.filter(a => [cur, cmp, opn].some(x => x && Math.abs(x[a.code] || 0) >= 1)).map(a => ({ code: a.code, name: a.name, cur: cur[a.code] || 0, cmp: cmp ? cmp[a.code] || 0 : null, bud: null, opn: opn ? opn[a.code] || 0 : null, cat: a.cat, src: "books" }));
+  if (!rows.length) { toast("There are no entries to build a pack from yet."); return; }
+  const rev = -sumWhere(b, cur, a => a.cat === "rev");
+  const keepPdf = S ? S.pdfModel : undefined;
+  A = rows;
+  S = { ...SAMPLE_SETTINGS, company: b.name.replace(/\s*\(example\)\s*$/i, ""), cur: `${MONTHS[m - 1]} ${y} YTD`, cmp: `${MONTHS[m - 1]} ${y - 1} YTD`, bud: "Budget", opn: `Opening ${niceISO(fs)}`, months: Math.min(12, Math.max(1, months)), unit: Math.abs(rev) >= 2e7 ? "m" : "k", currency: b.currency, flip: false, cmpOpen: false, policies: null, model: null, pdfModel: keepPdf };
+  isSample = false; compareTo = "cmp"; $("commentary").value = "";
+  persist(); renderAll(); show("pack");
+  toast(`Pack built from the books to ${niceISO(d)}.`);
+}
+
+/* Books events */
+$("view-books").addEventListener("click", e => {
+  const a = e.target.closest("[data-act]");
+  if (!a || a.disabled) return;
+  const b = book(), act = a.dataset.act, id = a.dataset.id;
+  if (act === "bk-tab") { bkView = a.dataset.bk; bkJAll = false; renderBooks(); window.scrollTo({ top: 0 }); }
+  else if (act === "new") openForm(a.dataset.kind);
+  else if (act === "new-open-item") openForm(a.dataset.kind, { opening: true });
+  else if (act === "new-company") openForm("company");
+  else if (act === "edit") { const t = b.txns.find(x => x.id === id); if (t) openForm(t.kind, t); }
+  else if (act === "pay") {
+    const t = b.txns.find(x => x.id === id); if (!t) return;
+    const o = openItems(b, t.kind, "9999-12-31").find(x => x.t.id === id);
+    openForm(t.kind === "invoice" ? "receipt" : "billpay", { contact: t.contact, inv: t.id, amount: o ? o.out : "" });
+  }
+  else if (act === "del") {
+    if (a.dataset.armed) bkDelete(id);
+    else { a.dataset.armed = "1"; a.textContent = "Confirm"; a.classList.add("danger"); setTimeout(() => { if (a.isConnected) { delete a.dataset.armed; a.textContent = "Delete"; a.classList.remove("danger"); } }, 4000); }
+  }
+  else if (act === "pick-bank") { bkBank = a.dataset.code; renderBooks(); }
+  else if (act === "save-recon") {
+    const rows = bankLines(b, bkBank), sdt = bkReconDate || todayISO(), stmt = toNum(bkReconBal);
+    if (stmt === null) return;
+    const cleared = rows.filter(r => r.t.date <= sdt && b.recon[r.key]).reduce((s, r) => s + r.v, 0);
+    b.recons.push({ acct: bkBank, date: sdt, balance: stmt, diff: stmt - cleared });
+    bkSave(); renderBooks();
+    toast(Math.abs(stmt - cleared) < 1 ? "Reconciliation saved." : "Saved, with a difference still to explain.");
+  }
+  else if (act === "j-all") { bkJAll = true; renderBooks(); }
+  else if (act === "vat-period") { bkVat = bkVatPeriod(a.dataset.p); renderBooks(); }
+  else if (act === "vat-pay") {
+    const v = vatSummary(b, bkVat.from, bkVat.to);
+    openForm("moneyout", { contact: "RRA", lines: [{ acct: roleCode(b, "vat"), desc: `VAT return ${niceISO(bkVat.from)} to ${niceISO(bkVat.to)}`, amt: String(Math.round(v.net)), vat: "N" }] });
+  }
+  else if (act === "post-tax") {
+    const d = bkAsAt, pl = plFrom(b, tbAt(b, d)), amt = Math.round(Math.max(0, pl.pbt) * CIT_RATE - pl.tax);
+    const tx = (b.accounts.find(x => x.cat === "tax") || {}).code, cit = roleCode(b, "cit");
+    if (Math.abs(amt) < 1) return;
+    if (!tx || !cit) { toast("Add an income tax expense account first."); return; }
+    if (d < b.start) { toast("Choose a date on or after the start of the books."); return; }
+    b.txns.push({ id: uid(), kind: "journal", date: d, ref: "", memo: `Income tax provision at 28% to ${niceISO(d)}`, lines: amt > 0 ? [{ acct: tx, desc: "", dr: amt, cr: 0 }, { acct: cit, desc: "", dr: 0, cr: amt }] : [{ acct: cit, desc: "", dr: -amt, cr: 0 }, { acct: tx, desc: "", dr: 0, cr: -amt }] });
+    b.txns.sort(byDate); bkSave(); renderBooks(); toast("Income tax provision posted.");
+  }
+  else if (act === "to-pack") sendBooksToPack();
+  else if (act === "xlsx") bkExportXLSX();
+  else if (act === "backup") bkBackup();
+  else if (act === "save-settings") bkSaveSettings();
+  else if (act === "add-acct") bkAddAccount();
+  else if (act === "del-acct") { b.accounts = b.accounts.filter(x => x.code !== a.dataset.code); bkSave(); renderBooks(); toast("Account deleted."); }
+  else if (act === "restore-yes") { BK = bkRestore.store; bkRestore = null; if (!BK.books.some(x => x.id === BK.cur)) BK.cur = BK.books[0].id; bkWrite(); bkView = "overview"; bkBank = null; bkLedger = null; renderBooks(); toast("Books restored from the backup."); }
+  else if (act === "restore-no") { bkRestore = null; renderBooks(); }
+  else if (act === "del-company") {
+    if (!a.dataset.armed) { a.dataset.armed = "1"; a.textContent = `Confirm: delete ${b.name}`; a.classList.add("danger"); setTimeout(() => { if (a.isConnected) { delete a.dataset.armed; a.textContent = "Delete company"; a.classList.remove("danger"); } }, 5000); return; }
+    const nm = b.name;
+    BK.books = BK.books.filter(x => x.id !== b.id);
+    if (!BK.books.length) BK.books.push(newBook("My company"));
+    BK.cur = BK.books[0].id; bkWrite(); bkView = "overview"; bkBank = null; bkLedger = null; renderBooks(); toast(`${nm} deleted.`);
+  }
+});
+$("view-books").addEventListener("change", e => {
+  const el = e.target, b = book();
+  if (el.id === "bk-company") { BK.cur = el.value; bkWrite(); bkBank = null; bkLedger = null; bkRestore = null; bkReconBal = ""; bkJAll = false; renderBooks(); }
+  else if (el.id === "bk-asat") { if (isISO(el.value)) { bkAsAt = el.value; renderBooks(); } }
+  else if (el.dataset.recon) { if (el.checked) b.recon[el.dataset.recon] = true; else delete b.recon[el.dataset.recon]; bkSave(); renderBooks(); }
+  else if (el.id === "bk-rec-date") { if (isISO(el.value)) { bkReconDate = el.value; renderBooks(); } }
+  else if (el.id === "bk-rec-bal") { bkReconBal = el.value; renderBooks(); }
+  else if (el.id === "bk-vat-from" || el.id === "bk-vat-to") { if (isISO(el.value)) { bkVat = { ...bkVat, [el.id === "bk-vat-from" ? "from" : "to"]: el.value }; renderBooks(); } }
+  else if (el.id === "bk-ledger") { bkLedger = el.value; renderBooks(); }
+  else if (el.id === "bk-jfilter") { bkJFilter = el.value; bkJAll = false; renderBooks(); }
+  else if (el.dataset.acctName !== undefined) { const ac = acctOf(b, el.dataset.acctName); if (ac && el.value.trim()) { ac.name = el.value.trim(); bkSave(); toast("Account renamed."); } }
+  else if (el.dataset.acctCat !== undefined) { const ac = acctOf(b, el.dataset.acctCat); if (ac) { ac.cat = el.value; bkSave(); toast("Pack line changed."); } }
+});
+$("bk-restore-file").addEventListener("change", async e => {
+  const f = e.target.files && e.target.files[0];
+  e.target.value = "";
+  if (!f) return;
+  try {
+    const text = await new Promise((res, rej) => { const fr = new FileReader(); fr.onload = () => res(fr.result); fr.onerror = rej; fr.readAsText(f); });
+    const j = JSON.parse(text);
+    if (!j || j.kind !== "books-backup" || !j.store || !Array.isArray(j.store.books) || !j.store.books.length || !j.store.books.every(x => Array.isArray(x.accounts) && Array.isArray(x.txns))) throw new Error("not a backup");
+    bkRestore = j; bkView = "setup"; renderBooks(); window.scrollTo({ top: 0 });
+  } catch (err) { toast("That file isn't an Acivaz books backup."); }
+});
+function bkFormInput(e) {
+  if (!bkF) return;
+  const el = e.target, b = book();
+  if (el.dataset.f) {
+    const f = el.dataset.f;
+    bkF[f] = el.type === "checkbox" ? el.checked : el.value;
+    if (f === "date" && (bkF.kind === "invoice" || bkF.kind === "bill") && !bkF.dueTouched && isISO(el.value)) { bkF.due = addDays(el.value, 30); const du = $("bkf-due"); if (du) du.value = bkF.due; }
+    if (f === "due") bkF.dueTouched = true;
+    if (e.type === "change" && (f === "contact" || f === "inv") && (bkF.kind === "receipt" || bkF.kind === "billpay")) {
+      if (f === "contact") bkF.inv = "";
+      if (!bkF.id) { const o = openItems(b, bkF.kind === "receipt" ? "invoice" : "bill", "9999-12-31").find(x => x.t.id === bkF.inv); bkF.amount = o ? o.out : ""; }
+      renderForm(); return;
+    }
+  } else if (el.dataset.lf) {
+    const l = bkF.lines[+el.dataset.l];
+    if (!l) return;
+    const lf = el.dataset.lf;
+    l[lf] = el.value;
+    if (lf === "acct" && !l.vatTouched && "vat" in l) { l.vat = defaultVat(b, el.value); const s = el.closest("tr").querySelector('[data-lf="vat"]'); if (s) s.value = l.vat; }
+    if (lf === "vat") l.vatTouched = true;
+  }
+  updateFormTotals();
+}
+$("bk-modal").addEventListener("input", bkFormInput);
+$("bk-modal").addEventListener("change", bkFormInput);
+$("bk-modal").addEventListener("click", e => {
+  const a = e.target.closest("[data-act]");
+  if (!a || !bkF) return;
+  if (a.dataset.act === "close-modal") closeForm();
+  else if (a.dataset.act === "add-line") { bkF.lines.push(blankLine(book(), bkF.kind)); renderForm(); }
+  else if (a.dataset.act === "rm-line") { bkF.lines.splice(+a.dataset.i, 1); renderForm(); }
+});
+$("bk-m-save").onclick = saveForm;
+document.addEventListener("keydown", e => { if (e.key === "Escape" && !$("bk-modal").hidden) closeForm(); });
+
+
 /* ---------- Views and events ---------- */
 function show(view) {
   const isModel = MODEL_VIEWS.includes(view);
   if (isModel) modelView = view;
-  for (const v of ["pack", "data", "map"]) $("view-" + v).hidden = v !== view;
+  for (const v of ["pack", "data", "map", "books"]) $("view-" + v).hidden = v !== view;
   $("view-model").hidden = !isModel;
-  for (const v of ["pack", "data", "map", ...MODEL_VIEWS]) $("tab-" + v).setAttribute("aria-selected", v === view);
+  for (const v of ["books", "pack", "data", "map", ...MODEL_VIEWS]) $("tab-" + v).setAttribute("aria-selected", v === view);
   if (view === "map") renderMapping();
   if (view === "pack") renderPack();
   if (isModel) renderModel();
+  if (view === "books") renderBooks();
   window.scrollTo({ top: 0 });
 }
 document.addEventListener("click", e => {
