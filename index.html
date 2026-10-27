@@ -6,7 +6,7 @@
 <meta name="description" content="Turn a trial balance into a board-ready management pack: three financial statements, notes, charts, ratios and commentary, exported to PDF or Excel.">
 <meta name="theme-color" content="#1F3A5F">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Pack Builder">
+<meta name="apple-mobile-web-app-title" content="Acivaz">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" href="favicon-32.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -207,6 +207,12 @@ table.st.fs tr.sec td { padding-top: 16px; border-bottom: 0; }
 table.st.fs tr.grp td { font-style: italic; color: var(--muted); padding-top: 9px; padding-bottom: 2px; }
 table.st.fs tr.gap td { padding-top: 14px; }
 .fs-panel .table-box { overflow-x: auto; }
+.fs-panel { scroll-margin-top: 90px; }
+.disc-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: 16px 20px; }
+.disc-grid .disc { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.disc-grid label { font-weight: 600; font-size: 14px; }
+.disc-grid textarea { width: 100%; min-height: 96px; resize: vertical; padding: 10px 12px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg); font-size: 13.5px; line-height: 1.55; }
+.disc-grid input[type=date] { padding: 7px 9px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); max-width: 220px; }
 /* business plan */
 .bp-wrap { display: grid; grid-template-columns: 230px minmax(0, 1fr); gap: 22px; align-items: start; }
 .bp-toc { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 92px); display: flex; flex-direction: column; gap: 2px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 8px; }
@@ -475,15 +481,21 @@ img { max-width: 100%; }
           <button class="tab-item" type="button" id="tab-map" data-view="map"><span class="step">3</span><span><b>Mapping</b><small>Place each account on a line of the pack</small></span><span class="count" id="unmapped-count" hidden></span></button>
         </div>
       </div>
-      <button class="tab" type="button" id="tab-pack" data-view="pack" aria-current="page">Pack</button>
+      <div class="tab-group">
+        <button class="tab tab-parent has-current" type="button" id="grp-reports" aria-haspopup="true" aria-expanded="false" aria-controls="menu-reports">Reports <span class="tab-cur">· Management report</span><span class="caret" aria-hidden="true">▾</span></button>
+        <div class="tab-menu" id="menu-reports" hidden>
+          <button class="tab-item" type="button" id="tab-pack" data-view="pack" aria-current="page"><span class="step">4</span><span><b>Management report</b><small>Key figures, charts, ratios and commentary for owners and the board</small></span></button>
+          <button class="tab-item" type="button" id="tab-fs" data-view="fs"><span class="step">5</span><span><b>Financial statements</b><small>The four statements and notes in IFRS for SMEs format, with year-end disclosures</small></span></button>
+        </div>
+      </div>
       <div class="tab-group">
         <button class="tab tab-parent" type="button" id="grp-plan" aria-haspopup="true" aria-expanded="false" aria-controls="menu-plan">Plan <span class="tab-cur"></span><span class="caret" aria-hidden="true">▾</span></button>
         <div class="tab-menu" id="menu-plan" hidden>
-          <button class="tab-item" type="button" id="tab-forecast" data-view="forecast"><span class="step">5</span><span><b>Forecast</b><small>Three years, three scenarios, what drives profit</small></span></button>
-          <button class="tab-item" type="button" id="tab-budget" data-view="budget"><span class="step">6</span><span><b>Budget</b><small>The first forecast year, month by month</small></span></button>
-          <button class="tab-item" type="button" id="tab-valuation" data-view="valuation"><span class="step">7</span><span><b>Valuation</b><small>Discounted cash flow and sensitivity</small></span></button>
-          <button class="tab-item" type="button" id="tab-appraisal" data-view="appraisal"><span class="step">8</span><span><b>Loans and projects</b><small>Repayment schedules and project returns</small></span></button>
-          <button class="tab-item" type="button" id="tab-bplan" data-view="bplan"><span class="step">9</span><span><b>Business plan</b><small>A full plan for lenders and investors, built on the forecast</small></span></button>
+          <button class="tab-item" type="button" id="tab-forecast" data-view="forecast"><span class="step">6</span><span><b>Forecast</b><small>Three years, three scenarios, what drives profit</small></span></button>
+          <button class="tab-item" type="button" id="tab-budget" data-view="budget"><span class="step">7</span><span><b>Budget</b><small>The first forecast year, month by month</small></span></button>
+          <button class="tab-item" type="button" id="tab-valuation" data-view="valuation"><span class="step">8</span><span><b>Valuation</b><small>Discounted cash flow and sensitivity</small></span></button>
+          <button class="tab-item" type="button" id="tab-appraisal" data-view="appraisal"><span class="step">9</span><span><b>Loans and projects</b><small>Repayment schedules and project returns</small></span></button>
+          <button class="tab-item" type="button" id="tab-bplan" data-view="bplan"><span class="step">10</span><span><b>Business plan</b><small>A full plan for lenders and investors, built on the forecast</small></span></button>
         </div>
       </div>
       <button class="tab" type="button" id="tab-manual" data-view="manual">Manual</button>
@@ -508,11 +520,12 @@ img { max-width: 100%; }
 
       <div class="pack-title" id="sec-overview">
         <div>
-          <div class="eyebrow">Management pack</div>
+          <div class="eyebrow">Management report</div>
           <h1 id="pack-company">Company</h1>
           <div class="sub" id="pack-sub"></div>
         </div>
         <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">
+          <div class="actions"><button class="btn small" type="button" id="btn-mr-xlsx">Excel</button><button class="btn small primary" type="button" id="btn-mr-pdf">Download report PDF</button></div>
           <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
             <span class="eyebrow">Compare with</span>
             <div class="seg" role="group" aria-label="Compare with">
@@ -524,8 +537,8 @@ img { max-width: 100%; }
             <button type="button" data-jump="sec-charts">Charts</button>
             <button type="button" data-jump="sec-dash">Scorecard</button>
             <button type="button" data-jump="sec-commentary">Commentary</button>
-            <button type="button" data-jump="sec-statements">Statements</button>
-            <button type="button" data-jump="sec-notes">Notes</button>
+            <button type="button" data-jump="sec-ratios">Ratios</button>
+            <button type="button" data-view="fs">Financial statements →</button>
           </div>
         </div>
       </div>
@@ -583,32 +596,61 @@ img { max-width: 100%; }
         <div class="status" id="comm-status">Edit freely. This text goes into the PDF exactly as written.</div>
       </div>
 
-      <div class="section-title" id="sec-statements"><h2>Financial statements</h2><span class="muted unit-label" style="font-size:13px"></span></div>
-      <div class="panel fs-panel">
-        <div class="panel-head"><h3>Statement of profit or loss</h3><span class="sub" id="is-sub"></span></div>
-        <div class="table-box"><table class="st fs" id="is"></table></div>
-      </div>
-      <div class="panel fs-panel">
-        <div class="panel-head"><h3>Statement of financial position</h3><span class="sub" id="bs-sub"></span></div>
-        <div class="table-box"><table class="st fs" id="bs"></table></div>
-      </div>
-      <div class="panel fs-panel">
-        <div class="panel-head"><h3>Statement of changes in equity</h3><span class="sub" id="soce-sub"></span></div>
-        <div id="soce-box"></div>
-      </div>
-      <div class="panel fs-panel">
-        <div class="panel-head"><h3>Statement of cash flows</h3><span class="sub" id="cf-sub"></span></div>
-        <div id="cf-box"></div>
-      </div>
-      <div class="panel">
+      <div class="panel" id="sec-ratios" style="scroll-margin-top:90px">
         <div class="panel-head"><h3>Ratios</h3><span class="sub" id="ratio-sub"></span></div>
         <div class="table-box"><table class="ratios" id="ratios"></table></div>
       </div>
+    </section>
 
+    <!-- FINANCIAL STATEMENTS -->
+    <section class="view" id="view-fs" hidden>
+      <div class="notice" id="fs-sample" hidden>
+        <span><strong>Example data.</strong> Umucyo Agro Processors Ltd is a fictional maize and feed processor, loaded so you can see the statements.</span>
+        <button class="linkish" type="button" data-goto="data">Load your own trial balance</button>
+      </div>
+      <div class="pack-title">
+        <div>
+          <div class="eyebrow">Financial statements</div>
+          <h1 id="fs-company">Company</h1>
+          <div class="sub" id="fs-subt"></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">
+          <div class="actions"><button class="btn small" type="button" id="btn-fs-xlsx">Excel</button><button class="btn small primary" type="button" id="btn-fs-pdf">Download statements PDF</button></div>
+          <div class="pack-nav">
+            <button type="button" data-jump="fs-p-is">Profit or loss</button>
+            <button type="button" data-jump="fs-p-bs">Position</button>
+            <button type="button" data-jump="fs-p-soce">Equity</button>
+            <button type="button" data-jump="fs-p-cf">Cash flows</button>
+            <button type="button" data-jump="sec-notes">Notes</button>
+            <button type="button" data-jump="sec-disc">Disclosures and approval</button>
+            <button type="button" data-view="pack">← Management report</button>
+          </div>
+        </div>
+      </div>
+      <div class="checks" id="fs-checks"></div>
+      <div class="panel fs-panel" id="fs-p-is">
+        <div class="panel-head"><h3>Statement of profit or loss</h3><span class="sub" id="is-sub"></span></div>
+        <div class="table-box"><table class="st fs" id="is"></table></div>
+      </div>
+      <div class="panel fs-panel" id="fs-p-bs">
+        <div class="panel-head"><h3>Statement of financial position</h3><span class="sub" id="bs-sub"></span></div>
+        <div class="table-box"><table class="st fs" id="bs"></table></div>
+      </div>
+      <div class="panel fs-panel" id="fs-p-soce">
+        <div class="panel-head"><h3>Statement of changes in equity</h3><span class="sub" id="soce-sub"></span></div>
+        <div id="soce-box"></div>
+      </div>
+      <div class="panel fs-panel" id="fs-p-cf">
+        <div class="panel-head"><h3>Statement of cash flows</h3><span class="sub" id="cf-sub"></span></div>
+        <div id="cf-box"></div>
+      </div>
       <div class="section-title" id="sec-notes"><h2>Notes to the financial statements</h2></div>
       <div class="panel">
         <div class="notes" id="notes"></div>
       </div>
+
+      <div class="section-title" id="sec-disc" style="scroll-margin-top:90px"><h2>Year-end disclosures and approval</h2></div>
+      <div class="panel" id="fs-disc"></div>
     </section>
 
     <!-- DATA -->
@@ -885,12 +927,13 @@ img { max-width: 100%; }
           <button type="button" class="lvl2" data-jump="m-books-pack">From books to pack</button>
           <button type="button" data-jump="m-data">2 · Data</button>
           <button type="button" data-jump="m-mapping">3 · Mapping</button>
-          <button type="button" data-jump="m-pack">4 · Pack</button>
-          <button type="button" data-jump="m-forecast">5 · Forecast</button>
-          <button type="button" data-jump="m-budget">6 · Budget</button>
-          <button type="button" data-jump="m-valuation">7 · Valuation</button>
-          <button type="button" data-jump="m-appraisal">8 · Loans and projects</button>
-          <button type="button" data-jump="m-bplan">9 · Business plan</button>
+          <button type="button" data-jump="m-pack">4 · Management report</button>
+          <button type="button" data-jump="m-fs">5 · Financial statements</button>
+          <button type="button" data-jump="m-forecast">6 · Forecast</button>
+          <button type="button" data-jump="m-budget">7 · Budget</button>
+          <button type="button" data-jump="m-valuation">8 · Valuation</button>
+          <button type="button" data-jump="m-appraisal">9 · Loans and projects</button>
+          <button type="button" data-jump="m-bplan">10 · Business plan</button>
           <button type="button" data-jump="m-downloads">Downloads and unlocking</button>
           <button type="button" data-jump="m-install">Install and offline use</button>
           <button type="button" data-jump="m-built">How Acivaz is built</button>
@@ -900,9 +943,9 @@ img { max-width: 100%; }
         <article class="m-art">
           <section id="m-start">
             <h2>Getting started</h2>
-            <p>Acivaz takes a business from its day-to-day transactions to a board-ready management pack, then on to forecasts, a budget, a valuation, loan or project appraisal and a full business plan. The top bar has five entries: <strong>Books</strong>, <strong>Data</strong> (upload a trial balance, then mapping), <strong>Pack</strong>, <strong>Plan</strong> (forecast, budget, valuation, loans and projects, and the business plan) and <strong>Manual</strong>. Data and Plan open a short menu; the step you are on shows beside the menu's name.</p>
+            <p>Acivaz takes a business from its day-to-day transactions to a board-ready management pack, then on to forecasts, a budget, a valuation, loan or project appraisal and a full business plan. The top bar has five entries: <strong>Books</strong>, <strong>Data</strong> (upload a trial balance, then mapping), <strong>Reports</strong> (the management report and the financial statements), <strong>Plan</strong> (forecast, budget, valuation, loans and projects, and the business plan) and <strong>Manual</strong>. Data, Reports and Plan open a short menu; the step you are on shows beside the menu's name.</p>
             <h3>How the figures flow</h3>
-            <figure class="m-fig"><div class="fig-box"><svg viewBox="0 0 960 450" role="img" aria-label="Figures flow from Books or an uploaded trial balance, through mapping, into the pack; the forecast starts from the pack and feeds the budget and valuation; every download is free for the first 30 days, then needs an unlock code" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-size="12"><defs><marker id="mfa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker></defs><rect x="20" y="30" width="160" height="100" rx="4" fill="var(--seg1)" fill-opacity=".13" stroke="var(--seg1)" stroke-width="1.5"/><text x="34" y="56" font-weight="700" font-size="13" fill="var(--ink)">1 Books</text><text x="34" y="78" fill="var(--ink)">Invoices and bills</text><text x="34" y="97" fill="var(--ink)">Bank, MoMo, journals</text><text x="34" y="116" fill="var(--ink)">VAT and 28% tax</text><rect x="20" y="170" width="160" height="80" rx="4" fill="var(--seg1)" fill-opacity=".13" stroke="var(--seg1)" stroke-width="1.5"/><text x="34" y="196" font-weight="700" font-size="13" fill="var(--ink)">2 Data</text><text x="34" y="218" fill="var(--ink)">Trial balance file</text><text x="34" y="237" fill="var(--ink)">Excel or CSV</text><rect x="260" y="90" width="140" height="100" rx="4" fill="var(--accent)" fill-opacity=".13" stroke="var(--accent)" stroke-width="1.5"/><text x="274" y="116" font-weight="700" font-size="13" fill="var(--ink)">Trial balance</text><text x="274" y="138" fill="var(--ink)">This period</text><text x="274" y="157" fill="var(--ink)">Comparative</text><text x="274" y="176" fill="var(--ink)">Opening</text><rect x="440" y="105" width="120" height="70" rx="4" fill="var(--accent)" fill-opacity=".13" stroke="var(--accent)" stroke-width="1.5"/><text x="454" y="131" font-weight="700" font-size="13" fill="var(--ink)">3 Mapping</text><text x="454" y="153" fill="var(--ink)">Account to line</text><rect x="600" y="30" width="170" height="190" rx="4" fill="var(--accent)" fill-opacity=".13" stroke="var(--accent)" stroke-width="1.5"/><text x="614" y="56" font-weight="700" font-size="13" fill="var(--ink)">4 Pack</text><text x="614" y="78" fill="var(--ink)">Profit or loss</text><text x="614" y="97" fill="var(--ink)">Financial position</text><text x="614" y="116" fill="var(--ink)">Cash flows</text><text x="614" y="135" fill="var(--ink)">Notes</text><text x="614" y="154" fill="var(--ink)">Ratios</text><text x="614" y="173" fill="var(--ink)">Charts</text><text x="614" y="192" fill="var(--ink)">Commentary</text><rect x="420" y="270" width="170" height="70" rx="4" fill="var(--seg3)" fill-opacity=".13" stroke="var(--seg3)" stroke-width="1.5"/><text x="434" y="296" font-weight="700" font-size="13" fill="var(--ink)">5 Forecast</text><text x="434" y="318" fill="var(--ink)">3 years, 3 scenarios</text><rect x="630" y="270" width="150" height="56" rx="4" fill="var(--seg3)" fill-opacity=".13" stroke="var(--seg3)" stroke-width="1.5"/><text x="644" y="296" font-weight="700" font-size="13" fill="var(--ink)">6 Budget</text><text x="644" y="318" fill="var(--ink)">Year 1 by month</text><rect x="630" y="342" width="150" height="56" rx="4" fill="var(--seg3)" fill-opacity=".13" stroke="var(--seg3)" stroke-width="1.5"/><text x="644" y="368" font-weight="700" font-size="13" fill="var(--ink)">7 Valuation</text><text x="644" y="390" fill="var(--ink)">DCF, sensitivity</text><rect x="420" y="370" width="170" height="56" rx="4" fill="var(--seg3)" fill-opacity=".13" stroke="var(--seg3)" stroke-width="1.5" stroke-dasharray="5 4"/><text x="434" y="396" font-weight="700" font-size="13" fill="var(--ink)">8 Loans and projects</text><text x="434" y="418" fill="var(--ink)">Own inputs</text><rect x="820" y="30" width="120" height="400" rx="4" fill="var(--seg2)" fill-opacity=".13" stroke="var(--seg2)" stroke-width="1.5"/><text x="834" y="56" font-weight="700" font-size="13" fill="var(--ink)">Downloads</text><text x="834" y="78" fill="var(--ink)">PDF and Excel</text><text x="834" y="97" fill="var(--ink)"></text><text x="834" y="116" fill="var(--ink)">30-day free trial,</text><text x="834" y="135" fill="var(--ink)">then RWF 20,000</text><text x="834" y="154" fill="var(--ink)">a month by MoMo</text><text x="834" y="173" fill="var(--ink)"></text><text x="834" y="192" fill="var(--ink)">Backups are</text><text x="834" y="211" fill="var(--ink)">always free</text><path d="M180 80 H220 V120 H259" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfa)"/><text x="184" y="72" text-anchor="start" font-size="11" fill="var(--muted)">Build pack</text><path d="M180 210 H220 V155 H259" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfa)"/><text x="184" y="226" text-anchor="start" font-size="11" fill="var(--muted)">Upload</text><path d="M400 140 H439" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfa)"/><path d="M560 140 H599" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfa)"/><path d="M770 90 H819" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfa)"/><path d="M685 220 V245 H505 V269" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfa)"/><text x="595" y="239" text-anchor="middle" font-size="11" fill="var(--muted)">Actuals, annualised</text><path d="M590 298 H629" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfa)"/><path d="M590 322 H610 V370 H629" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfa)"/><path d="M780 298 H819" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfa)"/><path d="M780 370 H819" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfa)"/><path d="M590 412 H819" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfa)"/></svg></div>
+            <figure class="m-fig"><div class="fig-box"><svg viewBox="0 0 960 450" role="img" aria-label="Figures flow from Books or an uploaded trial balance, through mapping, into the pack; the forecast starts from the pack and feeds the budget and valuation; every download is free for the first 30 days, then needs an unlock code" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-size="12"><defs><marker id="mfa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker></defs><rect x="20" y="30" width="160" height="100" rx="4" fill="var(--seg1)" fill-opacity=".13" stroke="var(--seg1)" stroke-width="1.5"/><text x="34" y="56" font-weight="700" font-size="13" fill="var(--ink)">1 Books</text><text x="34" y="78" fill="var(--ink)">Invoices and bills</text><text x="34" y="97" fill="var(--ink)">Bank, MoMo, journals</text><text x="34" y="116" fill="var(--ink)">VAT and 28% tax</text><rect x="20" y="170" width="160" height="80" rx="4" fill="var(--seg1)" fill-opacity=".13" stroke="var(--seg1)" stroke-width="1.5"/><text x="34" y="196" font-weight="700" font-size="13" fill="var(--ink)">2 Data</text><text x="34" y="218" fill="var(--ink)">Trial balance file</text><text x="34" y="237" fill="var(--ink)">Excel or CSV</text><rect x="260" y="90" width="140" height="100" rx="4" fill="var(--accent)" fill-opacity=".13" stroke="var(--accent)" stroke-width="1.5"/><text x="274" y="116" font-weight="700" font-size="13" fill="var(--ink)">Trial balance</text><text x="274" y="138" fill="var(--ink)">This period</text><text x="274" y="157" fill="var(--ink)">Comparative</text><text x="274" y="176" fill="var(--ink)">Opening</text><rect x="440" y="105" width="120" height="70" rx="4" fill="var(--accent)" fill-opacity=".13" stroke="var(--accent)" stroke-width="1.5"/><text x="454" y="131" font-weight="700" font-size="13" fill="var(--ink)">3 Mapping</text><text x="454" y="153" fill="var(--ink)">Account to line</text><rect x="600" y="30" width="170" height="190" rx="4" fill="var(--accent)" fill-opacity=".13" stroke="var(--accent)" stroke-width="1.5"/><text x="614" y="56" font-weight="700" font-size="13" fill="var(--ink)">4–5 Reports</text><text x="614" y="78" fill="var(--ink)">Profit or loss</text><text x="614" y="97" fill="var(--ink)">Financial position</text><text x="614" y="116" fill="var(--ink)">Cash flows</text><text x="614" y="135" fill="var(--ink)">Notes</text><text x="614" y="154" fill="var(--ink)">Ratios</text><text x="614" y="173" fill="var(--ink)">Charts</text><text x="614" y="192" fill="var(--ink)">Commentary</text><rect x="420" y="270" width="170" height="70" rx="4" fill="var(--seg3)" fill-opacity=".13" stroke="var(--seg3)" stroke-width="1.5"/><text x="434" y="296" font-weight="700" font-size="13" fill="var(--ink)">6 Forecast</text><text x="434" y="318" fill="var(--ink)">3 years, 3 scenarios</text><rect x="630" y="270" width="150" height="56" rx="4" fill="var(--seg3)" fill-opacity=".13" stroke="var(--seg3)" stroke-width="1.5"/><text x="644" y="296" font-weight="700" font-size="13" fill="var(--ink)">7 Budget</text><text x="644" y="318" fill="var(--ink)">Year 1 by month</text><rect x="630" y="342" width="150" height="56" rx="4" fill="var(--seg3)" fill-opacity=".13" stroke="var(--seg3)" stroke-width="1.5"/><text x="644" y="368" font-weight="700" font-size="13" fill="var(--ink)">8 Valuation</text><text x="644" y="390" fill="var(--ink)">DCF, sensitivity</text><rect x="420" y="370" width="170" height="56" rx="4" fill="var(--seg3)" fill-opacity=".13" stroke="var(--seg3)" stroke-width="1.5" stroke-dasharray="5 4"/><text x="434" y="396" font-weight="700" font-size="13" fill="var(--ink)">9 Loans and projects</text><text x="434" y="418" fill="var(--ink)">Own inputs</text><rect x="820" y="30" width="120" height="400" rx="4" fill="var(--seg2)" fill-opacity=".13" stroke="var(--seg2)" stroke-width="1.5"/><text x="834" y="56" font-weight="700" font-size="13" fill="var(--ink)">Downloads</text><text x="834" y="78" fill="var(--ink)">PDF and Excel</text><text x="834" y="97" fill="var(--ink)"></text><text x="834" y="116" fill="var(--ink)">30-day free trial,</text><text x="834" y="135" fill="var(--ink)">then RWF 20,000</text><text x="834" y="154" fill="var(--ink)">a month by MoMo</text><text x="834" y="173" fill="var(--ink)"></text><text x="834" y="192" fill="var(--ink)">Backups are</text><text x="834" y="211" fill="var(--ink)">always free</text><path d="M180 80 H220 V120 H259" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfa)"/><text x="184" y="72" text-anchor="start" font-size="11" fill="var(--muted)">Build pack</text><path d="M180 210 H220 V155 H259" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfa)"/><text x="184" y="226" text-anchor="start" font-size="11" fill="var(--muted)">Upload</text><path d="M400 140 H439" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfa)"/><path d="M560 140 H599" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfa)"/><path d="M770 90 H819" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfa)"/><path d="M685 220 V245 H505 V269" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfa)"/><text x="595" y="239" text-anchor="middle" font-size="11" fill="var(--muted)">Actuals, annualised</text><path d="M590 298 H629" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfa)"/><path d="M590 322 H610 V370 H629" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfa)"/><path d="M780 298 H819" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfa)"/><path d="M780 370 H819" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfa)"/><path d="M590 412 H819" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfa)"/></svg></div>
               <figcaption>Figures come either from the books or from an uploaded trial balance. Mapping places each account on a line of the pack. The forecast starts from the pack's actuals, scaled to a full year, and feeds the budget and valuation. Loans and projects use their own inputs. Every PDF or Excel download is free during the 30-day trial, then needs an unlock code.</figcaption></figure>
             <p>There are two ways in. If you keep the client's books in Acivaz, start at <strong>Books</strong> and press <strong>Build management pack</strong> when you're ready. If the books are kept in other software, start at <strong>Data</strong> and upload a trial balance.</p>
             <p>Both ways open on example data, a fictional bakery and a fictional maize processor, so you can see every screen working before you enter your own figures.</p>
@@ -1043,8 +1086,8 @@ img { max-width: 100%; }
           </section>
 
           <section id="m-pack">
-            <h2>4 · Pack</h2>
-            <p>The Pack is the management accounts. It opens with four checks: the trial balance balances, every account is mapped, the balance sheet ties, and the cash flow reconciles to cash. Fix any check that isn't green before sending the pack.</p>
+            <h2>4 · Management report</h2>
+            <p>The management report is what owners and the board read each month. It opens with four checks: the trial balance balances, every account is mapped, the balance sheet ties, and the cash flow reconciles to cash. Fix any check that isn't green before sending the pack.</p>
             <ul>
               <li><strong>Compare with</strong> switches the comparison between the comparative period and the budget.</li>
               <li><strong>Key figures</strong>: revenue, gross margin, net profit and cash.</li>
@@ -1052,40 +1095,49 @@ img { max-width: 100%; }
               <li><strong>Ratio scorecard</strong>: each ratio placed on a band of Healthy, Watch and Act zones, with this period as a dot and the comparative as a ring, so you can see which way it moved.</li>
               <li><strong>Cost lines per 100 of revenue</strong>: every cost account as a share of revenue, this period against the comparative. A red change means that cost took a bigger share. Both also go into the PDF and Excel.</li>
               <li><strong>Commentary</strong>: press <strong>Rebuild basic draft</strong> for a draft written from the figures, then fill in the notes in square brackets with the real reasons. Edit it freely; it goes into the PDF exactly as written. When Acivaz is opened inside Claude, <strong>Draft with Claude</strong> writes a fuller version.</li>
-              <li><strong>Financial statements</strong>: profit or loss, financial position, changes in equity, and cash flows using the indirect method, with note references, laid out as in IFRS for SMEs accounts. Costs are shown in brackets, assets and liabilities are split into non-current and current, and every statement uses the same columns so the figures line up from one statement to the next. In the PDF each statement starts on its own page, after a cover and a contents page.</li>
               <li><strong>Ratios</strong>: ten ratios with a guide value and a flag of Healthy, Watch or Act.</li>
-              <li><strong>Notes</strong>: account-level breakdowns of each line, the property and equipment movement, and the effective tax rate. Note 1, the basis of preparation, can be edited, and <strong>Reset to standard wording</strong> restores it.</li>
             </ul>
-            <p><strong>Download PDF pack</strong> and <strong>Excel</strong> in the top bar download the whole pack.</p>
+            <p><strong>Download report PDF</strong> and <strong>Excel</strong> beside the title download the management report on its own. <strong>Download PDF pack</strong> and <strong>Excel</strong> in the top bar download the full pack: the management report and the financial statements together.</p>
+          </section>
+
+          <section id="m-fs">
+            <h2>5 · Financial statements</h2>
+            <p>The statements for an auditor, RRA, RDB or a bank, laid out in the IFRS for SMEs format and marked unaudited. They use the same figures and checks as the management report.</p>
+            <ul>
+              <li><strong>The four statements</strong>: profit or loss, financial position, changes in equity, and cash flows using the indirect method, with note references. Costs are shown in brackets, assets and liabilities are split into non-current and current, and every statement uses the same columns so the figures line up from one to the next.</li>
+              <li><strong>Notes</strong>: the basis of preparation (editable; <strong>Reset to standard wording</strong> restores it), account-level breakdowns of each line, the property and equipment movement, and the effective tax rate.</li>
+              <li><strong>Year-end disclosures and approval</strong>: going concern, related party transactions, events after the reporting date, and contingencies and commitments. Each one you fill in becomes a note. <strong>Use standard wording</strong> inserts a nil statement; use it only when it is true. Add the date the board approves the statements and who signs; left blank, the PDF prints lines to sign by hand.</li>
+            </ul>
+            <p><strong>Download statements PDF</strong> gives a cover, contents, the approval page, each statement on its own page, and the notes. These are management-prepared statements: an auditor may still ask for more disclosures, such as detailed accounting policies or a directors' report.</p>
           </section>
 
           <section id="m-forecast">
-            <h2>5 · Forecast</h2>
+            <h2>6 · Forecast</h2>
             <p>A three-year forecast of the profit or loss, balance sheet and cash flow, starting from this year's actuals scaled up to a full year. Every assumption starts from the company's own figures, such as growth, gross margin and debtor days. Change any of them and the forecast updates as you type. <strong>Reset from actuals</strong> puts them back.</p>
             <p>Choose a <strong>Scenario</strong>: Base, Downside or Upside. The downside and upside cases change growth, gross margin and debtor days by the amounts you set at the bottom of the assumptions. The chart of closing cash shows all three cases together, and a warning appears if cash goes negative in any year, which signals a funding need.</p>
             <p><strong>What drives profit</strong> breaks the first forecast year's net profit into its lines, each branch as thick as the money it carries. Move a slider to try a change in growth, gross margin, staff or admin cost growth, selling costs or the interest rate: the tree recolours, the panel ranks the effect of each change, and the takeaway shows the new profit and closing cash. Nothing changes in the forecast until you press <strong>Use in forecast</strong>.</p>
           </section>
 
           <section id="m-budget">
-            <h2>6 · Budget</h2>
+            <h2>7 · Budget</h2>
             <p>The budget spreads the first forecast year over twelve months, using the scenario chosen in the Forecast. Choose the month the financial year starts, then give each month a weight for how much of the year's revenue falls in it. Cost of sales, selling costs and other income follow revenue; staff, administration, depreciation, interest and tax are spread evenly. <strong>Spread evenly</strong> resets the weights.</p>
           </section>
 
           <section id="m-valuation">
-            <h2>7 · Valuation</h2>
+            <h2>8 · Valuation</h2>
             <p>A discounted cash flow valuation built on the forecast. Set the <strong>discount rate (WACC)</strong>, meaning the return lenders and investors expect from a business of this size and risk, and the <strong>long-term growth</strong> after year 3.</p>
             <p>The result shows enterprise value, equity value after deducting borrowings less cash, the share of value coming from after year 3, and value as a multiple of EBITDA. The sensitivity table shows equity value across a range of discount and growth rates. With a three-year forecast, most of the value usually comes from after year 3, so read the result as a range rather than a price.</p>
           </section>
 
           <section id="m-appraisal">
-            <h2>8 · Loans and projects</h2>
+            <h2>9 · Loans and projects</h2>
             <p><strong>Loan repayment schedule</strong>: enter the amount, interest rate, term in months and any interest-only grace period, then choose equal monthly instalments or equal principal repayments. It shows the instalment, total interest, a year-by-year summary and the full monthly schedule.</p>
             <p><strong>Investment appraisal</strong>: enter the initial investment, useful life, the net cash inflow in year 1, how fast it grows, the value at the end of its life, and the discount rate. It shows net present value, internal rate of return, payback, discounted payback and the profitability index. A positive NPV means the project earns more than the discount rate.</p>
-            <p>Steps 5 to 9 each have their own <strong>Excel</strong> and <strong>Download PDF</strong> buttons. Tick <strong>Also add the forecast, budget, valuation, and loans and projects</strong> to include them in the full pack downloads.</p>
+            <p>Steps 6 to 10 each have their own <strong>Excel</strong> and <strong>Download PDF</strong> buttons. Tick <strong>Also add the forecast, budget, valuation, and loans and projects</strong> to include them in the full pack downloads.</p>
           </section>
 
           <section id="m-bplan">
-            <h2>9 · Business plan</h2>
+            <h2>10 · Business plan</h2>
             <p>A full business plan of thirteen sections, the shape banks, the Business Development Fund and investors expect. The figures come from your accounts and forecast; you write the story around them.</p>
             <ul>
               <li><strong>Sections 2 to 8</strong> (the business, products, market, competition, marketing, operations, team) are yours to write. <strong>Insert starter text</strong> adds a paragraph with the points to cover in square brackets; replace each bracket with the real detail.</li>
@@ -1185,7 +1237,7 @@ img { max-width: 100%; }
     </ol>
   </div>
 </div>
-<footer class="gutter"><div class="wrap foot"><span>Pack Builder</span><span id="plan-status"></span><span>Your files are processed on this device. Nothing is uploaded.</span><button class="linkish" type="button" data-goto="manual">Read the manual</button><span>Management accounts are unaudited. Check every figure before you send a pack.</span></div></footer>
+<footer class="gutter"><div class="wrap foot"><span>Acivaz</span><span id="plan-status"></span><span>Your files are processed on this device. Nothing is uploaded.</span><button class="linkish" type="button" data-goto="manual">Read the manual</button><span>Management accounts are unaudited. Check every figure before you send a pack.</span></div></footer>
 <div class="toast" id="toast" hidden></div>
 
 <script>
@@ -1557,6 +1609,39 @@ The statement of cash flows uses the indirect method and is derived from the mov
 
 Purchases of non-current assets are derived from the movement in their carrying amount plus the depreciation charge, net of any disposals.`;
 }
+/* Year-end disclosures and approval, kept for each company on this device */
+const FS_DISC = [
+  ["going", "Going concern", "Can the company keep operating for at least twelve months from approval? Say so, and name any material uncertainty.", "The directors have assessed the company's ability to continue operating for at least twelve months from the date these financial statements were approved and are not aware of any material uncertainty. The financial statements are therefore prepared on a going concern basis."],
+  ["related", "Related party transactions", "Sales, purchases, loans or balances with directors, shareholders, their families or companies they control.", "There were no transactions with related parties during the period other than remuneration paid to directors as employees."],
+  ["events", "Events after the reporting date", "Anything after the period end that changes these figures or that readers should know about.", "No events have occurred since the end of the period that require adjustment to, or disclosure in, these financial statements."],
+  ["contingent", "Contingencies and commitments", "Guarantees, legal claims, and capital spending the company has committed to but not yet recorded.", "The company had no contingent liabilities or capital commitments at the end of the period."]
+];
+const fsKey = () => "acv:fs:" + String(S.company || "").trim().toLowerCase();
+function FSD() { const k = fsKey(); if (FSD.key !== k || !FSD.data) { FSD.key = k; FSD.data = store.get(k) || { approvedOn: "", signers: "" }; } return FSD.data; }
+let fsT = null;
+function renderFSDisc(force) {
+  const box = $("fs-disc"); if (!box) return;
+  if (!force && renderFSDisc.key === FSD.key && box.innerHTML) return;
+  const d = FSD(); renderFSDisc.key = FSD.key;
+  box.innerHTML = `<p class="help" style="margin-bottom:12px">Monthly management accounts can skip these. Year-end statements for an auditor, RRA, RDB or a bank need them. Each one you fill in becomes a note. <strong>Use standard wording</strong> only when it is true for this company.</p><div class="disc-grid">` +
+    FS_DISC.map(([k, t, hint]) => `<div class="disc"><label for="fs-d-${k}">${esc(t)}</label><span class="help">${esc(hint)}</span><textarea id="fs-d-${k}" data-fsd="${k}">${esc(d[k] || "")}</textarea><div><button class="btn small" type="button" data-fs-std="${k}">Use standard wording</button></div></div>`).join("") +
+    `<div class="disc"><label for="fs-d-approved">Approved by the board on</label><span class="help">The date the directors approve and sign the statements.</span><input type="date" id="fs-d-approved" data-fsd="approvedOn" value="${esc(d.approvedOn || "")}"></div>` +
+    `<div class="disc"><label for="fs-d-signers">Signed on behalf of the board by</label><span class="help">One per line, for example: Jane Uwase, Director. Left blank, the PDF prints lines to sign by hand.</span><textarea id="fs-d-signers" data-fsd="signers" style="min-height:70px">${esc(d.signers || "")}</textarea></div></div>`;
+}
+function fsDiscChip() {
+  const d = FSD(), n = FS_DISC.filter(([k]) => String(d[k] || "").trim()).length;
+  return n === FS_DISC.length && d.approvedOn ? `<span class="chip good">Year-end disclosures and approval complete</span>` : `<span class="chip plain">Year-end disclosures: ${n} of ${FS_DISC.length}${d.approvedOn ? "" : ", approval date not set"} <button class="linkish" type="button" data-jump="sec-disc">Complete</button></span>`;
+}
+document.addEventListener("input", e => {
+  const el = e.target.closest("[data-fsd]"); if (!el) return;
+  FSD()[el.dataset.fsd] = el.value; store.set(FSD.key, FSD.data);
+  clearTimeout(fsT); fsT = setTimeout(renderPack, 500);
+});
+document.addEventListener("click", e => {
+  const b = e.target.closest("[data-fs-std]"); if (!b) return;
+  const k = b.dataset.fsStd, def = FS_DISC.find(x => x[0] === k), ta = $("fs-d-" + k);
+  ta.value = def[3]; FSD()[k] = def[3]; store.set(FSD.key, FSD.data); renderPack(); ta.focus();
+});
 function buildNotes(cur, cmp, open) {
   const notes = [];
   const noteOf = {};
@@ -1624,6 +1709,8 @@ function buildNotes(cur, cmp, open) {
     notes.push(note);
     n++;
   }
+  const fd = FSD();
+  for (const [k, t] of FS_DISC) if (String(fd[k] || "").trim()) notes.push({ n: n++, id: "disc-" + k, title: t, rows: [], extra: [], text: String(fd[k]).trim(), textOnly: true });
   return { notes, noteOf };
 }
 
@@ -1775,6 +1862,8 @@ function renderNotes(built, cmp) {
     h += `<div class="note"><h4><span>${note.n}</span>${esc(note.title)}</h4>`;
     if (note.id === "basis") {
       h += `<textarea id="policies" aria-label="Basis of preparation">${esc(note.text)}</textarea><div><button class="btn small" type="button" id="btn-policies-reset">Reset to standard wording</button></div>`;
+    } else if (note.textOnly) {
+      h += `<p>${esc(note.text)}</p><div><button class="linkish" type="button" data-jump="sec-disc">Edit in year-end disclosures</button></div>`;
     } else {
       h += noteTableHTML(note.rows, cols);
       for (const x of note.extra) h += `<div class="eyebrow" style="margin-top:4px">${esc(x.title)}</div>` + noteTableHTML(x.rows, x.single ? [S.cur] : cols, x.single);
@@ -2119,6 +2208,11 @@ function renderPack() {
   $("brand-co").textContent = (S.company || "") + (S.cur ? " · " + S.cur : "");
   document.querySelectorAll(".unit-label").forEach(e => e.textContent = "Amounts in " + unitText());
   renderChecks(cur, cf);
+  $("fs-sample").hidden = !isSample;
+  $("fs-company").textContent = S.company || "Your company";
+  $("fs-subt").textContent = `For ${S.cur} · IFRS for SMEs format · unaudited · amounts in ${unitText()}`;
+  renderFSDisc();
+  $("fs-checks").innerHTML = $("checks").innerHTML + fsDiscChip();
   renderKPIs(cur, base, cmp, cf);
   renderResults(cur, base, compareTo === "bud" ? (S.bud || "Budget") : S.cmp);
   renderBridge(cur, base);
@@ -2260,7 +2354,7 @@ async function draftWithClaude() {
 /* ---------- Financial model ---------- */
 let modelView = "forecast", modelScen = "base", modelT = null;
 const MODEL_VIEWS = ["forecast", "budget", "valuation", "appraisal", "bplan"];
-const TASK_TITLE = { forecast: "Three-year forecast", budget: "Budget", valuation: "Business valuation", appraisal: "Loans and projects", bplan: "Business plan" };
+const TASK_TITLE = { forecast: "Three-year forecast", budget: "Budget", valuation: "Business valuation", appraisal: "Loans and projects", bplan: "Business plan", mgmt: "Management report", fs: "Financial statements" };
 const taskFileBase = t => `${(S.company || "Company").replace(/[^\w\- ]+/g, "").trim()} - ${TASK_TITLE[t]}`;
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const SCEN_LABEL = { base: "Base", down: "Downside", up: "Upside" };
@@ -2916,7 +3010,7 @@ function renderModelResults() {
   const { m, runs, years, labels, val, budget, loan, proj } = modelSnapshot();
   const scen = SCEN_LABEL[modelScen];
   const titles = { forecast: "Three-year forecast", budget: `Budget for ${labels[1]}`, valuation: "Business valuation", appraisal: "Loans and projects", bplan: "Business plan" };
-  $("model-eyebrow").textContent = { forecast: "Step 5 · Forecast", budget: "Step 6 · Budget", valuation: "Step 7 · Valuation", appraisal: "Step 8 · Loans and projects", bplan: "Step 9 · Business plan" }[modelView];
+  $("model-eyebrow").textContent = { forecast: "Step 6 · Forecast", budget: "Step 7 · Budget", valuation: "Step 8 · Valuation", appraisal: "Step 9 · Loans and projects", bplan: "Step 10 · Business plan" }[modelView];
   $("model-title").textContent = titles[modelView];
   $("model-sub").textContent = modelView === "appraisal" ? `${S.company} · amounts in ${unitText()}` : `${S.company} · ${scen} case · built from ${S.cur}, annualised from ${S.months} month${Number(S.months) === 1 ? "" : "s"}`;
   document.querySelectorAll(".unit-label").forEach(e => e.textContent = "Amounts in " + unitText());
@@ -3236,15 +3330,15 @@ async function exportPDF(only) {
   const font = (st, sz) => { doc.setFont("helvetica", st); doc.setFontSize(sz); };
   doc.setTextColor(0, 0, 0); doc.setDrawColor(0, 0, 0);
   const prepared = new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
-  const toc = [], cover = !only || only === "bplan";
+  const toc = [], cover = !only || ["bplan", "mgmt", "fs"].includes(only);
   if (cover) {
     y = 70; doc.setLineWidth(1.2); doc.line(M, y - 14, M + 30, y - 14);
     font("bold", 26); doc.splitTextToSize(plain(S.company || "Company"), R - M).forEach(t => { doc.text(t, M, y); y += 10; });
-    y += 2; font("normal", 15); doc.text(plain(only === "bplan" ? "Business plan" : "Management accounts"), M, y); y += 8;
+    y += 2; font("normal", 15); doc.text(plain({ bplan: "Business plan", mgmt: "Management report", fs: "Financial statements" }[only] || "Management accounts"), M, y); y += 8;
     font("normal", 11); doc.text(plain(only === "bplan" ? `Built from the accounts for ${S.cur}` : `For ${S.cur}`), M, y); y += 6;
     doc.text(plain(`Amounts in ${unitText()} unless stated`), M, y); y += 6;
     doc.text(plain(`Prepared ${prepared}`), M, y); y += 6;
-    doc.text(plain(only === "bplan" ? "Forecasts are management estimates. Confidential." : "Unaudited management accounts"), M, y); y += 14;
+    doc.text(plain(only === "bplan" ? "Forecasts are management estimates. Confidential." : only === "fs" ? "Prepared in the IFRS for SMEs format. Unaudited." : "Unaudited management accounts"), M, y); y += 14;
     font("bold", 11); doc.text("Contents", M, y); y += 2; doc.setLineWidth(0.25); doc.line(M, y, R, y);
     var tocY = y + 7;
     doc.addPage(); y = 20;
@@ -3295,7 +3389,8 @@ async function exportPDF(only) {
       doc.splitTextToSize(txt, R - M - indent).forEach((pt, i) => { ensure(5); if (indent && i === 0) doc.text("-", M, y); doc.text(pt, M + indent, y); y += size * 0.47; });
     }
   };
-  if (!only) {
+  const part = !only ? "all" : only === "mgmt" || only === "fs" ? only : null;
+  if (part === "all" || part === "mgmt") {
   // Key figures
   heading("Key figures");
   table([{ t: "", w: 62 }, { t: S.cur, w: 34, a: "r" }, { t: cmp ? S.cmp : "", w: 34, a: "r" }, { t: bud ? "Budget" : "", w: 34, a: "r" }], [
@@ -3331,6 +3426,21 @@ async function exportPDF(only) {
   ensure(30 + costLines(cur, cmp).rows.length * 6.2);
   heading("Cost lines per 100 of revenue");
   y += pdfCostLines(doc, M, y + 1, R - M, cur, cmp) + 4;
+  // Ratios
+  heading("Ratios");
+  table([{ t: "Ratio", w: 54 }, { t: S.cur, w: 26, a: "r" }, { t: cmp ? S.cmp : "", w: 26, a: "r" }, { t: "Guide", w: 44 }, { t: "Status", w: 16 }],
+    RATIOS.map(d => { const v = ratioVal(d, cur), st = ratioStatus(d, v); return { cells: [d.l, ratioFmt(d, v), cmp ? ratioFmt(d, ratioVal(d, cmp)) : "", d.bench, st ? STATUS_TEXT[st] : "n/a"] }; }));
+  }
+  if (part === "all" || part === "fs") {
+  { const fd = FSD();
+    heading("Approval of the financial statements", part === "all");
+    para("The directors are responsible for preparing financial statements that present fairly the company's financial position, performance and cash flows, in line with IFRS for SMEs and the law governing companies in Rwanda, and for keeping proper accounting records.", 9.6);
+    y += 3;
+    para(`The financial statements on the pages that follow were approved by the board of directors on ${fd.approvedOn ? niceISO(fd.approvedOn) : "____________________"} and signed on its behalf by:`, 9.6);
+    y += 12;
+    const sg = String(fd.signers || "").split("\n").map(t => t.trim()).filter(Boolean);
+    (sg.length ? sg : ["Name, Director", "Name, Director"]).forEach(t => { ensure(22); doc.setLineWidth(0.25); doc.line(M, y, M + 70, y); font("normal", 9.4); doc.text(plain(t), M, y + 5); y += 22; });
+  }
   // Statements
   const noteOf = built.noteOf;
   /* one grid for every statement: label 60mm, note 9mm, figures 21mm each */
@@ -3391,7 +3501,7 @@ async function exportPDF(only) {
   heading("Notes to the financial statements", true);
   for (const note of built.notes) {
     subheading(`${note.n}. ${note.title}`);
-    if (note.id === "basis") { para(note.text, 9); y += 4; continue; }
+    if (note.id === "basis" || note.textOnly) { para(note.text, 9); y += 4; continue; }
     const nCols = [{ t: unitShort(), w: 96 }, { t: S.cur, w: 28, a: "r" }];
     if (cmp) nCols.push({ t: S.cmp, w: 28, a: "r" });
     const toRows = (rs, single) => rs.map(r => r.head ? { cells: [r.l], i: true, span: true } : { cells: [r.l, r.pct ? pct(r.cur) : amt(r.cur)].concat(cmp && !single ? [r.cmp === null || r.cmp === undefined ? "-" : (r.pct ? pct(r.cmp) : amt(r.cmp))] : []), b: !!(r.sub || r.total), top: !!(r.sub || r.total), dbl: !!r.total });
@@ -3400,10 +3510,6 @@ async function exportPDF(only) {
     if (note.text) { para(note.text, 8.6); y += 3; }
     y += 2;
   }
-  // Ratios
-  heading("Ratios");
-  table([{ t: "Ratio", w: 54 }, { t: S.cur, w: 26, a: "r" }, { t: cmp ? S.cmp : "", w: 26, a: "r" }, { t: "Guide", w: 44 }, { t: "Status", w: 16 }],
-    RATIOS.map(d => { const v = ratioVal(d, cur), st = ratioStatus(d, v); return { cells: [d.l, ratioFmt(d, v), cmp ? ratioFmt(d, ratioVal(d, cmp)) : "", d.bench, st ? STATUS_TEXT[st] : "n/a"] }; }));
   }
   if (only === "bplan") {
     const b = BP(), N = bpNums(), L = N.labels, f = b.funding, scen = SCEN_LABEL[modelScen];
@@ -3474,7 +3580,7 @@ async function exportPDF(only) {
     if (ms.length) wrapTable([{ t: "When", w: 34 }, { t: "Milestone", w: 140 }], ms.map(r => [r.d, r.l])); else { para("To be completed."); y += 3; }
     y += 4; para("Prepared with Acivaz from the company's management accounts. Historical figures are unaudited and the projections are management estimates.", 8.4);
   }
-  if ((only && only !== "bplan") || (!only && S.pdfModel === true)) {
+  if ((only && MODEL_VIEWS.includes(only) && only !== "bplan") || (!only && S.pdfModel === true)) {
     const { m, runs, years, labels, val, budget, loan, proj } = modelSnapshot();
     const scen = SCEN_LABEL[modelScen];
     heading(only ? TASK_TITLE[only] : "Financial model", !only);
@@ -3543,7 +3649,7 @@ async function exportPDF(only) {
   for (let i = 1; i <= n; i++) {
     doc.setPage(i); font("normal", 7.5); doc.setTextColor(0, 0, 0);
     if (cover && i === 1) continue;
-    doc.text(plain(`${S.company} - ${S.cur} - ${only === "bplan" ? "business plan, confidential" : only ? "management estimates, unaudited" : "management accounts, unaudited"}`), M, 290);
+    doc.text(plain(`${S.company} - ${S.cur} - ${only === "bplan" ? "business plan, confidential" : only === "mgmt" ? "management report, unaudited" : only === "fs" ? "financial statements, unaudited" : only ? "management estimates, unaudited" : "management accounts, unaudited"}`), M, 290);
     doc.text(`Page ${i} of ${n}`, R, 290, { align: "right" });
   }
   await saveFile((only ? taskFileBase(only) : fileBase()) + ".pdf", doc.output("blob"));
@@ -3579,7 +3685,7 @@ async function exportXLSX(only) {
   const nRows = [];
   for (const note of built.notes) {
     nRows.push([`Note ${note.n}. ${note.title}`]);
-    if (note.id === "basis") { for (const l of note.text.split("\n")) nRows.push([l]); nRows.push([]); continue; }
+    if (note.id === "basis" || note.textOnly) { for (const l of note.text.split("\n")) nRows.push([l]); nRows.push([]); continue; }
     nRows.push(["", S.cur].concat(cmp ? [S.cmp] : []));
     const put = (rs, single) => { for (const r of rs) nRows.push(r.head ? [r.l] : [r.l, r.pct ? (r.cur === null ? "" : Math.round(r.cur * 1000) / 10 + "%") : R0(r.cur)].concat(cmp && !single ? [r.pct ? (r.cmp === null ? "" : Math.round(r.cmp * 1000) / 10 + "%") : R0(r.cmp)] : [])); };
     put(note.rows);
@@ -3591,17 +3697,21 @@ async function exportXLSX(only) {
   const cRows = $("commentary").value.split("\n").map(l => [l]);
   const mRows = [["Account code", "Account name", S.cur, S.cmp, S.bud, S.opn || "Opening", "Pack line"]].concat(A.map(a => [a.code, a.name, a.cur, a.cmp, a.bud, a.opn, a.cat ? catLabel(a.cat) : "Not mapped"]));
   const add = (rows, name, widths) => { const ws = XLSX.utils.aoa_to_sheet(rows); ws["!cols"] = widths.map(w => ({ wch: w })); XLSX.utils.book_append_sheet(wb, ws, name); };
-  if (!only) {
+  const part = !only ? "all" : only === "mgmt" || only === "fs" ? only : null;
+  if (part === "all" || part === "mgmt") {
   add(cRows, "Commentary", [110]);
+  add(rRows, "Ratios", [28, 14, 14, 22, 10]);
+  { const { rows, totC, totP } = costLines(cur, cmp), f = v => v === null || !isFinite(v) ? "" : Math.round(v * 1000) / 10, chg = (a, c) => a === null || c === null ? "" : Math.round((a - c) * 1000) / 10;
+    const clRows = [["Cost line, per 100 of revenue", "Pack line", S.cur].concat(cmp ? [S.cmp, "Change (points)"] : [])].concat(rows.map(r => [r.l, r.cat ? catLabel(r.cat) : "Several", f(r.c)].concat(cmp ? [f(r.p), chg(r.c, r.p)] : [])), [["All cost lines before tax", "", f(totC)].concat(cmp ? [f(totP), chg(totC, totP)] : [])]);
+    add(clRows, "Cost lines", [36, 26, 14, 14, 16]); }
+  }
+  if (part === "all" || part === "fs") {
   add(isRows, "Profit or loss", [32, 6, 16, 16, 16, 16, 16]);
   add(bsRows, "Financial position", [34, 6, 16, 16, 16]);
   add(scRows, "Changes in equity", [46, 24, 20, 16]);
   add(cfRows, "Cash flows", [52, 16]);
   add(nRows, "Notes", [52, 16, 16]);
-  add(rRows, "Ratios", [28, 14, 14, 22, 10]);
-  { const { rows, totC, totP } = costLines(cur, cmp), f = v => v === null || !isFinite(v) ? "" : Math.round(v * 1000) / 10, chg = (a, c) => a === null || c === null ? "" : Math.round((a - c) * 1000) / 10;
-    const clRows = [["Cost line, per 100 of revenue", "Pack line", S.cur].concat(cmp ? [S.cmp, "Change (points)"] : [])].concat(rows.map(r => [r.l, r.cat ? catLabel(r.cat) : "Several", f(r.c)].concat(cmp ? [f(r.p), chg(r.c, r.p)] : [])), [["All cost lines before tax", "", f(totC)].concat(cmp ? [f(totP), chg(totC, totP)] : [])]);
-    add(clRows, "Cost lines", [36, 26, 14, 14, 16]); }
+  { const fd = FSD(); add([["Approval of the financial statements"], ["Approved by the board on", fd.approvedOn || ""], ["Signed on behalf of the board by"]].concat(String(fd.signers || "").split("\n").filter(t => t.trim()).map(t => ["", t.trim()])), "Approval", [36, 40]); }
   add(mRows, "Mapping", [14, 40, 16, 16, 16, 16, 28]);
   }
   if (only === "bplan") {
@@ -3611,7 +3721,7 @@ async function exportXLSX(only) {
     add([["Risk", "How we manage it"]].concat((b.risks || []).filter(r => r.r || r.m).map(r => [r.r, r.m])), "Risks", [60, 70]);
     add([["When", "Milestone"]].concat((b.milestones || []).filter(r => r.d || r.l).map(r => [r.d, r.l])), "Milestones", [16, 80]);
   }
-  if (only || S.pdfModel === true) {
+  if ((only && MODEL_VIEWS.includes(only)) || (!only && S.pdfModel === true)) {
     const { m, runs, years, labels, val, budget, loan, proj } = modelSnapshot();
     const scen = SCEN_LABEL[modelScen];
     const xr = (v, f) => v === null || v === undefined || !isFinite(v) ? "" : f === "pct" ? Math.round(v * 1000) / 10 + "%" : f === "x" ? Math.round(v * 100) / 100 : Math.round(v);
@@ -4751,13 +4861,13 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !$("bk-mod
 function show(view) {
   const isModel = MODEL_VIEWS.includes(view);
   if (isModel) modelView = view;
-  for (const v of ["pack", "data", "map", "books", "manual"]) $("view-" + v).hidden = v !== view;
+  for (const v of ["pack", "fs", "data", "map", "books", "manual"]) $("view-" + v).hidden = v !== view;
   $("view-model").hidden = !isModel;
-  for (const v of ["books", "pack", "data", "map", "manual", ...MODEL_VIEWS]) { const t = $("tab-" + v); if (t) { if (v === view) t.setAttribute("aria-current", "page"); else t.removeAttribute("aria-current"); } }
+  for (const v of ["books", "pack", "fs", "data", "map", "manual", ...MODEL_VIEWS]) { const t = $("tab-" + v); if (t) { if (v === view) t.setAttribute("aria-current", "page"); else t.removeAttribute("aria-current"); } }
   document.querySelectorAll(".tab-group").forEach(g => { const c = g.querySelector('.tab-item[aria-current="page"]'), p = g.querySelector(".tab-parent"); p.classList.toggle("has-current", !!c); p.querySelector(".tab-cur").textContent = c ? "· " + c.querySelector("b").textContent : ""; });
   closeMenus();
   if (view === "map") renderMapping();
-  if (view === "pack") renderPack();
+  if (view === "pack" || view === "fs") renderPack();
   if (isModel) renderModel();
   if (view === "books") renderBooks();
   window.scrollTo({ top: 0 });
@@ -4807,6 +4917,10 @@ $("btn-stop").onclick = () => ctl && ctl.abort();
 $("commentary").addEventListener("input", () => { clearTimeout(draftT); draftT = setTimeout(() => store.set(commKey(), $("commentary").value), 400); });
 $("btn-pdf").onclick = () => exportPDF();
 $("btn-xlsx").onclick = () => exportXLSX();
+$("btn-mr-pdf").onclick = () => exportPDF("mgmt");
+$("btn-mr-xlsx").onclick = () => exportXLSX("mgmt");
+$("btn-fs-pdf").onclick = () => exportPDF("fs");
+$("btn-fs-xlsx").onclick = () => exportXLSX("fs");
 $("btn-template").onclick = () => saveFile("trial-balance-template.csv",
   "Account code,Account name,This period YTD,Comparative YTD,Budget YTD,Opening balances\n4000,Sales,-500000000,-420000000,-520000000,\n5000,Purchases,320000000,270000000,330000000,\n1300,Cash at bank,25000000,31000000,,28000000\n");
 $("btn-sample").onclick = () => { loadSample(); renderAll(); show("pack"); toast("Example data loaded."); };
@@ -4878,7 +4992,7 @@ $("btn-install").onclick = async () => {
   try { await installEvt.userChoice; } catch (e) {}
   installEvt = null; $("btn-install").hidden = true;
 };
-window.addEventListener("appinstalled", () => { $("btn-install").hidden = true; toast("Installed. Open Pack Builder from your apps."); });
+window.addEventListener("appinstalled", () => { $("btn-install").hidden = true; toast("Installed. Open Acivaz from your apps."); });
 if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js").catch(() => {});
 })();
 </script>
