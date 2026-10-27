@@ -1,28 +1,33 @@
 # Acivaz
 
-Acivaz turns a trial balance into a board-ready management pack in a few minutes.
+From trial balance to signed year-end statements in an afternoon.
 
-Load a year-to-date trial balance from Excel or CSV (Tally, Odoo, QuickBooks, Sage or your own workbook), check how the accounts are mapped, and Acivaz builds:
+**Open the app:** https://anicet-safari.github.io/acivaz/
 
-- the statement of profit or loss, statement of financial position and statement of cash flows (indirect method)
-- numbered notes to the financial statements, with account-level breakdowns
-- charts: results against comparative or budget, what moved net profit, cost structure, and how cash moved
-- ten ratios with Healthy, Watch or Act flags
-- a commentary draft to edit
-- a PDF pack and an Excel workbook to send to the client
+Acivaz is built for accountants, bookkeepers and business owners in Rwanda. Load a trial balance, or keep the books in Acivaz, and it prepares:
 
-## Use it
+- **Financial statements** in the IFRS for SMEs format: profit or loss, financial position, changes in equity and cash flows, with numbered notes, significant accounting policies and year-end disclosures
+- **Directors' report, approval page and dividend solvency test**, in line with Law N° 007/2021 governing companies, with filing-deadline reminders
+- **Management report**: key figures, charts that explain each movement, a ratio scorecard and a commentary draft
+- **Books**: sales, purchases, bank and VAT under RRA rules, with EBM receipt numbers and income tax estimates
+- **Plans**: a three-year forecast in three scenarios, a monthly budget, a valuation, loan and project schedules, and a full business plan for lenders and investors
 
-Open the site and use the example company to see a finished pack, then load your own file from the **Data** step.
-
-To install it as an app, open the site in Chrome or Edge and choose **Install app**. On a phone, use **Add to Home Screen**. After the first visit it also works offline.
+Everything downloads as PDF and Excel.
 
 ## Your data
 
-Files are read and processed in the browser on your own device. Nothing is uploaded to a server. Account mappings and drafts are remembered in that browser only.
+Files are read and processed in the browser on your own device. Nothing is uploaded to a server. Books, mappings and drafts are saved in that browser only, so keep a backup from Books.
 
-## File format
+## Pricing
 
-One row per account: account code, account name, this period's balance, a comparative balance, and optionally a budget and opening balances (start of the year, needed for the cash flow statement). Debits are positive and credits negative. Use year-to-date balances before closing entries.
+Everything on screen is free. Downloads are free for 30 days on each device, then RWF 20,000 a month per company (founding price RWF 10,000 per company for the first 20 customers; RWF 15,000 each from 5 companies). Pay by MTN MoMo and receive an unlock code on WhatsApp. Details are in the app's manual.
 
-The figures are management information and are unaudited. Check every figure before sending a pack.
+## Install
+
+In Chrome or Edge, choose **Install app**. On a phone, use **Add to Home Screen**. After the first visit it works offline.
+
+## Trial balance format
+
+One row per account: account code, account name, this period's balance, and optionally a comparative, a budget and opening balances (needed for the cash flow statement). Debits positive, credits negative. Use year-to-date balances before closing entries.
+
+Statements prepared in Acivaz are management-prepared and unaudited. Check every figure before you send them.
