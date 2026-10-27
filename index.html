@@ -358,6 +358,35 @@ table.st td.chk, table.st th.chk { text-align: center; width: 92px; }
 textarea#pw-code { width: 100%; min-height: 72px; margin-top: 6px; padding: 10px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg); font-family: var(--font-mono); font-size: 12px; resize: vertical; }
 .pw-price { font-family: var(--font-display); font-weight: 600; }
 .pw-founding { margin: 10px 0 4px; padding: 9px 12px; border-left: 3px solid var(--good); background: var(--good-soft); font-size: 14px; }
+/* Storyform charts: ghost overlay, living driver tree, cash river */
+.takeaway { margin: 12px 0 0; display: grid; grid-template-columns: auto 1fr; gap: 2px 12px; align-items: baseline; font-size: 13.5px; line-height: 1.55; max-width: 92ch; }
+.takeaway:empty { display: none; }
+.takeaway .tk { font-size: 10.5px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+.takeaway b { font-weight: 600; }
+.chart-box.wide svg { min-width: 680px; }
+.dt-wrap { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 22px; align-items: start; }
+@media (max-width: 900px) { .dt-wrap { grid-template-columns: 1fr; } }
+.dt-side { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+#dt-ctls { display: flex; flex-direction: column; gap: 10px; }
+.dt-ctl { display: flex; flex-direction: column; gap: 3px; }
+.dt-ctl .top { display: flex; justify-content: space-between; gap: 8px; font-size: 12.5px; color: var(--muted); }
+.dt-ctl output { font-family: var(--font-mono); font-size: 12px; font-weight: 500; color: var(--ink); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.dt-ctl input[type=range] { width: 100%; accent-color: var(--accent); margin: 0; }
+.dt-imp { display: flex; flex-direction: column; gap: 6px; }
+.dt-row { display: grid; grid-template-columns: 96px 1fr 64px; gap: 8px; align-items: center; font-size: 12px; }
+.dt-row .v { font-family: var(--font-mono); text-align: right; font-variant-numeric: tabular-nums; }
+.dt-row .v.good { color: var(--good); } .dt-row .v.bad { color: var(--bad); }
+.dt-row.tot { border-top: 1px solid var(--line); padding-top: 6px; font-weight: 600; }
+.dt-bar { position: relative; height: 9px; background: var(--line-soft); }
+.dt-bar::after { content: ""; position: absolute; left: 50%; top: -3px; bottom: -3px; width: 1px; background: var(--muted); }
+.dt-bar b { position: absolute; top: 0; bottom: 0; transition: left .35s, width .35s; }
+.dt-node { fill: var(--surface); stroke: var(--line); stroke-width: 1.4; transition: stroke .3s; }
+.dt-node.root { stroke: var(--accent); stroke-width: 2; }
+.dt-node.good { stroke: var(--pos); } .dt-node.bad { stroke: var(--neg); }
+.dt-link { fill: none; stroke: var(--accent); stroke-opacity: .28; transition: stroke-width .45s ease, stroke .3s, stroke-opacity .3s; }
+.dt-link.good { stroke: var(--pos); stroke-opacity: .6; } .dt-link.bad { stroke: var(--neg); stroke-opacity: .6; }
+.dt-delta { font-family: var(--font-mono); font-size: 11.5px; font-weight: 500; fill: var(--muted); }
+.dt-delta.good { fill: var(--good); } .dt-delta.bad { fill: var(--bad); }
 html { -webkit-text-size-adjust: 100%; }
 body { margin: 0; }
 [hidden] { display: none !important; }
@@ -438,9 +467,10 @@ img { max-width: 100%; }
 
       <div class="grid-2" id="sec-charts" style="scroll-margin-top:90px">
         <div class="panel">
-          <div class="panel-head"><h3>Results against comparison</h3><span class="sub" id="results-sub"></span></div>
+          <div class="panel-head"><h3 id="results-h">Results against comparison</h3><span class="sub" id="results-sub"></span></div>
           <div class="chart-box" id="chart-results"></div>
           <div class="legend" id="results-legend"></div>
+          <p class="takeaway" id="results-take"></p>
         </div>
         <div class="panel">
           <div class="panel-head"><h3>What moved net profit</h3><span class="sub" id="bridge-sub"></span></div>
@@ -658,6 +688,20 @@ img { max-width: 100%; }
             </div>
           </div>
         </div>
+        <div class="panel" id="dt-panel">
+          <div class="panel-head"><h3 id="dt-title">What drives profit</h3><span class="sub" id="dt-sub"></span></div>
+          <div class="dt-wrap">
+            <div class="chart-box wide" id="dt-tree"></div>
+            <div class="dt-side">
+              <p class="help" style="margin:0">Try a change before you commit to it. Each branch is as thick as the money it carries. Green helps profit, red hurts it.</p>
+              <div id="dt-ctls"></div>
+              <div class="actions"><button class="btn small primary" type="button" id="dt-apply" disabled>Use in forecast</button><button class="btn small" type="button" id="dt-clear">Clear changes</button></div>
+              <div class="eyebrow">Effect on net profit, one change at a time</div>
+              <div class="dt-imp" id="dt-imp"></div>
+            </div>
+          </div>
+          <p class="takeaway" id="dt-take"></p>
+        </div>
         <div class="panel">
           <div class="panel-head"><h3 id="fc-title">Forecast statements</h3><span class="sub unit-label"></span></div>
           <div class="table-box"><table class="st" id="fc-table"></table></div>
@@ -793,6 +837,7 @@ img { max-width: 100%; }
             <h3 id="m-books-dash">Dashboard</h3>
             <p>The <strong>Dashboard</strong> shows the year so far at a glance, as at the date you choose. Four tiles give revenue, gross margin, profit before tax and cash, each with a small line of the monthly trend. Below them:</p>
             <ul>
+              <li><strong>Cash River</strong>: cash in the bank, MoMo and petty cash drawn as a river whose width is the balance at each month end. Money from customers and lenders flows in from above; payments to suppliers, staff, RRA and the bank leave below. Where the river turns red, cash fell below one month of average outgoings. A written takeaway names the tight months and the heaviest month for payments.</li>
               <li><strong>Revenue and profit by month</strong> and <strong>Margins by month</strong>, so a weak month stands out.</li>
               <li><strong>Cash at each month end</strong>, for the bank, MoMo and petty cash accounts and in total.</li>
               <li><strong>Who owes what, by age</strong>: what customers owe you and what you owe suppliers, split into not yet due, 1–30, 31–60, 61–90 and over 90 days overdue.</li>
@@ -920,7 +965,7 @@ img { max-width: 100%; }
             <ul>
               <li><strong>Compare with</strong> switches the comparison between the comparative period and the budget.</li>
               <li><strong>Key figures</strong>: revenue, gross margin, net profit and cash.</li>
-              <li><strong>Charts</strong>: results against the comparison, what moved net profit, where each 100 of income went, and how cash moved.</li>
+              <li><strong>Charts</strong>: each line of the results against the comparison, what moved net profit, where each 100 of income went, and how cash moved. In the first chart the comparison sits behind this period as a dashed ghost, so shortfalls show in red and beats in green, and a written takeaway names what lifted and what dragged profit. The takeaway also goes into the PDF.</li>
               <li><strong>Ratio scorecard</strong>: each ratio placed on a band of Healthy, Watch and Act zones, with this period as a dot and the comparative as a ring, so you can see which way it moved.</li>
               <li><strong>Cost lines per 100 of revenue</strong>: every cost account as a share of revenue, this period against the comparative. A red change means that cost took a bigger share. Both also go into the PDF and Excel.</li>
               <li><strong>Commentary</strong>: press <strong>Rebuild basic draft</strong> for a draft written from the figures, then fill in the notes in square brackets with the real reasons. Edit it freely; it goes into the PDF exactly as written. When Acivaz is opened inside Claude, <strong>Draft with Claude</strong> writes a fuller version.</li>
@@ -935,6 +980,7 @@ img { max-width: 100%; }
             <h2>5 · Forecast</h2>
             <p>A three-year forecast of the profit or loss, balance sheet and cash flow, starting from this year's actuals scaled up to a full year. Every assumption starts from the company's own figures, such as growth, gross margin and debtor days. Change any of them and the forecast updates as you type. <strong>Reset from actuals</strong> puts them back.</p>
             <p>Choose a <strong>Scenario</strong>: Base, Downside or Upside. The downside and upside cases change growth, gross margin and debtor days by the amounts you set at the bottom of the assumptions. The chart of closing cash shows all three cases together, and a warning appears if cash goes negative in any year, which signals a funding need.</p>
+            <p><strong>What drives profit</strong> breaks the first forecast year's net profit into its lines, each branch as thick as the money it carries. Move a slider to try a change in growth, gross margin, staff or admin cost growth, selling costs or the interest rate: the tree recolours, the panel ranks the effect of each change, and the takeaway shows the new profit and closing cash. Nothing changes in the forecast until you press <strong>Use in forecast</strong>.</p>
           </section>
 
           <section id="m-budget">
@@ -1705,32 +1751,60 @@ function renderCashChart(cf) {
   $("chart-cash").innerHTML = waterfallSVG({ l: "Opening cash", v: cf.openCash }, [{ l: "Operating activities", v: cf.op }, { l: "Investing activities", v: cf.iv }, { l: "Financing activities", v: cf.fi }], { l: "Closing cash", v: cf.closeCalc }, "Cash bridge from opening to closing cash");
 }
 const RESULT_KEYS = [["rev", "Revenue"], ["gp", "Gross profit"], ["op", "Operating profit"], ["np", "Net profit"]];
-function renderResults(cur, cmp, bud) {
-  const series = [{ r: cur, l: S.cur, fill: "var(--accent)" }];
-  if (cmp) series.push({ r: cmp, l: S.cmp, fill: "var(--bar-total)" });
-  if (bud) series.push({ r: bud, l: "Budget", ghost: true });
+/* Ghost overlay: this period as solid bars, the comparison as a dashed silhouette behind, gaps in green or red */
+const GHOST_LINES = [["rev", "Revenue", 1], ["cos", "Cost of sales", -1], ["gp", "Gross profit", 1], ["opex", "Operating costs", -1], ["op", "Operating profit", 1], ["np", "Net profit", 1]];
+const GHOST_DRIVERS = [["rev", "revenue", 1], ["cos", "cost of sales", -1], ["staff", "staff costs", -1], ["selling", "selling costs", -1], ["admin", "administration costs", -1], ["dep", "depreciation", -1], ["oi", "other income", 1], ["fin", "finance costs", -1], ["tax", "income tax", -1]];
+const untag = h => String(h).replace(/<[^>]+>/g, "").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, "&");
+function ghostTakeaway(cur, base, label) {
+  const u = unitShort(), d = cur.np - base.np, p = base.np ? d / Math.abs(base.np) : null;
+  const bgm = base.rev ? base.gp / base.rev : 0, cgm = cur.rev ? cur.gp / cur.rev : 0;
+  const eff = [{ l: "the change in revenue", v: (cur.rev - base.rev) * bgm }, { l: "the change in gross margin", v: cur.rev * (cgm - bgm) }]
+    .concat(GHOST_DRIVERS.filter(([k]) => k !== "rev" && k !== "cos").map(([k, l, dir]) => ({ l, v: (cur[k] - base[k]) * dir })))
+    .filter(x => Math.abs(x.v) >= 0.005 * Math.max(1, Math.abs(base.rev)));
+  const up = eff.filter(x => x.v > 0).sort((a, b) => b.v - a.v)[0], dn = eff.filter(x => x.v < 0).sort((a, b) => a.v - b.v)[0];
+  let t = `Net profit is <b>${esc(u)} ${amt(cur.np)}</b> against ${amt(base.np)} for ${esc(label)}, `;
+  t += Math.abs(d) < 0.0005 * Math.max(1, Math.abs(base.rev)) ? "level with it." : `${d > 0 ? "ahead" : "behind"} by <b class="${d > 0 ? "up" : "down"}">${amt(Math.abs(d))}</b>${p !== null && isFinite(p) ? ` (${pct(Math.abs(p), 0)})` : ""}.`;
+  if (up && dn) t += ` The biggest lift came from ${up.l} (${amt(up.v, { sign: true })}) and the biggest drag from ${dn.l} (${amt(dn.v, { sign: true })}).`;
+  else if (up) t += ` The biggest lift came from ${up.l} (${amt(up.v, { sign: true })}).`;
+  else if (dn) t += ` The biggest drag was ${dn.l} (${amt(dn.v, { sign: true })}).`;
+  const rv = cur.rev - base.rev, gmC = cur.rev && base.rev ? cur.gp / cur.rev - base.gp / base.rev : 0;
+  if (rv > 0 && d < 0) t += ` Revenue grew but profit did not, so look at what each sale costs before pushing for more volume.`;
+  else if (gmC <= -0.02) t += ` Gross margin slipped ${(Math.abs(gmC) * 100).toFixed(1)} points, worth watching in pricing and input costs.`;
+  return t;
+}
+function renderResults(cur, base, label) {
+  const W = 760, H = 340, left = 12, right = 12, top = 30, bottom = 62;
+  $("results-h").textContent = base ? `Line by line against ${label}` : "Results this period";
   $("results-sub").textContent = unitText();
-  $("results-legend").innerHTML = series.map(s => `<span><i class="${s.ghost ? "ghost" : ""}" style="${s.ghost ? "" : `background:${s.fill}`}"></i>${esc(s.l)}</span>`).join("");
-  const W = 760, H = 320, left = 16, right = 16, top = 28, bottom = 40;
-  const vals = []; for (const s of series) for (const [k] of RESULT_KEYS) vals.push(s.r[k]);
-  const hi = Math.max(...vals, 0) * 1.12 || 1, lo = Math.min(0, ...vals) * 1.12;
+  const L = GHOST_LINES.map(([k, l, dir]) => ({ k, l, dir, a: cur[k], g: base ? base[k] : null }));
+  const vals = L.flatMap(x => [x.a, x.g ?? 0]);
+  const hi = Math.max(0, ...vals) * 1.14 || 1, lo = Math.min(0, ...vals) * 1.14;
   const y = v => top + (hi - v) / (hi - lo) * (H - top - bottom);
-  const gw = (W - left - right) / RESULT_KEYS.length, bw = Math.min(46, gw * 0.7 / series.length);
-  let svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Revenue and profit compared" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-size="12">`;
-  svg += `<line x1="${left}" x2="${W - right}" y1="${y(0)}" y2="${y(0)}" stroke="var(--line)"/>`;
-  RESULT_KEYS.forEach(([k, lab], gi) => {
-    const gx = left + gi * gw + (gw - bw * series.length - 4 * (series.length - 1)) / 2;
-    series.forEach((s, si) => {
-      const v = s.r[k], x = gx + si * (bw + 4);
-      const y1 = y(Math.max(0, v)), y2 = y(Math.min(0, v));
-      const fillAttr = s.ghost ? `fill="var(--bar-ghost)" fill-opacity=".35" stroke="var(--bar-ghost)" stroke-width="1.5" stroke-dasharray="3 2"` : `fill="${s.fill}"`;
-      svg += `<rect x="${x.toFixed(1)}" y="${y1.toFixed(1)}" width="${bw.toFixed(1)}" height="${Math.max(1.5, y2 - y1).toFixed(1)}" ${fillAttr}><title>${esc(lab)}, ${esc(s.l)}: ${esc(amt(v))} ${esc(unitShort())}</title></rect>`;
-      if (si === 0) svg += `<text x="${(x + bw / 2).toFixed(1)}" y="${(v >= 0 ? y1 - 6 : y2 + 14).toFixed(1)}" text-anchor="middle" fill="var(--ink)" font-weight="600" style="font-variant-numeric:tabular-nums">${esc(amt(v))}</text>`;
-      else svg += `<text x="${(x + bw / 2).toFixed(1)}" y="${(v >= 0 ? y1 - 6 : y2 + 14).toFixed(1)}" text-anchor="middle" fill="var(--muted)" font-size="10.5" style="font-variant-numeric:tabular-nums">${esc(amt(v))}</text>`;
-    });
-    svg += `<text x="${(left + gi * gw + gw / 2).toFixed(1)}" y="${H - bottom + 22}" text-anchor="middle" fill="var(--ink)" font-weight="500">${esc(lab)}</text>`;
+  const gw = (W - left - right) / L.length, bw = Math.min(56, gw * 0.5), y0 = y(0);
+  let svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(base ? `${S.cur} line by line, with ${label} drawn behind as a dashed outline` : `${S.cur} results`)}" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-size="12">`;
+  L.forEach((x, i) => {
+    const cx = left + gw * (i + .5), bx = cx - bw / 2, ya = y(x.a);
+    let topY = Math.min(ya, y0), yg = null;
+    if (base) {
+      yg = y(x.g); topY = Math.min(topY, yg);
+      svg += `<rect x="${(bx - 7).toFixed(1)}" y="${Math.min(yg, y0).toFixed(1)}" width="${(bw + 14).toFixed(1)}" height="${Math.max(1.5, Math.abs(y0 - yg)).toFixed(1)}" fill="var(--bar-ghost)" fill-opacity=".1" stroke="var(--bar-ghost)" stroke-width="1.5" stroke-dasharray="4 3"/>`;
+    }
+    svg += `<rect x="${bx.toFixed(1)}" y="${Math.min(ya, y0).toFixed(1)}" width="${bw.toFixed(1)}" height="${Math.max(1.5, Math.abs(y0 - ya)).toFixed(1)}" fill="var(--accent)"/>`;
+    let diffTxt = "";
+    if (base && Math.abs(ya - yg) >= 0.6) {
+      const diff = x.a - x.g, good = diff * x.dir > 0, over = Math.abs(x.a) > Math.abs(x.g) && x.a * x.g >= 0;
+      svg += `<rect x="${bx.toFixed(1)}" y="${Math.min(ya, yg).toFixed(1)}" width="${bw.toFixed(1)}" height="${Math.abs(ya - yg).toFixed(1)}" fill="var(${good ? "--pos" : "--neg"})" fill-opacity="${over ? ".92" : ".38"}"/>`;
+      const p = x.g ? diff / Math.abs(x.g) : null;
+      diffTxt = `<text x="${cx.toFixed(1)}" y="${H - bottom + 38}" text-anchor="middle" fill="var(${good ? "--good" : "--bad"})" font-weight="600" font-size="11.5" style="font-variant-numeric:tabular-nums">${esc(amt(diff, { sign: true }))}${p !== null && isFinite(p) ? ` · ${(diff > 0 ? "+" : "−") + Math.abs(p * 100).toFixed(0)}%` : ""}</text>`;
+    } else if (base) diffTxt = `<text x="${cx.toFixed(1)}" y="${H - bottom + 38}" text-anchor="middle" fill="var(--muted)" font-size="11.5">level</text>`;
+    svg += `<text x="${cx.toFixed(1)}" y="${(topY - 7).toFixed(1)}" text-anchor="middle" fill="var(--ink)" font-weight="600" style="font-variant-numeric:tabular-nums">${esc(amt(x.a))}</text>`;
+    svg += `<text x="${cx.toFixed(1)}" y="${H - bottom + 20}" text-anchor="middle" fill="var(--ink)" font-weight="500" font-size="11.5">${esc(x.l)}</text>` + diffTxt;
+    svg += `<rect x="${(cx - gw / 2).toFixed(1)}" y="0" width="${gw.toFixed(1)}" height="${H}" fill="transparent"><title>${esc(x.l)}\n${esc(S.cur)}: ${esc(amt(x.a))} ${esc(unitShort())}${base ? `\n${esc(label)}: ${esc(amt(x.g))}\nDifference: ${esc(amt(x.a - x.g, { sign: true }))}` : ""}</title></rect>`;
   });
+  svg += `<line x1="${left}" x2="${W - right}" y1="${y0.toFixed(1)}" y2="${y0.toFixed(1)}" stroke="var(--muted)" stroke-width="1"/>`;
   $("chart-results").innerHTML = svg + `</svg>`;
+  $("results-legend").innerHTML = `<span><i style="background:var(--accent)"></i>${esc(S.cur)}</span>` + (base ? `<span><i class="ghost"></i>${esc(label)}, the ghost</span><span><i style="background:var(--pos)"></i>Better than ${esc(label)}</span><span><i style="background:var(--neg);opacity:.5"></i>Worse</span>` : "");
+  $("results-take").innerHTML = base ? `<span class="tk">Takeaway</span><span>${ghostTakeaway(cur, base, label)}</span>` : "";
 }
 const COST_SEGS = [["cos", "Cost of sales", "--seg1"], ["staff", "Staff costs", "--seg2"], ["selling", "Selling and distribution", "--seg3"], ["admin", "Administration and other", "--seg4"], ["dep", "Depreciation", "--seg5"], ["fin", "Finance costs", "--seg6"], ["tax", "Income tax", "--seg7"], ["np", "Net profit", "--pos"]];
 function costShares(r) {
@@ -1908,7 +1982,7 @@ function renderPack() {
   document.querySelectorAll(".unit-label").forEach(e => e.textContent = "Amounts in " + unitText());
   renderChecks(cur, cf);
   renderKPIs(cur, base, cmp, cf);
-  renderResults(cur, cmp, bud);
+  renderResults(cur, base, compareTo === "bud" ? (S.bud || "Budget") : S.cmp);
   renderBridge(cur, base);
   renderCost(cur, cmp, bud);
   renderCashChart(cf);
@@ -2258,6 +2332,136 @@ function signedBarsSVG(cats, vals, aria) {
   return svg + `</svg>`;
 }
 
+/* Living driver tree: year 1 profit broken into its drivers, with what-if sliders */
+const DT_CTL = [
+  { id: "g", p: "g.0", l: "Revenue growth, year 1", min: -15, max: 15, step: 1, short: "Growth" },
+  { id: "gm", p: "gm", l: "Gross margin", min: -10, max: 10, step: 0.5, short: "Gross margin" },
+  { id: "staffG", p: "staffG", l: "Staff cost growth", min: -10, max: 20, step: 1, short: "Staff costs" },
+  { id: "adminG", p: "adminG", l: "Admin cost growth", min: -10, max: 20, step: 1, short: "Admin costs" },
+  { id: "sellPct", p: "sellPct", l: "Selling costs, % of revenue", min: -5, max: 5, step: 0.5, short: "Selling costs" },
+  { id: "rate", p: "rate", l: "Interest rate on debt", min: -10, max: 10, step: 0.5, short: "Interest rate" }
+];
+const dtDelta = {};
+let dtRefs = null;
+const dtPct = v => v === null || !isFinite(v) ? "–" : (v * 100).toFixed(1) + "%";
+const DT_NODES = [
+  { k: "np", l: "Net profit", col: 0, y: 238, dir: 1, drv: c => "margin " + dtPct(c.y.np / c.y.rev) },
+  { k: "gp", l: "Gross profit", col: 1, y: 68, dir: 1, par: "np", drv: c => "margin " + dtPct(c.y.gp / c.y.rev) },
+  { k: "oi", l: "Other income", col: 1, y: 164, dir: 1, par: "np" },
+  { k: "opex", l: "Operating costs", col: 1, y: 260, dir: -1, par: "np", drv: c => dtPct(c.v.opex / c.y.rev) + " of revenue" },
+  { k: "fintax", l: "Interest and tax", col: 1, y: 452, dir: -1, par: "np" },
+  { k: "rev", l: "Revenue", col: 2, y: 36, dir: 1, par: "gp", drv: c => "growth " + dtPct(c.ys[0].rev ? c.y.rev / c.ys[0].rev - 1 : null) },
+  { k: "cos", l: "Cost of sales", col: 2, y: 100, dir: -1, par: "gp", drv: c => dtPct(c.y.cos / c.y.rev) + " of revenue" },
+  { k: "staff", l: "Staff costs", col: 2, y: 164, dir: -1, par: "opex", drv: c => "growth " + dtPct(c.ys[0].staff ? c.y.staff / c.ys[0].staff - 1 : null) },
+  { k: "selling", l: "Selling and distribution", col: 2, y: 228, dir: -1, par: "opex", drv: c => dtPct(c.y.selling / c.y.rev) + " of rev." },
+  { k: "admin", l: "Administration", col: 2, y: 292, dir: -1, par: "opex", drv: c => "growth " + dtPct(c.ys[0].admin ? c.y.admin / c.ys[0].admin - 1 : null) },
+  { k: "dep", l: "Depreciation", col: 2, y: 356, dir: -1, par: "opex", drv: c => r1(c.m.depRate) + "% of assets" },
+  { k: "fin", l: "Finance costs", col: 2, y: 420, dir: -1, par: "fintax", drv: c => "rate " + r1(c.m.rate) + "%" },
+  { k: "tax", l: "Income tax", col: 2, y: 484, dir: -1, par: "fintax", drv: c => "rate " + r1(c.m.tax) + "%" }
+];
+const DT_COL = [{ x: 8, w: 214 }, { x: 290, w: 236 }, { x: 594, w: 252 }], DT_H = 56;
+function dtCalc(delta) {
+  const m = JSON.parse(JSON.stringify(M()));
+  for (const c of DT_CTL) {
+    const v = delta[c.id] || 0; if (!v) continue;
+    let nv = (Number(getPath(m, c.p)) || 0) + v;
+    if (c.id === "rate" || c.id === "sellPct") nv = Math.max(0, nv);
+    setPath(m, c.p, nv);
+  }
+  const ys = runForecast(m, modelScen), y = ys[1];
+  return { m, ys, y, v: { ...y, opex: y.staff + y.selling + y.admin + y.dep, fintax: y.fin + y.tax } };
+}
+function dtBuild() {
+  const NS = "http://www.w3.org/2000/svg", mk = (tag, at, par) => { const e = document.createElementNS(NS, tag); for (const k in at) e.setAttribute(k, at[k]); if (par) par.appendChild(e); return e; };
+  const svg = mk("svg", { viewBox: "0 0 854 520", role: "img", "aria-label": "Year 1 net profit broken down into its drivers", "font-family": "IBM Plex Sans, Segoe UI, sans-serif", "font-size": "12" });
+  const gl = mk("g", {}, svg), gn = mk("g", {}, svg), by = {};
+  DT_NODES.forEach(n => by[n.k] = n);
+  const nodes = DT_NODES.map(n => {
+    const C = DT_COL[n.col], o = { n, x: C.x, w: C.w };
+    if (n.par) {
+      const p = by[n.par], P = DT_COL[p.col], x1 = P.x + P.w, x2 = C.x;
+      o.link = mk("path", { d: `M${x1},${p.y} C${x1 + 50},${p.y} ${x2 - 50},${n.y} ${x2},${n.y}`, class: "dt-link" }, gl);
+    }
+    const g = mk("g", { transform: `translate(${C.x},${n.y - DT_H / 2})` }, gn);
+    o.rect = mk("rect", { width: C.w, height: DT_H, rx: 4, class: "dt-node" }, g);
+    const t1 = mk("text", { x: 12, y: 20, fill: "var(--muted)", "font-size": "12" }, g); t1.textContent = n.l;
+    o.drv = mk("text", { x: C.w - 12, y: 20, fill: "var(--muted)", "font-size": "11", "text-anchor": "end" }, g);
+    o.val = mk("text", { x: 12, y: 43, fill: "var(--ink)", "font-size": "16", "font-weight": "600", style: "font-variant-numeric:tabular-nums" }, g);
+    o.dl = mk("text", { x: C.w - 12, y: 43, "text-anchor": "end", class: "dt-delta" }, g);
+    o.tip = mk("title", {}, g);
+    return o;
+  });
+  $("dt-tree").innerHTML = ""; $("dt-tree").appendChild(svg);
+  $("dt-ctls").innerHTML = DT_CTL.map(c => `<label class="dt-ctl" for="dt-${c.id}"><span class="top"><span>${esc(c.l)}</span><output id="dt-${c.id}-o"></output></span><input type="range" id="dt-${c.id}" data-dt="${c.id}" min="${c.min}" max="${c.max}" step="${c.step}" value="${dtDelta[c.id] || 0}"></label>`).join("");
+  dtRefs = nodes;
+}
+function dtUpdate() {
+  if (!dtRefs) return;
+  const labels = modelYears(), yl = labels[1], u = unitShort();
+  const base = dtCalc({}), now = dtCalc(dtDelta);
+  const maxV = Math.max(1, ...DT_NODES.map(n => Math.abs(base.v[n.k] || 0)));
+  for (const o of dtRefs) {
+    const n = o.n, v = now.v[n.k], bv = base.v[n.k], d = v - bv;
+    const st = Math.abs(d) < Math.max(0.5, Math.abs(bv) * 1e-4) ? "" : d * n.dir > 0 ? "good" : "bad";
+    o.val.textContent = amt(v);
+    o.dl.textContent = st ? amt(d, { sign: true }) : "";
+    o.dl.setAttribute("class", "dt-delta" + (st ? " " + st : ""));
+    o.drv.textContent = n.drv ? n.drv(now) : "";
+    o.rect.setAttribute("class", "dt-node" + (n.k === "np" ? " root" : "") + (st ? " " + st : ""));
+    o.tip.textContent = `${n.l}, ${yl}: ${amt(v)} ${u}` + (st ? ` (${amt(d, { sign: true })} against the forecast as entered)` : "");
+    if (o.link) { o.link.style.strokeWidth = Math.max(1.5, Math.abs(v) / maxV * 26).toFixed(1) + "px"; o.link.setAttribute("class", "dt-link" + (st ? " " + st : "")); }
+  }
+  const any = DT_CTL.some(c => dtDelta[c.id]);
+  for (const c of DT_CTL) {
+    const dv = dtDelta[c.id] || 0, cur = Number(getPath(M(), c.p)) || 0, inp = $("dt-" + c.id);
+    if (inp && Number(inp.value) !== dv) inp.value = dv;
+    $("dt-" + c.id + "-o").textContent = `${r1(Math.max(c.id === "rate" || c.id === "sellPct" ? 0 : -1e9, cur + dv))}%` + (dv ? ` (${dv > 0 ? "+" : "−"}${Math.abs(dv)} pts)` : "");
+  }
+  $("dt-apply").disabled = !any;
+  const imp = DT_CTL.map(c => ({ l: c.short, v: dtDelta[c.id] ? dtCalc({ [c.id]: dtDelta[c.id] }).y.np - base.y.np : 0 }));
+  const tot = now.y.np - base.y.np, mx = Math.max(1e-9, ...imp.map(i => Math.abs(i.v)), Math.abs(tot));
+  const bar = v => { const w = Math.abs(v) / mx * 50; return `<div class="dt-bar"><b style="left:${v >= 0 ? 50 : 50 - w}%;width:${w}%;background:var(${v >= 0 ? "--pos" : "--neg"})"></b></div>`; };
+  const cls = v => Math.abs(v) < 0.5 ? "" : v > 0 ? "good" : "bad";
+  $("dt-imp").innerHTML = imp.map(i => `<div class="dt-row"><span>${esc(i.l)}</span>${bar(i.v)}<span class="v ${cls(i.v)}">${Math.abs(i.v) < 0.5 ? "–" : amt(i.v, { sign: true })}</span></div>`).join("") + `<div class="dt-row tot"><span>All together</span>${bar(tot)}<span class="v ${cls(tot)}">${Math.abs(tot) < 0.5 ? "–" : amt(tot, { sign: true })}</span></div>`;
+  let t;
+  if (!any) {
+    const s1 = dtCalc({ gm: 1 }).y.np - base.y.np, s2 = dtCalc({ g: 1 }).y.np - base.y.np, s3 = dtCalc({ staffG: 1 }).y.np - base.y.np;
+    t = `${esc(yl)} net profit of <b>${esc(u)} ${amt(base.y.np)}</b> rests on revenue of ${amt(base.y.rev)} at a ${dtPct(base.y.gp / base.y.rev)} gross margin. One point of gross margin is worth <b>${amt(s1)}</b> of net profit, one point of extra growth ${amt(s2)}, and one point less staff cost growth ${amt(-s3)}.`;
+    if (s1 > 1.8 * Math.abs(s2)) t += " Protecting margin matters more than chasing volume here.";
+    else if (s2 > 1.8 * Math.abs(s1)) t += " Volume is the stronger lever here.";
+  } else {
+    const top = imp.filter(i => Math.abs(i.v) >= 0.5).sort((a, b) => Math.abs(b.v) - Math.abs(a.v))[0];
+    t = `These changes move ${esc(yl)} net profit from ${amt(base.y.np)} to <b>${esc(u)} ${amt(now.y.np)}</b> (<b class="${tot >= 0 ? "up" : "down"}">${amt(tot, { sign: true })}</b>) and closing cash from ${amt(base.y.cash)} to ${amt(now.y.cash)}.`;
+    if (top) t += ` The biggest single effect is ${esc(top.l.toLowerCase())}, at ${amt(top.v, { sign: true })}.`;
+    if (now.y.cash < 0) t += " Cash goes negative, so this plan would need funding.";
+    t += " Press <b>Use in forecast</b> to keep them.";
+  }
+  $("dt-take").innerHTML = `<span class="tk">Takeaway</span><span>${t}</span>`;
+}
+function renderDriverTree(labels) {
+  if (!dtRefs) dtBuild();
+  $("dt-title").textContent = `What drives ${labels[1]} profit`;
+  $("dt-sub").textContent = `${SCEN_LABEL[modelScen]} case, ${unitText()}`;
+  dtUpdate();
+}
+$("dt-ctls").addEventListener("input", e => {
+  const el = e.target.closest("[data-dt]"); if (!el) return;
+  dtDelta[el.dataset.dt] = parseFloat(el.value) || 0;
+  dtUpdate();
+});
+$("dt-clear").onclick = () => { for (const c of DT_CTL) dtDelta[c.id] = 0; dtUpdate(); };
+$("dt-apply").onclick = () => {
+  const m = M();
+  for (const c of DT_CTL) {
+    const v = dtDelta[c.id] || 0; if (!v) continue;
+    let nv = (Number(getPath(m, c.p)) || 0) + v;
+    if (c.id === "rate" || c.id === "sellPct") nv = Math.max(0, nv);
+    setPath(m, c.p, Math.round(nv * 10) / 10);
+    dtDelta[c.id] = 0;
+  }
+  persist(); renderModel();
+  toast("Added to the forecast assumptions.");
+};
 /* model inputs */
 const INPUT_UNITS = { pct: "%", pts: "pts", days: "days", months: "months", years: "years", w: "" };
 const FC_INPUTS = [
@@ -2352,6 +2556,7 @@ function renderModelResults() {
   ], "Closing cash by scenario");
   $("fc-rn-sub").textContent = `${scen} case, ${unitText()}`;
   $("fc-rn").innerHTML = groupedBarsSVG(labels, [{ l: "Revenue", vals: years.map(y => y.rev), fill: "var(--bar-total)" }, { l: "Net profit", vals: years.map(y => y.np), fill: "var(--accent)" }], "Revenue and net profit by year");
+  renderDriverTree(labels);
   // budget
   $("bd-title").textContent = `Monthly budget for ${labels[1]}, ${scen.toLowerCase()} case`;
   $("bd-sub").textContent = unitText();
@@ -2587,6 +2792,42 @@ function pdfStacked(doc, X, Y, Wd, Ht, title, cur, cmp, bud) {
   });
   doc.setFontSize(6); doc.setTextColor(90, 90, 90); doc.text("Figures are per 100 of revenue plus other income.", X, ly + 4); doc.setTextColor(0, 0, 0);
 }
+function pdfGhost(doc, X, Y, Wd, Ht, title, cur, base, label) {
+  const plain = s => String(s).replace(/−/g, "-");
+  doc.setFont("helvetica", "bold"); doc.setFontSize(9); doc.setTextColor(0, 0, 0); doc.text(plain(title), X, Y);
+  const L = GHOST_LINES.map(([k, l, dir]) => ({ l, dir, a: cur[k], g: base ? base[k] : null }));
+  const vals = L.flatMap(x => [x.a, x.g ?? 0]);
+  const hi = Math.max(0, ...vals) * 1.15 || 1, lo = Math.min(0, ...vals) * 1.15;
+  const top = Y + 7, bot = Y + Ht - 17, y = v => top + (hi - v) / (hi - lo) * (bot - top), y0 = y(0);
+  const gw = Wd / L.length, bw = Math.min(8, gw * 0.5);
+  L.forEach((x, i) => {
+    const cx = X + gw * (i + .5), bx = cx - bw / 2, ya = y(x.a);
+    let topY = Math.min(ya, y0);
+    doc.setFillColor(...PC.navy); doc.rect(bx, Math.min(ya, y0), bw, Math.max(0.4, Math.abs(y0 - ya)), "F");
+    const lines = doc.splitTextToSize(x.l, gw - 0.6).slice(0, 2);
+    if (base) {
+      const yg = y(x.g), diff = x.a - x.g, good = diff * x.dir > 0, over = Math.abs(x.a) > Math.abs(x.g) && x.a * x.g >= 0;
+      if (Math.abs(ya - yg) > 0.25) {
+        doc.setFillColor(...(good ? (over ? PC.green : [192, 223, 203]) : (over ? PC.red : [241, 199, 191])));
+        doc.rect(bx, Math.min(ya, yg), bw, Math.abs(ya - yg), "F");
+      }
+      doc.setDrawColor(160, 125, 55); doc.setLineWidth(0.3); doc.setLineDashPattern([0.9, 0.7], 0);
+      doc.rect(bx - 1.3, Math.min(yg, y0), bw + 2.6, Math.max(0.4, Math.abs(y0 - yg)), "S");
+      doc.setLineDashPattern([], 0);
+      topY = Math.min(topY, yg);
+      doc.setFont("helvetica", "bold"); doc.setFontSize(5.4);
+      doc.setTextColor(...(Math.abs(ya - yg) <= 0.25 ? [90, 90, 90] : good ? PC.green : PC.red));
+      doc.text(plain(amt(diff, { sign: true })), cx, bot + 3.4 + lines.length * 2.5 + 0.8, { align: "center" });
+      doc.setTextColor(0, 0, 0);
+    }
+    doc.setFont("helvetica", "bold"); doc.setFontSize(5.6); doc.text(plain(amt(x.a)), cx, topY - 1.2, { align: "center" });
+    doc.setFont("helvetica", "normal"); doc.setFontSize(5.8); doc.text(lines, cx, bot + 3.2, { align: "center" });
+  });
+  doc.setDrawColor(120, 120, 120); doc.setLineWidth(0.2); doc.line(X, y0, X + Wd, y0);
+  doc.setFont("helvetica", "normal"); doc.setFontSize(5.8); doc.setTextColor(90, 90, 90);
+  doc.text(doc.splitTextToSize(plain(base ? `Blue: ${S.cur}. Dashed outline: ${label}. Green is better, red is worse.` : `${S.cur}.`), Wd), X, Y + Ht - 2.5);
+  doc.setTextColor(0, 0, 0);
+}
 async function exportPDF(only) {
   if (!canDownload()) return;
   const want = k => !only || only === k;
@@ -2655,14 +2896,15 @@ async function exportPDF(only) {
   // Charts page
   heading("Charts", true);
   const cw = (R - M - 8) / 2, ch = 70;
-  pdfGrouped(doc, M, y + 2, cw, ch, "Results against comparison", cur, cmp, bud);
-  const base = compareTo === "bud" && bud ? bud : cmp;
+  const base = compareTo === "bud" && bud ? bud : cmp, baseLbl = compareTo === "bud" && bud ? (S.bud || "Budget") : S.cmp;
+  pdfGhost(doc, M, y + 2, cw, ch, base ? `Line by line against ${baseLbl}` : "Results this period", cur, base, baseLbl);
   if (base) pdfWaterfall(doc, M + cw + 8, y + 2, cw, ch, `What moved net profit (${plain(compareTo === "bud" && bud ? "vs budget" : "vs " + S.cmp)})`, { l: compareTo === "bud" && bud ? "Budget" : S.cmp, v: base.np }, bridgeSteps(cur, base).map((x, i) => ({ ...x, l: ["Revenue", "Cost of sales", "Staff", "Selling", "Admin", "Deprec.", "Other income", "Finance", "Tax"][i] })), { l: S.cur, v: cur.np });
   y += ch + 10;
   pdfStacked(doc, M, y + 2, cw, ch, "Where each 100 of income went", cur, cmp, bud);
   if (cf) pdfWaterfall(doc, M + cw + 8, y + 2, cw, ch, "How cash moved", { l: "Opening cash", v: cf.openCash }, [{ l: "Operating", v: cf.op }, { l: "Investing", v: cf.iv }, { l: "Financing", v: cf.fi }], { l: "Closing cash", v: cf.closeCalc });
   y += ch + 10;
   font("normal", 7.5); doc.setTextColor(90, 90, 90); doc.text(plain(`All charts in ${unitText()}.`), M, y); doc.setTextColor(0, 0, 0); y += 6;
+  if (base) { ensure(16); font("bold", 8.5); doc.text("Takeaway", M, y); y += 4.2; para(untag(ghostTakeaway(cur, base, baseLbl)), 9); y += 3; }
   heading("Ratio scorecard", true);
   y += pdfScorecard(doc, M, y + 1, R - M, cur, cmp) + 6;
   ensure(30 + costLines(cur, cmp).rows.length * 6.2);
@@ -3262,6 +3504,90 @@ function hbarList(items, fmtV) {
   const max = Math.max(1, ...items.map(x => x.v));
   return `<div class="hbars">${items.map(x => `<div class="hb"><span class="l" title="${esc(x.l)}">${x.col ? `<i style="background:${x.col}"></i>` : ""}${esc(x.l)}</span><span class="t" title="${esc(x.l)}: ${rwf(x.v)}"><b style="width:${(Math.max(0, x.v) / max * 100).toFixed(2)}%;background:${x.col || "var(--seg1)"}"></b></span><span class="v">${fmtV(x)}</span></div>`).join("")}</div>`;
 }
+/* Cash River: the cash balance as a river; money in joins from above, money out leaves below */
+function bkCashFlows(b, D, d) {
+  const cashC = new Set(bankAccts(b).map(a => a.code)), cat = {}, vatC = roleCode(b, "vat"), citC = roleCode(b, "cit");
+  for (const a of b.accounts) cat[a.code] = a.cat;
+  const idx = Object.fromEntries(D.months.map((k, i) => [k, i]));
+  const F = D.months.map(() => ({ cust: 0, fund: 0, ops: 0, other: 0 }));
+  for (const t of b.txns) {
+    if (t.date < D.fs || t.date > d || t.kind === "opening") continue;
+    const i = idx[t.date.slice(0, 7)]; if (i === undefined) continue;
+    let net = 0; const rest = [];
+    for (const p of postings(t, b)) { if (cashC.has(p.code)) net += p.v; else rest.push(p); }
+    if (Math.abs(net) < 1) continue;
+    const core = rest.filter(p => p.code !== vatC && p.code !== citC), tot = core.reduce((x, p) => x + Math.abs(p.v), 0);
+    if (net > 0) {
+      if (!tot) { F[i].cust += net; continue; }
+      for (const p of core) F[i][["ncl", "eq"].includes(cat[p.code]) ? "fund" : "cust"] += net * Math.abs(p.v) / tot;
+    } else {
+      if (!tot) { F[i].other -= net; continue; }
+      for (const p of core) F[i][["ncl", "eq", "fin", "tax", "nca"].includes(cat[p.code]) ? "other" : "ops"] += -net * Math.abs(p.v) / tot;
+    }
+  }
+  return F;
+}
+function rvSmooth(p) {
+  let d = `M${p[0][0].toFixed(1)},${p[0][1].toFixed(1)}`;
+  for (let i = 0; i < p.length - 1; i++) {
+    const p0 = p[i - 1] || p[i], p1 = p[i], p2 = p[i + 1], p3 = p[i + 2] || p2;
+    d += ` C${(p1[0] + (p2[0] - p0[0]) / 6).toFixed(1)},${(p1[1] + (p2[1] - p0[1]) / 6).toFixed(1)} ${(p2[0] - (p3[0] - p1[0]) / 6).toFixed(1)},${(p2[1] - (p3[1] - p1[1]) / 6).toFixed(1)} ${p2[0].toFixed(1)},${p2[1].toFixed(1)}`;
+  }
+  return d;
+}
+const joinList = a => a.length <= 2 ? a.join(" and ") : a.slice(0, -1).join(", ") + " and " + a[a.length - 1];
+function cashRiverSVG(cats, open, ends, F, buffer) {
+  const n = cats.length, W = 960, H = 430, L = 92, R = 92, cy = 205, bw = (W - L - R) / n;
+  const X = i => L + i * bw;
+  const pts = [open, ...ends], maxBal = Math.max(1, ...pts.map(v => Math.abs(v))), wOf = v => Math.max(4, v / maxBal * 150);
+  const ws = pts.map(wOf), maxS = Math.max(1, ...F.flatMap(f => [f.cust, f.fund, f.ops, f.other]));
+  const sw = v => Math.max(1.2, v / maxS * Math.min(26, bw * 0.3));
+  const id = "rv" + Math.random().toString(36).slice(2, 8);
+  let clip = "";
+  ends.forEach((e, i) => { if (e < buffer) clip += `<rect x="${X(i).toFixed(1)}" y="0" width="${bw.toFixed(1)}" height="${H}"/>`; });
+  let svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Cash River: cash balance at each month end, with money coming in from above and going out below" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-size="12"><defs><clipPath id="${id}">${clip || `<rect x="0" y="0" width="0" height="0"/>`}</clipPath></defs>`;
+  for (let i = 0; i < n; i++) {
+    if (i % 2 === 0) svg += `<rect x="${X(i).toFixed(1)}" y="14" width="${bw.toFixed(1)}" height="${H - 44}" fill="var(--line-soft)" opacity=".6"/>`;
+    svg += `<text x="${(X(i) + bw / 2).toFixed(1)}" y="${H - 10}" text-anchor="middle" fill="var(--muted)" font-size="11.5">${esc(cats[i])}</text>`;
+  }
+  const stream = (d, col, v) => v > maxS * 0.004 ? `<path d="${d}" fill="none" stroke="var(${col})" stroke-opacity=".85" stroke-width="${sw(v).toFixed(1)}"/>` : "";
+  F.forEach((f, i) => {
+    const xm = X(i) + bw / 2, o = bw * 0.17, jt = cy - (ws[i] + ws[i + 1]) / 4, jb = cy + (ws[i] + ws[i + 1]) / 4, yb = H - 36;
+    svg += stream(`M${(xm - o - 5).toFixed(1)},20 C${(xm - o - 5).toFixed(1)},${((20 + jt) / 2).toFixed(1)} ${(xm - o * 0.4).toFixed(1)},${(jt - 34).toFixed(1)} ${(xm - o * 0.4).toFixed(1)},${(jt + 8).toFixed(1)}`, "--pos", f.cust);
+    svg += stream(`M${(xm + o + 5).toFixed(1)},20 C${(xm + o + 5).toFixed(1)},${((20 + jt) / 2).toFixed(1)} ${(xm + o * 0.4).toFixed(1)},${(jt - 34).toFixed(1)} ${(xm + o * 0.4).toFixed(1)},${(jt + 8).toFixed(1)}`, "--seg2", f.fund);
+    svg += stream(`M${(xm - o * 0.4).toFixed(1)},${(jb - 8).toFixed(1)} C${(xm - o * 0.4).toFixed(1)},${(jb + 34).toFixed(1)} ${(xm - o - 5).toFixed(1)},${((jb + yb) / 2).toFixed(1)} ${(xm - o - 5).toFixed(1)},${yb}`, "--seg4", f.ops);
+    svg += stream(`M${(xm + o * 0.4).toFixed(1)},${(jb - 8).toFixed(1)} C${(xm + o * 0.4).toFixed(1)},${(jb + 34).toFixed(1)} ${(xm + o + 5).toFixed(1)},${((jb + yb) / 2).toFixed(1)} ${(xm + o + 5).toFixed(1)},${yb}`, "--seg5", f.other);
+  });
+  const topE = pts.map((v, i) => [X(i), cy - ws[i] / 2]), botE = pts.map((v, i) => [X(i), cy + ws[i] / 2]).reverse();
+  const river = rvSmooth(topE) + " " + rvSmooth(botE).replace("M", "L") + " Z";
+  svg += `<path d="${river}" fill="var(--accent)"/><path d="${river}" fill="var(--bad)" clip-path="url(#${id})"/>`;
+  const bh = buffer / maxBal * 150 / 2;
+  if (bh > 2.5) svg += [cy - bh, cy + bh].map(yy => `<line x1="${L}" x2="${W - R}" y1="${yy.toFixed(1)}" y2="${yy.toFixed(1)}" stroke="var(--bad)" stroke-width="1" stroke-dasharray="3 4" opacity=".75"/>`).join("");
+  svg += `<text x="${L - 12}" y="${cy - 5}" text-anchor="end" fill="var(--muted)" font-size="11">Start</text><text x="${L - 12}" y="${cy + 12}" text-anchor="end" fill="var(--ink)" font-weight="600" style="font-variant-numeric:tabular-nums">${esc(fmtM(open))}</text>`;
+  svg += `<text x="${W - R + 12}" y="${cy - 5}" fill="var(--muted)" font-size="11">Now</text><text x="${W - R + 12}" y="${cy + 12}" fill="var(--ink)" font-weight="600" style="font-variant-numeric:tabular-nums">${esc(fmtM(ends[n - 1]))}</text>`;
+  let mi = 0; ends.forEach((e, i) => { if (e < ends[mi]) mi = i; });
+  const lowTxt = (ends[mi] < 0 ? "Overdrawn " : "Low ") + fmtM(Math.abs(ends[mi])), lw = lowTxt.length * 6.9 + 18, lx = Math.min(W - R - lw / 2, Math.max(L + lw / 2, X(mi + 1)));
+  const low = ends[mi] < buffer;
+  svg += `<rect x="${(lx - lw / 2).toFixed(1)}" y="${cy - 11}" width="${lw.toFixed(1)}" height="22" rx="11" fill="var(--surface)" stroke="var(${low ? "--bad" : "--muted"})" stroke-width="1.4"/><text x="${lx.toFixed(1)}" y="${cy + 4}" text-anchor="middle" fill="var(${low ? "--bad" : "--ink"})" font-weight="600" font-size="11.5" style="font-variant-numeric:tabular-nums">${esc(lowTxt)}</text>`;
+  F.forEach((f, i) => {
+    svg += `<rect x="${X(i).toFixed(1)}" y="0" width="${bw.toFixed(1)}" height="${H}" fill="transparent"><title>${esc(cats[i])}\nIn from customers: ${rwf(f.cust)}\nLoans and owners in: ${rwf(f.fund)}\nSuppliers, wages and running costs: ${rwf(f.ops)}\nTax, loan repayments and equipment: ${rwf(f.other)}\nCash at month end: ${rwf(ends[i])}</title></rect>`;
+  });
+  return svg + `</svg>`;
+}
+function cashRiverPanel(b, D, d, cats) {
+  const F = bkCashFlows(b, D, d), ends = D.cashTot, sum = a => a.reduce((t, v) => t + v, 0);
+  const open = ends[0] - (F[0].cust + F[0].fund - F[0].ops - F[0].other);
+  const outs = F.map(f => f.ops + f.other), ins = F.map(f => f.cust + f.fund), buffer = sum(outs) / Math.max(1, outs.length);
+  let mi = 0, mo = 0; ends.forEach((e, i) => { if (e < ends[mi]) mi = i; }); outs.forEach((v, i) => { if (v > outs[mo]) mo = i; });
+  const under = cats.filter((c, i) => ends[i] < buffer), last = ends[ends.length - 1], cur = b.currency;
+  let t = `Cash ${last >= open ? "rose" : "fell"} from <b>${rwf(open)}</b> to <b>${rwf(last)}</b> ${esc(cur)} since ${esc(niceISO(D.fs))}. `;
+  if (under.length) t += `It dropped below one month of outgoings (${rwf(buffer)}) at the end of <b>${esc(joinList(under))}</b>, lowest in ${esc(cats[mi])} at ${rwf(ends[mi])}. ${esc(cats[mo])} was the heaviest month for payments (${rwf(outs[mo])}), so plan big purchases away from it or line up a credit facility before it.`;
+  else t += `It never dropped below one month of outgoings (${rwf(buffer)}). The tightest point was the end of ${esc(cats[mi])}, at ${rwf(ends[mi])}.`;
+  const fund = sum(F.map(f => f.fund));
+  if (fund >= 1) t += ` Loans and owners put in ${rwf(fund)} of the ${rwf(sum(ins))} that came in.`;
+  const lg = `<span><i style="background:var(--pos)"></i>In from customers</span><span><i style="background:var(--seg2)"></i>Loans and owners in</span><span><i style="background:var(--seg4)"></i>Suppliers, wages and running costs</span><span><i style="background:var(--seg5)"></i>Tax, loan repayments and equipment</span><span><i style="background:var(--accent)"></i>Cash</span><span><i style="background:var(--bad)"></i>Below one month of outgoings</span>`;
+  return `<div class="panel"><div class="panel-head"><h3>Cash River</h3><span class="sub">River width is cash in bank, MoMo and petty cash at each month end. Dashed lines mark one month of outgoings. Hover a month for the figures.</span></div><div class="chart-box wide">${cashRiverSVG(cats, open, ends, F, buffer)}</div><div class="legend">${lg}</div><p class="takeaway"><span class="tk">Takeaway</span><span>${t}</span></p></div>`;
+}
 function bkDashboard(b) {
   const d = bkAsAt, D = bkMonthly(b, d), cur = b.currency;
   let h = asAtField("Figures as at");
@@ -3277,6 +3603,7 @@ function bkDashboard(b) {
     dashTile("Profit before tax", rwf(totPbt), cur, `<span class="${last(pbt) < 0 ? "down" : "flat"}">${lastM}: ${rwf(last(pbt))}</span>`, sparkSVG(pbt, "var(--accent)")),
     dashTile("Cash and bank", rwf(cashNow), cur, `<span class="flat">At ${niceISO(d)}</span>`, sparkSVG(D.cashTot, "var(--seg2)"))
   ].join("") + `</div>`;
+  h += cashRiverPanel(b, D, d, cats);
   h += `<div class="grid-2"><div class="panel"><div class="panel-head"><h3>Revenue and profit by month</h3><span class="sub">${esc(cur)}</span></div><div class="chart-box">${groupedBarsSVG(cats, [{ l: "Revenue", vals: R.map(r => r.rev), fill: "var(--seg1)" }, { l: "Profit before tax", vals: pbt, fill: "var(--seg3)" }], "Revenue and profit before tax by month", fmtM, cur)}</div><div class="legend"><span><i style="background:var(--seg1)"></i>Revenue</span><span><i style="background:var(--seg3)"></i>Profit before tax</span></div></div>`;
   h += `<div class="panel"><div class="panel-head"><h3>Margins by month</h3><span class="sub">Share of revenue</span></div><div class="chart-box">${linesSVG(cats, [{ l: "Gross", vals: gm.map(v => v || 0), stroke: "var(--seg3)", bold: true }, { l: "Before tax", vals: nm.map(v => v || 0), stroke: "var(--accent)" }], "Gross margin and profit before tax as a share of revenue, by month", v => pct(v, 0))}</div></div></div>`;
   const cashSeries = [{ l: "Total", vals: D.cashTot, stroke: "var(--accent)", bold: true }];
