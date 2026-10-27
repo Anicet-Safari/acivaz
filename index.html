@@ -83,10 +83,23 @@ button, select, input, textarea { font: inherit; color: inherit; }
 .brand-mark { font-family: var(--font-display); font-weight: 700; font-size: 23px; color: var(--accent); letter-spacing: -0.01em; white-space: nowrap; }
 .brand-mark small { font-family: var(--font-body); font-size: 11px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-left: 8px; }
 .brand-co { color: var(--muted); font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
-.tabs { display: flex; gap: 2px; overflow-x: auto; max-width: 100%; }
+.tabs { display: flex; flex-wrap: wrap; gap: 2px; max-width: 100%; }
+.tab-group { position: relative; }
+.tab .caret { font-size: 10px; transition: transform .15s; }
+.tab[aria-expanded="true"] .caret { transform: rotate(180deg); }
+.tab .tab-cur { font-weight: 500; color: var(--muted); }
+.tab-menu { position: absolute; top: calc(100% + 6px); left: 0; z-index: 30; width: 300px; max-width: calc(100vw - 32px); background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: 0 12px 28px rgba(15, 23, 35, .18); padding: 6px; display: flex; flex-direction: column; gap: 2px; }
+.tab-item { display: grid; grid-template-columns: 20px 1fr auto; gap: 0 10px; align-items: start; text-align: left; border: 0; background: transparent; padding: 9px 10px; border-radius: var(--radius); cursor: pointer; color: var(--ink); font: inherit; }
+.tab-item:hover, .tab-item:focus-visible { background: var(--accent-soft); }
+.tab-item .step { font-family: var(--font-mono); font-size: 11px; color: var(--muted); padding-top: 3px; }
+.tab-item b { display: block; font-weight: 600; font-size: 14px; }
+.tab-item small { display: block; color: var(--muted); font-size: 12px; line-height: 1.35; }
+.tab-item[aria-current="page"] { background: var(--accent-soft); }
+.tab-item[aria-current="page"] b { color: var(--accent); }
+@media (max-width: 640px) { .tab .tab-cur { display: none; } .tab { padding: 7px 8px 5px; } }
 .tab { white-space: nowrap; flex: none; border: 0; border-bottom: 2px solid transparent; background: transparent; padding: 7px 10px 5px; cursor: pointer; font-weight: 500; color: var(--muted); display: flex; align-items: center; gap: 6px; }
 .tab:hover { color: var(--ink); }
-.tab[aria-selected="true"] { color: var(--accent); border-bottom-color: var(--accent); font-weight: 600; }
+.tab[aria-current="page"], .tab.has-current { color: var(--accent); border-bottom-color: var(--accent); font-weight: 600; }
 .tab .step { font-family: var(--font-mono); font-size: 11px; opacity: .7; }
 .tab .count { background: var(--bad-soft); color: var(--bad); font-size: 11px; font-weight: 600; border-radius: 10px; padding: 0 6px; }
 .actions { display: flex; gap: 8px; flex-wrap: wrap; }
@@ -174,6 +187,50 @@ table.st tr.total td { border-top: 1px solid var(--ink); border-bottom: 3px doub
 table.st tr.sec td { font-weight: 600; padding-top: 16px; border-bottom: 0; color: var(--ink); font-size: 11.5px; text-transform: uppercase; letter-spacing: .08em; }
 table.st tr.head td { font-style: italic; color: var(--muted); border-bottom: 0; padding-top: 10px; }
 table.st td.fav { color: var(--good); } table.st td.adv { color: var(--bad); }
+/* financial statements: one column grid, rules under the figures only, as in printed accounts */
+table.st.fs { table-layout: fixed; min-width: 0; border-collapse: collapse; }
+table.st.fs th, table.st.fs td { border-bottom: 0; padding: 5px 8px; vertical-align: baseline; }
+table.st.fs thead th { vertical-align: bottom; }
+table.st.fs td.note { font-size: 12.5px; }
+table.st.fs td.lbl { white-space: normal; min-width: 0; }
+table.st.fs thead th { border-bottom: 0; text-transform: none; letter-spacing: 0; font-size: 12.5px; vertical-align: bottom; padding-bottom: 8px; }
+table.st.fs thead th:first-child { color: var(--muted); font-weight: 500; }
+table.st.fs thead th.n:not(.v) { background: linear-gradient(var(--ink), var(--ink)) right bottom / calc(100% - 16px) 1px no-repeat; }
+table.st.fs th.v, table.st.fs td.v { color: var(--muted); font-size: 12.5px; }
+table.st.fs td.v.fav { color: var(--good); } table.st.fs td.v.adv { color: var(--bad); }
+table.st.fs tr.sub td, table.st.fs tr.total td { border-top: 0; border-bottom: 0; }
+table.st.fs tr.sub td.n:not(.v) { background: linear-gradient(var(--ink), var(--ink)) right top / calc(100% - 16px) 1px no-repeat; }
+table.st.fs tr.total td.n:not(.v) { background: linear-gradient(var(--ink), var(--ink)) right top / calc(100% - 16px) 1px no-repeat, linear-gradient(var(--ink), var(--ink)) right bottom / calc(100% - 16px) 1px no-repeat, linear-gradient(var(--ink), var(--ink)) right calc(100% - 3px) / calc(100% - 16px) 1px no-repeat; }
+table.st.fs tr.total td { padding-bottom: 9px; }
+table.st.fs tr.sub td, table.st.fs tr.total td { padding-top: 6px; }
+table.st.fs tr.sec td { padding-top: 16px; border-bottom: 0; }
+table.st.fs tr.grp td { font-style: italic; color: var(--muted); padding-top: 9px; padding-bottom: 2px; }
+table.st.fs tr.gap td { padding-top: 14px; }
+.fs-panel .table-box { overflow-x: auto; }
+/* business plan */
+.bp-wrap { display: grid; grid-template-columns: 230px minmax(0, 1fr); gap: 22px; align-items: start; }
+.bp-toc { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 92px); display: flex; flex-direction: column; gap: 2px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 8px; }
+.bp-toc button { display: grid; grid-template-columns: 22px 1fr; gap: 0 6px; text-align: left; border: 0; background: transparent; padding: 6px 8px; border-radius: var(--radius); cursor: pointer; color: var(--ink); font-size: 13px; }
+.bp-toc button:hover { background: var(--accent-soft); }
+.bp-toc .num { font-family: var(--font-mono); font-size: 11px; color: var(--muted); padding-top: 2px; }
+.bp-toc small { grid-column: 2; font-size: 11.5px; color: var(--muted); }
+.bp-toc small.ok { color: var(--good); } .bp-toc small.gap { color: var(--warn); }
+.bp-toc .bp-prog { font-size: 12px; color: var(--muted); padding: 4px 8px 8px; border-bottom: 1px solid var(--line-soft); margin-bottom: 4px; }
+.bp-doc { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+.bp-sec { scroll-margin-top: 100px; display: flex; flex-direction: column; gap: 10px; }
+.bp-sec .panel-head { margin-bottom: 0; }
+.bp-sec h3 { font-size: 19px; }
+.bp-sec h4 { font-size: 15px; margin-top: 6px; }
+textarea.bp-text { width: 100%; min-height: 150px; resize: vertical; padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg); line-height: 1.6; font-size: 14px; }
+textarea.bp-text:focus { border-color: var(--accent); outline: none; }
+.bp-tools { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.bp-badge { font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); background: var(--accent-soft); padding: 2px 8px; border-radius: 10px; }
+.bp-kv { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr)); gap: 10px 12px; }
+.bp-note { font-size: 13px; color: var(--muted); margin: 0; max-width: 80ch; }
+.bp-out { font-size: 14px; line-height: 1.6; margin: 0; max-width: 80ch; }
+table.lines.bp-rows { min-width: 560px; }
+table.lines.bp-rows textarea { width: 100%; min-height: 54px; padding: 6px 7px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); resize: vertical; font: inherit; font-size: 13.5px; line-height: 1.45; }
+@media (max-width: 900px) { .bp-wrap { grid-template-columns: 1fr; } .bp-toc { position: static; flex-direction: row; flex-wrap: wrap; } .bp-toc button { grid-template-columns: auto; } .bp-toc .num, .bp-toc small { display: none; } .bp-toc .bp-prog { width: 100%; } }
 
 .notes { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 460px), 1fr)); gap: 18px; align-items: start; }
 .note { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
@@ -409,16 +466,27 @@ img { max-width: 100%; }
       <div class="brand-mark">Acivaz<small>Books, reports and models</small></div>
       <div class="brand-co" id="brand-co"></div>
     </div>
-    <nav class="tabs" role="tablist" aria-label="Steps">
-      <button class="tab" role="tab" id="tab-books" aria-selected="false" data-view="books"><span class="step">1</span>Books</button>
-      <button class="tab" role="tab" id="tab-data" aria-selected="false" data-view="data"><span class="step">2</span>Data</button>
-      <button class="tab" role="tab" id="tab-map" aria-selected="false" data-view="map"><span class="step">3</span>Mapping <span class="count" id="unmapped-count" hidden></span></button>
-      <button class="tab" role="tab" id="tab-pack" aria-selected="true" data-view="pack"><span class="step">4</span>Pack</button>
-      <button class="tab" role="tab" id="tab-forecast" aria-selected="false" data-view="forecast"><span class="step">5</span>Forecast</button>
-      <button class="tab" role="tab" id="tab-budget" aria-selected="false" data-view="budget"><span class="step">6</span>Budget</button>
-      <button class="tab" role="tab" id="tab-valuation" aria-selected="false" data-view="valuation"><span class="step">7</span>Valuation</button>
-      <button class="tab" role="tab" id="tab-appraisal" aria-selected="false" data-view="appraisal"><span class="step">8</span>Loans and projects</button>
-      <button class="tab" role="tab" id="tab-manual" aria-selected="false" data-view="manual">Manual</button>
+    <nav class="tabs" aria-label="Steps">
+      <button class="tab" type="button" id="tab-books" data-view="books">Books</button>
+      <div class="tab-group">
+        <button class="tab tab-parent" type="button" id="grp-data" aria-haspopup="true" aria-expanded="false" aria-controls="menu-data">Data <span class="tab-cur"></span><span class="count" id="unmapped-dot" hidden></span><span class="caret" aria-hidden="true">▾</span></button>
+        <div class="tab-menu" id="menu-data" hidden>
+          <button class="tab-item" type="button" id="tab-data" data-view="data"><span class="step">2</span><span><b>Trial balance</b><small>Upload a file or paste rows from other software</small></span></button>
+          <button class="tab-item" type="button" id="tab-map" data-view="map"><span class="step">3</span><span><b>Mapping</b><small>Place each account on a line of the pack</small></span><span class="count" id="unmapped-count" hidden></span></button>
+        </div>
+      </div>
+      <button class="tab" type="button" id="tab-pack" data-view="pack" aria-current="page">Pack</button>
+      <div class="tab-group">
+        <button class="tab tab-parent" type="button" id="grp-plan" aria-haspopup="true" aria-expanded="false" aria-controls="menu-plan">Plan <span class="tab-cur"></span><span class="caret" aria-hidden="true">▾</span></button>
+        <div class="tab-menu" id="menu-plan" hidden>
+          <button class="tab-item" type="button" id="tab-forecast" data-view="forecast"><span class="step">5</span><span><b>Forecast</b><small>Three years, three scenarios, what drives profit</small></span></button>
+          <button class="tab-item" type="button" id="tab-budget" data-view="budget"><span class="step">6</span><span><b>Budget</b><small>The first forecast year, month by month</small></span></button>
+          <button class="tab-item" type="button" id="tab-valuation" data-view="valuation"><span class="step">7</span><span><b>Valuation</b><small>Discounted cash flow and sensitivity</small></span></button>
+          <button class="tab-item" type="button" id="tab-appraisal" data-view="appraisal"><span class="step">8</span><span><b>Loans and projects</b><small>Repayment schedules and project returns</small></span></button>
+          <button class="tab-item" type="button" id="tab-bplan" data-view="bplan"><span class="step">9</span><span><b>Business plan</b><small>A full plan for lenders and investors, built on the forecast</small></span></button>
+        </div>
+      </div>
+      <button class="tab" type="button" id="tab-manual" data-view="manual">Manual</button>
     </nav>
     <div class="actions" id="export-actions">
       <button class="btn" id="btn-install" type="button" hidden>Install app</button>
@@ -516,23 +584,25 @@ img { max-width: 100%; }
       </div>
 
       <div class="section-title" id="sec-statements"><h2>Financial statements</h2><span class="muted unit-label" style="font-size:13px"></span></div>
-      <div class="grid-2">
-        <div class="panel">
-          <div class="panel-head"><h3>Statement of profit or loss</h3><span class="sub" id="is-sub"></span></div>
-          <div class="table-box"><table class="st" id="is"></table></div>
-        </div>
-        <div class="panel">
-          <div class="panel-head"><h3>Statement of financial position</h3><span class="sub" id="bs-sub"></span></div>
-          <div class="table-box"><table class="st" id="bs"></table></div>
-        </div>
-        <div class="panel">
-          <div class="panel-head"><h3>Statement of cash flows</h3><span class="sub" id="cf-sub"></span></div>
-          <div id="cf-box"></div>
-        </div>
-        <div class="panel">
-          <div class="panel-head"><h3>Ratios</h3><span class="sub" id="ratio-sub"></span></div>
-          <div class="table-box"><table class="ratios" id="ratios"></table></div>
-        </div>
+      <div class="panel fs-panel">
+        <div class="panel-head"><h3>Statement of profit or loss</h3><span class="sub" id="is-sub"></span></div>
+        <div class="table-box"><table class="st fs" id="is"></table></div>
+      </div>
+      <div class="panel fs-panel">
+        <div class="panel-head"><h3>Statement of financial position</h3><span class="sub" id="bs-sub"></span></div>
+        <div class="table-box"><table class="st fs" id="bs"></table></div>
+      </div>
+      <div class="panel fs-panel">
+        <div class="panel-head"><h3>Statement of changes in equity</h3><span class="sub" id="soce-sub"></span></div>
+        <div id="soce-box"></div>
+      </div>
+      <div class="panel fs-panel">
+        <div class="panel-head"><h3>Statement of cash flows</h3><span class="sub" id="cf-sub"></span></div>
+        <div id="cf-box"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><h3>Ratios</h3><span class="sub" id="ratio-sub"></span></div>
+        <div class="table-box"><table class="ratios" id="ratios"></table></div>
       </div>
 
       <div class="section-title" id="sec-notes"><h2>Notes to the financial statements</h2></div>
@@ -776,7 +846,15 @@ img { max-width: 100%; }
         </div>
       </div>
 
-      <label class="check"><input type="checkbox" id="m-pdf"><span>Also add the forecast, budget, valuation, and loans and projects to the full management pack downloads</span></label>
+      <div id="mv-bplan" class="mv" hidden>
+        <div class="notice" id="bp-example" hidden><span><strong>Example plan.</strong> The text is written for the fictional Umucyo Agro Processors so you can see a finished plan. Replace it with your own; the figures always come from your accounts and forecast.</span></div>
+        <div class="bp-wrap">
+          <nav class="bp-toc" id="bp-toc" aria-label="Plan sections"></nav>
+          <div class="bp-doc" id="bp-doc"></div>
+        </div>
+      </div>
+
+      <label class="check" id="m-pdf-wrap"><input type="checkbox" id="m-pdf"><span>Also add the forecast, budget, valuation, and loans and projects to the full management pack downloads</span></label>
     </section>
 
     <!-- MANUAL -->
@@ -800,7 +878,7 @@ img { max-width: 100%; }
           <button type="button" class="lvl2" data-jump="m-books-money">Money in, money out, transfers</button>
           <button type="button" class="lvl2" data-jump="m-books-journal">Journal entries</button>
           <button type="button" class="lvl2" data-jump="m-books-vat">VAT</button>
-          <button type="button" class="lvl2" data-jump="m-books-tax">Income tax at 28%</button>
+          <button type="button" class="lvl2" data-jump="m-books-tax">Income tax</button>
           <button type="button" class="lvl2" data-jump="m-books-recon">Bank reconciliation</button>
           <button type="button" class="lvl2" data-jump="m-books-reports">Reports</button>
           <button type="button" class="lvl2" data-jump="m-books-backup">Backup and restore</button>
@@ -812,6 +890,7 @@ img { max-width: 100%; }
           <button type="button" data-jump="m-budget">6 · Budget</button>
           <button type="button" data-jump="m-valuation">7 · Valuation</button>
           <button type="button" data-jump="m-appraisal">8 · Loans and projects</button>
+          <button type="button" data-jump="m-bplan">9 · Business plan</button>
           <button type="button" data-jump="m-downloads">Downloads and unlocking</button>
           <button type="button" data-jump="m-install">Install and offline use</button>
           <button type="button" data-jump="m-built">How Acivaz is built</button>
@@ -821,7 +900,7 @@ img { max-width: 100%; }
         <article class="m-art">
           <section id="m-start">
             <h2>Getting started</h2>
-            <p>Acivaz takes a business from its day-to-day transactions to a board-ready management pack, then on to forecasts, a budget, a valuation and loan or project appraisal. The steps run along the top bar in order.</p>
+            <p>Acivaz takes a business from its day-to-day transactions to a board-ready management pack, then on to forecasts, a budget, a valuation, loan or project appraisal and a full business plan. The top bar has five entries: <strong>Books</strong>, <strong>Data</strong> (upload a trial balance, then mapping), <strong>Pack</strong>, <strong>Plan</strong> (forecast, budget, valuation, loans and projects, and the business plan) and <strong>Manual</strong>. Data and Plan open a short menu; the step you are on shows beside the menu's name.</p>
             <h3>How the figures flow</h3>
             <figure class="m-fig"><div class="fig-box"><svg viewBox="0 0 960 450" role="img" aria-label="Figures flow from Books or an uploaded trial balance, through mapping, into the pack; the forecast starts from the pack and feeds the budget and valuation; every download is free for the first 30 days, then needs an unlock code" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-size="12"><defs><marker id="mfa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker></defs><rect x="20" y="30" width="160" height="100" rx="4" fill="var(--seg1)" fill-opacity=".13" stroke="var(--seg1)" stroke-width="1.5"/><text x="34" y="56" font-weight="700" font-size="13" fill="var(--ink)">1 Books</text><text x="34" y="78" fill="var(--ink)">Invoices and bills</text><text x="34" y="97" fill="var(--ink)">Bank, MoMo, journals</text><text x="34" y="116" fill="var(--ink)">VAT and 28% tax</text><rect x="20" y="170" width="160" height="80" rx="4" fill="var(--seg1)" fill-opacity=".13" stroke="var(--seg1)" stroke-width="1.5"/><text x="34" y="196" font-weight="700" font-size="13" fill="var(--ink)">2 Data</text><text x="34" y="218" fill="var(--ink)">Trial balance file</text><text x="34" y="237" fill="var(--ink)">Excel or CSV</text><rect x="260" y="90" width="140" height="100" rx="4" fill="var(--accent)" fill-opacity=".13" stroke="var(--accent)" stroke-width="1.5"/><text x="274" y="116" font-weight="700" font-size="13" fill="var(--ink)">Trial balance</text><text x="274" y="138" fill="var(--ink)">This period</text><text x="274" y="157" fill="var(--ink)">Comparative</text><text x="274" y="176" fill="var(--ink)">Opening</text><rect x="440" y="105" width="120" height="70" rx="4" fill="var(--accent)" fill-opacity=".13" stroke="var(--accent)" stroke-width="1.5"/><text x="454" y="131" font-weight="700" font-size="13" fill="var(--ink)">3 Mapping</text><text x="454" y="153" fill="var(--ink)">Account to line</text><rect x="600" y="30" width="170" height="190" rx="4" fill="var(--accent)" fill-opacity=".13" stroke="var(--accent)" stroke-width="1.5"/><text x="614" y="56" font-weight="700" font-size="13" fill="var(--ink)">4 Pack</text><text x="614" y="78" fill="var(--ink)">Profit or loss</text><text x="614" y="97" fill="var(--ink)">Financial position</text><text x="614" y="116" fill="var(--ink)">Cash flows</text><text x="614" y="135" fill="var(--ink)">Notes</text><text x="614" y="154" fill="var(--ink)">Ratios</text><text x="614" y="173" fill="var(--ink)">Charts</text><text x="614" y="192" fill="var(--ink)">Commentary</text><rect x="420" y="270" width="170" height="70" rx="4" fill="var(--seg3)" fill-opacity=".13" stroke="var(--seg3)" stroke-width="1.5"/><text x="434" y="296" font-weight="700" font-size="13" fill="var(--ink)">5 Forecast</text><text x="434" y="318" fill="var(--ink)">3 years, 3 scenarios</text><rect x="630" y="270" width="150" height="56" rx="4" fill="var(--seg3)" fill-opacity=".13" stroke="var(--seg3)" stroke-width="1.5"/><text x="644" y="296" font-weight="700" font-size="13" fill="var(--ink)">6 Budget</text><text x="644" y="318" fill="var(--ink)">Year 1 by month</text><rect x="630" y="342" width="150" height="56" rx="4" fill="var(--seg3)" fill-opacity=".13" stroke="var(--seg3)" stroke-width="1.5"/><text x="644" y="368" font-weight="700" font-size="13" fill="var(--ink)">7 Valuation</text><text x="644" y="390" fill="var(--ink)">DCF, sensitivity</text><rect x="420" y="370" width="170" height="56" rx="4" fill="var(--seg3)" fill-opacity=".13" stroke="var(--seg3)" stroke-width="1.5" stroke-dasharray="5 4"/><text x="434" y="396" font-weight="700" font-size="13" fill="var(--ink)">8 Loans and projects</text><text x="434" y="418" fill="var(--ink)">Own inputs</text><rect x="820" y="30" width="120" height="400" rx="4" fill="var(--seg2)" fill-opacity=".13" stroke="var(--seg2)" stroke-width="1.5"/><text x="834" y="56" font-weight="700" font-size="13" fill="var(--ink)">Downloads</text><text x="834" y="78" fill="var(--ink)">PDF and Excel</text><text x="834" y="97" fill="var(--ink)"></text><text x="834" y="116" fill="var(--ink)">30-day free trial,</text><text x="834" y="135" fill="var(--ink)">then RWF 20,000</text><text x="834" y="154" fill="var(--ink)">a month by MoMo</text><text x="834" y="173" fill="var(--ink)"></text><text x="834" y="192" fill="var(--ink)">Backups are</text><text x="834" y="211" fill="var(--ink)">always free</text><path d="M180 80 H220 V120 H259" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfa)"/><text x="184" y="72" text-anchor="start" font-size="11" fill="var(--muted)">Build pack</text><path d="M180 210 H220 V155 H259" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfa)"/><text x="184" y="226" text-anchor="start" font-size="11" fill="var(--muted)">Upload</text><path d="M400 140 H439" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfa)"/><path d="M560 140 H599" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfa)"/><path d="M770 90 H819" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfa)"/><path d="M685 220 V245 H505 V269" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfa)"/><text x="595" y="239" text-anchor="middle" font-size="11" fill="var(--muted)">Actuals, annualised</text><path d="M590 298 H629" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfa)"/><path d="M590 322 H610 V370 H629" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfa)"/><path d="M780 298 H819" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfa)"/><path d="M780 370 H819" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfa)"/><path d="M590 412 H819" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfa)"/></svg></div>
               <figcaption>Figures come either from the books or from an uploaded trial balance. Mapping places each account on a line of the pack. The forecast starts from the pack's actuals, scaled to a full year, and feeds the budget and valuation. Loans and projects use their own inputs. Every PDF or Excel download is free during the 30-day trial, then needs an unlock code.</figcaption></figure>
@@ -973,7 +1052,7 @@ img { max-width: 100%; }
               <li><strong>Ratio scorecard</strong>: each ratio placed on a band of Healthy, Watch and Act zones, with this period as a dot and the comparative as a ring, so you can see which way it moved.</li>
               <li><strong>Cost lines per 100 of revenue</strong>: every cost account as a share of revenue, this period against the comparative. A red change means that cost took a bigger share. Both also go into the PDF and Excel.</li>
               <li><strong>Commentary</strong>: press <strong>Rebuild basic draft</strong> for a draft written from the figures, then fill in the notes in square brackets with the real reasons. Edit it freely; it goes into the PDF exactly as written. When Acivaz is opened inside Claude, <strong>Draft with Claude</strong> writes a fuller version.</li>
-              <li><strong>Financial statements</strong>: profit or loss, financial position, and cash flows using the indirect method, with note references.</li>
+              <li><strong>Financial statements</strong>: profit or loss, financial position, changes in equity, and cash flows using the indirect method, with note references, laid out as in IFRS for SMEs accounts. Costs are shown in brackets, assets and liabilities are split into non-current and current, and every statement uses the same columns so the figures line up from one statement to the next. In the PDF each statement starts on its own page, after a cover and a contents page.</li>
               <li><strong>Ratios</strong>: ten ratios with a guide value and a flag of Healthy, Watch or Act.</li>
               <li><strong>Notes</strong>: account-level breakdowns of each line, the property and equipment movement, and the effective tax rate. Note 1, the basis of preparation, can be edited, and <strong>Reset to standard wording</strong> restores it.</li>
             </ul>
@@ -1002,7 +1081,20 @@ img { max-width: 100%; }
             <h2>8 · Loans and projects</h2>
             <p><strong>Loan repayment schedule</strong>: enter the amount, interest rate, term in months and any interest-only grace period, then choose equal monthly instalments or equal principal repayments. It shows the instalment, total interest, a year-by-year summary and the full monthly schedule.</p>
             <p><strong>Investment appraisal</strong>: enter the initial investment, useful life, the net cash inflow in year 1, how fast it grows, the value at the end of its life, and the discount rate. It shows net present value, internal rate of return, payback, discounted payback and the profitability index. A positive NPV means the project earns more than the discount rate.</p>
-            <p>Steps 5 to 8 each have their own <strong>Excel</strong> and <strong>Download PDF</strong> buttons. Tick <strong>Also add the forecast, budget, valuation, and loans and projects</strong> to include them in the full pack downloads.</p>
+            <p>Steps 5 to 9 each have their own <strong>Excel</strong> and <strong>Download PDF</strong> buttons. Tick <strong>Also add the forecast, budget, valuation, and loans and projects</strong> to include them in the full pack downloads.</p>
+          </section>
+
+          <section id="m-bplan">
+            <h2>9 · Business plan</h2>
+            <p>A full business plan of thirteen sections, the shape banks, the Business Development Fund and investors expect. The figures come from your accounts and forecast; you write the story around them.</p>
+            <ul>
+              <li><strong>Sections 2 to 8</strong> (the business, products, market, competition, marketing, operations, team) are yours to write. <strong>Insert starter text</strong> adds a paragraph with the points to cover in square brackets; replace each bracket with the real detail.</li>
+              <li><strong>Executive summary</strong>: write it last, or press <strong>Draft from the figures</strong>. It takes the first sentences of your other sections and adds revenue, growth, profit, the funding sought and how it will be repaid. <strong>Undo</strong> brings back what you had.</li>
+              <li><strong>Financial performance to date</strong> and <strong>Financial plan</strong> are built for you: results against the comparative, key assumptions, projected profit or loss, financial position and cash flows for three years, key ratios, break-even revenue and the three scenarios. Change them through Plan, Forecast; the scenario switch at the top applies here too.</li>
+              <li><strong>Funding request</strong>: the amount, its form (loan, equity, grant or a mix) and what it pays for. For a loan, Acivaz checks the debt service cover each year for the amount sought, at the interest rate and term set in Loans and projects. For a mix, enter how much of it is loan. For equity, it shows the share an investor would get at the value from Valuation.</li>
+              <li><strong>Risks</strong> and <strong>Milestones</strong> are short tables. <strong>Add risks suggested by the figures</strong> adds risks the numbers point to, such as cash running out in the downside case or slow-paying customers, each with a way to manage it.</li>
+            </ul>
+            <p>The list on the left shows which sections are ready, have gaps in brackets, or are still to write. <strong>Download PDF</strong> gives a plan with a cover, contents and every section; <strong>Excel</strong> gives the text, funding, risks, milestones and forecast. Your text is saved on this device for each company.</p>
           </section>
 
           <section id="m-downloads">
@@ -1377,7 +1469,7 @@ function compute(col) {
     r.ca = r.inv + r.rec + r.oca + r.cash; r.ta = r.nca + r.ca;
     r.eq = -s("eq"); r.teq = r.eq + r.np;
     r.ncl = -s("ncl"); r.pay = -s("pay"); r.ocl = -s("ocl"); r.cl = r.pay + r.ocl;
-    r.tel = r.teq + r.ncl + r.cl;
+    r.tel = r.teq + r.ncl + r.cl; r.tl = r.ncl + r.cl;
   }
   r.tb = A.reduce((t, a) => t + (a[col] || 0), 0);
   return r;
@@ -1553,40 +1645,69 @@ const IS_LINES = [
 ];
 const BS_LINES = [
   { h: "Assets" },
+  { g: "Non-current assets" },
   { k: "nca", l: "Property, plant and equipment", note: "nca" },
+  { g: "Current assets" },
   { k: "inv", l: "Inventories", note: "inv" },
   { k: "rec", l: "Trade receivables", note: "rec" },
   { k: "oca", l: "Other current assets", note: "oca" },
   { k: "cash", l: "Cash and bank", note: "cash" },
-  { k: "ca", l: "Current assets", sub: true },
+  { k: "ca", l: "Total current assets", sub: true },
   { k: "ta", l: "Total assets", total: true },
   { h: "Equity and liabilities" },
+  { g: "Equity" },
   { k: "eq", l: "Share capital and reserves", note: "eq" },
   { k: "np", l: "Profit for the period" },
   { k: "teq", l: "Total equity", sub: true },
+  { g: "Non-current liabilities" },
   { k: "ncl", l: "Long-term borrowings", note: "ncl" },
+  { g: "Current liabilities" },
   { k: "pay", l: "Trade payables", note: "pay" },
   { k: "ocl", l: "Other current liabilities", note: "ocl" },
-  { k: "cl", l: "Current liabilities", sub: true },
+  { k: "cl", l: "Total current liabilities", sub: true },
+  { k: "tl", l: "Total liabilities", sub: true },
   { k: "tel", l: "Total equity and liabilities", total: true }
 ];
+/* Costs are shown in brackets, as in published accounts; changes are then signed so that minus is always adverse */
+const isDisp = (L, r) => r ? (L.t === "exp" ? -r[L.k] : r[L.k]) : null;
+const atLabel = l => { const t = String(l || "").replace(/^opening(\s+balances?)?\s+(at\s+)?/i, "").trim(); return t || String(l || ""); };
+/* Statement of changes in equity, from the opening balance sheet */
+function socRows(cur, open) {
+  if (!open) return null;
+  const o = open.r, rows = [];
+  rows.push({ l: `Balance at ${atLabel(open.label)}`, a: o.eq, b: o.np, c: o.teq, b1: true });
+  if (Math.abs(o.np) >= 1) rows.push({ l: "Prior period profit transferred to reserves", a: o.np, b: -o.np, c: 0 });
+  rows.push({ l: "Profit for the period", a: 0, b: cur.np, c: cur.np });
+  rows.push({ l: "Capital introduced less dividends and drawings", a: cur.eq - o.eq - o.np, b: 0, c: cur.eq - o.eq - o.np });
+  rows.push({ l: `Balance at ${S.cur}`, a: cur.eq, b: cur.np, c: cur.teq, total: true });
+  return rows;
+}
+/* one column grid for every statement on screen: label, note, then figures */
+const FS_COL = { lab: 360, note: 56, n: 120, v: 100, p: 76 };
+function fsCols(kinds) {
+  const w = { n: FS_COL.n, v: FS_COL.v, p: FS_COL.p };
+  const total = FS_COL.lab + FS_COL.note + kinds.reduce((t, k) => t + w[k], 0);
+  return { attr: `style="width:${total}px"`, cg: `<colgroup><col style="width:${FS_COL.lab}px"><col style="width:${FS_COL.note}px">${kinds.map(k => `<col style="width:${w[k]}px">`).join("")}</colgroup>` };
+}
 
 /* ---------- Rendering: statements ---------- */
-function varCell(cur, base, type) {
-  if (base === null || base === undefined) return `<td class="n">–</td><td class="n">–</td>`;
-  const d = cur - base;
-  const fav = type === "inc" ? d > 0 : d < 0;
-  const cls = Math.abs(d) < 0.5 ? "" : fav ? "fav" : "adv";
-  const p = base !== 0 ? d / Math.abs(base) : null;
-  return `<td class="n ${cls}">${amt(d, { sign: true })}</td><td class="n ${cls}">${p === null ? "–" : (p > 0 ? "+" : p < 0 ? "−" : "") + Math.abs(p * 100).toFixed(1) + "%"}</td>`;
+function varCell(curD, baseD) {
+  if (baseD === null || baseD === undefined) return `<td class="n v">–</td><td class="n v">–</td>`;
+  const d = curD - baseD;
+  const cls = Math.abs(d) < 0.5 ? "" : d > 0 ? "fav" : "adv";
+  const p = baseD !== 0 ? d / Math.abs(baseD) : null;
+  return `<td class="n v ${cls}">${amt(d, { sign: true })}</td><td class="n v ${cls}">${p === null ? "–" : (p > 0 ? "+" : p < 0 ? "−" : "") + Math.abs(p * 100).toFixed(1) + "%"}</td>`;
 }
 function renderIS(cur, cmp, bud, noteOf) {
   $("is-sub").textContent = `For ${S.cur}, ${unitText()}`;
-  let h = `<thead><tr><th></th><th class="note">Note</th><th class="n">${esc(S.cur)}</th>${cmp ? `<th class="n">${esc(S.cmp)}</th><th class="n">Change</th><th class="n">%</th>` : ""}${bud ? `<th class="n">Budget</th><th class="n">vs budget</th><th class="n">%</th>` : ""}</tr></thead><tbody>`;
+  const kinds = ["n"].concat(cmp ? ["n", "v", "p"] : []).concat(bud ? ["n", "v", "p"] : []), F = fsCols(kinds);
+  $("is").setAttribute("style", F.attr.slice(7, -1));
+  let h = F.cg + `<thead><tr><th>${esc(unitShort())}</th><th class="note">Note</th><th class="n">${esc(S.cur)}</th>${cmp ? `<th class="n">${esc(S.cmp)}</th><th class="n v">Change</th><th class="n v">%</th>` : ""}${bud ? `<th class="n">${esc(S.bud || "Budget")}</th><th class="n v">vs budget</th><th class="n v">%</th>` : ""}</tr></thead><tbody>`;
   for (const L of IS_LINES) {
-    h += `<tr class="${L.total ? "total" : L.sub ? "sub" : ""}"><td class="lbl">${esc(L.l)}</td><td class="note">${L.note && noteOf[L.note] ? noteOf[L.note] : ""}</td><td class="n">${amt(cur[L.k])}</td>`;
-    if (cmp) h += `<td class="n">${amt(cmp[L.k])}</td>` + varCell(cur[L.k], cmp[L.k], L.t);
-    if (bud) h += `<td class="n">${amt(bud[L.k])}</td>` + varCell(cur[L.k], bud[L.k], L.t);
+    const c = isDisp(L, cur);
+    h += `<tr class="${L.total ? "total" : L.sub ? "sub" : ""}"><td class="lbl">${esc(L.l)}</td><td class="note">${L.note && noteOf[L.note] ? noteOf[L.note] : ""}</td><td class="n">${amt(c)}</td>`;
+    if (cmp) h += `<td class="n">${amt(isDisp(L, cmp))}</td>` + varCell(c, isDisp(L, cmp));
+    if (bud) h += `<td class="n">${amt(isDisp(L, bud))}</td>` + varCell(c, isDisp(L, bud));
     h += "</tr>";
   }
   $("is").innerHTML = h + "</tbody>";
@@ -1594,16 +1715,28 @@ function renderIS(cur, cmp, bud, noteOf) {
 function renderBS(cur, cmp, open, noteOf) {
   $("bs-sub").textContent = `As at ${S.cur}, ${unitText()}`;
   const showC = cmp && cmp.bsOk, showO = open && open.src === "opn";
-  let h = `<thead><tr><th></th><th class="note">Note</th><th class="n">${esc(S.cur)}</th>${showC ? `<th class="n">${esc(S.cmp)}</th>` : ""}${showO ? `<th class="n">${esc(open.label)}</th>` : ""}</tr></thead><tbody>`;
+  const F = fsCols(["n"].concat(showC ? ["n"] : []).concat(showO ? ["n"] : []));
+  $("bs").setAttribute("style", F.attr.slice(7, -1));
+  let h = F.cg + `<thead><tr><th>${esc(unitShort())}</th><th class="note">Note</th><th class="n">${esc(S.cur)}</th>${showC ? `<th class="n">${esc(S.cmp)}</th>` : ""}${showO ? `<th class="n">${esc(open.label)}</th>` : ""}</tr></thead><tbody>`;
   const span = 3 + (showC ? 1 : 0) + (showO ? 1 : 0);
   for (const L of BS_LINES) {
     if (L.h) { h += `<tr class="sec"><td colspan="${span}">${esc(L.h)}</td></tr>`; continue; }
+    if (L.g) { h += `<tr class="grp"><td class="lbl" colspan="${span}">${esc(L.g)}</td></tr>`; continue; }
     h += `<tr class="${L.total ? "total" : L.sub ? "sub" : ""}"><td class="lbl">${esc(L.l)}</td><td class="note">${L.note && noteOf[L.note] ? noteOf[L.note] : ""}</td><td class="n">${amt(cur[L.k])}</td>`;
     if (showC) h += `<td class="n">${amt(cmp[L.k])}</td>`;
     if (showO) h += `<td class="n">${amt(open.r[L.k])}</td>`;
     h += "</tr>";
   }
   $("bs").innerHTML = h + "</tbody>";
+}
+function renderSOCE(cur, open, noteOf) {
+  const box = $("soce-box"), rows = socRows(cur, open);
+  if (!rows) { $("soce-sub").textContent = ""; box.innerHTML = `<div class="empty"><span>The statement of changes in equity needs an opening balance sheet, like the cash flow statement.</span><button class="btn small" type="button" data-goto="data">Add opening balances</button></div>`; return; }
+  $("soce-sub").textContent = `For ${S.cur}, ${unitText()}`;
+  const F = fsCols(["n", "n", "n"]);
+  let h = `<div class="table-box"><table class="st fs" ${F.attr}>${F.cg}<thead><tr><th>${esc(unitShort())}</th><th class="note">Note</th><th class="n">Share capital and reserves</th><th class="n">Profit for the period</th><th class="n">Total equity</th></tr></thead><tbody>`;
+  for (const r of rows) h += `<tr class="${r.total ? "total" : r.b1 ? "sub" : ""}"><td class="lbl">${esc(r.l)}</td><td class="note">${r.b1 && noteOf.eq ? noteOf.eq : ""}</td><td class="n">${amt(r.a)}</td><td class="n">${amt(r.b)}</td><td class="n">${amt(r.c)}</td></tr>`;
+  box.innerHTML = h + "</tbody></table></div>";
 }
 function renderCF(cf) {
   const box = $("cf-box");
@@ -1612,17 +1745,18 @@ function renderCF(cf) {
     box.innerHTML = `<div class="empty"><span>The cash flow statement needs an opening balance sheet: the trial balance at the start of the year. Add it as an extra column when you load your data, or tick the comparative option in Pack settings if your comparative column is last year's closing balance.</span><button class="btn small" type="button" data-goto="data">Add opening balances</button></div>`;
     return;
   }
-  $("cf-sub").textContent = `For ${S.cur}, ${unitText()}`;
-  let h = `<div class="table-box"><table class="st narrow"><thead><tr><th></th><th class="n">${esc(S.cur)}</th></tr></thead><tbody>`;
+  $("cf-sub").textContent = `For ${S.cur}, indirect method, ${unitText()}`;
+  const F = fsCols(["n"]);
+  let h = `<div class="table-box"><table class="st fs" ${F.attr}>${F.cg}<thead><tr><th>${esc(unitShort())}</th><th class="note"></th><th class="n">${esc(S.cur)}</th></tr></thead><tbody>`;
   for (const s of cf.sections) {
-    h += `<tr class="sec"><td colspan="2">${esc(s.h)}</td></tr>`;
-    for (const l of s.lines) h += `<tr><td class="lbl">${esc(l.l)}</td><td class="n">${amt(l.v)}</td></tr>`;
-    h += `<tr class="sub"><td class="lbl">${esc(s.total.l)}</td><td class="n">${amt(s.total.v)}</td></tr>`;
+    h += `<tr class="sec"><td colspan="3">${esc(s.h)}</td></tr>`;
+    for (const l of s.lines) h += `<tr><td class="lbl">${esc(l.l)}</td><td class="note"></td><td class="n">${amt(l.v)}</td></tr>`;
+    h += `<tr class="sub"><td class="lbl">${esc(s.total.l)}</td><td class="note"></td><td class="n">${amt(s.total.v)}</td></tr>`;
   }
-  h += `<tr class="sub"><td class="lbl">Net increase/(decrease) in cash</td><td class="n">${amt(cf.net)}</td></tr>`;
-  h += `<tr><td class="lbl">Cash and bank at ${esc(cf.openLabel)}</td><td class="n">${amt(cf.openCash)}</td></tr>`;
-  h += `<tr class="total"><td class="lbl">Cash and bank at ${esc(S.cur)}</td><td class="n">${amt(cf.closeCalc)}</td></tr>`;
-  if (Math.abs(cf.diff) >= 1) h += `<tr><td class="lbl" style="color:var(--bad)">Difference to the balance sheet</td><td class="n" style="color:var(--bad)">${amt(cf.diff)}</td></tr>`;
+  h += `<tr class="sub gap"><td class="lbl">Net increase/(decrease) in cash</td><td class="note"></td><td class="n">${amt(cf.net)}</td></tr>`;
+  h += `<tr><td class="lbl">Cash and bank at ${esc(atLabel(cf.openLabel))}</td><td class="note"></td><td class="n">${amt(cf.openCash)}</td></tr>`;
+  h += `<tr class="total"><td class="lbl">Cash and bank at ${esc(S.cur)}</td><td class="note"></td><td class="n">${amt(cf.closeCalc)}</td></tr>`;
+  if (Math.abs(cf.diff) >= 1) h += `<tr><td class="lbl" style="color:var(--bad)">Difference to the balance sheet</td><td class="note"></td><td class="n" style="color:var(--bad)">${amt(cf.diff)}</td></tr>`;
   box.innerHTML = h + "</tbody></table></div>";
 }
 function noteTableHTML(rows, cols, single) {
@@ -1993,6 +2127,7 @@ function renderPack() {
   renderIS(cur, cmp, bud, built.noteOf);
   renderBS(cur, cmp, open, built.noteOf);
   renderCF(cf);
+  renderSOCE(cur, open, built.noteOf);
   renderRatios(cur, cmp);
   renderScorecard(cur, cmp);
   renderCostLines(cur, cmp);
@@ -2006,6 +2141,7 @@ function renderMapping() {
   const un = A.filter(a => !a.cat).length;
   $("unmapped-count").hidden = un === 0;
   $("unmapped-count").textContent = un;
+  $("unmapped-dot").hidden = un === 0; $("unmapped-dot").textContent = un;
   $("map-summary").textContent = `${A.length} accounts · ${un === 0 ? "all mapped" : un + " need a line"}`;
   const groups = {};
   for (const c of CATS) (groups[c.g] = groups[c.g] || []).push(c);
@@ -2123,8 +2259,8 @@ async function draftWithClaude() {
 
 /* ---------- Financial model ---------- */
 let modelView = "forecast", modelScen = "base", modelT = null;
-const MODEL_VIEWS = ["forecast", "budget", "valuation", "appraisal"];
-const TASK_TITLE = { forecast: "Three-year forecast", budget: "Budget", valuation: "Business valuation", appraisal: "Loans and projects" };
+const MODEL_VIEWS = ["forecast", "budget", "valuation", "appraisal", "bplan"];
+const TASK_TITLE = { forecast: "Three-year forecast", budget: "Budget", valuation: "Business valuation", appraisal: "Loans and projects", bplan: "Business plan" };
 const taskFileBase = t => `${(S.company || "Company").replace(/[^\w\- ]+/g, "").trim()} - ${TASK_TITLE[t]}`;
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const SCEN_LABEL = { base: "Base", down: "Downside", up: "Upside" };
@@ -2466,6 +2602,257 @@ $("dt-apply").onclick = () => {
   persist(); renderModel();
   toast("Added to the forecast assumptions.");
 };
+/* ---------- Business plan ---------- */
+const BP_TEXT = [
+  { id: "summary", t: "Executive summary", hint: "Half a page that a busy lender or investor reads first: what the business does, how it is doing, where the plan takes it, and what you are asking for. Write it last, or press Draft from the figures." },
+  { id: "business", t: "The business", hint: "What the company does, where and when it was set up, its legal form, who owns it, and what it has achieved so far.",
+    starter: "[Company] is a [private limited company] based in [district, city], registered with RDB in [year]. We [make / sell / provide] [what] for [whom]. The company is owned by [owners and their shares]. Since starting, we have [two or three achievements: customers won, sales reached, certifications, awards]." },
+  { id: "products", t: "Products and services", hint: "What you sell, which lines matter most, why customers choose you, and what is coming next.",
+    starter: "Our main products are [product 1], [product 2] and [product 3]. [Product 1] makes up about [__]% of sales. Customers choose us because [quality, price, reliability, location]. We plan to add [new product] in [year]." },
+  { id: "market", t: "Market and customers", hint: "Who buys, where they are, how big and how fast-growing the market is (with a source), and how concentrated your sales are.",
+    starter: "Our customers are [type of customers] in [area]. The market for [product] in Rwanda is [size or trend, with its source]. Demand is growing because [reasons]. Our largest customers are [names or types], and no single customer takes more than [__]% of sales." },
+  { id: "competition", t: "Competition and advantage", hint: "Who else serves your customers, how you compete, and what is hard for others to copy.",
+    starter: "Our main competitors are [names], [imports from where] and [informal sellers]. We compete on [price, quality, delivery, service]. Our advantages are [what is hard to copy: location, licences, relationships, equipment, brand]." },
+  { id: "marketing", t: "Marketing and sales", hint: "How customers hear about you and buy, how you set prices, and what you will do to grow sales, with its cost.",
+    starter: "We reach customers through [channels: distributors, own shops, direct sales, online]. We set prices [how], about [__]% [above / below] competitors. To grow sales we will [actions], at a cost of about [RWF __] a year." },
+  { id: "operations", t: "Operations", hint: "Premises, equipment and capacity, key inputs and suppliers, and how quality is controlled.",
+    starter: "We operate from [premises, owned or rented] in [location]. Our main equipment is [list], with capacity of [__ per day or month], of which we use about [__]%. Our key inputs are [inputs], bought from [suppliers]. Quality is checked by [process or certification, such as the RSB S-mark]." },
+  { id: "team", t: "Management and staff", hint: "Who runs the business and their experience, how many people you employ, who advises you, and who you will hire.",
+    starter: "[Name], [role], has [years] of experience in [field]. [Name], [role], [experience]. We employ [__] permanent staff and [__] casual workers. We are advised by [accountant, board, mentors]. We plan to hire [roles] in [year]." }
+];
+const BP_SECS = BP_TEXT.map(x => ({ ...x, kind: "text" })).concat([
+  { id: "history", t: "Financial performance to date", kind: "history", hint: "Built from the management pack. Add a short comment on what drove the results." },
+  { id: "finplan", t: "Financial plan", kind: "finplan", hint: "Built from the forecast and the scenario chosen above. Change the assumptions in Plan, Forecast." },
+  { id: "funding", t: "Funding request", kind: "funding", hint: "How much you need, in what form, what it pays for, and how it will be repaid or rewarded." },
+  { id: "risks", t: "Risks and how we manage them", kind: "risks", hint: "The main things that could go wrong and what you will do about each. Lenders look for honest answers here." },
+  { id: "milestones", t: "Milestones", kind: "milestones", hint: "What will happen, and when, if the plan is funded." }
+]);
+BP_SECS.forEach((x, i) => { x.n = i + 1; const t = BP_TEXT.find(z => z.id === x.id); if (t) t.n = x.n; });
+const bpKey = () => "acv:bp:" + String(S.company || "").trim().toLowerCase();
+const bpBlank = () => ({ v: 1, text: Object.fromEntries(BP_TEXT.map(x => [x.id, ""]).concat([["history", ""]])), funding: { amount: 0, type: "loan", uses: [{ l: "", v: 0 }] }, risks: [], milestones: [] });
+function bpExample() {
+  const b = bpBlank();
+  Object.assign(b.text, {
+    business: "Umucyo Agro Processors Ltd is a private limited company that mills maize into flour and makes animal feed. It was registered with RDB in 2018 and runs a mill in Bugesera District, Eastern Province. The company is owned by its two founders, with 60% and 40% of the shares. It now supplies more than 120 shops and two supermarket chains in Kigali and Bugesera, and its maize flour carries the Rwanda Standards Board S-mark.",
+    products: "We sell two product lines. Maize flour, in 1, 5, 10 and 25 kg bags, makes up about 72% of sales. Animal feed for poultry, pigs and dairy cattle, made partly from the bran left after milling, makes up the other 28%. Customers choose us for consistent quality, fortified flour and delivery within 48 hours. We plan to add a layers' mash for poultry farmers in 2027.",
+    market: "Our flour customers are shops, supermarkets, schools and hotels in Kigali and the Eastern Province. Our feed customers are small and medium livestock farmers. Demand for maize flour grows with the urban population and school feeding, and demand for feed grows as more farmers move to commercial poultry and dairy. No single customer takes more than 12% of sales.",
+    competition: "We compete with larger mills in Kigali, flour imported from Uganda and Tanzania, and small hammer mills selling unbranded flour. We do not try to be the cheapest. Our advantages are certified quality, a location close to the maize cooperatives of Bugesera, which keeps transport costs down, and the feed line, which turns milling by-products into a second source of profit.",
+    marketing: "We sell through four distributors in Kigali and our own sales team of three, who visit shops every week. Prices are set monthly from the maize price and sit about 3% above unbranded flour. To grow sales we will add two distributors in the Northern Province and run radio adverts in the feed season, at a cost of about RWF 18 million a year.",
+    operations: "We operate from a leased factory of 1,200 square metres in Bugesera. Our milling line can process 40 tonnes of maize a day, and we use about 65% of that on a single shift. We buy maize from six cooperatives under seasonal supply agreements and can store three months of stock. Every batch is tested for moisture and aflatoxin before milling.",
+    team: "The managing director has 15 years of experience in grain trading. The finance manager is a certified public accountant. The production manager trained in food technology and has run the mill since it opened. We employ 46 permanent staff and up to 20 casual workers at harvest. The board meets every quarter with an external adviser."
+  });
+  b.funding = { amount: 180e6, type: "loan", uses: [{ l: "A second milling line, installed", v: 120e6 }, { l: "Maize stock for the harvest season", v: 45e6 }, { l: "A delivery truck", v: 15e6 }] };
+  b.risks = [
+    { r: "Maize prices can rise sharply after a poor harvest.", m: "Buy under seasonal agreements with cooperatives and hold up to three months of stock." },
+    { r: "A new large mill could cut prices in Kigali.", m: "Compete on certified quality and delivery, and grow the feed line, where competition is weaker." },
+    { r: "Power cuts stop production.", m: "Run a standby generator and schedule milling at off-peak hours." },
+    { r: "Aflatoxin in maize would mean losing a batch and customers' trust.", m: "Test every batch before milling and reject maize above the limit." }
+  ];
+  b.milestones = [{ d: "Q1 2027", l: "Loan approved and second milling line ordered" }, { d: "Q2 2027", l: "Second line installed and a second shift started" }, { d: "Q3 2027", l: "Layers' mash launched; two Northern Province distributors signed" }, { d: "Q4 2027", l: "Sales above RWF 110 million a month" }];
+  b.example = true;
+  return b;
+}
+function BP() {
+  const k = bpKey();
+  if (BP.key !== k || !BP.data) { BP.key = k; BP.data = store.get(k) || (isSample ? bpExample() : bpBlank()); }
+  return BP.data;
+}
+let bpT = null, bpUndo = {};
+const bpSave = () => { clearTimeout(bpT); bpT = setTimeout(() => store.set(BP.key, BP.data), 400); };
+const firstSentence = (t, min = 60) => { let out = ""; for (const x of String(t || "").trim().split(/(?<=[.!?])\s+/)) { if (/\[/.test(x)) break; out = (out ? out + " " : "") + x; if (out.length >= min) break; } return out; };
+const BP_TYPE = { loan: "a loan", equity: "an equity investment", grant: "a grant", mixed: "a mix of loan and equity" };
+function bpNums() {
+  const snap = modelSnapshot(), { m, runs, years, labels, val, loan } = snap, b = BP(), f = b.funding;
+  const y0 = years[0], y1 = years[1], y3 = years[3];
+  const c = y1.rev ? (y1.gp - y1.selling + y1.oi) / y1.rev : 0, fixed = y1.staff + y1.admin + y1.dep + y1.fin;
+  const be = c > 0 ? fixed / c : null, mos = be !== null && y1.rev ? (y1.rev - be) / y1.rev : null;
+  const minCash = sc => Math.min(...runs[sc].slice(1).map(y => y.cash));
+  const growth = y0.rev > 0 && y3.rev > 0 ? Math.pow(y3.rev / y0.rev, 1 / 3) - 1 : null;
+  const loanAmt = f.type === "loan" ? f.amount : f.type === "mixed" ? Math.min(f.amount, f.loanPart || 0) : 0, eqAmt = f.type === "equity" ? f.amount : f.type === "mixed" ? Math.max(0, f.amount - (f.loanPart || 0)) : 0;
+  const pl = loanAmt > 0 ? loanSchedule({ ...m.loan, amt: loanAmt }) : null;
+  const dscr = [1, 2, 3].map(t => {
+    const y = years[t], avail = y.ebitda - y.tax, exist = y.fin + (y.repay || 0), add = pl && pl.years[t - 1] ? pl.years[t - 1].pay : 0;
+    return { t, avail, exist, add, ratio: exist + add > 0 ? avail / (exist + add) : null };
+  });
+  const pre = val.equity, stake = eqAmt > 0 && pre > 0 ? eqAmt / (pre + eqAmt) : null;
+  const usesTot = (f.uses || []).reduce((t, u) => t + (Number(u.v) || 0), 0);
+  return { ...snap, y0, y1, y3, be, mos, contrib: c, fixed, minBase: minCash("base"), minDown: minCash("down"), growth, dscr, stake, pre, usesTot, loanAmt, eqAmt };
+}
+function bpDraftSummary() {
+  const b = BP(), N = bpNums(), L = N.labels, scen = SCEN_LABEL[modelScen].toLowerCase(), f = b.funding;
+  const p1 = firstSentence(b.text.business) || `${S.company} [does what, for whom, and where].`;
+  const p1b = firstSentence(b.text.products);
+  let p2 = `In ${L[0]} the company is on course for revenue of ${money(N.y0.rev)}, annualised from ${S.months} month${Number(S.months) === 1 ? "" : "s"} of actual results, with a gross margin of ${pct(N.y0.rev ? N.y0.gp / N.y0.rev : null)} and net profit of ${money(N.y0.np)}.`;
+  p2 += ` This plan takes revenue to ${money(N.y3.rev)} by ${L[3]}${N.growth !== null ? `, growth of ${(N.growth * 100).toFixed(1)}% a year` : ""}, with net profit of ${money(N.y3.np)} and closing cash of ${money(N.y3.cash)} in the ${scen} case.`;
+  let p3 = "";
+  if (f.amount > 0) {
+    const uses = (f.uses || []).filter(u => u.l && u.v > 0).sort((a, c) => c.v - a.v).slice(0, 4).map(u => `${u.l.charAt(0).toLowerCase() + u.l.slice(1)} (${money(u.v)})`);
+    p3 = `We are seeking ${money(f.amount)} as ${BP_TYPE[f.type] || "funding"}.${uses.length ? ` It will pay for ${uses.length > 1 ? uses.slice(0, -1).join("; ") + "; and " + uses[uses.length - 1] : uses[0]}.` : ""}`;
+    const d1 = N.dscr[0].ratio;
+    if ((f.type === "loan" || f.type === "mixed") && d1 !== null) p3 += ` In the ${scen} case, cash from operations covers all debt payments ${d1.toFixed(1)} times in ${L[1]}.`;
+    if (N.stake !== null) p3 += ` At the indicative equity value of ${money(N.pre)} from the valuation, this is about ${(N.stake * 100).toFixed(1)}% of the company after the investment.`;
+  } else p3 = "We are seeking [amount] as [a loan / an equity investment / a grant] to pay for [what].";
+  const rs = (b.risks || []).filter(r => r.r).slice(0, 2).map(r => r.r.replace(/\.$/, "").replace(/^./, ch => ch.toLowerCase()));
+  const p4 = rs.length ? `The main risks are that ${rs.join(", and that ")}. Section ${BP_SECS.find(x => x.id === "risks").n} sets out how each is managed.` : "";
+  return [p1 + (p1b ? " " + p1b : ""), p2, p3, p4].filter(Boolean).join("\n\n");
+}
+function bpDraftHistory() {
+  const { cur, cmp, cf } = snapshot();
+  let t = `Revenue for ${S.cur} was ${money(cur.rev)}`;
+  if (cmp && cmp.rev) t += `, ${cur.rev >= cmp.rev ? "up" : "down"} ${Math.abs((cur.rev / cmp.rev - 1) * 100).toFixed(1)}% on ${S.cmp}`;
+  t += `. Gross margin was ${pct(cur.rev ? cur.gp / cur.rev : null)}${cmp && cmp.rev ? ` against ${pct(cmp.gp / cmp.rev)}` : ""}, and net profit was ${money(cur.np)}${cmp ? ` against ${money(cmp.np)}` : ""}.`;
+  t += ` Cash and bank stood at ${money(cur.cash)}${cf ? `, after operations generated ${money(cf.op)} of cash in the period` : ""}.`;
+  return t + " [Add what drove these results.]";
+}
+function bpSuggestRisks() {
+  const b = BP(), N = bpNums(), L = N.labels, y1 = N.y1, m = N.m, out = [];
+  const dn = N.runs.down.findIndex((y, i) => i > 0 && y.cash < 0);
+  if (dn > 0) out.push({ r: `In the downside case cash runs out in ${L[dn]}.`, m: "Agree an overdraft or working capital line before it is needed, and list the costs that can be cut quickly." });
+  if (y1.rev && y1.gp / y1.rev < 0.3) out.push({ r: "Input prices rising faster than selling prices would squeeze the gross margin.", m: "Fix prices with key suppliers for part of the year and review selling prices every quarter." });
+  if (m.dd > 45) out.push({ r: `Customers take about ${m.dd} days to pay, which ties up cash.`, m: "Set credit limits, invoice promptly and follow up overdue accounts every week." });
+  if (m.id > 60) out.push({ r: `Stock covers about ${m.id} days of sales, which ties up cash and can spoil.`, m: "Reorder more often in smaller lots and track slow-moving items monthly." });
+  if (y1.icov !== null && y1.icov < 3) out.push({ r: "Interest takes a large share of operating profit.", m: "Repay the most costly debt first and avoid new borrowing until interest cover is above 3 times." });
+  out.push({ r: "Losing a key person would slow the business.", m: "Write down key processes and train a deputy for each critical role." });
+  const have = new Set((b.risks || []).map(r => r.r));
+  const add = out.filter(r => !have.has(r.r));
+  b.risks = (b.risks || []).filter(r => r.r || r.m).concat(add);
+  return add.length;
+}
+function bpStatus(sec) {
+  const b = BP();
+  if (sec.kind === "text" || sec.kind === "history") {
+    const t = String(b.text[sec.id] || "").trim();
+    if (sec.kind === "history" && !t) return { c: "ok", l: "From your figures" };
+    return !t ? { c: "", l: "To write" } : /\[[^\]]*\]/.test(t) ? { c: "gap", l: "Has gaps to fill" } : t.length < 80 ? { c: "gap", l: "Very short" } : { c: "ok", l: "Written" };
+  }
+  if (sec.kind === "finplan") return { c: "ok", l: "From your figures" };
+  if (sec.kind === "funding") return b.funding.amount > 0 ? { c: "ok", l: "Set" } : { c: "", l: "To set" };
+  const n = (b[sec.kind] || []).filter(x => (x.r || x.l)).length;
+  return n ? { c: "ok", l: `${n} listed` } : { c: "", l: "None yet" };
+}
+function renderBplanToc() {
+  const done = BP_SECS.filter(x => bpStatus(x).c === "ok").length;
+  $("bp-toc").innerHTML = `<div class="bp-prog">${done} of ${BP_SECS.length} sections ready</div>` + BP_SECS.map(x => { const st = bpStatus(x); return `<button type="button" data-jump="bp-s-${x.id}"><span class="num">${x.n}</span><span>${esc(x.t)}</span><small class="${st.c}">${esc(st.l)}</small></button>`; }).join("");
+}
+const bpRowsHTML = list => {
+  const b = BP(), rows = b[list] || [];
+  const cols = list === "risks" ? [["r", "Risk"], ["m", "How we manage it"]] : [["d", "When"], ["l", "Milestone"]];
+  return `<div class="table-box"><table class="lines bp-rows"><thead><tr>${cols.map(([, h], i) => `<th style="${list === "milestones" && i === 0 ? "width:22%" : ""}">${h}</th>`).join("")}<th style="width:40px"></th></tr></thead><tbody>${rows.map((r, i) => `<tr>${cols.map(([k, h]) => `<td><textarea id="bp-${list}-${i}-${k}" data-bpr="${list}.${i}.${k}" aria-label="${h}, row ${i + 1}" rows="2">${esc(r[k] || "")}</textarea></td>`).join("")}<td><button class="btn tiny" type="button" data-bp-act="del-row" data-list="${list}" data-i="${i}" aria-label="Remove row ${i + 1}">×</button></td></tr>`).join("") || `<tr><td colspan="3" class="muted">Nothing listed yet.</td></tr>`}</tbody></table></div>`;
+};
+function bpUsesHTML() {
+  const f = BP().funding;
+  return `<div class="table-box"><table class="lines bp-rows"><thead><tr><th>What the money pays for</th><th style="width:26%">Amount (${esc(unitShort())})</th><th style="width:40px"></th></tr></thead><tbody>${(f.uses || []).map((u, i) => `<tr><td><input id="bp-use-${i}-l" data-bpu="${i}.l" value="${esc(u.l || "")}" aria-label="Use ${i + 1}"></td><td><input class="n" id="bp-use-${i}-v" data-bpu="${i}.v" inputmode="decimal" value="${u.v ? esc(moneyIn(u.v)) : ""}" aria-label="Amount for use ${i + 1}"></td><td><button class="btn tiny" type="button" data-bp-act="del-use" data-i="${i}" aria-label="Remove use ${i + 1}">×</button></td></tr>`).join("")}</tbody></table></div><div class="bp-tools"><button class="btn small" type="button" data-bp-act="add-use">Add a use</button></div>`;
+}
+function renderBplan(full) {
+  const b = BP();
+  $("bp-example").hidden = !b.example;
+  if (b.example) {
+    if (!b.text.summary) b.text.summary = bpDraftSummary();
+    if (!b.text.history) b.text.history = bpDraftHistory().replace(" [Add what drove these results.]", " Sales of both product lines grew, but maize and transport costs rose faster than selling prices, so the gross margin slipped slightly.");
+  }
+  if (full || renderBplan.key !== BP.key) {
+    renderBplan.key = BP.key;
+    $("bp-doc").innerHTML = BP_SECS.map(x => {
+      let h = `<section class="panel bp-sec" id="bp-s-${x.id}"><div class="panel-head"><h3>${x.n}. ${esc(x.t)}</h3>${["history", "finplan"].includes(x.kind) ? `<span class="bp-badge">From your figures</span>` : ""}</div><p class="bp-note">${esc(x.hint)}</p>`;
+      if (x.kind === "text") {
+        h += `<textarea class="bp-text" id="bp-t-${x.id}" data-bp="${x.id}" aria-label="${esc(x.t)}" rows="${x.id === "summary" ? 9 : 6}">${esc(b.text[x.id] || "")}</textarea><div class="bp-tools">`;
+        h += x.id === "summary" ? `<button class="btn small primary" type="button" data-bp-act="draft-summary">Draft from the figures</button><button class="btn small" type="button" data-bp-act="undo" data-s="summary" hidden id="bp-undo-summary">Undo</button>` : `<button class="btn small" type="button" data-bp-act="starter" data-s="${x.id}">Insert starter text</button>`;
+        h += `</div>`;
+        if (x.id === "summary") h += `<h4>Highlights</h4><div class="table-box" id="bp-high"></div>`;
+      } else if (x.kind === "history") {
+        h += `<div class="table-box" id="bp-hist"></div><textarea class="bp-text" id="bp-t-history" data-bp="history" aria-label="Comment on results to date" rows="4" placeholder="A short comment on what drove the results.">${esc(b.text.history || "")}</textarea><div class="bp-tools"><button class="btn small" type="button" data-bp-act="draft-history">Draft from the figures</button><button class="btn small" type="button" data-bp-act="undo" data-s="history" hidden id="bp-undo-history">Undo</button></div>`;
+      } else if (x.kind === "finplan") {
+        h += `<div id="bp-fin"></div>`;
+      } else if (x.kind === "funding") {
+        h += `<div class="bp-kv"><div class="mfield"><label for="bp-amount">Amount sought</label><div class="inp"><input id="bp-amount" type="number" step="any" inputmode="decimal" data-bpf="amount" value="${b.funding.amount ? esc(moneyIn(b.funding.amount)) : ""}"><span class="u">${esc(unitShort())}</span></div></div><div class="mfield"><label for="bp-type">Form of funding</label><select id="bp-type" data-bpf="type">${Object.entries({ loan: "Loan", equity: "Equity investment", grant: "Grant", mixed: "Loan and equity" }).map(([k, l]) => `<option value="${k}" ${b.funding.type === k ? "selected" : ""}>${l}</option>`).join("")}</select></div><div class="mfield" id="bp-loanpart-f" ${b.funding.type === "mixed" ? "" : "hidden"}><label for="bp-loanpart">Of which loan</label><div class="inp"><input id="bp-loanpart" type="number" step="any" inputmode="decimal" data-bpf="loanPart" value="${b.funding.loanPart ? esc(moneyIn(b.funding.loanPart)) : ""}"><span class="u">${esc(unitShort())}</span></div></div></div><h4>Use of funds</h4><div id="bp-uses">${bpUsesHTML()}</div><div id="bp-fund"></div>`;
+      } else {
+        h += `<div id="bp-rows-${x.kind}">${bpRowsHTML(x.kind)}</div><div class="bp-tools"><button class="btn small" type="button" data-bp-act="add-row" data-list="${x.kind}">Add a row</button>${x.kind === "risks" ? `<button class="btn small" type="button" data-bp-act="suggest-risks">Add risks suggested by the figures</button>` : ""}</div>`;
+      }
+      return h + `</section>`;
+    }).join("");
+  }
+  renderBplanToc();
+  renderBplanNumbers();
+}
+function bpTable(head, rows, opts = {}) {
+  return `<table class="st narrow"><thead><tr>${head.map((x, i) => `<th class="${i ? "n" : ""}">${esc(x)}</th>`).join("")}</tr></thead><tbody>${rows.map(r => r.sec ? `<tr class="sec"><td colspan="${head.length}">${esc(r.sec)}</td></tr>` : `<tr class="${r.lvl === 2 ? "total" : r.lvl === 1 ? "sub" : ""}">${r.c.map((v, i) => `<td class="${i ? "n" : "lbl"}">${i ? v : esc(v)}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
+}
+const BP_EXP = new Set(["cos", "staff", "selling", "admin", "dep", "fin", "tax"]);
+function bpFinRows(N) {
+  const yrs = N.years, sg = (k, v) => BP_EXP.has(k) ? -v : v, r = [];
+  const pl = [["rev", "Revenue"], ["cos", "Cost of sales"], ["gp", "Gross profit", 1], ["staff", "Staff costs"], ["selling", "Selling and distribution"], ["admin", "Administration and other"], ["dep", "Depreciation"], ["oi", "Other income"], ["op", "Operating profit", 1], ["fin", "Finance costs"], ["pbt", "Profit before tax", 1], ["tax", "Income tax"], ["np", "Net profit", 2]];
+  const bs = [["nca", "Property, plant and equipment"], ["inv", "Inventories"], ["rec", "Trade receivables"], ["oca", "Other current assets"], ["cash", "Cash and bank"], ["ta", "Total assets", 2], ["equity", "Total equity"], ["debt", "Borrowings"], ["pay", "Trade payables"], ["ocl", "Other current liabilities"], ["tel", "Total equity and liabilities", 2]];
+  const cfr = [["cfo", "Net cash from operating activities"], ["cfi", "Net cash used in investing"], ["cff", "Net cash from financing"], ["netcash", "Net change in cash", 1], ["cash", "Closing cash", 2]];
+  const ratio = [["gmP", "Gross margin", "pct"], ["nmP", "Net margin", "pct"], ["icov", "Interest cover", "x"], ["de", "Debt to equity", "x"]];
+  return { pl: pl.map(([k, l, lvl]) => ({ k, l, lvl, v: yrs.map(y => sg(k, y[k])) })), bs: bs.map(([k, l, lvl]) => ({ k, l, lvl, v: yrs.map(y => y[k]) })), cf: cfr.map(([k, l, lvl]) => ({ k, l, lvl, v: yrs.map((y, i) => i === 0 && k !== "cash" ? null : y[k]) })), ratio: ratio.map(([k, l, f]) => ({ k, l, f, v: yrs.map(y => y[k]) })) };
+}
+function renderBplanNumbers() {
+  if (!$("bp-doc") || !$("bp-high")) return;
+  const N = bpNums(), L = N.labels, b = BP(), f = b.funding, { cur, cmp } = snapshot();
+  const head = ["", L[0] + " (ann.)"].concat(L.slice(1));
+  const fv = (v, f2) => v === null || v === undefined || !isFinite(v) ? "–" : f2 === "pct" ? pct(v) : f2 === "x" ? v.toFixed(2) + "×" : amt(v);
+  $("bp-high").innerHTML = bpTable([unitShort()].concat(head.slice(1)), [
+    { c: ["Revenue"].concat(N.years.map(y => amt(y.rev))) },
+    { c: ["Gross margin"].concat(N.years.map(y => pct(y.gmP))) },
+    { c: ["Net profit"].concat(N.years.map(y => amt(y.np))) },
+    { c: ["Closing cash"].concat(N.years.map(y => amt(y.cash))) }
+  ]);
+  const hr = [["rev", "Revenue"], ["gp", "Gross profit"], ["np", "Net profit"], ["cash", "Cash and bank"]];
+  $("bp-hist").innerHTML = bpTable([unitShort(), S.cur].concat(cmp ? [S.cmp, "Change"] : []), hr.map(([k, l]) => ({ c: [l, amt(cur[k])].concat(cmp ? [amt(cmp[k]), cmp[k] ? (cur[k] >= cmp[k] ? "+" : "−") + Math.abs((cur[k] / cmp[k] - 1) * 100).toFixed(1) + "%" : "–"] : []) })).concat([{ c: ["Gross margin", pct(cur.rev ? cur.gp / cur.rev : null)].concat(cmp ? [pct(cmp.rev ? cmp.gp / cmp.rev : null), ""] : []) }]));
+  const R = bpFinRows(N), m = N.m, scen = SCEN_LABEL[modelScen];
+  let h = `<p class="bp-out">${esc(scen)} case. ${esc(L[0])} is the actual year to date annualised from ${S.months} month${Number(S.months) === 1 ? "" : "s"}. Costs are shown in brackets.</p>`;
+  h += `<h4>Key assumptions</h4>` + bpTable(["Assumption", "Value"], [
+    { c: ["Revenue growth, years 1 to 3", m.g.map(x => x + "%").join(" / ")] }, { c: ["Gross margin", m.gm + "%"] }, { c: ["Staff and admin cost growth", `${m.staffG}% / ${m.adminG}%`] },
+    { c: ["Capital spending per year", amt(m.capex)] }, { c: ["Debtor, inventory and creditor days", `${m.dd} / ${m.id} / ${m.cd}`] }, { c: ["Interest rate on debt", m.rate + "%"] }, { c: ["Income tax rate", m.tax + "%"] }]);
+  h += `<h4>Projected profit or loss</h4><div class="table-box">` + bpTable([unitShort()].concat(head.slice(1)), R.pl.map(r => ({ lvl: r.lvl, c: [r.l].concat(r.v.map(v => fv(v))) }))) + `</div>`;
+  h += `<h4>Projected financial position</h4><div class="table-box">` + bpTable([unitShort()].concat(head.slice(1)), R.bs.map(r => ({ lvl: r.lvl, c: [r.l].concat(r.v.map(v => fv(v))) }))) + `</div>`;
+  h += `<h4>Projected cash flows</h4><div class="table-box">` + bpTable([unitShort()].concat(head.slice(1)), R.cf.map(r => ({ lvl: r.lvl, c: [r.l].concat(r.v.map(v => fv(v))) }))) + `</div>`;
+  h += `<h4>Key ratios</h4><div class="table-box">` + bpTable([""].concat(head.slice(1)), R.ratio.map(r => ({ c: [r.l].concat(r.v.map(v => fv(v, r.f))) }))) + `</div>`;
+  h += `<h4>Break-even</h4><p class="bp-out">${N.be === null ? "Break-even cannot be worked out because each sale does not cover its own costs." : `In ${esc(L[1])}, fixed costs of ${esc(money(N.fixed))} (staff, administration, depreciation and interest) are covered once revenue reaches ${esc(money(N.be))}. Forecast revenue is ${esc(money(N.y1.rev))}, a margin of safety of ${pct(N.mos)}${N.mos < 0.1 ? ", which is thin" : ""}.`}</p>`;
+  h += `<h4>Scenarios</h4><div class="table-box">` + bpTable([unitShort(), "Downside", "Base", "Upside"], [["rev", "Revenue, " + L[3]], ["np", "Net profit, " + L[3]], ["cash", "Closing cash, " + L[3]]].map(([k, l]) => ({ c: [l, amt(N.runs.down[3][k]), amt(N.runs.base[3][k]), amt(N.runs.up[3][k])] })).concat([{ c: ["Lowest year-end cash, years 1 to 3", amt(N.minDown), amt(N.minBase), amt(Math.min(...N.runs.up.slice(1).map(y => y.cash)))] }])) + `</div>`;
+  $("bp-fin").innerHTML = h;
+  let fh = "";
+  if (f.amount > 0 && Math.abs(N.usesTot - f.amount) >= 1) fh += `<p class="bp-note" style="color:var(--warn)">The uses add up to ${esc(money(N.usesTot))}, ${N.usesTot > f.amount ? "more" : "less"} than the ${esc(money(f.amount))} sought.</p>`;
+  if (f.type === "loan" || f.type === "mixed") {
+    const ln = m.loan;
+    fh += `<h4>Ability to repay</h4><p class="bp-out">${N.loanAmt > 0 ? `A loan of ${esc(money(N.loanAmt))} at ${ln.rate}% a year over ${ln.months} months${ln.grace ? `, ${ln.grace} months interest only` : ""}, the rate and term set in Plan, Loans and projects. ` : "Enter the amount sought to see the repayments. "}Cash available is operating profit before depreciation, less tax. Lenders usually look for cover of at least 1.25 times.</p>`;
+    fh += `<div class="table-box">` + bpTable([unitShort()].concat(L.slice(1)), [
+      { c: ["Cash available for debt"].concat(N.dscr.map(d => amt(d.avail))) },
+      { c: ["Existing interest and repayments"].concat(N.dscr.map(d => amt(d.exist))) },
+      { c: ["New loan payments"].concat(N.dscr.map(d => amt(d.add))) },
+      { lvl: 1, c: ["Debt service cover"].concat(N.dscr.map(d => d.ratio === null ? "–" : `<span class="${d.ratio >= 1.25 ? "up" : "down"}">${d.ratio.toFixed(2)}×</span>`)) }
+    ]) + `</div>`;
+  }
+  if (f.type === "equity" || f.type === "mixed") fh += `<h4>Investor's share</h4><p class="bp-out">${N.stake === null ? "Set an amount and a valuation (Plan, Valuation) to show the share an investor would receive." : `The valuation step puts the equity at ${esc(money(N.pre))} before the investment. ${esc(money(N.eqAmt))} would buy about ${(N.stake * 100).toFixed(1)}% of the company. Treat this as a starting point for negotiation.`}</p>`;
+  if (f.type === "grant") fh += `<p class="bp-out">A grant needs no repayment. Funders will still check that the business can keep running after the grant is spent: the lowest year-end cash in the base case is ${esc(money(N.minBase))}.</p>`;
+  $("bp-fund").innerHTML = fh;
+}
+$("view-model").addEventListener("input", e => {
+  const el = e.target; if (!el.closest("#mv-bplan")) return;
+  const b = BP();
+  if (el.dataset.bp) { b.text[el.dataset.bp] = el.value; delete b.example; const u = $("bp-undo-" + el.dataset.bp); if (u) u.hidden = true; bpSave(); renderBplanToc(); return; }
+  if (el.dataset.bpf) { const k = el.dataset.bpf; if (k === "amount" || k === "loanPart") { const v = parseFloat(el.value); b.funding[k] = isFinite(v) ? v * (UNIT[S.unit] || UNIT.m).div : 0; } else { b.funding.type = el.value; $("bp-loanpart-f").hidden = el.value !== "mixed"; if (el.value === "mixed" && !b.funding.loanPart) b.funding.loanPart = b.funding.amount / 2; } delete b.example; $("bp-example").hidden = true; bpSave(); renderBplanToc(); renderBplanNumbers(); return; }
+  if (el.dataset.bpu) { const [i, k] = el.dataset.bpu.split("."), u = b.funding.uses[+i]; if (k === "v") { const v = parseFloat(el.value); u.v = isFinite(v) ? v * (UNIT[S.unit] || UNIT.m).div : 0; } else u.l = el.value; bpSave(); renderBplanNumbers(); return; }
+  if (el.dataset.bpr) { const [list, i, k] = el.dataset.bpr.split("."); b[list][+i][k] = el.value; bpSave(); renderBplanToc(); }
+});
+$("view-model").addEventListener("change", e => { if (e.target.dataset && e.target.dataset.bpf === "type") e.target.dispatchEvent(new Event("input", { bubbles: true })); });
+$("view-model").addEventListener("click", e => {
+  const a = e.target.closest("[data-bp-act]"); if (!a) return;
+  const b = BP(), act = a.dataset.bp_act || a.dataset.bpAct;
+  const setText = (k, v) => { bpUndo[k] = b.text[k]; b.text[k] = v; $("bp-t-" + k).value = v; const u = $("bp-undo-" + k); if (u) u.hidden = !bpUndo[k]; };
+  if (act === "draft-summary") { setText("summary", bpDraftSummary()); toast("Summary drafted from the figures. Check it and fill any brackets."); }
+  else if (act === "draft-history") setText("history", bpDraftHistory());
+  else if (act === "undo") { const k = a.dataset.s; b.text[k] = bpUndo[k] || ""; $("bp-t-" + k).value = b.text[k]; a.hidden = true; }
+  else if (act === "starter") { const k = a.dataset.s, sec = BP_TEXT.find(x => x.id === k), ta = $("bp-t-" + k); b.text[k] = (ta.value.trim() ? ta.value.trim() + "\n\n" : "") + sec.starter.replace("[Company]", S.company || "[Company]"); ta.value = b.text[k]; ta.focus(); }
+  else if (act === "add-row") { const l = a.dataset.list; b[l] = b[l] || []; b[l].push(l === "risks" ? { r: "", m: "" } : { d: "", l: "" }); $("bp-rows-" + l).innerHTML = bpRowsHTML(l); const t = $(`bp-${l}-${b[l].length - 1}-${l === "risks" ? "r" : "d"}`); if (t) t.focus(); }
+  else if (act === "del-row") { const l = a.dataset.list; b[l].splice(+a.dataset.i, 1); $("bp-rows-" + l).innerHTML = bpRowsHTML(l); }
+  else if (act === "suggest-risks") { const n = bpSuggestRisks(); $("bp-rows-risks").innerHTML = bpRowsHTML("risks"); toast(n ? `${n} risk${n === 1 ? "" : "s"} added. Edit them to fit the business.` : "No new risks to suggest from the figures."); }
+  else if (act === "add-use") { b.funding.uses.push({ l: "", v: 0 }); $("bp-uses").innerHTML = bpUsesHTML(); }
+  else if (act === "del-use") { b.funding.uses.splice(+a.dataset.i, 1); if (!b.funding.uses.length) b.funding.uses.push({ l: "", v: 0 }); $("bp-uses").innerHTML = bpUsesHTML(); }
+  else return;
+  delete b.example; $("bp-example").hidden = true;
+  bpSave(); renderBplanToc(); renderBplanNumbers();
+});
 /* model inputs */
 const INPUT_UNITS = { pct: "%", pts: "pts", days: "days", months: "months", years: "years", w: "" };
 const FC_INPUTS = [
@@ -2493,7 +2880,8 @@ function renderSeasonInputs() {
 }
 function renderModel() {
   M();
-  for (const v of ["forecast", "budget", "valuation", "appraisal"]) $("mv-" + v).hidden = v !== modelView;
+  for (const v of MODEL_VIEWS) $("mv-" + v).hidden = v !== modelView;
+  $("m-pdf-wrap").hidden = modelView === "bplan";
   document.querySelectorAll("#scen-nav [data-sc]").forEach(b => b.setAttribute("aria-pressed", b.dataset.sc === modelScen));
   $("scen-wrap").hidden = modelView === "appraisal";
   $("m-pdf").checked = S.pdfModel === true;
@@ -2503,6 +2891,7 @@ function renderModel() {
   $("mi-proj").innerHTML = inputsHTML(PROJ_INPUTS);
   $("m-loan-type").value = M().loan.type;
   renderSeasonInputs();
+  if (modelView === "bplan") renderBplan(true);
   renderModelResults();
 }
 const FC_ROWS = [
@@ -2526,8 +2915,8 @@ function modelSnapshot() {
 function renderModelResults() {
   const { m, runs, years, labels, val, budget, loan, proj } = modelSnapshot();
   const scen = SCEN_LABEL[modelScen];
-  const titles = { forecast: "Three-year forecast", budget: `Budget for ${labels[1]}`, valuation: "Business valuation", appraisal: "Loans and projects" };
-  $("model-eyebrow").textContent = { forecast: "Step 5 · Forecast", budget: "Step 6 · Budget", valuation: "Step 7 · Valuation", appraisal: "Step 8 · Loans and projects" }[modelView];
+  const titles = { forecast: "Three-year forecast", budget: `Budget for ${labels[1]}`, valuation: "Business valuation", appraisal: "Loans and projects", bplan: "Business plan" };
+  $("model-eyebrow").textContent = { forecast: "Step 5 · Forecast", budget: "Step 6 · Budget", valuation: "Step 7 · Valuation", appraisal: "Step 8 · Loans and projects", bplan: "Step 9 · Business plan" }[modelView];
   $("model-title").textContent = titles[modelView];
   $("model-sub").textContent = modelView === "appraisal" ? `${S.company} · amounts in ${unitText()}` : `${S.company} · ${scen} case · built from ${S.cur}, annualised from ${S.months} month${Number(S.months) === 1 ? "" : "s"}`;
   document.querySelectorAll(".unit-label").forEach(e => e.textContent = "Amounts in " + unitText());
@@ -2543,6 +2932,7 @@ function renderModelResults() {
     chips.push(`<span class="chip plain">${labels[0]} is annualised from ${S.months} months</span>`);
   }
   $("model-checks").innerHTML = chips.join("");
+  if (modelView === "bplan") renderBplanNumbers();
   // forecast
   $("fc-title").textContent = `Forecast statements, ${scen.toLowerCase()} case`;
   let h = `<thead><tr><th></th><th class="n dim">${esc(labels[0])} actual, annualised</th>${labels.slice(1).map(l => `<th class="n">${esc(l)}</th>`).join("")}</tr></thead><tbody>`;
@@ -2845,25 +3235,52 @@ async function exportPDF(only) {
   const ensure = h => { if (y + h > 280) { doc.addPage(); y = 20; } };
   const font = (st, sz) => { doc.setFont("helvetica", st); doc.setFontSize(sz); };
   doc.setTextColor(0, 0, 0); doc.setDrawColor(0, 0, 0);
-  font("bold", 17); doc.text(plain(S.company || "Management pack"), M, y); y += 7;
-  font("normal", 11); doc.text(plain(only ? `${TASK_TITLE[only]}, built from ${S.cur}` : `Management pack: ${S.cur}`), M, y); y += 5;
-  font("normal", 8.5); doc.text(plain(`Amounts in ${unitText()} unless stated. Prepared ${new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}. ${only ? "Management estimates, unaudited." : "Unaudited management accounts."}`), M, y); y += 4;
-  doc.setLineWidth(0.5); doc.line(M, y, R, y); y += 8;
-  const heading = (t, newPage) => { if (newPage) { doc.addPage(); y = 20; } ensure(30); font("bold", 11.5); doc.text(plain(t), M, y); y += 2; doc.setLineWidth(0.25); doc.line(M, y, R, y); y += 5.5; };
+  const prepared = new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+  const toc = [], cover = !only || only === "bplan";
+  if (cover) {
+    y = 70; doc.setLineWidth(1.2); doc.line(M, y - 14, M + 30, y - 14);
+    font("bold", 26); doc.splitTextToSize(plain(S.company || "Company"), R - M).forEach(t => { doc.text(t, M, y); y += 10; });
+    y += 2; font("normal", 15); doc.text(plain(only === "bplan" ? "Business plan" : "Management accounts"), M, y); y += 8;
+    font("normal", 11); doc.text(plain(only === "bplan" ? `Built from the accounts for ${S.cur}` : `For ${S.cur}`), M, y); y += 6;
+    doc.text(plain(`Amounts in ${unitText()} unless stated`), M, y); y += 6;
+    doc.text(plain(`Prepared ${prepared}`), M, y); y += 6;
+    doc.text(plain(only === "bplan" ? "Forecasts are management estimates. Confidential." : "Unaudited management accounts"), M, y); y += 14;
+    font("bold", 11); doc.text("Contents", M, y); y += 2; doc.setLineWidth(0.25); doc.line(M, y, R, y);
+    var tocY = y + 7;
+    doc.addPage(); y = 20;
+  } else {
+    font("bold", 17); doc.text(plain(S.company || "Management pack"), M, y); y += 7;
+    font("normal", 11); doc.text(plain(`${TASK_TITLE[only]}, built from ${S.cur}`), M, y); y += 5;
+    font("normal", 8.5); doc.text(plain(`Amounts in ${unitText()} unless stated. Prepared ${prepared}. Management estimates, unaudited.`), M, y); y += 4;
+    doc.setLineWidth(0.5); doc.line(M, y, R, y); y += 8;
+  }
+  const heading = (t, newPage, noToc) => { if (newPage) { doc.addPage(); y = 20; } ensure(30); if (!noToc) toc.push({ t, p: doc.getNumberOfPages() }); font("bold", 11.5); doc.text(plain(t), M, y); y += 2; doc.setLineWidth(0.25); doc.line(M, y, R, y); y += 5.5; };
   const subheading = t => { ensure(24); font("bold", 9.5); doc.text(plain(t), M, y); y += 5; };
   const table = (cols, rows) => {
     const xs = []; let x = M; for (const c of cols) { xs.push(x); x += c.w; }
-    const draw = (v, i) => { const c = cols[i]; c.a === "r" ? doc.text(plain(v), xs[i] + c.w, y, { align: "right" }) : c.a === "c" ? doc.text(plain(v), xs[i] + c.w / 2, y, { align: "center" }) : doc.text(plain(v), xs[i], y); };
-    const head = () => { font("bold", 8.3); cols.forEach((c, i) => draw(c.t, i)); y += 1.8; doc.setLineWidth(0.2); doc.line(M, y, M + cols.reduce((t, c) => t + c.w, 0), y); y += 4.2; };
+    const draw = (v, i) => {
+      const c = cols[i], t = plain(v);
+      if (c.a === "r") { const sz = doc.getFontSize(), tw = doc.getTextWidth(t); if (tw > c.w - 1.5) doc.setFontSize(sz * (c.w - 1.5) / tw); doc.text(t, xs[i] + c.w, y, { align: "right" }); doc.setFontSize(sz); }
+      else if (c.a === "c") doc.text(t, xs[i] + c.w / 2, y, { align: "center" });
+      else doc.text(t, xs[i], y);
+    };
+    /* rules sit under the figure columns only, each with a small gap, as in printed accounts */
+    const figs = cols.map((c, i) => i).filter(i => cols[i].a === "r" && !cols[i].v);
+    const rule = yy => { doc.setLineWidth(0.2); for (const i of figs) doc.line(xs[i] + 2.5, yy, xs[i] + cols[i].w, yy); };
+    const head = () => {
+      font("bold", 8.3);
+      const ls = cols.map(c => c.t ? doc.splitTextToSize(plain(c.t), c.a === "r" || c.a === "c" ? c.w - 3 : c.w + 6) : []), n = Math.max(1, ...ls.map(l => l.length));
+      ls.forEach((l, i) => { const c = cols[i]; l.forEach((t, j) => { const yy = y + (n - l.length + j) * 3.5; c.a === "r" ? doc.text(t, xs[i] + c.w, yy, { align: "right" }) : c.a === "c" ? doc.text(t, xs[i] + c.w / 2, yy, { align: "center" }) : doc.text(t, xs[i], yy); }); });
+      y += (n - 1) * 3.5 + 1.8; doc.setLineWidth(0.2); doc.line(M, y, M + cols.reduce((t, c) => t + c.w, 0), y); y += 4.2;
+    };
     ensure(14); head();
     for (const r of rows) {
       if (y > 276) { doc.addPage(); y = 20; head(); }
-      const tw = cols.reduce((t, c) => t + c.w, 0);
-      if (r.top) { doc.setLineWidth(0.2); doc.line(M, y - 3.8, M + tw, y - 3.8); }
+      if (r.top) rule(y - 3.8);
       font(r.b ? "bold" : r.i ? "italic" : "normal", 8.8);
       if (r.span) doc.text(plain(r.cells[0]), M, y);
       else r.cells.forEach((v, i) => draw(v, i));
-      if (r.dbl) { doc.setLineWidth(0.2); doc.line(M, y + 1.4, M + tw, y + 1.4); doc.line(M, y + 2, M + tw, y + 2); y += 1; }
+      if (r.dbl) { rule(y + 1.4); rule(y + 2); y += 1; }
       y += 5;
     }
     y += 3;
@@ -2916,44 +3333,56 @@ async function exportPDF(only) {
   y += pdfCostLines(doc, M, y + 1, R - M, cur, cmp) + 4;
   // Statements
   const noteOf = built.noteOf;
+  /* one grid for every statement: label 60mm, note 9mm, figures 21mm each */
+  const G = { lab: 60, note: 9, num: 21 };
+  const gl = () => [{ t: unitShort(), w: G.lab }, { t: "Note", w: G.note, a: "c" }];
+  const gn = (t, v) => ({ t, w: G.num, a: "r", v: !!v });
   heading("Statement of profit or loss", true);
-  font("normal", 8.5); doc.text(plain(`For ${S.cur}`), M, y); y += 5;
-  const isCols = [{ t: unitShort(), w: 56 }, { t: "Note", w: 10, a: "c" }, { t: S.cur, w: 24, a: "r" }];
-  if (cmp) isCols.push({ t: S.cmp, w: 24, a: "r" }, { t: "Change", w: 20, a: "r" });
-  if (bud) isCols.push({ t: "Budget", w: 22, a: "r" }, { t: "vs budget", w: 18, a: "r" });
+  font("normal", 8.5); doc.text(plain(`For ${S.cur}. Costs are shown in brackets.`), M, y); y += 5;
+  const isCols = gl().concat([gn(S.cur)]);
+  if (cmp) isCols.push(gn(S.cmp), gn("Change", true));
+  if (bud) isCols.push(gn(S.bud || "Budget"), gn("vs budget", true));
   table(isCols, IS_LINES.map(L => {
-    const cells = [L.l, L.note && noteOf[L.note] ? String(noteOf[L.note]) : "", amt(cur[L.k])];
-    if (cmp) cells.push(amt(cmp[L.k]), amt(cur[L.k] - cmp[L.k], { sign: true }));
-    if (bud) cells.push(amt(bud[L.k]), amt(cur[L.k] - bud[L.k], { sign: true }));
+    const c = isDisp(L, cur), cells = [L.l, L.note && noteOf[L.note] ? String(noteOf[L.note]) : "", amt(c)];
+    if (cmp) cells.push(amt(isDisp(L, cmp)), amt(c - isDisp(L, cmp), { sign: true }));
+    if (bud) cells.push(amt(isDisp(L, bud)), amt(c - isDisp(L, bud), { sign: true }));
     return { cells, b: !!(L.sub || L.total), top: !!(L.sub || L.total), dbl: !!L.total };
   }));
-  heading("Statement of financial position");
+  heading("Statement of financial position", true);
   font("normal", 8.5); doc.text(plain(`As at ${S.cur}`), M, y); y += 5;
   const showC = cmp && cmp.bsOk, showO = open && open.src === "opn";
-  const bsCols = [{ t: unitShort(), w: 70 }, { t: "Note", w: 10, a: "c" }, { t: S.cur, w: 28, a: "r" }];
-  if (showC) bsCols.push({ t: S.cmp, w: 28, a: "r" });
-  if (showO) bsCols.push({ t: open.label, w: 30, a: "r" });
+  const bsCols = gl().concat([gn(S.cur)]);
+  if (showC) bsCols.push(gn(S.cmp));
+  if (showO) bsCols.push(gn(open.label));
   table(bsCols, BS_LINES.map(L => {
     if (L.h) return { cells: [L.h.toUpperCase()], b: true, span: true };
+    if (L.g) return { cells: [L.g], i: true, span: true };
     const cells = [L.l, L.note && noteOf[L.note] ? String(noteOf[L.note]) : "", amt(cur[L.k])];
     if (showC) cells.push(amt(cmp[L.k]));
     if (showO) cells.push(amt(open.r[L.k]));
     return { cells, b: !!(L.sub || L.total), top: !!(L.sub || L.total), dbl: !!L.total };
   }));
-  heading("Statement of cash flows");
+  heading("Statement of changes in equity", true);
+  { const sr = socRows(cur, open);
+    if (sr) {
+      font("normal", 8.5); doc.text(plain(`For ${S.cur}`), M, y); y += 5;
+      table(gl().concat([gn("Share capital and reserves"), gn("Profit for the period"), gn("Total equity")]),
+        sr.map(r => ({ cells: [r.l, r.b1 && noteOf.eq ? String(noteOf.eq) : "", amt(r.a), amt(r.b), amt(r.c)], b: !!(r.total || r.b1), top: !!r.total, dbl: !!r.total })));
+    } else { para("Not prepared: no opening balance sheet was supplied. Add the trial balance at the start of the year to produce this statement."); y += 4; } }
+  heading("Statement of cash flows", true);
   if (cf) {
     font("normal", 8.5); doc.text(plain(`For ${S.cur}, indirect method`), M, y); y += 5;
     const rows = [];
     for (const s of cf.sections) {
       rows.push({ cells: [s.h.toUpperCase()], b: true, span: true });
-      for (const l of s.lines) rows.push({ cells: [l.l, amt(l.v)] });
-      rows.push({ cells: [s.total.l, amt(s.total.v)], b: true, top: true });
+      for (const l of s.lines) rows.push({ cells: [l.l, "", amt(l.v)] });
+      rows.push({ cells: [s.total.l, "", amt(s.total.v)], b: true, top: true });
     }
-    rows.push({ cells: ["Net increase/(decrease) in cash", amt(cf.net)], b: true, top: true });
-    rows.push({ cells: [`Cash and bank at ${cf.openLabel}`, amt(cf.openCash)] });
-    rows.push({ cells: [`Cash and bank at ${S.cur}`, amt(cf.closeCalc)], b: true, top: true, dbl: true });
-    if (Math.abs(cf.diff) >= 1) rows.push({ cells: ["Difference to the balance sheet", amt(cf.diff)], i: true });
-    table([{ t: unitShort(), w: 120 }, { t: S.cur, w: 30, a: "r" }], rows);
+    rows.push({ cells: ["Net increase/(decrease) in cash", "", amt(cf.net)], b: true, top: true });
+    rows.push({ cells: [`Cash and bank at ${atLabel(cf.openLabel)}`, "", amt(cf.openCash)] });
+    rows.push({ cells: [`Cash and bank at ${S.cur}`, "", amt(cf.closeCalc)], b: true, top: true, dbl: true });
+    if (Math.abs(cf.diff) >= 1) rows.push({ cells: ["Difference to the balance sheet", "", amt(cf.diff)], i: true });
+    table([{ t: unitShort(), w: G.lab }, { t: "", w: G.note }, gn(S.cur)], rows);
   } else {
     para("Not prepared: no opening balance sheet was supplied. Add the trial balance at the start of the year to produce this statement.");
     y += 4;
@@ -2976,7 +3405,76 @@ async function exportPDF(only) {
   table([{ t: "Ratio", w: 54 }, { t: S.cur, w: 26, a: "r" }, { t: cmp ? S.cmp : "", w: 26, a: "r" }, { t: "Guide", w: 44 }, { t: "Status", w: 16 }],
     RATIOS.map(d => { const v = ratioVal(d, cur), st = ratioStatus(d, v); return { cells: [d.l, ratioFmt(d, v), cmp ? ratioFmt(d, ratioVal(d, cmp)) : "", d.bench, st ? STATUS_TEXT[st] : "n/a"] }; }));
   }
-  if (only || S.pdfModel === true) {
+  if (only === "bplan") {
+    const b = BP(), N = bpNums(), L = N.labels, f = b.funding, scen = SCEN_LABEL[modelScen];
+    const wrapTable = (cols, rows) => {
+      const xs = []; let x = M; for (const c of cols) { xs.push(x); x += c.w; }
+      const tw = cols.reduce((t, c) => t + c.w, 0);
+      const head = () => { font("bold", 8.6); cols.forEach((c, i) => doc.text(plain(c.t), c.a === "r" ? xs[i] + c.w : xs[i], y, c.a === "r" ? { align: "right" } : undefined)); y += 1.8; doc.setLineWidth(0.2); doc.line(M, y, M + tw, y); y += 4.6; };
+      ensure(16); head();
+      for (const r of rows) {
+        font("normal", 9);
+        const ls = r.map((v, i) => doc.splitTextToSize(plain(v), cols[i].w - 3));
+        const h = Math.max(...ls.map(l => l.length)) * 4.2;
+        if (y + h > 278) { doc.addPage(); y = 20; head(); font("normal", 9); }
+        ls.forEach((l, i) => l.forEach((t, j) => doc.text(t, cols[i].a === "r" ? xs[i] + cols[i].w : xs[i], y + j * 4.2, cols[i].a === "r" ? { align: "right" } : undefined)));
+        y += h + 1.6; doc.setDrawColor(200, 200, 200); doc.setLineWidth(0.1); doc.line(M, y - 3.4, M + tw, y - 3.4); doc.setDrawColor(0, 0, 0);
+      }
+      y += 3;
+    };
+    const textOr = k => String(b.text[k] || "").trim() || "To be completed.";
+    const sec = id => BP_SECS.find(x => x.id === id);
+    const yc = [{ t: unitShort(), w: 70 }].concat(L.map((l, i) => ({ t: i === 0 ? l + " (ann.)" : l, w: 26, a: "r" })));
+    const fv = (v, f2) => v === null || v === undefined || !isFinite(v) ? "-" : f2 === "pct" ? pct(v) : f2 === "x" ? v.toFixed(2) + "x" : amt(v);
+    heading(`1. ${sec("summary").t}`); para(textOr("summary")); y += 3;
+    subheading("Highlights");
+    table(yc, [{ cells: ["Revenue"].concat(N.years.map(yy => amt(yy.rev))) }, { cells: ["Gross margin"].concat(N.years.map(yy => pct(yy.gmP))) }, { cells: ["Net profit"].concat(N.years.map(yy => amt(yy.np))) }, { cells: ["Closing cash"].concat(N.years.map(yy => amt(yy.cash))) }]);
+    for (const x of BP_TEXT.slice(1)) { heading(`${x.n}. ${x.t}`); para(textOr(x.id)); y += 4; }
+    { const { cur, cmp } = snapshot();
+      heading(`${sec("history").n}. ${sec("history").t}`);
+      table([{ t: unitShort(), w: 70 }, { t: S.cur, w: 30, a: "r" }].concat(cmp ? [{ t: S.cmp, w: 30, a: "r" }, { t: "Change", w: 24, a: "r", v: true }] : []),
+        [["rev", "Revenue"], ["gp", "Gross profit"], ["np", "Net profit"], ["cash", "Cash and bank"]].map(([k, l]) => ({ cells: [l, amt(cur[k])].concat(cmp ? [amt(cmp[k]), cmp[k] ? (cur[k] >= cmp[k] ? "+" : "-") + Math.abs((cur[k] / cmp[k] - 1) * 100).toFixed(1) + "%" : "-"] : []) })));
+      if (String(b.text.history || "").trim()) { para(b.text.history); y += 3; } }
+    const FR = bpFinRows(N), m = N.m;
+    heading(`${sec("finplan").n}. ${sec("finplan").t}`, true);
+    para(`${scen} case. ${L[0]} is the actual year to date annualised from ${S.months} months. Costs are shown in brackets. All projections are management estimates.`, 9); y += 3;
+    subheading("Key assumptions");
+    table([{ t: "", w: 84 }, { t: "Value", w: 44, a: "r" }], [["Revenue growth, years 1 to 3", m.g.map(x2 => x2 + "%").join(" / ")], ["Gross margin", m.gm + "%"], ["Staff and admin cost growth", `${m.staffG}% / ${m.adminG}%`], ["Capital spending per year", amt(m.capex)], ["Debtor, inventory and creditor days", `${m.dd} / ${m.id} / ${m.cd}`], ["Interest rate on debt", m.rate + "%"], ["Income tax rate", m.tax + "%"]].map(c => ({ cells: c })));
+    subheading("Projected profit or loss");
+    table(yc, FR.pl.map(r => ({ cells: [r.l].concat(r.v.map(v => fv(v))), b: r.lvl > 0, top: r.lvl > 0, dbl: r.lvl === 2 })));
+    subheading("Projected financial position");
+    table(yc, FR.bs.map(r => ({ cells: [r.l].concat(r.v.map(v => fv(v))), b: r.lvl > 0, top: r.lvl > 0, dbl: r.lvl === 2 })));
+    subheading("Projected cash flows");
+    table(yc, FR.cf.map(r => ({ cells: [r.l].concat(r.v.map(v => fv(v))), b: r.lvl > 0, top: r.lvl > 0, dbl: r.lvl === 2 })));
+    subheading("Key ratios");
+    table(yc.map((c, i) => i ? { ...c, v: true } : { ...c, t: "" }), FR.ratio.map(r => ({ cells: [r.l].concat(r.v.map(v => fv(v, r.f))) })));
+    subheading("Break-even");
+    para(N.be === null ? "Break-even cannot be worked out because each sale does not cover its own costs." : `In ${L[1]}, fixed costs of ${money(N.fixed)} (staff, administration, depreciation and interest) are covered once revenue reaches ${money(N.be)}. Forecast revenue is ${money(N.y1.rev)}, a margin of safety of ${pct(N.mos)}.`, 9.4); y += 3;
+    subheading("Scenarios");
+    table([{ t: unitShort(), w: 76 }, { t: "Downside", w: 30, a: "r" }, { t: "Base", w: 30, a: "r" }, { t: "Upside", w: 30, a: "r" }],
+      [["rev", "Revenue, " + L[3]], ["np", "Net profit, " + L[3]], ["cash", "Closing cash, " + L[3]]].map(([k, l]) => ({ cells: [l, amt(N.runs.down[3][k]), amt(N.runs.base[3][k]), amt(N.runs.up[3][k])] })).concat([{ cells: ["Lowest year-end cash", amt(N.minDown), amt(N.minBase), amt(Math.min(...N.runs.up.slice(1).map(yy => yy.cash)))] }]));
+    heading(`${sec("funding").n}. ${sec("funding").t}`, true);
+    para(f.amount > 0 ? `We are seeking ${money(f.amount)} as ${BP_TYPE[f.type]}${f.type === "mixed" ? `: ${money(N.loanAmt)} of loan and ${money(N.eqAmt)} of equity` : ""}.` : "To be completed."); y += 3;
+    const uses = (f.uses || []).filter(u => u.l || u.v);
+    if (uses.length) { subheading("Use of funds"); table([{ t: "", w: 120 }, { t: unitShort(), w: 30, a: "r" }], uses.map(u => ({ cells: [u.l, amt(u.v)] })).concat([{ cells: ["Total", amt(N.usesTot)], b: true, top: true, dbl: true }])); }
+    if (f.type === "loan" || f.type === "mixed") {
+      const ln = m.loan;
+      subheading("Ability to repay");
+      para(`Based on a loan of ${money(N.loanAmt)} at ${ln.rate}% a year over ${ln.months} months${ln.grace ? `, with ${ln.grace} months interest only` : ""}. Cash available is operating profit before depreciation, less tax. Lenders usually look for cover of at least 1.25 times.`, 9.2); y += 2;
+      table([{ t: unitShort(), w: 76 }].concat(L.slice(1).map(l => ({ t: l, w: 30, a: "r" }))), [
+        { cells: ["Cash available for debt"].concat(N.dscr.map(d => amt(d.avail))) }, { cells: ["Existing interest and repayments"].concat(N.dscr.map(d => amt(d.exist))) },
+        { cells: ["New loan payments"].concat(N.dscr.map(d => amt(d.add))) }, { cells: ["Debt service cover"].concat(N.dscr.map(d => d.ratio === null ? "-" : d.ratio.toFixed(2) + "x")), b: true, top: true }]);
+    }
+    if ((f.type === "equity" || f.type === "mixed") && N.stake !== null) { subheading("Investor's share"); para(`At an indicative equity value of ${money(N.pre)} before the investment, ${money(N.eqAmt)} would buy about ${(N.stake * 100).toFixed(1)}% of the company.`, 9.4); y += 3; }
+    heading(`${sec("risks").n}. ${sec("risks").t}`);
+    const rk = (b.risks || []).filter(r => r.r || r.m);
+    if (rk.length) wrapTable([{ t: "Risk", w: 80 }, { t: "How we manage it", w: 94 }], rk.map(r => [r.r, r.m])); else { para("To be completed."); y += 3; }
+    heading(`${sec("milestones").n}. ${sec("milestones").t}`);
+    const ms = (b.milestones || []).filter(r => r.d || r.l);
+    if (ms.length) wrapTable([{ t: "When", w: 34 }, { t: "Milestone", w: 140 }], ms.map(r => [r.d, r.l])); else { para("To be completed."); y += 3; }
+    y += 4; para("Prepared with Acivaz from the company's management accounts. Historical figures are unaudited and the projections are management estimates.", 8.4);
+  }
+  if ((only && only !== "bplan") || (!only && S.pdfModel === true)) {
     const { m, runs, years, labels, val, budget, loan, proj } = modelSnapshot();
     const scen = SCEN_LABEL[modelScen];
     heading(only ? TASK_TITLE[only] : "Financial model", !only);
@@ -3038,9 +3536,14 @@ async function exportPDF(only) {
     }
   }
   const n = doc.getNumberOfPages();
+  if (cover) {
+    doc.setPage(1); let ty = tocY; font("normal", 10);
+    for (const e of toc) { if (ty > 270) break; const t = plain(e.t); doc.text(t, M, ty); const w = doc.getTextWidth(t); doc.setLineDashPattern([0.4, 1.2], 0); doc.setLineWidth(0.2); doc.line(M + w + 2, ty - 0.8, R - 8, ty - 0.8); doc.setLineDashPattern([], 0); doc.text(String(e.p), R, ty, { align: "right" }); ty += 6.2; }
+  }
   for (let i = 1; i <= n; i++) {
     doc.setPage(i); font("normal", 7.5); doc.setTextColor(0, 0, 0);
-    doc.text(plain(`${S.company} - ${S.cur} - management accounts, unaudited`), M, 290);
+    if (cover && i === 1) continue;
+    doc.text(plain(`${S.company} - ${S.cur} - ${only === "bplan" ? "business plan, confidential" : only ? "management estimates, unaudited" : "management accounts, unaudited"}`), M, 290);
     doc.text(`Page ${i} of ${n}`, R, 290, { align: "right" });
   }
   await saveFile((only ? taskFileBase(only) : fileBase()) + ".pdf", doc.output("blob"));
@@ -3051,21 +3554,23 @@ const fileBase = () => `${(S.company || "Management pack").replace(/[^\w\- ]+/g,
 /* ---------- Excel ---------- */
 async function exportXLSX(only) {
   if (!canDownload()) return;
-  const want = k => !only || only === k;
+  const want = k => !only || only === k || (only === "bplan" && k === "forecast");
   if (!window.XLSX) { toast("The Excel tool didn't load. Check your connection and reload."); return; }
   const { cur, cmp, bud, open, cf, built } = snapshot();
   const wb = XLSX.utils.book_new();
   const R0 = v => v === null || v === undefined || !isFinite(v) ? "" : Math.round(v);
   const isRows = [["Statement of profit or loss (" + S.currency + ")", "Note", S.cur].concat(cmp ? [S.cmp, "Change"] : []).concat(bud ? [S.bud, "vs budget"] : [])];
   for (const L of IS_LINES) {
-    const row = [L.l, L.note && built.noteOf[L.note] ? built.noteOf[L.note] : "", R0(cur[L.k])];
-    if (cmp) row.push(R0(cmp[L.k]), R0(cur[L.k] - cmp[L.k]));
-    if (bud) row.push(R0(bud[L.k]), R0(cur[L.k] - bud[L.k]));
+    const c = isDisp(L, cur), row = [L.l, L.note && built.noteOf[L.note] ? built.noteOf[L.note] : "", R0(c)];
+    if (cmp) row.push(R0(isDisp(L, cmp)), R0(c - isDisp(L, cmp)));
+    if (bud) row.push(R0(isDisp(L, bud)), R0(c - isDisp(L, bud)));
     isRows.push(row);
   }
   const showO = open && open.src === "opn";
   const bsRows = [["Statement of financial position (" + S.currency + ")", "Note", S.cur].concat(cmp && cmp.bsOk ? [S.cmp] : []).concat(showO ? [open.label] : [])];
-  for (const L of BS_LINES) bsRows.push(L.h ? [L.h] : [L.l, L.note && built.noteOf[L.note] ? built.noteOf[L.note] : "", R0(cur[L.k])].concat(cmp && cmp.bsOk ? [R0(cmp[L.k])] : []).concat(showO ? [R0(open.r[L.k])] : []));
+  for (const L of BS_LINES) bsRows.push(L.h ? [L.h.toUpperCase()] : L.g ? [L.g] : [L.l, L.note && built.noteOf[L.note] ? built.noteOf[L.note] : "", R0(cur[L.k])].concat(cmp && cmp.bsOk ? [R0(cmp[L.k])] : []).concat(showO ? [R0(open.r[L.k])] : []));
+  const scRows = [["Statement of changes in equity (" + S.currency + ")", "Share capital and reserves", "Profit for the period", "Total equity"]];
+  { const sr = socRows(cur, open); if (sr) for (const r of sr) scRows.push([r.l, R0(r.a), R0(r.b), R0(r.c)]); else scRows.push(["Not prepared: no opening balance sheet supplied."]); }
   const cfRows = [["Statement of cash flows (" + S.currency + ")", S.cur]];
   if (cf) {
     for (const s of cf.sections) { cfRows.push([s.h]); for (const l of s.lines) cfRows.push([l.l, R0(l.v)]); cfRows.push([s.total.l, R0(s.total.v)]); }
@@ -3090,6 +3595,7 @@ async function exportXLSX(only) {
   add(cRows, "Commentary", [110]);
   add(isRows, "Profit or loss", [32, 6, 16, 16, 16, 16, 16]);
   add(bsRows, "Financial position", [34, 6, 16, 16, 16]);
+  add(scRows, "Changes in equity", [46, 24, 20, 16]);
   add(cfRows, "Cash flows", [52, 16]);
   add(nRows, "Notes", [52, 16, 16]);
   add(rRows, "Ratios", [28, 14, 14, 22, 10]);
@@ -3097,6 +3603,13 @@ async function exportXLSX(only) {
     const clRows = [["Cost line, per 100 of revenue", "Pack line", S.cur].concat(cmp ? [S.cmp, "Change (points)"] : [])].concat(rows.map(r => [r.l, r.cat ? catLabel(r.cat) : "Several", f(r.c)].concat(cmp ? [f(r.p), chg(r.c, r.p)] : [])), [["All cost lines before tax", "", f(totC)].concat(cmp ? [f(totP), chg(totC, totP)] : [])]);
     add(clRows, "Cost lines", [36, 26, 14, 14, 16]); }
   add(mRows, "Mapping", [14, 40, 16, 16, 16, 16, 28]);
+  }
+  if (only === "bplan") {
+    const b = BP(), N = bpNums(), f = b.funding;
+    add([["Section", "Text"]].concat(BP_TEXT.concat([BP_SECS.find(x => x.id === "history")]).map(x => [`${x.n}. ${x.t}`, b.text[x.id] || ""])), "Business plan", [30, 120]);
+    add([[`Funding sought (${S.currency})`, Math.round(f.amount || 0)], ["Form", BP_TYPE[f.type] || ""], [], ["Use of funds", S.currency]].concat((f.uses || []).filter(u => u.l || u.v).map(u => [u.l, Math.round(u.v || 0)])).concat([["Total", Math.round(N.usesTot)], [], ["Debt service cover", ...N.labels.slice(1)], ["Cash available for debt", ...N.dscr.map(d => Math.round(d.avail))], ["Existing interest and repayments", ...N.dscr.map(d => Math.round(d.exist))], ["New loan payments", ...N.dscr.map(d => Math.round(d.add))], ["Cover (times)", ...N.dscr.map(d => d.ratio === null ? "" : Math.round(d.ratio * 100) / 100)]]), "Funding", [40, 18, 16, 16]);
+    add([["Risk", "How we manage it"]].concat((b.risks || []).filter(r => r.r || r.m).map(r => [r.r, r.m])), "Risks", [60, 70]);
+    add([["When", "Milestone"]].concat((b.milestones || []).filter(r => r.d || r.l).map(r => [r.d, r.l])), "Milestones", [16, 80]);
   }
   if (only || S.pdfModel === true) {
     const { m, runs, years, labels, val, budget, loan, proj } = modelSnapshot();
@@ -4240,13 +4753,46 @@ function show(view) {
   if (isModel) modelView = view;
   for (const v of ["pack", "data", "map", "books", "manual"]) $("view-" + v).hidden = v !== view;
   $("view-model").hidden = !isModel;
-  for (const v of ["books", "pack", "data", "map", "manual", ...MODEL_VIEWS]) $("tab-" + v).setAttribute("aria-selected", v === view);
+  for (const v of ["books", "pack", "data", "map", "manual", ...MODEL_VIEWS]) { const t = $("tab-" + v); if (t) { if (v === view) t.setAttribute("aria-current", "page"); else t.removeAttribute("aria-current"); } }
+  document.querySelectorAll(".tab-group").forEach(g => { const c = g.querySelector('.tab-item[aria-current="page"]'), p = g.querySelector(".tab-parent"); p.classList.toggle("has-current", !!c); p.querySelector(".tab-cur").textContent = c ? "· " + c.querySelector("b").textContent : ""; });
+  closeMenus();
   if (view === "map") renderMapping();
   if (view === "pack") renderPack();
   if (isModel) renderModel();
   if (view === "books") renderBooks();
   window.scrollTo({ top: 0 });
 }
+function closeMenus(except) {
+  document.querySelectorAll('.tab-parent[aria-expanded="true"]').forEach(b => { if (b === except) return; b.setAttribute("aria-expanded", "false"); $(b.getAttribute("aria-controls")).hidden = true; });
+}
+function placeMenu(m) {
+  m.style.left = "0px";
+  const r = m.getBoundingClientRect(), lim = document.documentElement.clientWidth - 12;
+  if (r.right > lim) m.style.left = Math.round(lim - r.right) + "px";
+}
+document.querySelectorAll(".tab-parent").forEach(b => {
+  const m = $(b.getAttribute("aria-controls"));
+  const items = () => [...m.querySelectorAll(".tab-item")];
+  b.addEventListener("click", e => {
+    e.stopPropagation();
+    const open = b.getAttribute("aria-expanded") === "true";
+    closeMenus(b);
+    b.setAttribute("aria-expanded", String(!open)); m.hidden = open;
+    if (!open) placeMenu(m);
+  });
+  b.addEventListener("keydown", e => {
+    if (e.key === "ArrowDown") { e.preventDefault(); if (b.getAttribute("aria-expanded") !== "true") b.click(); (m.querySelector('[aria-current="page"]') || items()[0]).focus(); }
+  });
+  m.addEventListener("keydown", e => {
+    const its = items(), i = its.indexOf(document.activeElement);
+    if (e.key === "ArrowDown") { e.preventDefault(); its[(i + 1) % its.length].focus(); }
+    else if (e.key === "ArrowUp") { e.preventDefault(); its[(i - 1 + its.length) % its.length].focus(); }
+    else if (e.key === "Escape") { e.preventDefault(); closeMenus(); b.focus(); }
+  });
+  m.addEventListener("focusout", e => { if (!e.relatedTarget || !b.parentElement.contains(e.relatedTarget)) closeMenus(); });
+});
+document.addEventListener("click", e => { if (!e.target.closest(".tab-group")) closeMenus(); });
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeMenus(); });
 document.addEventListener("click", e => {
   const j = e.target.closest("[data-jump]");
   if (j) { const t = $(j.dataset.jump); if (t) t.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" }); return; }
