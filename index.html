@@ -485,6 +485,13 @@ img { max-width: 100%; }
   .kpi .v { font-size: 26px; }
   .panel { padding: 14px; }
 }
+/* Auditor's report */
+.aud-draft { margin-top: 18px; border-top: 1px solid var(--line); padding-top: 14px; }
+.aud-draft summary { cursor: pointer; font-weight: 600; font-size: 14px; }
+.aud-draft[open] summary { margin-bottom: 8px; }
+#fs-d-auditDraft { width: 100%; min-height: 300px; margin-top: 10px; padding: 10px 12px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg); font-size: 13px; line-height: 1.55; resize: vertical; }
+#fs-audit-file { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 2px 0 8px; }
+label.btn { cursor: pointer; }
 /* Gantt chart */
 table.lines.bp-rows input { width: 100%; padding: 6px 7px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); font: inherit; font-size: 13.5px; }
 .gantt-box { overflow-x: auto; margin-top: 6px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); padding: 10px 12px; }
@@ -1338,9 +1345,10 @@ table.lines.bp-rows input { width: 100%; padding: 6px 7px; border: 1px solid var
               <li><strong>Directors' report</strong> (Article 89): principal activities, a review of the business, the dividend and any transfer to reserves, donations, and entries in the register of directors' interests. Left blank, the review is written from the figures; other blank items show "To be completed". A public company must include its principal activities.</li>
               <li><strong>Signing</strong> (Articles 89 and 125): the statements and the report are signed by two directors, or by the only director. A red chip shows if only one is named.</li>
               <li><strong>Dividend solvency test</strong> (Article 69): enter a recommended dividend and Acivaz checks that, after paying it, assets still exceed liabilities, current assets still cover current liabilities, and cash covers it. If it passes, the PDF adds a certificate for the directors to sign; a private company whose shareholders have opted out (Article 209) can leave it out. A dividend note explains that it is not a liability until approved.</li>
+              <li><strong>Independent auditor's report</strong> (Articles 131 to 135): set the audit status and attach the auditor's signed report, as a PDF or photos of the pages. It goes into the statements PDF after the approval page and into the contents, and the cover changes from "Unaudited" to "Audited by" the firm. For audit firms, <strong>Draft the report</strong> writes a draft in ISA format, with the statements Article 135 asks for, following the opinion chosen: unmodified, qualified, adverse or disclaimer, with optional going-concern and emphasis-of-matter paragraphs. The draft is watermarked and is never added to the statements; only the auditor can issue and sign the report.</li>
               <li><strong>Filing deadlines</strong> (Articles 88, 142 and 143): signed accounts, the auditor's report and the directors' report go to shareholders and the Registrar General within 7 months of the year end for a private company, or 4 months for a public one. Set the year end and the annual return month, and the chips count down. Late filing can cost each director RWF 1 million to 10 million (Article 332).</li>
             </ul>
-            <p><strong>Download statements PDF</strong> gives a cover, contents, the directors' report, the solvency certificate when a dividend passes the test, the approval page, each statement on its own page, and the notes. These are management-prepared statements for the board and the auditor; every company needs an external audit unless a Minister's order exempts it (Articles 131 and 210).</p>
+            <p><strong>Download statements PDF</strong> gives a cover, contents, the directors' report, the solvency certificate when a dividend passes the test, the approval page, each statement on its own page, and the notes. Once the auditor's signed report is attached, it sits after the approval page. Every company needs an external audit unless a Minister's order exempts it (Articles 131 and 210).</p>
           </section>
 
           <section id="m-forecast">
@@ -1882,7 +1890,21 @@ function renderFSDisc(force) {
     `<h3 class="fs-h">Approval</h3><div class="disc-grid">` +
       `<div class="disc"><label for="fs-d-approved">Approved by the board on</label><span class="help">The date the directors approve and sign the statements and their report.</span><input type="date" id="fs-d-approved" data-fsd="approvedOn" value="${esc(d.approvedOn || "")}"></div>` +
       `<div class="disc"><label for="fs-d-signers">Signed on behalf of the board by</label><span class="help">One per line, for example: Jane Uwase, Director. Two directors sign, or the only director. Left blank, the PDF prints lines to sign by hand.</span><textarea id="fs-d-signers" data-fsd="signers" style="min-height:70px">${esc(d.signers || "")}</textarea><div id="fs-sign-msg"></div></div>` +
-    `</div>`;
+    `</div>` +
+    `<h3 class="fs-h">Independent auditor's report</h3><div class="disc-grid">` +
+      `<div class="disc"><label for="fs-d-auditStatus">Audit status</label><span class="help">Every company appoints an external auditor unless a Minister's order exempts it (Articles 131 and 210). Only the auditor issues the report: attach it here once it is signed.</span><select id="fs-d-auditStatus" data-fsd="auditStatus"><option value="">Not audited yet</option><option value="audited"${d.auditStatus === "audited" ? " selected" : ""}>Audited</option><option value="exempt"${d.auditStatus === "exempt" ? " selected" : ""}>Exempt from audit (Article 210)</option></select></div>` +
+    `</div>` +
+    `<div id="fs-audit-fields"><div class="disc-grid" style="margin-top:16px">` +
+      `<div class="disc"><label for="fs-d-auditPartner">Engagement partner</label><span class="help">The audit firm is set under Company and filing.</span><input type="text" id="fs-d-auditPartner" data-fsd="auditPartner" value="${esc(d.auditPartner || "")}"><label for="fs-d-auditPractice" style="margin-top:10px">ICPAR practising certificate number</label><input type="text" id="fs-d-auditPractice" data-fsd="auditPractice" value="${esc(d.auditPractice || "")}"></div>` +
+      `<div class="disc"><label for="fs-d-auditDate">Date of the auditor's report</label><span class="help">On or after the date the board approves the statements.</span><input type="date" id="fs-d-auditDate" data-fsd="auditDate" value="${esc(d.auditDate || "")}"><label for="fs-d-auditOpinion" style="margin-top:10px">Opinion</label><select id="fs-d-auditOpinion" data-fsd="auditOpinion">${AUD_OPS.map(([k, l]) => `<option value="${k}"${(d.auditOpinion || "unmodified") === k ? " selected" : ""}>${l}</option>`).join("")}</select><label class="chk"><input type="checkbox" id="fs-d-auditGC" data-fsd="auditGC"${d.auditGC ? " checked" : ""}> Material uncertainty related to going concern</label><label class="chk"><input type="checkbox" id="fs-d-auditEOM" data-fsd="auditEOM"${d.auditEOM ? " checked" : ""}> Emphasis of matter</label></div>` +
+      `<div class="disc"><label for="fs-audit-upload">The auditor's signed report</label><span class="help">The PDF from the auditor, or clear photos or scans of each page. It goes into the statements PDF after the approval page. Kept on this device only.</span><div id="fs-audit-file"></div><div><label class="btn small" for="fs-audit-upload">Attach the signed report</label><input type="file" id="fs-audit-upload" accept="application/pdf,image/png,image/jpeg" multiple hidden></div></div>` +
+    `</div>` +
+    `<details class="aud-draft"><summary>For audit firms: draft the report</summary>` +
+      `<p class="help">Acivaz drafts the report in the format of the International Standards on Auditing, with the statements Article 135 of Law N° 007/2021 asks for, following the opinion chosen above. The auditor reviews and completes it, then signs it on the firm's letterhead. A draft is never added to the statements.</p>` +
+      `<div class="disc-grid" style="margin-top:10px">` + ta("auditBasis", "Matter behind a modified opinion", "For a qualified, adverse or disclaimer opinion: what the matter is and its effect on the figures.", "", 70) + ta("auditEOMText", "Emphasis of matter", "The note the auditor draws attention to, and why it matters.", "", 70) + `</div>` +
+      `<div class="bp-tools" style="margin-top:10px"><button class="btn small primary" type="button" id="btn-aud-draft">Write the draft</button><button class="btn small" type="button" id="btn-aud-undo" hidden>Undo</button><button class="btn small" type="button" id="btn-aud-pdf">Download draft PDF</button></div>` +
+      `<textarea id="fs-d-auditDraft" data-fsd="auditDraft" aria-label="Draft auditor's report" placeholder="Press Write the draft.">${esc(d.auditDraft || "")}</textarea>` +
+    `</details></div>`;
 }
 
 /* ---------- Law N° 007/2021 governing companies: directors' report, solvency test, filing ---------- */
@@ -1968,7 +1990,123 @@ function renderDR(cur, cmp, cf) {
   const d = FSD();
   el.innerHTML = drSections(cur, cmp, cf).map(x => (x.h ? `<h4>${esc(x.h)}</h4>` : "") + `<p>${esc(x.t)}</p>`).join("") + `<p class="help">Approved by the board on ${d.approvedOn ? esc(niceISO(d.approvedOn)) : "(date not set)"}. Signed by ${fsSigners().length ? esc(fsSigners().join("; ")) : d.single ? "the director" : "two directors"}.</p>`;
 }
+/* ---------- Independent auditor's report ---------- */
+const AUD_OPS = [["unmodified", "Unmodified (clean)"], ["qualified", "Qualified"], ["adverse", "Adverse"], ["disclaimer", "Disclaimer of opinion"]];
+const IDB = {
+  p: null,
+  open() { if (!this.p) this.p = new Promise((res, rej) => { try { const r = indexedDB.open("acivaz", 1); r.onupgradeneeded = () => r.result.createObjectStore("files"); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); } catch (e) { rej(e); } }); return this.p; },
+  async run(mode, fn) { const db = await this.open(); return new Promise((res, rej) => { const tx = db.transaction("files", mode), rq = fn(tx.objectStore("files")); tx.oncomplete = () => res(rq ? rq.result : null); tx.onerror = () => rej(tx.error); tx.onabort = () => rej(tx.error); }); },
+  get(k) { return this.run("readonly", st => st.get(k)).catch(() => null); },
+  set(k, v) { return this.run("readwrite", st => st.put(v, k)); },
+  del(k) { return this.run("readwrite", st => st.delete(k)).catch(() => null); }
+};
+const AUD_MEM = {};
+const audKey = () => "audit:" + String(S.company || "").trim().toLowerCase();
+const auditFileRec = async () => AUD_MEM[audKey()] || await IDB.get(audKey());
+function loadScript(src) { return new Promise((res, rej) => { const el = document.createElement("script"); el.src = src; el.onload = res; el.onerror = rej; document.head.appendChild(el); }); }
+async function loadPdfLib() { if (!window.PDFLib) await loadScript("https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"); if (!window.PDFLib) throw new Error("pdf-lib did not load"); }
+function auditState() { const d = FSD(); return d.auditStatus === "audited" ? (d.auditFile ? "audited" : "pending") : d.auditStatus === "exempt" ? "exempt" : "none"; }
+function auditLine() {
+  const d = FSD(), st = auditState(), firm = String(d.auditor || "").trim();
+  return st === "audited" ? `Audited${firm ? " by " + firm : ""}${d.auditDate ? ", report dated " + niceISO(d.auditDate) : ""}.` : st === "pending" ? "Audited: the auditor's report is to be attached." : st === "exempt" ? "Not audited: exempt from audit under Article 210." : "Unaudited.";
+}
+function renderAuditBox() {
+  const d = FSD(), f = $("fs-audit-fields"), box = $("fs-audit-file");
+  if (f) f.hidden = d.auditStatus !== "audited";
+  if (box) box.innerHTML = d.auditFile ? `<span class="chip good" style="white-space:normal">${esc(d.auditFile)}</span><button class="linkish" type="button" id="btn-aud-remove">Remove</button>` : `<span class="chip plain">No report attached yet</span>`;
+}
+const AUD_HEADS = ["Opinion", "Qualified opinion", "Adverse opinion", "Disclaimer of opinion", "Basis for opinion", "Basis for qualified opinion", "Basis for adverse opinion", "Basis for disclaimer of opinion", "Material uncertainty related to going concern", "Emphasis of matter", "Other information", "Responsibilities of the directors for the financial statements", "Auditor's responsibilities for the audit of the financial statements", "Report on other legal and regulatory requirements"];
+function auditDraft() {
+  const d = FSD(), co = S.company || "the company", per = S.cur, op = d.auditOpinion || "unmodified";
+  const firm = String(d.auditor || "").trim() || "[Audit firm]", partner = String(d.auditPartner || "").trim() || "[Engagement partner]", prac = String(d.auditPractice || "").trim();
+  const notes = snapshot().built.notes, nOf = id => { const x = notes.find(n => n.id === id); return x ? x.n : "[x]"; };
+  const scope = `the financial statements of ${co}, which comprise the statement of financial position as at ${per}, the statement of profit or loss, the statement of changes in equity and the statement of cash flows for the period then ended, and the notes to the financial statements, including a summary of significant accounting policies`;
+  const frame = "the International Financial Reporting Standard for Small and Medium-sized Entities (IFRS for SMEs) and Law N° 007/2021 governing companies";
+  const T = [["", `INDEPENDENT AUDITOR'S REPORT\nTo the shareholders of ${co}`]];
+  const hOp = { unmodified: "Opinion", qualified: "Qualified opinion", adverse: "Adverse opinion", disclaimer: "Disclaimer of opinion" }[op];
+  T.push([hOp, op === "disclaimer"
+    ? `We were engaged to audit ${scope}.\n\nWe do not express an opinion on the accompanying financial statements. Because of the significance of the matter described in the Basis for disclaimer of opinion section of our report, we have not been able to obtain sufficient appropriate audit evidence to provide a basis for an audit opinion on these financial statements.`
+    : `We have audited ${scope}.\n\n` + (op === "unmodified"
+      ? `In our opinion, the accompanying financial statements give a true and fair view of the financial position of ${co} as at ${per}, and of its financial performance and its cash flows for the period then ended, in accordance with ${frame}.`
+      : op === "qualified"
+        ? `In our opinion, except for the effects of the matter described in the Basis for qualified opinion section of our report, the accompanying financial statements give a true and fair view of the financial position of ${co} as at ${per}, and of its financial performance and its cash flows for the period then ended, in accordance with ${frame}.`
+        : `In our opinion, because of the significance of the matter discussed in the Basis for adverse opinion section of our report, the accompanying financial statements do not give a true and fair view of the financial position of ${co} as at ${per}, or of its financial performance and its cash flows for the period then ended, in accordance with ${frame}.`)]);
+  const hB = { unmodified: "Basis for opinion", qualified: "Basis for qualified opinion", adverse: "Basis for adverse opinion", disclaimer: "Basis for disclaimer of opinion" }[op];
+  let b = op !== "unmodified" ? (String(d.auditBasis || "").trim() || "[Describe the matter and, where practicable, quantify its effect on the financial statements.]") + (op === "disclaimer" ? "" : "\n\n") : "";
+  if (op !== "disclaimer") b += `We conducted our audit in accordance with International Standards on Auditing (ISAs). Our responsibilities under those standards are further described in the Auditor's responsibilities for the audit of the financial statements section of our report. We are independent of the company in accordance with the International Ethics Standards Board for Accountants' International Code of Ethics for Professional Accountants (IESBA Code) and the ethical requirements of the Institute of Certified Public Accountants of Rwanda, and we have fulfilled our other ethical responsibilities in accordance with these requirements. We believe that the audit evidence we have obtained is sufficient and appropriate to provide a basis for our ${op === "qualified" ? "qualified " : op === "adverse" ? "adverse " : ""}opinion.`;
+  T.push([hB, b]);
+  if (d.auditGC && op !== "disclaimer") T.push(["Material uncertainty related to going concern", `We draw attention to note ${nOf("disc-going")} in the financial statements, which indicates that [describe the events or conditions]. As stated in note ${nOf("disc-going")}, these events or conditions indicate that a material uncertainty exists that may cast significant doubt on the company's ability to continue as a going concern. Our opinion is not modified in respect of this matter.`]);
+  if (d.auditEOM && op !== "disclaimer") T.push(["Emphasis of matter", `${String(d.auditEOMText || "").trim() || "We draw attention to note [x] to the financial statements, which describes [the matter]."} Our opinion is not modified in respect of this matter.`]);
+  if (op !== "disclaimer") T.push(["Other information", `The directors are responsible for the other information. The other information comprises the directors' report, but does not include the financial statements and our auditor's report thereon. Our opinion on the financial statements does not cover the other information and we do not express any form of assurance conclusion thereon.\n\nIn connection with our audit of the financial statements, our responsibility is to read the other information and, in doing so, consider whether it is materially inconsistent with the financial statements or our knowledge obtained in the audit, or otherwise appears to be materially misstated. If, based on the work we have performed, we conclude that there is a material misstatement of this other information, we are required to report that fact. ${op === "unmodified" ? "We have nothing to report in this regard." : "[Describe how the matter behind the modified opinion affects the other information, or state that there is nothing to report.]"}`]);
+  T.push(["Responsibilities of the directors for the financial statements", `The directors are responsible for the preparation of financial statements that give a true and fair view in accordance with ${frame}, and for such internal control as the directors determine is necessary to enable the preparation of financial statements that are free from material misstatement, whether due to fraud or error.\n\nIn preparing the financial statements, the directors are responsible for assessing the company's ability to continue as a going concern, disclosing, as applicable, matters related to going concern and using the going concern basis of accounting unless the directors either intend to liquidate the company or to cease operations, or have no realistic alternative but to do so.`]);
+  T.push(["Auditor's responsibilities for the audit of the financial statements", op === "disclaimer"
+    ? `Our responsibility is to conduct an audit of the company's financial statements in accordance with International Standards on Auditing and to issue an auditor's report. However, because of the matter described in the Basis for disclaimer of opinion section of our report, we were not able to obtain sufficient appropriate audit evidence to provide a basis for an audit opinion on these financial statements.\n\nWe are independent of the company in accordance with the IESBA Code and the ethical requirements of the Institute of Certified Public Accountants of Rwanda, and we have fulfilled our other ethical responsibilities in accordance with these requirements.`
+    : `Our objectives are to obtain reasonable assurance about whether the financial statements as a whole are free from material misstatement, whether due to fraud or error, and to issue an auditor's report that includes our opinion. Reasonable assurance is a high level of assurance, but is not a guarantee that an audit conducted in accordance with ISAs will always detect a material misstatement when it exists. Misstatements can arise from fraud or error and are considered material if, individually or in the aggregate, they could reasonably be expected to influence the economic decisions of users taken on the basis of these financial statements.\n\nAs part of an audit in accordance with ISAs, we exercise professional judgement and maintain professional scepticism throughout the audit. We also:\n- identify and assess the risks of material misstatement of the financial statements, whether due to fraud or error, design and perform audit procedures responsive to those risks, and obtain audit evidence that is sufficient and appropriate to provide a basis for our opinion;\n- obtain an understanding of internal control relevant to the audit in order to design audit procedures that are appropriate in the circumstances, but not for the purpose of expressing an opinion on the effectiveness of the company's internal control;\n- evaluate the appropriateness of accounting policies used and the reasonableness of accounting estimates and related disclosures made by the directors;\n- conclude on the appropriateness of the directors' use of the going concern basis of accounting and, based on the audit evidence obtained, whether a material uncertainty exists related to events or conditions that may cast significant doubt on the company's ability to continue as a going concern;\n- evaluate the overall presentation, structure and content of the financial statements, including the disclosures, and whether the financial statements represent the underlying transactions and events in a manner that achieves fair presentation.\n\nWe communicate with the directors regarding, among other matters, the planned scope and timing of the audit and significant audit findings, including any significant deficiencies in internal control that we identify during our audit.`]);
+  T.push(["Report on other legal and regulatory requirements", `As required by Article 135 of Law N° 007/2021 governing companies, we report that:\n- we have obtained all the information and explanations which, to the best of our knowledge and belief, were necessary for the purposes of our audit;\n- in our opinion, proper accounting records have been kept by the company, so far as appears from our examination of those records;\n- we have no relationship with, interest in or debt to the company other than as its auditor;\n- in our opinion, the financial statements comply with the international accounting standards and with Article 125 of the Law [state any areas in which they do not comply];\n- our observations on the company's management and our recommendations to correct the matters identified during the audit have been reported to the directors in our letter dated [date].\n[Amend any statement that does not apply.]`]);
+  T.push(["", `The engagement partner on the audit resulting in this independent auditor's report is ${partner}${prac ? ", ICPAR practising certificate number " + prac : ""}.\n\n\n__________________________\n${firm}\nKigali, Rwanda\n${d.auditDate ? niceISO(d.auditDate) : "[Date of the report]"}`]);
+  return T.map(([h, t]) => (h ? h + "\n" : "") + t).join("\n\n");
+}
+async function exportAuditDraft() {
+  if (!(await canDownload())) return;
+  if (!window.jspdf) { toast("The PDF tool didn't load. Check your connection and reload."); return; }
+  const { jsPDF } = window.jspdf, doc = new jsPDF({ unit: "mm", format: "a4" }), W = 210, M = 20, R = W - M;
+  const plain = t => String(t ?? "").replace(/[−]/g, "-").replace(/[…]/g, "...").replace(/[–—]/g, "-");
+  const txt = String(FSD().auditDraft || "").trim() || auditDraft(), heads = new Set(AUD_HEADS);
+  let y = 24;
+  for (const raw of txt.split("\n")) {
+    const line = plain(raw.trimEnd());
+    if (!line.trim()) { y += 2.6; continue; }
+    const top = /^INDEPENDENT AUDITOR'S REPORT/.test(line), isH = top || heads.has(line.trim());
+    doc.setFont("helvetica", isH ? "bold" : "normal"); doc.setFontSize(top ? 13 : isH ? 10.5 : 9.8);
+    const ind = /^\s*-\s/.test(line) ? 4 : 0, t = ind ? line.replace(/^\s*-\s/, "") : line;
+    doc.splitTextToSize(t, R - M - ind).forEach((pt, i) => { if (y > 278) { doc.addPage(); y = 24; } if (ind && i === 0) doc.text("-", M, y); doc.text(pt, M + ind, y); y += top ? 6.2 : isH ? 5.4 : 4.6; });
+    if (isH) y += 0.8;
+  }
+  const n = doc.getNumberOfPages();
+  for (let i = 1; i <= n; i++) {
+    doc.setPage(i);
+    doc.setGState(new doc.GState({ opacity: 0.1 })); doc.setFont("helvetica", "bold"); doc.setFontSize(110); doc.setTextColor(90, 90, 90); doc.text("DRAFT", 48, 230, { angle: 45 }); doc.setGState(new doc.GState({ opacity: 1 }));
+    doc.setTextColor(160, 30, 30); doc.setFontSize(8.5); doc.text("DRAFT FOR THE AUDITOR'S REVIEW - NOT FOR ISSUE", M, 13);
+    doc.setTextColor(0, 0, 0); doc.setFont("helvetica", "normal"); doc.setFontSize(7.5); doc.text(plain(`${S.company} - draft auditor's report - page ${i} of ${n}`), M, 290);
+  }
+  await saveFile(`${(S.company || "Company").replace(/[^\w\- ]+/g, "").trim()} - draft auditor's report.pdf`, doc.output("blob"));
+  noteDownload();
+}
+document.addEventListener("change", async e => {
+  if (e.target.id !== "fs-audit-upload") return;
+  const fl = [...e.target.files]; e.target.value = "";
+  if (!fl.length) return;
+  const pdf = fl.find(f => f.type === "application/pdf" || /\.pdf$/i.test(f.name)), imgs = fl.filter(f => /^image\/(png|jpeg)$/.test(f.type));
+  const use = pdf ? [pdf] : imgs;
+  if (!use.length) { toast("Attach the PDF from the auditor, or JPG or PNG photos of the pages."); return; }
+  if (use.reduce((t, f) => t + f.size, 0) > 20e6) { toast("That is over 20 MB. Ask the auditor for a smaller PDF."); return; }
+  const files = [];
+  for (const f of use) files.push({ name: f.name, type: pdf ? "application/pdf" : f.type, data: await f.arrayBuffer() });
+  let pages = files.length;
+  if (pdf) {
+    try { await loadPdfLib(); pages = (await PDFLib.PDFDocument.load(files[0].data, { ignoreEncryption: true })).getPageCount(); }
+    catch (err) { toast("Acivaz couldn't read that PDF. Ask the auditor for a copy without a password, or attach photos of the pages."); return; }
+  }
+  const rec = { files, pages, added: todayISO() };
+  try { await IDB.set(audKey(), rec); delete AUD_MEM[audKey()]; }
+  catch (err) { AUD_MEM[audKey()] = rec; toast("This browser can't keep the file after the page closes, so attach it again next time."); }
+  const d = FSD();
+  d.auditFile = `${pdf ? pdf.name : files.length + " picture" + (files.length === 1 ? "" : "s")}, ${pages} page${pages === 1 ? "" : "s"}`;
+  d.auditStatus = "audited"; store.set(FSD.key, FSD.data);
+  const sel = $("fs-d-auditStatus"); if (sel) sel.value = "audited";
+  renderPack(); toast("Auditor's report attached.");
+});
+let audPrev = null;
+document.addEventListener("click", async e => {
+  const t = e.target.closest("#btn-aud-remove,#btn-aud-draft,#btn-aud-undo,#btn-aud-pdf"); if (!t) return;
+  const d = FSD(), ta = $("fs-d-auditDraft");
+  if (t.id === "btn-aud-remove") { await IDB.del(audKey()); delete AUD_MEM[audKey()]; d.auditFile = ""; store.set(FSD.key, FSD.data); renderPack(); toast("Auditor's report removed."); }
+  if (t.id === "btn-aud-draft") { audPrev = ta.value; ta.value = auditDraft(); d.auditDraft = ta.value; store.set(FSD.key, FSD.data); $("btn-aud-undo").hidden = !audPrev.trim(); toast("Draft written. Edit it here before you download it."); }
+  if (t.id === "btn-aud-undo" && audPrev !== null) { ta.value = audPrev; d.auditDraft = audPrev; store.set(FSD.key, FSD.data); t.hidden = true; }
+  if (t.id === "btn-aud-pdf") exportAuditDraft();
+});
 function renderFSAct(cur) {
+  renderAuditBox();
   const sv = $("fs-solv");
   if (sv) {
     const s = solvency(cur), res = ok => ok ? `<span class="chip good">Passes</span>` : `<span class="chip bad">Fails</span>`;
@@ -1992,6 +2130,7 @@ function fsDiscChip() {
   const du = fsDue();
   out.push(d.filed ? `<span class="chip good">Filed with the Registrar General</span>` : du.left < 0 ? `<span class="chip bad">Accounts were due at RDB by ${fsNice(du.due)}</span>` : du.left <= 45 ? `<span class="chip warn">Accounts due at RDB by ${fsNice(du.due)}, ${du.left} day${du.left === 1 ? "" : "s"} left</span>` : `<span class="chip plain">Accounts due to shareholders and RDB by ${fsNice(du.due)}</span>`);
   if (+d.arMonth) out.push(`<span class="chip plain">Annual return due in ${FULL_MONTHS[+d.arMonth - 1]}</span>`);
+  { const st = auditState(); out.push(st === "audited" ? `<span class="chip good">Auditor's report attached</span>` : st === "pending" ? `<span class="chip warn">Audited: attach the auditor's signed report</span>` : st === "exempt" ? `<span class="chip plain">Exempt from audit (Article 210)</span>` : `<span class="chip plain">Not audited yet</span>`); }
   return out.join("");
 }
 const fsSave = e => {
@@ -2618,7 +2757,7 @@ function renderPack() {
   renderChecks(cur, cf);
   $("fs-sample").hidden = !isSample;
   $("fs-company").textContent = S.company || "Your company";
-  $("fs-subt").textContent = `For ${S.cur} · IFRS for SMEs format · unaudited · amounts in ${unitText()}`;
+  $("fs-subt").textContent = `For ${S.cur} · IFRS for SMEs format · ${{ audited: "audited", pending: "auditor's report to attach", exempt: "exempt from audit", none: "unaudited" }[auditState()]} · amounts in ${unitText()}`;
   renderFSDisc();
   renderFSAct(cur);
   renderDR(cur, cmp, cf);
@@ -3840,6 +3979,16 @@ async function exportPDF(only) {
   if (!window.jspdf) { toast("The PDF tool didn't load. Check your connection and reload."); return; }
   const { jsPDF } = window.jspdf;
   const { cur, cmp, bud, open, cf, built } = snapshot();
+  /* The auditor's signed report, when attached, goes after the approval page */
+  let aud = null, audImgs = [], audAt = 0;
+  if ((!only || only === "fs") && FSD().auditStatus === "audited") {
+    aud = await auditFileRec();
+    if (aud && aud.files[0].type === "application/pdf") { try { await loadPdfLib(); } catch (err) { toast("The tool that adds the auditor's report didn't load. Check your connection and try again."); return; } }
+    else if (aud) {
+      const b64 = buf => { let t = ""; const u = new Uint8Array(buf); for (let i = 0; i < u.length; i += 0x8000) t += String.fromCharCode.apply(null, u.subarray(i, i + 0x8000)); return btoa(t); };
+      for (const f of aud.files) { try { const bm = await createImageBitmap(new Blob([f.data], { type: f.type })); audImgs.push({ url: `data:${f.type};base64,${b64(f.data)}`, fmt: f.type === "image/png" ? "PNG" : "JPEG", w: bm.width, h: bm.height }); } catch (err) {} }
+    }
+  }
   const doc = new jsPDF({ unit: "mm", format: "a4" });
   const W = 210, M = 18, R = W - M;
   let y = 20;
@@ -3856,7 +4005,7 @@ async function exportPDF(only) {
     font("normal", 11); doc.text(plain(only === "bplan" ? `Built from the accounts for ${S.cur}` : `For ${S.cur}`), M, y); y += 6;
     doc.text(plain(`Amounts in ${unitText()} unless stated`), M, y); y += 6;
     { const pb = sgLine(SG().prep, SG().prepRole); doc.text(plain(`Prepared ${prepared}${pb ? " by " + pb : ""}`), M, y); y += 6; }
-    doc.text(plain(only === "bplan" ? "Forecasts are management estimates. Confidential." : only === "fs" ? "Prepared in the IFRS for SMEs format. Unaudited." : "Unaudited management accounts"), M, y); y += 14;
+    doc.text(plain(only === "bplan" ? "Forecasts are management estimates. Confidential." : only === "fs" ? "Prepared in the IFRS for SMEs format. " + auditLine() : "Unaudited management accounts"), M, y); y += 14;
     font("bold", 11); doc.text("Contents", M, y); y += 2; doc.setLineWidth(0.25); doc.line(M, y, R, y);
     var tocY = y + 7;
     doc.addPage(); y = 20;
@@ -4001,6 +4150,23 @@ async function exportPDF(only) {
     para(`The financial statements on the pages that follow were approved by the board of directors on ${onDate} and signed on its behalf by:`, 9.6);
     y += 12;
     sigLines();
+    if (fd.auditStatus === "audited") {
+      if (aud && aud.files[0].type === "application/pdf" && aud.pages) {
+        doc.addPage(); audAt = doc.getNumberOfPages(); toc.push({ t: "Independent auditor's report", p: audAt });
+        for (let i = 1; i < aud.pages; i++) doc.addPage();
+        y = 20;
+      } else if (audImgs.length) {
+        audImgs.forEach((im, i) => {
+          doc.addPage(); if (i === 0) toc.push({ t: "Independent auditor's report", p: doc.getNumberOfPages() });
+          const k = Math.min((W - 24) / im.w, (297 - 32) / im.h), w = im.w * k, h = im.h * k;
+          doc.addImage(im.url, im.fmt, (W - w) / 2, 12, w, h);
+        });
+        y = 20;
+      } else {
+        heading("Independent auditor's report", true);
+        para(`The auditor's signed report${String(fd.auditor || "").trim() ? ", from " + String(fd.auditor).trim() + "," : ""} is to be inserted here before these financial statements are issued.`, 9.6);
+      }
+    }
   }
   // Statements
   const noteOf = built.noteOf;
@@ -4229,10 +4395,22 @@ async function exportPDF(only) {
   for (let i = 1; i <= n; i++) {
     doc.setPage(i); font("normal", 7.5); doc.setTextColor(0, 0, 0);
     if (cover && i === 1) continue;
-    doc.text(plain(`${S.company} - ${S.cur} - ${only === "bplan" ? "business plan, confidential" : only === "mgmt" ? "management report, unaudited" : only === "fs" ? "financial statements, unaudited" : only ? "management estimates, unaudited" : "management accounts, unaudited"}`), M, 290);
+    if (audAt && i >= audAt && i < audAt + aud.pages) continue;
+    doc.text(plain(`${S.company} - ${S.cur} - ${only === "bplan" ? "business plan, confidential" : only === "mgmt" ? "management report, unaudited" : only === "fs" ? "financial statements" + ({ audited: "", exempt: ", not audited" }[auditState()] ?? ", unaudited") : only ? "management estimates, unaudited" : "management accounts, unaudited"}`), M, 290);
     doc.text(`Page ${i} of ${n}`, R, 290, { align: "right" });
   }
-  await saveFile((only ? taskFileBase(only) : fileBase()) + ".pdf", doc.output("blob"));
+  let blob = doc.output("blob");
+  if (audAt) {
+    try {
+      const out = await PDFLib.PDFDocument.load(doc.output("arraybuffer"));
+      const src = await PDFLib.PDFDocument.load(aud.files[0].data, { ignoreEncryption: true });
+      const pages = await out.copyPages(src, src.getPageIndices());
+      for (let i = aud.pages - 1; i >= 0; i--) out.removePage(audAt - 1 + i);
+      pages.forEach((pg, i) => out.insertPage(audAt - 1 + i, pg));
+      blob = new Blob([await out.save()], { type: "application/pdf" });
+    } catch (err) { toast("The auditor's report couldn't be added, so its pages are blank. Attach it again and retry."); }
+  }
+  await saveFile((only ? taskFileBase(only) : fileBase()) + ".pdf", blob);
   noteDownload();
 }
 const fileBase = () => `${(S.company || "Management pack").replace(/[^\w\- ]+/g, "").trim()} - ${String(S.cur).replace(/[^\w\- ]+/g, "").trim()} pack`;
@@ -4301,12 +4479,13 @@ function xlBook({ company, title, period, unit, fs = false }) {
     const sg = SG(), fd = fs ? FSD() : null;
     const rows = [["Report", title], ["Period", period], ["Currency", String(unit || "").replace(/^Amounts in /, "")], ["Prepared on", prepared], ["Prepared by", sgLine(sg.prep, sg.prepRole)]];
     rows.push(fs ? ["Approved by the board on", fd.approvedOn ? niceISO(fd.approvedOn) : "Not yet approved"] : ["Approved by", sgLine(sg.appr, sg.apprRole)]);
+    if (fs) rows.push(["Audit", auditLine() + (auditState() === "audited" ? " The signed report is in the statements PDF." : "")]);
     rows.push([], xr("sec", ["Contents"]));
     list.forEach((x, i) => rows.push([`${i + 1}. ${x.name}`, x.desc]));
     rows.push([], xr("sec", ["Sign-off"]), ["Prepared by", "Signature: ____________________", "Date: ____________"]);
     if (!fs) rows.push(["Approved by", "Signature: ____________________", "Date: ____________"]);
     else rows.push(["Directors", "Sign the Approval sheet", ""]);
-    rows.push([], xr("note", [fs ? "Management-prepared financial statements. Unaudited unless an auditor's report is attached." : "Unaudited management information. Check every figure before you rely on it."]));
+    rows.push([], xr("note", [fs ? (auditState() === "audited" ? "Read these statements together with the independent auditor's report." : "Management-prepared financial statements, not yet covered by an auditor's report.") : "Unaudited management information. Check every figure before you rely on it."]));
     sheet(rows, "Cover", [24, 44, 22], { noHead: true, title });
     wb.SheetNames.unshift(wb.SheetNames.pop());
     return wb;
