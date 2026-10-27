@@ -212,6 +212,15 @@ table.st.fs tr.gap td { padding-top: 14px; }
 .disc-grid .disc { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
 .disc-grid label { font-weight: 600; font-size: 14px; }
 .disc-grid textarea { width: 100%; min-height: 96px; resize: vertical; padding: 10px 12px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg); font-size: 13.5px; line-height: 1.55; }
+.fs-h { font-size: 15px; font-weight: 600; margin: 24px 0 12px; padding-top: 16px; border-top: 1px solid var(--line); }
+.fs-h.first { margin-top: 4px; padding-top: 0; border-top: 0; }
+.disc-grid select, .disc-grid input[type=text], .disc-grid input[type=number] { padding: 7px 9px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); color: var(--ink); font: inherit; font-size: 14px; max-width: 320px; width: 100%; }
+.disc-grid label.chk, label.chk { display: flex; gap: 8px; align-items: flex-start; font-weight: 400; font-size: 13.5px; margin-top: 8px; }
+label.chk input { margin-top: 3px; }
+.dr h4 { font-size: 13.5px; font-weight: 600; margin: 14px 0 4px; }
+.dr p { white-space: pre-line; margin: 0 0 6px; line-height: 1.6; max-width: 80ch; }
+.solv-sum { margin: 10px 0 4px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.solv-sum .chip { white-space: normal; }
 .disc-grid input[type=date] { padding: 7px 9px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); max-width: 220px; }
 /* business plan */
 .bp-wrap { display: grid; grid-template-columns: 230px minmax(0, 1fr); gap: 22px; align-items: start; }
@@ -617,6 +626,7 @@ img { max-width: 100%; }
         <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">
           <div class="actions"><button class="btn small" type="button" id="btn-fs-xlsx">Excel</button><button class="btn small primary" type="button" id="btn-fs-pdf">Download statements PDF</button></div>
           <div class="pack-nav">
+            <button type="button" data-jump="fs-p-dr">Directors' report</button>
             <button type="button" data-jump="fs-p-is">Profit or loss</button>
             <button type="button" data-jump="fs-p-bs">Position</button>
             <button type="button" data-jump="fs-p-soce">Equity</button>
@@ -628,6 +638,11 @@ img { max-width: 100%; }
         </div>
       </div>
       <div class="checks" id="fs-checks"></div>
+      <div class="panel" id="fs-p-dr">
+        <div class="panel-head"><h3>Directors' report</h3><span class="sub">Law N° 007/2021 governing companies, Article 89</span></div>
+        <div class="dr" id="dr"></div>
+        <div><button class="linkish" type="button" data-jump="sec-disc">Edit in year-end disclosures</button></div>
+      </div>
       <div class="panel fs-panel" id="fs-p-is">
         <div class="panel-head"><h3>Statement of profit or loss</h3><span class="sub" id="is-sub"></span></div>
         <div class="table-box"><table class="st fs" id="is"></table></div>
@@ -649,7 +664,7 @@ img { max-width: 100%; }
         <div class="notes" id="notes"></div>
       </div>
 
-      <div class="section-title" id="sec-disc" style="scroll-margin-top:90px"><h2>Year-end disclosures and approval</h2></div>
+      <div class="section-title" id="sec-disc" style="scroll-margin-top:90px"><h2>Year-end report, disclosures and approval</h2></div>
       <div class="panel" id="fs-disc"></div>
     </section>
 
@@ -1106,9 +1121,17 @@ img { max-width: 100%; }
             <ul>
               <li><strong>The four statements</strong>: profit or loss, financial position, changes in equity, and cash flows using the indirect method, with note references. Costs are shown in brackets, assets and liabilities are split into non-current and current, and every statement uses the same columns so the figures line up from one to the next.</li>
               <li><strong>Notes</strong>: the basis of preparation (editable; <strong>Reset to standard wording</strong> restores it), account-level breakdowns of each line, the property and equipment movement, and the effective tax rate.</li>
-              <li><strong>Year-end disclosures and approval</strong>: going concern, related party transactions, events after the reporting date, and contingencies and commitments. Each one you fill in becomes a note. <strong>Use standard wording</strong> inserts a nil statement; use it only when it is true. Add the date the board approves the statements and who signs; left blank, the PDF prints lines to sign by hand.</li>
+              <li><strong>Significant accounting policies</strong>: a note written for the lines in these statements (revenue, property and equipment, inventories, receivables, borrowings, tax). Press <strong>Edit the standard wording</strong> to change it.</li>
+              <li><strong>Year-end disclosures and approval</strong>: going concern, risks and uncertainties, related party transactions, events after the reporting date, and contingencies and commitments. Each one you fill in becomes a note. <strong>Use standard wording</strong> inserts a nil statement; use it only when it is true. <strong>Suggest from the figures</strong> drafts the risks note from liquidity, borrowing, credit and trading trends.</li>
             </ul>
-            <p><strong>Download statements PDF</strong> gives a cover, contents, the approval page, each statement on its own page, and the notes. These are management-prepared statements: an auditor may still ask for more disclosures, such as detailed accounting policies or a directors' report.</p>
+            <h3>Company law: Law N° 007/2021 governing companies</h3>
+            <ul>
+              <li><strong>Directors' report</strong> (Article 89): principal activities, a review of the business, the dividend and any transfer to reserves, donations, and entries in the register of directors' interests. Left blank, the review is written from the figures; other blank items show "To be completed". A public company must include its principal activities.</li>
+              <li><strong>Signing</strong> (Articles 89 and 125): the statements and the report are signed by two directors, or by the only director. A red chip shows if only one is named.</li>
+              <li><strong>Dividend solvency test</strong> (Article 69): enter a recommended dividend and Acivaz checks that, after paying it, assets still exceed liabilities, current assets still cover current liabilities, and cash covers it. If it passes, the PDF adds a certificate for the directors to sign; a private company whose shareholders have opted out (Article 209) can leave it out. A dividend note explains that it is not a liability until approved.</li>
+              <li><strong>Filing deadlines</strong> (Articles 88, 142 and 143): signed accounts, the auditor's report and the directors' report go to shareholders and the Registrar General within 7 months of the year end for a private company, or 4 months for a public one. Set the year end and the annual return month, and the chips count down. Late filing can cost each director RWF 1 million to 10 million (Article 332).</li>
+            </ul>
+            <p><strong>Download statements PDF</strong> gives a cover, contents, the directors' report, the solvency certificate when a dividend passes the test, the approval page, each statement on its own page, and the notes. These are management-prepared statements for the board and the auditor; every company needs an external audit unless a Minister's order exempts it (Articles 131 and 210).</p>
           </section>
 
           <section id="m-forecast">
@@ -1151,14 +1174,14 @@ img { max-width: 100%; }
 
           <section id="m-downloads">
             <h2>Downloads and unlocking</h2>
-            <p>Everything on screen is free. On the public website, each device gets a 30-day free trial with unlimited PDF and Excel downloads, counted from the first visit. The footer shows how many days are left. Book backups are always free.</p>
-            <p>After the trial, a payment screen opens on the next download. Unlimited downloads cost RWF 20,000 a month. <strong>Founding price:</strong> the first 20 paying users pay RWF 10,000 a month, fixed for 12 months.</p>
+            <p>Everything on screen is free. On the public website, each device gets a 30-day free trial with unlimited PDF and Excel downloads for any company, counted from the first visit. The footer shows how many days are left. Book backups are always free.</p>
+            <p>After the trial, downloads are paid <strong>per company</strong>: RWF 20,000 a month for each company you download reports for, whatever the number of downloads. <strong>Founding price:</strong> the first 20 paying customers pay RWF 10,000 a month per company, fixed for 12 months. Accountants with 5 or more client companies pay RWF 15,000 for each.</p>
             <ol>
-              <li>Pay by MTN MoMo to <strong>0784 551 341</strong> (Anicet Safari): RWF 10,000 at the founding price while places last, otherwise RWF 20,000.</li>
-              <li>Send your <strong>device ID</strong>, shown on the payment screen, and the <strong>MoMo transaction ID</strong> on WhatsApp to the same number. The <strong>Open WhatsApp</strong> button writes the message for you.</li>
+              <li>Pay by MTN MoMo to <strong>0784 551 341</strong> (Anicet Safari) for each company you need.</li>
+              <li>Send the <strong>company ID</strong>, shown on the payment screen, and the <strong>MoMo transaction ID</strong> on WhatsApp to the same number. The <strong>Open WhatsApp</strong> button writes the message for you, with the company name.</li>
               <li>Paste the unlock code you receive into the payment screen and press <strong>Unlock</strong>.</li>
             </ol>
-            <p>An unlock code works on that device only, until the date shown, so it can't be shared. When it ends, the payment screen opens again on your next download. Using another computer or browser needs its own code; send that device's ID when you pay.</p>
+            <p>Each company has its own ID on each device, made from the device and the company name, so a code unlocks that company on that device and can't be shared. Renaming the company in Settings gives it a new ID, so keep the name as registered. When a code ends, the payment screen opens again on the next download for that company. Using another computer or browser needs its own code.</p>
           </section>
 
           <section id="m-install">
@@ -1185,7 +1208,7 @@ img { max-width: 100%; }
             <h3>My books have disappeared</h3>
             <p>Books live in the browser where you entered them. Check you're using the same browser and computer. If browser data was cleared, press <strong>Restore</strong> and choose your latest backup.</p>
             <h3>My unlock code doesn't work</h3>
-            <p>Make sure you copied the whole code, and that the device ID you sent matches the one on the payment screen. Codes only work on the device they were made for. If it has expired, ask for a new one.</p>
+            <p>Make sure you copied the whole code, and that the company ID you sent matches the one on the payment screen. A code only works for the company and device it was made for, so check the company name in Settings hasn't changed. If it has expired, ask for a new one.</p>
             <h3>Can I change an entry after saving it?</h3>
             <p>Yes. Press <strong>Edit</strong> next to it in Sales, Purchases, Bank or All entries. The statements and reports update straight away.</p>
           </section>
@@ -1224,14 +1247,15 @@ img { max-width: 100%; }
     <button class="modal-x" type="button" id="pw-close" aria-label="Close">×</button>
     <div class="eyebrow">Acivaz</div>
     <h2 id="pw-title">Your 30-day free trial has ended</h2>
-    <p id="pw-lead">Unlimited PDF and Excel downloads cost <span class="pw-price">RWF 20,000 a month</span>. Everything on screen stays free.</p>
-    <div class="pw-founding"><strong>Founding price: RWF 10,000 a month.</strong> The first 20 paying users pay half price, fixed for 12 months.</div>
+    <p id="pw-lead">Prices are per company: <span class="pw-price">RWF 20,000 a month for each company</span>, with unlimited PDF and Excel downloads for it. Everything on screen stays free.</p>
+    <div class="pw-founding"><strong>Founding price: RWF 10,000 a month per company.</strong> The first 20 paying customers pay half price, fixed for 12 months. From 5 companies, each costs RWF 15,000.</div>
+    <p style="margin:10px 0 0">This download is for <strong id="pw-co"></strong>.</p>
     <ol class="pw-steps">
-      <li><strong>Pay by MTN MoMo</strong> to Anicet Safari: RWF 10,000 at the founding price while places last, then RWF 20,000.
+      <li><strong>Pay by MTN MoMo</strong> to Anicet Safari: RWF 10,000 per company at the founding price while places last, then RWF 20,000.
         <div class="pw-line"><span class="pw-big">0784 551 341</span><button class="btn small" type="button" data-copy="0784551341">Copy number</button></div></li>
-      <li><strong>Send your device ID and the MoMo transaction ID</strong> on WhatsApp to the same number.
+      <li><strong>Send the company ID and the MoMo transaction ID</strong> on WhatsApp to the same number.
         <div class="pw-line"><span class="pw-big" id="pw-dev"></span><button class="btn small" type="button" id="pw-copy-dev">Copy ID</button><a class="btn small" id="pw-wa" href="https://wa.me/250784551341" target="_blank" rel="noopener">Open WhatsApp</a></div></li>
-      <li><strong>Paste the unlock code</strong> you receive back. It works on this device only.
+      <li><strong>Paste the unlock code</strong> you receive back. It unlocks this company on this device.
         <textarea id="pw-code" aria-label="Unlock code" placeholder="Paste your unlock code here" autocomplete="off" spellcheck="false"></textarea>
         <div class="pw-line"><button class="btn primary" type="button" id="pw-unlock">Unlock</button><span class="status" id="pw-status"></span></div></li>
     </ol>
@@ -1623,30 +1647,168 @@ function renderFSDisc(force) {
   const box = $("fs-disc"); if (!box) return;
   if (!force && renderFSDisc.key === FSD.key && box.innerHTML) return;
   const d = FSD(); renderFSDisc.key = FSD.key;
-  box.innerHTML = `<p class="help" style="margin-bottom:12px">Monthly management accounts can skip these. Year-end statements for an auditor, RRA, RDB or a bank need them. Each one you fill in becomes a note. <strong>Use standard wording</strong> only when it is true for this company.</p><div class="disc-grid">` +
-    FS_DISC.map(([k, t, hint]) => `<div class="disc"><label for="fs-d-${k}">${esc(t)}</label><span class="help">${esc(hint)}</span><textarea id="fs-d-${k}" data-fsd="${k}">${esc(d[k] || "")}</textarea><div><button class="btn small" type="button" data-fs-std="${k}">Use standard wording</button></div></div>`).join("") +
-    `<div class="disc"><label for="fs-d-approved">Approved by the board on</label><span class="help">The date the directors approve and sign the statements.</span><input type="date" id="fs-d-approved" data-fsd="approvedOn" value="${esc(d.approvedOn || "")}"></div>` +
-    `<div class="disc"><label for="fs-d-signers">Signed on behalf of the board by</label><span class="help">One per line, for example: Jane Uwase, Director. Left blank, the PDF prints lines to sign by hand.</span><textarea id="fs-d-signers" data-fsd="signers" style="min-height:70px">${esc(d.signers || "")}</textarea></div></div>`;
+  const u = unitShort(), mv = k => Number(d[k]) ? moneyIn(Number(d[k])) : "";
+  const ta = (k, t, hint, std, min) => `<div class="disc"><label for="fs-d-${k}">${esc(t)}</label><span class="help">${esc(hint)}</span><textarea id="fs-d-${k}" data-fsd="${k}"${min ? ` style="min-height:${min}px"` : ""}>${esc(d[k] || "")}</textarea>${std ? `<div><button class="btn small" type="button" data-fs-std="${k}">${esc(std)}</button></div>` : ""}</div>`;
+  box.innerHTML = `<p class="help" style="margin-bottom:12px">Monthly management accounts can skip this section. Year-end statements for shareholders, an auditor, RRA, RDB or a bank need it. Law N° 007/2021 governing companies asks for a directors' report, notes on accounting policies and risks, and signatures from two directors. <strong>Use standard wording</strong> only when it is true for this company.</p>` +
+    `<h3 class="fs-h first">Company and filing</h3><div class="disc-grid">` +
+      `<div class="disc"><label for="fs-d-coType">Type of company</label><span class="help">A public company files within 4 months of the year end, and its directors' report needs more detail.</span><select id="fs-d-coType" data-fsd="coType"><option value="private"${d.coType !== "public" ? " selected" : ""}>Private company</option><option value="public"${d.coType === "public" ? " selected" : ""}>Public company</option></select><label class="chk"><input type="checkbox" id="fs-d-single" data-fsd="single"${d.single ? " checked" : ""}> The company has only one director, who signs alone</label></div>` +
+      `<div class="disc"><label for="fs-d-yearEnd">Financial year ends on</label><span class="help">Sets the filing deadline: 7 months after the year end for a private company, 4 months for a public one.</span><input type="date" id="fs-d-yearEnd" data-fsd="yearEnd" value="${esc(fsYearEnd())}"><label for="fs-d-arMonth" style="margin-top:10px">Annual return month</label><span class="help">The month the Registrar General allocated to the company.</span><select id="fs-d-arMonth" data-fsd="arMonth"><option value="">Not set</option>${FULL_MONTHS.map((m, i) => `<option value="${i + 1}"${+d.arMonth === i + 1 ? " selected" : ""}>${m}</option>`).join("")}</select></div>` +
+      `<div class="disc"><label for="fs-d-auditor">Auditor</label><span class="help">Every company appoints an external auditor unless a Minister's order exempts it. Named in the directors' report.</span><input type="text" id="fs-d-auditor" data-fsd="auditor" value="${esc(d.auditor || "")}" placeholder="Name of the audit firm"><label class="chk"><input type="checkbox" id="fs-d-filed" data-fsd="filed"${d.filed ? " checked" : ""}> Accounts and reports for this year are filed with the Registrar General</label></div>` +
+    `</div>` +
+    `<h3 class="fs-h">Directors' report</h3><div class="disc-grid">` +
+      ta("activities", "Principal activities", "What the company does. Required for a public company; optional for a private one.", "", 70) +
+      ta("review", "Review of the business", "How the year went and the position at the end. Left blank, a review is written from the figures.", "Draft from the figures") +
+      `<div class="disc"><label for="fs-d-dividend">Dividend recommended (${esc(u)})</label><span class="help">Leave blank for no dividend. A dividend runs the solvency test below.</span><input type="number" step="any" min="0" id="fs-d-dividend" data-fsd="dividend" data-money="1" value="${mv("dividend")}"><label for="fs-d-reserves" style="margin-top:10px">Transfer to reserves (${esc(u)})</label><input type="number" step="any" min="0" id="fs-d-reserves" data-fsd="reserves" data-money="1" value="${mv("reserves")}"></div>` +
+      ta("donations", "Donations", "Charitable or political donations above the prescribed amount since the last report.", "Use standard wording", 70) +
+      ta("interests", "Register of directors' interests", "Entries made in the register of interests since the last report, such as a director's stake in a contract with the company.", "Use standard wording", 70) +
+      ta("directors", "Directors during the period", "One per line. Optional.", "", 70) +
+    `</div>` +
+    `<h3 class="fs-h">Dividend solvency test</h3><div id="fs-solv"></div><label class="chk"><input type="checkbox" id="fs-d-solvOptOut" data-fsd="solvOptOut"${d.solvOptOut ? " checked" : ""}> Private company only: the shareholders have opted out of the directors' certificate by unanimous resolution (Article 209). The test still applies.</label>` +
+    `<h3 class="fs-h">Notes</h3><div class="disc-grid">` +
+      ta("policies", "Significant accounting policies", "Left blank, standard policies for the lines in these statements are used.", "Edit the standard wording") +
+      ta("risks", "Risks and uncertainties", "The main risks, trends and uncertainties facing the company. Becomes a note when filled in.", "Suggest from the figures") +
+      FS_DISC.map(([k, t, hint]) => ta(k, t, hint, "Use standard wording")).join("") +
+    `</div>` +
+    `<h3 class="fs-h">Approval</h3><div class="disc-grid">` +
+      `<div class="disc"><label for="fs-d-approved">Approved by the board on</label><span class="help">The date the directors approve and sign the statements and their report.</span><input type="date" id="fs-d-approved" data-fsd="approvedOn" value="${esc(d.approvedOn || "")}"></div>` +
+      `<div class="disc"><label for="fs-d-signers">Signed on behalf of the board by</label><span class="help">One per line, for example: Jane Uwase, Director. Two directors sign, or the only director. Left blank, the PDF prints lines to sign by hand.</span><textarea id="fs-d-signers" data-fsd="signers" style="min-height:70px">${esc(d.signers || "")}</textarea><div id="fs-sign-msg"></div></div>` +
+    `</div>`;
+}
+
+/* ---------- Law N° 007/2021 governing companies: directors' report, solvency test, filing ---------- */
+const FULL_MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+const fsNice = d => d.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+const FS_STD = {
+  donations: "The company made no charitable or political donations above the prescribed amount during the period.",
+  interests: "No entries were made in the register of directors' interests during the period."
+};
+function fsYearEnd() {
+  const d = FSD();
+  if (isISO(d.yearEnd)) return d.yearEnd;
+  const m = String(S.cur || "").match(/(?:19|20)\d{2}/);
+  return (m ? m[0] : String(new Date().getFullYear())) + "-12-31";
+}
+function fsDue() {
+  const pub = FSD().coType === "public", ye = parseISO(fsYearEnd()), n = pub ? 4 : 7;
+  const due = new Date(ye.getFullYear(), ye.getMonth() + n + 1, 0);
+  due.setDate(Math.min(ye.getDate(), due.getDate())); due.setHours(23, 59, 59, 0);
+  return { due, left: Math.ceil((due - new Date()) / 864e5), months: n, pub };
+}
+const fsSigners = () => String(FSD().signers || "").split("\n").map(t => t.trim()).filter(Boolean);
+function signCheck() {
+  const d = FSD(), n = fsSigners().length, need = d.single ? 1 : 2;
+  if (!n) return { ok: null, t: `No one named yet. The PDF prints ${need === 1 ? "a line" : "two lines"} to sign by hand.` };
+  if (n < need) return { ok: false, t: "Two directors must sign the statements and the directors' report (Articles 89 and 125). Add a second director, or tick that the company has only one director." };
+  return { ok: true, t: `${n} signator${n === 1 ? "y" : "ies"} named.` };
+}
+function solvency(cur) {
+  const d = FSD(), div = Number(d.dividend) || 0;
+  if (!(div > 0)) return null;
+  const taA = cur.ta - div, caA = cur.ca - div, cashA = cur.cash - div;
+  const bs = taA > cur.tl, cl = caA >= cur.cl, cash = cashA >= 0;
+  return { div, taA, caA, cashA, bs, cl, cash, ok: bs && cl && cash, optOut: d.coType !== "public" && !!d.solvOptOut };
+}
+function drReview(cur, cmp, cf) {
+  const s = [], ch = (a, b) => `${a >= b ? "up" : "down"} ${pct(Math.abs(a / b - 1))} on ${S.cmp}`;
+  s.push(`Revenue for ${S.cur} was ${money(cur.rev)}${cmp && cmp.rev ? ", " + ch(cur.rev, cmp.rev) : ""}.`);
+  if (cur.rev) s.push(`The gross margin was ${pct(cur.gp / cur.rev)}${cmp && cmp.rev ? `, compared with ${pct(cmp.gp / cmp.rev)}` : ""}.`);
+  s.push(`${cur.np >= 0 ? "Net profit" : "The net loss"} for the period was ${money(Math.abs(cur.np))}${cmp ? `, against ${cmp.np >= 0 ? "a profit" : "a loss"} of ${money(Math.abs(cmp.np))}` : ""}.`);
+  if (cf) s.push(`Operating activities ${cf.op >= 0 ? "generated" : "used"} ${money(Math.abs(cf.op))} of cash.`);
+  s.push(`At the end of the period the company held ${money(cur.cash)} in cash and bank, and total equity was ${money(cur.teq)}.`);
+  return s.join(" ");
+}
+function riskDraft(cur, cmp) {
+  const s = [], cr = cur.cl ? cur.ca / cur.cl : null;
+  if (cr !== null) s.push(cr >= 1 ? `Liquidity: current assets cover current liabilities ${cr.toFixed(2)} times. The directors review cash and short-term commitments every month.` : `Liquidity: current liabilities exceed current assets (cover of ${cr.toFixed(2)} times), so the company relies on cash from operations and the continued support of lenders and suppliers to meet its obligations.`);
+  if (cur.ncl > 0) s.push(`Borrowing: long-term borrowings are ${money(cur.ncl)}${cur.teq > 0 ? `, ${pct(cur.ncl / cur.teq)} of equity` : ""}. A rise in interest rates would increase finance costs.`);
+  const dd = ratioVal(RATIO.dd, cur);
+  if (dd !== null && cur.rec > 0) s.push(`Credit: trade receivables equal ${Math.round(dd)} days of revenue. Customer balances are followed up monthly, and a provision is made where recovery is doubtful.`);
+  s.push(cmp && cmp.rev && cur.rev ? `Trading: revenue ${cur.rev >= cmp.rev ? "rose" : "fell"} ${pct(Math.abs(cur.rev / cmp.rev - 1))} and the gross margin moved from ${pct(cmp.gp / cmp.rev)} to ${pct(cur.gp / cur.rev)}. Input prices and demand are the main uncertainties for the coming year.` : "Trading: input prices and demand are the main uncertainties for the coming year.");
+  return s.join("\n\n");
+}
+function stdPolicies(cur) {
+  const t = S.taxRate ?? 28, p = [];
+  p.push("Statement of compliance. The financial statements are prepared in line with the International Financial Reporting Standard for Small and Medium-sized Entities (IFRS for SMEs) and Law N° 007/2021 governing companies, under the historical cost convention.");
+  p.push(`Revenue. Revenue is the amount received or receivable for goods sold and services provided in the normal course of business, net of VAT and discounts. Revenue from goods is recognised when the goods are delivered and the risks pass to the customer; revenue from services as the service is performed.`);
+  if (cur.nca) p.push("Property, plant and equipment. Assets are stated at cost less accumulated depreciation and any impairment. Depreciation is charged on a straight-line basis over each asset's useful life. Land is not depreciated.");
+  if (cur.inv) p.push("Inventories. Inventories are stated at the lower of cost and estimated selling price less costs to complete and sell. Cost is worked out using the weighted average method.");
+  if (cur.rec) p.push("Trade receivables. Trade receivables are recognised at the invoice amount less an allowance for amounts not expected to be collected.");
+  p.push("Cash. Cash and bank comprises cash in hand, bank balances and deposits repayable on demand.");
+  if (cur.ncl || cur.fin) p.push("Borrowings. Borrowings are recognised at the amount received. Interest is charged to profit or loss as a finance cost in the period it arises.");
+  p.push(`Income tax. The tax charge is the tax expected to be payable on the taxable profit for the period, at ${t}%.`);
+  p.push("Foreign currencies. Transactions in foreign currencies are recorded at the rate on the date of the transaction. Balances at the period end are translated at the closing rate, and differences are taken to profit or loss.");
+  p.push("Judgements and estimates. Preparing the statements requires estimates, mainly the useful lives of assets, the recoverability of receivables and the value of inventories. They are reviewed regularly.");
+  return p.join("\n\n");
+}
+function drSections(cur, cmp, cf) {
+  const d = FSD(), pub = d.coType === "public", TBC = "To be completed.", tx = k => String(d[k] || "").trim();
+  const out = [{ h: "", t: `The directors present their report together with the financial statements of ${S.company || "the company"} for ${S.cur}.` }];
+  if (pub || tx("activities")) out.push({ h: "Principal activities", t: tx("activities") || TBC });
+  out.push({ h: "Review of the business", t: tx("review") || drReview(cur, cmp, cf) });
+  const div = Number(d.dividend) || 0, res = Number(d.reserves) || 0;
+  out.push({ h: "Results and dividend", t: `The ${cur.np >= 0 ? "profit" : "loss"} for the period was ${money(Math.abs(cur.np))}. ` + (div > 0 ? `The directors recommend a dividend of ${money(div)}.` : "The directors do not recommend a dividend.") + (res > 0 ? ` They propose to transfer ${money(res)} to reserves.` : " No transfer to reserves is proposed.") });
+  out.push({ h: "Donations", t: tx("donations") || TBC });
+  out.push({ h: "Register of directors' interests", t: tx("interests") || TBC });
+  if (tx("directors")) out.push({ h: "Directors", t: "The directors who held office during the period were:\n" + tx("directors").split("\n").map(t => t.trim()).filter(Boolean).map(t => "- " + t).join("\n") });
+  if (tx("auditor")) out.push({ h: "Auditor", t: `${tx("auditor")} is the company's auditor.` });
+  return out;
+}
+function renderDR(cur, cmp, cf) {
+  const el = $("dr"); if (!el) return;
+  const d = FSD();
+  el.innerHTML = drSections(cur, cmp, cf).map(x => (x.h ? `<h4>${esc(x.h)}</h4>` : "") + `<p>${esc(x.t)}</p>`).join("") + `<p class="help">Approved by the board on ${d.approvedOn ? esc(niceISO(d.approvedOn)) : "(date not set)"}. Signed by ${fsSigners().length ? esc(fsSigners().join("; ")) : d.single ? "the director" : "two directors"}.</p>`;
+}
+function renderFSAct(cur) {
+  const sv = $("fs-solv");
+  if (sv) {
+    const s = solvency(cur), res = ok => ok ? `<span class="chip good">Passes</span>` : `<span class="chip bad">Fails</span>`;
+    sv.innerHTML = !s ? `<p class="help">No dividend is recommended, so there is nothing to test. Enter a dividend above to check it against the solvency test in Article 69.</p>` :
+      `<div class="table-box"><table class="st narrow"><thead><tr><th>Test, after paying ${esc(money(s.div))}</th><th class="n">${esc(unitShort())}</th><th class="n">Must be more than</th><th></th></tr></thead><tbody>` +
+      `<tr><td class="lbl">Total assets left</td><td class="n">${amt(s.taA)}</td><td class="n">${amt(cur.tl)} total liabilities</td><td>${res(s.bs)}</td></tr>` +
+      `<tr><td class="lbl">Current assets left</td><td class="n">${amt(s.caA)}</td><td class="n">${amt(cur.cl)} current liabilities</td><td>${res(s.cl)}</td></tr>` +
+      `<tr><td class="lbl">Cash and bank left</td><td class="n">${amt(s.cashA)}</td><td class="n">0</td><td>${res(s.cash)}</td></tr></tbody></table></div>` +
+      `<div class="solv-sum">${s.ok ? `<span class="chip good">On these figures the company would still be solvent after the dividend</span>` : `<span class="chip bad">On these figures the dividend fails the solvency test, so the board cannot authorise it</span>`}</div>` +
+      `<p class="help">${s.ok ? (s.optOut ? "The shareholders have opted out of the certificate, so it is left out of the PDF." : "The statements PDF includes a certificate for the directors who vote for the dividend to sign.") + " " : ""}Book values stand in for realisable values. Directors must also allow for debts falling due after the period end, contingent liabilities and fixed returns on preference shares.</p>`;
+  }
+  const sm = $("fs-sign-msg");
+  if (sm) { const c = signCheck(); sm.innerHTML = `<span class="chip ${c.ok === false ? "bad" : c.ok ? "good" : "plain"}" style="white-space:normal">${esc(c.t)}</span>`; }
 }
 function fsDiscChip() {
-  const d = FSD(), n = FS_DISC.filter(([k]) => String(d[k] || "").trim()).length;
-  return n === FS_DISC.length && d.approvedOn ? `<span class="chip good">Year-end disclosures and approval complete</span>` : `<span class="chip plain">Year-end disclosures: ${n} of ${FS_DISC.length}${d.approvedOn ? "" : ", approval date not set"} <button class="linkish" type="button" data-jump="sec-disc">Complete</button></span>`;
+  const d = FSD(), n = FS_DISC.filter(([k]) => String(d[k] || "").trim()).length, out = [];
+  out.push(n === FS_DISC.length && d.approvedOn ? `<span class="chip good">Year-end disclosures and approval complete</span>` : `<span class="chip plain">Year-end disclosures: ${n} of ${FS_DISC.length}${d.approvedOn ? "" : ", approval date not set"} <button class="linkish" type="button" data-jump="sec-disc">Complete</button></span>`);
+  const sc = signCheck(); if (sc.ok === false) out.push(`<span class="chip bad">Two directors must sign</span>`);
+  const sv = solvency(compute("cur")); if (sv && !sv.ok) out.push(`<span class="chip bad">Dividend fails the solvency test</span>`);
+  if (d.coType === "public" && !String(d.activities || "").trim()) out.push(`<span class="chip warn">Directors' report: add the principal activities</span>`);
+  const du = fsDue();
+  out.push(d.filed ? `<span class="chip good">Filed with the Registrar General</span>` : du.left < 0 ? `<span class="chip bad">Accounts were due at RDB by ${fsNice(du.due)}</span>` : du.left <= 45 ? `<span class="chip warn">Accounts due at RDB by ${fsNice(du.due)}, ${du.left} day${du.left === 1 ? "" : "s"} left</span>` : `<span class="chip plain">Accounts due to shareholders and RDB by ${fsNice(du.due)}</span>`);
+  if (+d.arMonth) out.push(`<span class="chip plain">Annual return due in ${FULL_MONTHS[+d.arMonth - 1]}</span>`);
+  return out.join("");
 }
-document.addEventListener("input", e => {
+const fsSave = e => {
   const el = e.target.closest("[data-fsd]"); if (!el) return;
-  FSD()[el.dataset.fsd] = el.value; store.set(FSD.key, FSD.data);
+  const k = el.dataset.fsd;
+  FSD()[k] = el.type === "checkbox" ? el.checked : el.dataset.money ? (el.value === "" || !isFinite(parseFloat(el.value)) ? "" : parseFloat(el.value) * (UNIT[S.unit] || UNIT.m).div) : el.value;
+  store.set(FSD.key, FSD.data);
   clearTimeout(fsT); fsT = setTimeout(renderPack, 500);
-});
+};
+document.addEventListener("input", fsSave);
+document.addEventListener("change", fsSave);
 document.addEventListener("click", e => {
   const b = e.target.closest("[data-fs-std]"); if (!b) return;
-  const k = b.dataset.fsStd, def = FS_DISC.find(x => x[0] === k), ta = $("fs-d-" + k);
-  ta.value = def[3]; FSD()[k] = def[3]; store.set(FSD.key, FSD.data); renderPack(); ta.focus();
+  const k = b.dataset.fsStd, ta = $("fs-d-" + k);
+  let v;
+  if (k === "review" || k === "risks") { const sn = snapshot(); v = k === "review" ? drReview(sn.cur, sn.cmp, sn.cf) : riskDraft(sn.cur, sn.cmp); }
+  else if (k === "policies") v = stdPolicies(compute("cur"));
+  else if (FS_STD[k]) v = FS_STD[k];
+  else v = FS_DISC.find(x => x[0] === k)[3];
+  ta.value = v; FSD()[k] = v; store.set(FSD.key, FSD.data); renderPack(); ta.focus();
 });
 function buildNotes(cur, cmp, open) {
   const notes = [];
   const noteOf = {};
   notes.push({ n: 1, id: "basis", title: "Basis of preparation", text: S.policies || defaultPolicies() });
-  let n = 2;
+  notes.push({ n: 2, id: "policies", title: "Significant accounting policies", rows: [], extra: [], text: String(FSD().policies || "").trim() || stdPolicies(cur), textOnly: true });
+  let n = 3;
   for (const def of NOTE_DEFS) {
     const inNote = A.filter(a => def.cats.includes(a.cat));
     if (!inNote.length) continue;
@@ -1709,8 +1871,10 @@ function buildNotes(cur, cmp, open) {
     notes.push(note);
     n++;
   }
-  const fd = FSD();
-  for (const [k, t] of FS_DISC) if (String(fd[k] || "").trim()) notes.push({ n: n++, id: "disc-" + k, title: t, rows: [], extra: [], text: String(fd[k]).trim(), textOnly: true });
+  const fd = FSD(), titles = Object.fromEntries(FS_DISC.map(([k, t]) => [k, t]));
+  titles.risks = "Risks and uncertainties";
+  for (const k of ["going", "risks", "related", "events", "contingent"]) if (String(fd[k] || "").trim()) notes.push({ n: n++, id: "disc-" + k, title: titles[k], rows: [], extra: [], text: String(fd[k]).trim(), textOnly: true });
+  if (Number(fd.dividend) > 0) notes.push({ n: n++, id: "disc-div", title: "Dividends", rows: [], extra: [], text: `The directors recommend a dividend of ${money(Number(fd.dividend))} for ${S.cur}. It is subject to approval and to the solvency test in Article 69 of Law N° 007/2021 governing companies, and is not recognised as a liability in these financial statements.`, textOnly: true });
   return { notes, noteOf };
 }
 
@@ -1863,7 +2027,7 @@ function renderNotes(built, cmp) {
     if (note.id === "basis") {
       h += `<textarea id="policies" aria-label="Basis of preparation">${esc(note.text)}</textarea><div><button class="btn small" type="button" id="btn-policies-reset">Reset to standard wording</button></div>`;
     } else if (note.textOnly) {
-      h += `<p>${esc(note.text)}</p><div><button class="linkish" type="button" data-jump="sec-disc">Edit in year-end disclosures</button></div>`;
+      h += `<p style="white-space:pre-line">${esc(note.text)}</p><div><button class="linkish" type="button" data-jump="sec-disc">Edit in year-end disclosures</button></div>`;
     } else {
       h += noteTableHTML(note.rows, cols);
       for (const x of note.extra) h += `<div class="eyebrow" style="margin-top:4px">${esc(x.title)}</div>` + noteTableHTML(x.rows, x.single ? [S.cur] : cols, x.single);
@@ -2212,6 +2376,8 @@ function renderPack() {
   $("fs-company").textContent = S.company || "Your company";
   $("fs-subt").textContent = `For ${S.cur} · IFRS for SMEs format · unaudited · amounts in ${unitText()}`;
   renderFSDisc();
+  renderFSAct(cur);
+  renderDR(cur, cmp, cf);
   $("fs-checks").innerHTML = $("checks").innerHTML + fsDiscChip();
   renderKPIs(cur, base, cmp, cf);
   renderResults(cur, base, compareTo === "bud" ? (S.bud || "Budget") : S.cmp);
@@ -2229,6 +2395,7 @@ function renderPack() {
   const ck = commKey();
   if (!$("commentary").value.trim() || renderPack.lastKey !== ck) $("commentary").value = store.get(ck) || basicDraft();
   renderPack.lastKey = ck;
+  refreshPlan().catch(() => {});
 }
 function renderMapping() {
   const only = $("only-unmapped").checked;
@@ -3096,10 +3263,10 @@ function renderModelResults() {
 }
 
 /* ---------- Free downloads and unlock (public site only) ---------- */
-const PAY = { trialDays: 30, price: "RWF 20,000", founding: "RWF 10,000", seats: 20, period: "a month", wa: "250784551341" };
+const PAY = { trialDays: 30, price: "RWF 20,000", founding: "RWF 10,000", volume: "RWF 15,000", volumeFrom: 5, seats: 20, period: "a month", wa: "250784551341" };
 const PUB_KEY = {"kty":"EC","crv":"P-256","x":"BZ8Cwi70A75Ibsf9uAsNBIUUvqtzYO4yiSaSXoOWCqo","y":"SrjEzklgpoq41vUh42ADy9Aw7z3J_qUKdZnYzYhct4g"};
 const PW_ON = typeof window.claude === "undefined";
-let unlockUntil = null;
+let unlockUntil = null, payCo = "", payId = "", dlUnlocked = false;
 const niceDate = d => d.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
 const b64uDec = s => { s = s.replace(/-/g, "+").replace(/_/g, "/"); while (s.length % 4) s += "="; return Uint8Array.from(atob(s), c => c.charCodeAt(0)); };
 function deviceId() {
@@ -3112,20 +3279,38 @@ function deviceId() {
   }
   return id;
 }
-async function verifyCode(code) {
+/* Prices are per company: the company ID mixes this device's ID with the company name, so an unlock code opens one company on one device. */
+const coNorm = n => String(n || "").toLowerCase().replace(/\(example\)/g, " ").replace(/[^a-z0-9]+/g, " ").replace(/\b(ltd|limited|plc)\b/g, " ").replace(/\s+/g, " ").trim();
+function companyId(name) {
+  const t = deviceId() + "|" + coNorm(name);
+  let h1 = 0x811c9dc5, h2 = 0x9747b28c;
+  for (let i = 0; i < t.length; i++) { const c = t.charCodeAt(i); h1 = Math.imul(h1 ^ c, 16777619); h2 = Math.imul(h2 ^ c, 2246822519) ^ (h2 >>> 13); }
+  const al = "ABCDEFGHJKMNPQRSTUVWXYZ23456789"; let out = "";
+  for (let i = 0; i < 8; i++) out += al[(((i < 4 ? h1 : h2) >>> (i % 4 * 8)) & 255) % al.length];
+  return `ACV-${out.slice(0, 4)}-${out.slice(4)}`;
+}
+async function verifyCode(code, id) {
   try {
     const m = String(code || "").replace(/\s+/g, "").match(/^(\d{8})-([A-Za-z0-9_-]{60,100})$/);
     if (!m || !crypto.subtle) return null;
     const key = await crypto.subtle.importKey("jwk", PUB_KEY, { name: "ECDSA", namedCurve: "P-256" }, false, ["verify"]);
-    const ok = await crypto.subtle.verify({ name: "ECDSA", hash: "SHA-256" }, key, b64uDec(m[2]), new TextEncoder().encode(`ACIVAZ|${deviceId()}|${m[1]}`));
+    const ok = await crypto.subtle.verify({ name: "ECDSA", hash: "SHA-256" }, key, b64uDec(m[2]), new TextEncoder().encode(`ACIVAZ|${id || deviceId()}|${m[1]}`));
     if (!ok) return null;
     const e = m[1];
     return new Date(+e.slice(0, 4), +e.slice(4, 6) - 1, +e.slice(6, 8), 23, 59, 59);
   } catch (err) { return null; }
 }
+const codeStore = () => { const c = store.get("acv:codes"); return c && typeof c === "object" && !Array.isArray(c) ? c : {}; };
+const verMemo = new Map();
+async function unlockDate(name) {
+  const id = companyId(name);
+  const v = async (code, who) => { if (!code) return null; const k = who + "|" + code; if (!verMemo.has(k)) verMemo.set(k, await verifyCode(code, who)); return verMemo.get(k); };
+  const a = await v(codeStore()[id], id), b = await v(store.get("acv:code"), deviceId()); /* acv:code: older device-wide codes, honoured until they end */
+  return a && b ? (a > b ? a : b) : a || b;
+}
+const isLive = d => !!d && d >= new Date();
 const usedDownloads = () => Number(store.get("acv:dl") || 0);
-const isUnlocked = () => !!unlockUntil && unlockUntil >= new Date();
-/* Free trial: 30 days of unlimited downloads from the first visit on this device. */
+/* Free trial: 30 days of unlimited downloads from the first visit on this device, for any company. */
 function trialEnd() {
   let st = store.get("acv:trial");
   if (!isISO(st)) { st = todayISO(); store.set("acv:trial", st); }
@@ -3137,27 +3322,36 @@ const trialDaysLeft = () => Math.max(0, Math.ceil((trialEnd() - new Date()) / 86
 function renderPlan() {
   const el = $("plan-status"); if (!el) return;
   if (!PW_ON) { el.textContent = ""; return; }
-  const btn = `<button class="linkish" type="button" id="btn-open-pay">Unlock unlimited downloads</button>`;
-  el.innerHTML = isUnlocked() ? `Unlocked on this device until ${niceDate(unlockUntil)}` : inTrial() ? `Free trial: ${trialDaysLeft()} day${trialDaysLeft() === 1 ? "" : "s"} left, until ${niceDate(trialEnd())} · ${btn}` : `Free trial ended on ${niceDate(trialEnd())} · ${btn}`;
+  const btn = `<button class="linkish" type="button" id="btn-open-pay">Unlock this company</button>`;
+  el.innerHTML = isLive(unlockUntil) ? `${esc(S.company || "This company")}: unlocked on this device until ${niceDate(unlockUntil)}` : inTrial() ? `Free trial: ${trialDaysLeft()} day${trialDaysLeft() === 1 ? "" : "s"} left, until ${niceDate(trialEnd())} · ${btn}` : `Free trial ended on ${niceDate(trialEnd())} · ${btn}`;
 }
-function openPaywall() {
-  const dev = deviceId();
-  $("pw-dev").textContent = dev;
-  $("pw-wa").href = `https://wa.me/${PAY.wa}?text=` + encodeURIComponent(`Hello, I have paid for Acivaz.\nAmount paid (RWF): \nDevice ID: ${dev}\nMoMo transaction ID: `);
-  const expired = unlockUntil && unlockUntil < new Date();
-  $("pw-title").textContent = expired ? `Your access ended on ${niceDate(unlockUntil)}` : !inTrial() ? `Your ${PAY.trialDays}-day free trial has ended` : "Unlock unlimited downloads";
+async function refreshPlan() {
+  if (!PW_ON) return;
+  const co = S.company, d = await unlockDate(co);
+  if (co === S.company) { unlockUntil = d; renderPlan(); }
+}
+function openPaywall(name, ended) {
+  payCo = String(name ?? S.company ?? "").replace(/\s*\(example\)\s*$/i, "").trim(); payId = companyId(payCo);
+  $("pw-co").textContent = payCo || "this company";
+  $("pw-dev").textContent = payId;
+  $("pw-wa").href = `https://wa.me/${PAY.wa}?text=` + encodeURIComponent(`Hello, I have paid for Acivaz.\nCompany: ${payCo}\nCompany ID: ${payId}\nAmount paid (RWF): \nMoMo transaction ID: `);
+  $("pw-title").textContent = ended && ended < new Date() ? `Downloads for this company ended on ${niceDate(ended)}` : !inTrial() ? `Your ${PAY.trialDays}-day free trial has ended` : "Unlock downloads for this company";
   $("pw-status").textContent = "";
   $("paywall").hidden = false;
   setTimeout(() => $("pw-code").focus(), 50);
 }
 const closePaywall = () => { $("paywall").hidden = true; };
-function canDownload() {
-  if (!PW_ON || isUnlocked() || inTrial()) return true;
-  openPaywall();
+async function canDownload(name) {
+  dlUnlocked = false;
+  if (!PW_ON) return true;
+  const co = name ?? S.company, d = await unlockDate(co);
+  if (isLive(d)) { dlUnlocked = true; return true; }
+  if (inTrial()) return true;
+  openPaywall(co, d);
   return false;
 }
 function noteDownload() {
-  if (!PW_ON || isUnlocked()) return;
+  if (!PW_ON || dlUnlocked) return;
   store.set("acv:dl", usedDownloads() + 1);
   renderPlan();
   const left = trialDaysLeft();
@@ -3167,19 +3361,18 @@ async function submitCode() {
   const code = $("pw-code").value.trim(), st = $("pw-status");
   if (!code) { st.textContent = "Paste the code you received first."; return; }
   st.textContent = "Checking…";
-  const d = await verifyCode(code);
-  if (!d) { st.textContent = "That code doesn't match this device. Check you copied all of it and that you sent the device ID shown above."; return; }
+  const id = payId || companyId(payCo);
+  let d = await verifyCode(code, id), legacy = false;
+  if (!d) { d = await verifyCode(code, deviceId()); legacy = !!d; }
+  if (!d) { st.textContent = "That code doesn't match this company on this device. Check you copied all of it and that you sent the company ID shown above."; return; }
   if (d < new Date()) { st.textContent = `That code expired on ${niceDate(d)}. Ask for a new one.`; return; }
-  store.set("acv:code", code.replace(/\s+/g, ""));
-  unlockUntil = d; renderPlan(); closePaywall(); $("pw-code").value = "";
-  toast(`Unlocked until ${niceDate(d)}. Thank you.`);
+  const clean = code.replace(/\s+/g, "");
+  if (legacy) store.set("acv:code", clean); else { const cs = codeStore(); cs[id] = clean; store.set("acv:codes", cs); }
+  closePaywall(); $("pw-code").value = "";
+  await refreshPlan();
+  toast(`${payCo || "This company"} is unlocked until ${niceDate(d)}. Thank you.`);
 }
-async function loadUnlock() {
-  if (!PW_ON) return;
-  const c = store.get("acv:code");
-  unlockUntil = c ? await verifyCode(c) : null;
-  renderPlan();
-}
+async function loadUnlock() { await refreshPlan(); }
 $("pw-close").onclick = closePaywall;
 $("paywall").addEventListener("click", e => { if (e.target === $("paywall")) closePaywall(); });
 document.addEventListener("keydown", e => { if (e.key === "Escape" && !$("paywall").hidden) closePaywall(); });
@@ -3188,10 +3381,10 @@ async function copyText(t, btn) {
   try { await navigator.clipboard.writeText(t); const o = btn.textContent; btn.textContent = "Copied"; setTimeout(() => { btn.textContent = o; }, 1400); }
   catch (e) { toast("Select the text and copy it."); }
 }
-$("pw-copy-dev").onclick = e => copyText(deviceId(), e.currentTarget);
+$("pw-copy-dev").onclick = e => copyText(payId || companyId(S.company), e.currentTarget);
 document.addEventListener("click", e => {
   const c = e.target.closest("[data-copy]"); if (c) copyText(c.dataset.copy, c);
-  if (e.target.closest("#btn-open-pay")) openPaywall();
+  if (e.target.closest("#btn-open-pay")) openPaywall(S.company, unlockUntil);
 });
 
 /* ---------- PDF ---------- */
@@ -3317,7 +3510,7 @@ function pdfGhost(doc, X, Y, Wd, Ht, title, cur, base, label) {
   doc.setTextColor(0, 0, 0);
 }
 async function exportPDF(only) {
-  if (!canDownload()) return;
+  if (!(await canDownload())) return;
   const want = k => !only || only === k;
   if (!window.jspdf) { toast("The PDF tool didn't load. Check your connection and reload."); return; }
   const { jsPDF } = window.jspdf;
@@ -3363,7 +3556,7 @@ async function exportPDF(only) {
     const rule = yy => { doc.setLineWidth(0.2); for (const i of figs) doc.line(xs[i] + 2.5, yy, xs[i] + cols[i].w, yy); };
     const head = () => {
       font("bold", 8.3);
-      const ls = cols.map(c => c.t ? doc.splitTextToSize(plain(c.t), c.a === "r" || c.a === "c" ? c.w - 3 : c.w + 6) : []), n = Math.max(1, ...ls.map(l => l.length));
+      const ls = cols.map(c => c.t ? doc.splitTextToSize(plain(c.t), c.a === "r" ? c.w - 3 : c.a === "c" ? c.w + 2 : c.w + 6) : []), n = Math.max(1, ...ls.map(l => l.length));
       ls.forEach((l, i) => { const c = cols[i]; l.forEach((t, j) => { const yy = y + (n - l.length + j) * 3.5; c.a === "r" ? doc.text(t, xs[i] + c.w, yy, { align: "right" }) : c.a === "c" ? doc.text(t, xs[i] + c.w / 2, yy, { align: "center" }) : doc.text(t, xs[i], yy); }); });
       y += (n - 1) * 3.5 + 1.8; doc.setLineWidth(0.2); doc.line(M, y, M + cols.reduce((t, c) => t + c.w, 0), y); y += 4.2;
     };
@@ -3432,14 +3625,34 @@ async function exportPDF(only) {
     RATIOS.map(d => { const v = ratioVal(d, cur), st = ratioStatus(d, v); return { cells: [d.l, ratioFmt(d, v), cmp ? ratioFmt(d, ratioVal(d, cmp)) : "", d.bench, st ? STATUS_TEXT[st] : "n/a"] }; }));
   }
   if (part === "all" || part === "fs") {
-  { const fd = FSD();
-    heading("Approval of the financial statements", part === "all");
-    para("The directors are responsible for preparing financial statements that present fairly the company's financial position, performance and cash flows, in line with IFRS for SMEs and the law governing companies in Rwanda, and for keeping proper accounting records.", 9.6);
+  { const fd = FSD(), sg = fsSigners();
+    const sigLines = () => (sg.length ? sg : fd.single ? ["Name, Director"] : ["Name, Director", "Name, Director"]).forEach(t => { ensure(22); doc.setLineWidth(0.25); doc.line(M, y, M + 70, y); font("normal", 9.4); doc.text(plain(t), M, y + 5); y += 22; });
+    const onDate = fd.approvedOn ? niceISO(fd.approvedOn) : "____________________";
+    heading("Directors' report", part === "all");
+    for (const x of drSections(cur, cmp, cf)) { if (x.h) subheading(x.h); para(x.t, 9.6); y += 3; }
+    y += 3; ensure(40);
+    para(`Approved by the board on ${onDate} and signed on its behalf by:`, 9.6); y += 12;
+    sigLines();
+    const sv = solvency(cur);
+    if (sv && sv.ok && !sv.optOut) {
+      heading("Directors' solvency certificate", true);
+      para(`We, the directors of ${S.company || "the company"} who voted in favour of the dividend of ${money(sv.div)} recommended for ${S.cur}, certify that in our opinion the company will, immediately after the distribution, satisfy the solvency test under Article 69 of Law N° 007/2021 governing companies. That is, the company will be able to pay its debts as they fall due in the normal course of business, and the realisable value of its assets will be greater than the present value of its liabilities, including contingent liabilities.`, 9.6);
+      y += 4; subheading("Figures considered, at the end of the period");
+      table([{ t: unitShort(), w: 70 }, { t: "After the dividend", w: 34, a: "r" }, { t: "Must be more than", w: 34, a: "r" }, { t: "Result", w: 26, a: "r", v: true }], [
+        { cells: ["Total assets left, against total liabilities", amt(sv.taA), amt(cur.tl), sv.bs ? "Passes" : "Fails"] },
+        { cells: ["Current assets left, against current liabilities", amt(sv.caA), amt(cur.cl), sv.cl ? "Passes" : "Fails"] },
+        { cells: ["Cash and bank left", amt(sv.cashA), "0", sv.cash ? "Passes" : "Fails"] }
+      ]);
+      para("The directors have also considered debts falling due after the period end, contingent liabilities and any fixed returns on preference shares.", 9); y += 6;
+      para(`Date: ${onDate}`, 9.6); y += 12;
+      sigLines();
+    }
+    heading("Approval of the financial statements", true);
+    para("The directors are responsible for preparing financial statements that give a true and fair view of the company's financial position, performance and cash flows, in line with IFRS for SMEs and Law N° 007/2021 governing companies, and for keeping proper accounting records.", 9.6);
     y += 3;
-    para(`The financial statements on the pages that follow were approved by the board of directors on ${fd.approvedOn ? niceISO(fd.approvedOn) : "____________________"} and signed on its behalf by:`, 9.6);
+    para(`The financial statements on the pages that follow were approved by the board of directors on ${onDate} and signed on its behalf by:`, 9.6);
     y += 12;
-    const sg = String(fd.signers || "").split("\n").map(t => t.trim()).filter(Boolean);
-    (sg.length ? sg : ["Name, Director", "Name, Director"]).forEach(t => { ensure(22); doc.setLineWidth(0.25); doc.line(M, y, M + 70, y); font("normal", 9.4); doc.text(plain(t), M, y + 5); y += 22; });
+    sigLines();
   }
   // Statements
   const noteOf = built.noteOf;
@@ -3659,7 +3872,7 @@ const fileBase = () => `${(S.company || "Management pack").replace(/[^\w\- ]+/g,
 
 /* ---------- Excel ---------- */
 async function exportXLSX(only) {
-  if (!canDownload()) return;
+  if (!(await canDownload())) return;
   const want = k => !only || only === k || (only === "bplan" && k === "forecast");
   if (!window.XLSX) { toast("The Excel tool didn't load. Check your connection and reload."); return; }
   const { cur, cmp, bud, open, cf, built } = snapshot();
@@ -3711,6 +3924,10 @@ async function exportXLSX(only) {
   add(scRows, "Changes in equity", [46, 24, 20, 16]);
   add(cfRows, "Cash flows", [52, 16]);
   add(nRows, "Notes", [52, 16, 16]);
+  { const rows = [["Directors' report"]], sv = solvency(cur);
+    for (const x of drSections(cur, cmp, cf)) { if (x.h) rows.push([x.h]); for (const l of x.t.split("\n")) rows.push(["", l]); rows.push([]); }
+    if (sv) rows.push([`Dividend solvency test (${S.currency})`, "After the dividend", "Must be more than", "Result"], ["Total assets left, against total liabilities", R0(sv.taA), R0(cur.tl), sv.bs ? "Passes" : "Fails"], ["Current assets left, against current liabilities", R0(sv.caA), R0(cur.cl), sv.cl ? "Passes" : "Fails"], ["Cash and bank left", R0(sv.cashA), 0, sv.cash ? "Passes" : "Fails"]);
+    add(rows, "Directors' report", [40, 100, 18, 10]); }
   { const fd = FSD(); add([["Approval of the financial statements"], ["Approved by the board on", fd.approvedOn || ""], ["Signed on behalf of the board by"]].concat(String(fd.signers || "").split("\n").filter(t => t.trim()).map(t => ["", t.trim()])), "Approval", [36, 40]); }
   add(mRows, "Mapping", [14, 40, 16, 16, 16, 16, 28]);
   }
@@ -4697,7 +4914,7 @@ async function bkBackup() {
 }
 async function bkExportXLSX() {
   if (!window.XLSX) { toast("The Excel tool didn't load. Check your connection and reload."); return; }
-  if (!canDownload()) return;
+  if (!(await canDownload(book().name))) return;
   const b = book(), d = bkAsAt || todayISO(), bal = tbAt(b, d), wb = XLSX.utils.book_new();
   const add = (rows, name, w) => { const ws = XLSX.utils.aoa_to_sheet(rows); ws["!cols"] = w.map(x => ({ wch: x })); XLSX.utils.book_append_sheet(wb, ws, name); };
   const tb = [[`Trial balance at ${d} (${b.currency})`, "Account", "Debit", "Credit"]];
