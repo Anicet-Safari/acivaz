@@ -24,7 +24,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/cpexcel.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 /* Layout: a set of management accounts from a good firm. White paper on a cool grey desk, navy as the house colour, ruled tables (single rule above subtotals, double rule under totals), serif headings like an annual report. Charts use a distinct palette: green up, brick red down, steel and ochre for comparisons. */
@@ -48,7 +49,8 @@
   --bar-ghost: #C9A55E;
   --pos: #3F8A5C;
   --neg: #C0503F;
-  --seg1: #5B82B0; --seg2: #C08A2B; --seg3: #6E8540; --seg4: #8C6BA0; --seg5: #9AA5B1; --seg6: #A6473B; --seg7: #D9BC80;
+  --seg1: #5B82B0; --seg2: #C08A2B; --seg3: #6E8540; --seg4: #595959; --seg5: #9AA5B1; --seg6: #A6473B; --seg7: #D9BC80;
+  --g1: #1F3A5F; --g2: #2E75B6; --g3: #548235; --g4: #C55A11; --g5: #BF9000; --g6: #9E2A2B; --g7: #595959;
   --font-display: "Source Serif 4", "Iowan Old Style", Georgia, "Times New Roman", serif;
   --font-body: "IBM Plex Sans", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
@@ -60,7 +62,8 @@
     --accent: #8FB0D9; --accent-ink: #0E1726; --accent-soft: #1C2A3D;
     --good: #7CC79A; --good-soft: #17291F; --warn: #E2B45E; --warn-soft: #2D2414; --bad: #EE8A7C; --bad-soft: #3A1D19;
     --bar-total: #4D6A8F; --bar-ghost: #C9A55E; --pos: #5DB07E; --neg: #E0705F;
-    --seg1: #7FA3CF; --seg2: #D5A24A; --seg3: #93AE5E; --seg4: #AE8CC2; --seg5: #7D8896; --seg6: #D0705F; --seg7: #E3CB98;
+    --seg1: #7FA3CF; --seg2: #D5A24A; --seg3: #93AE5E; --seg4: #BFBFBF; --seg5: #7D8896; --seg6: #D0705F; --seg7: #E3CB98;
+    --g1: #8FB0D9; --g2: #6FA8DC; --g3: #93C47D; --g4: #F0A35E; --g5: #E6C34A; --g6: #E07A6F; --g7: #BFBFBF;
     color-scheme: dark;
   }
 }
@@ -69,7 +72,8 @@
   --accent: #8FB0D9; --accent-ink: #0E1726; --accent-soft: #1C2A3D;
   --good: #7CC79A; --good-soft: #17291F; --warn: #E2B45E; --warn-soft: #2D2414; --bad: #EE8A7C; --bad-soft: #3A1D19;
   --bar-total: #4D6A8F; --bar-ghost: #C9A55E; --pos: #5DB07E; --neg: #E0705F;
-  --seg1: #7FA3CF; --seg2: #D5A24A; --seg3: #93AE5E; --seg4: #AE8CC2; --seg5: #7D8896; --seg6: #D0705F; --seg7: #E3CB98;
+  --seg1: #7FA3CF; --seg2: #D5A24A; --seg3: #93AE5E; --seg4: #BFBFBF; --seg5: #7D8896; --seg6: #D0705F; --seg7: #E3CB98;
+  --g1: #8FB0D9; --g2: #6FA8DC; --g3: #93C47D; --g4: #F0A35E; --g5: #E6C34A; --g6: #E07A6F; --g7: #BFBFBF;
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
@@ -481,6 +485,15 @@ img { max-width: 100%; }
   .kpi .v { font-size: 26px; }
   .panel { padding: 14px; }
 }
+/* Gantt chart */
+table.lines.bp-rows input { width: 100%; padding: 6px 7px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); font: inherit; font-size: 13.5px; }
+.gantt-box { overflow-x: auto; margin-top: 6px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); padding: 10px 12px; }
+.gantt { display: block; width: 100%; min-width: 640px; height: auto; font-family: var(--font-body); }
+.gantt-empty { color: var(--muted); font-size: 13px; margin: 4px 0; }
+/* Sign-off */
+.sg-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr)); gap: 12px 16px; }
+.sg-grid label { display: flex; flex-direction: column; gap: 5px; font-weight: 600; font-size: 13px; }
+.sg-grid input { padding: 7px 9px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg); font-weight: 400; font-size: 14px; }
 /* Welcome page */
 .brand-mark { background: none; border: 0; padding: 0; cursor: pointer; text-align: left; }
 .on-home #btn-xlsx, .on-home #btn-pdf { display: none; }
@@ -662,7 +675,7 @@ img { max-width: 100%; }
           <ul><li>Sales, purchases and bank</li><li>VAT at 18% with EBM receipt numbers</li><li>Income tax estimates and deadlines</li></ul>
           <button class="linkish go" type="button" data-goto="books">Open the books →</button>
         </div>
-        <div class="panel hm-card" style="--c: var(--seg4)">
+        <div class="panel hm-card" style="--c: var(--g4)">
           <div class="ic"><svg viewBox="0 0 24 24"><path d="M4 18l5-5 4 3 7-8"/><path d="M15 8h5v5"/></svg></div>
           <h3>Plans and funding</h3>
           <p>Built on the actual figures, not a blank spreadsheet.</p>
@@ -728,6 +741,7 @@ img { max-width: 100%; }
             </div>
           </div>
           <div class="pack-nav">
+            <button type="button" data-jump="sec-results">Results</button>
             <button type="button" data-jump="sec-charts">Charts</button>
             <button type="button" data-jump="sec-dash">Scorecard</button>
             <button type="button" data-jump="sec-commentary">Commentary</button>
@@ -739,6 +753,11 @@ img { max-width: 100%; }
 
       <div class="checks" id="checks"></div>
       <div class="kpis" id="kpis"></div>
+
+      <div class="panel" id="sec-results" style="scroll-margin-top:90px">
+        <div class="panel-head"><h3>Results against budget and last year</h3><span class="sub" id="res-sub"></span></div>
+        <div class="table-box"><table class="st fs" id="res"></table></div>
+      </div>
 
       <div class="grid-2" id="sec-charts" style="scroll-margin-top:90px">
         <div class="panel">
@@ -794,6 +813,8 @@ img { max-width: 100%; }
         <div class="panel-head"><h3>Ratios</h3><span class="sub" id="ratio-sub"></span></div>
         <div class="table-box"><table class="ratios" id="ratios"></table></div>
       </div>
+
+      <div class="panel sg-box" id="sg-pack"></div>
     </section>
 
     <!-- FINANCIAL STATEMENTS -->
@@ -1096,6 +1117,8 @@ img { max-width: 100%; }
         </div>
       </div>
 
+      <div class="panel sg-box" id="sg-model"></div>
+
       <label class="check" id="m-pdf-wrap"><input type="checkbox" id="m-pdf"><span>Also add the forecast, budget, valuation, and loans and projects to the full management pack downloads</span></label>
     </section>
 
@@ -1297,6 +1320,7 @@ img { max-width: 100%; }
               <li><strong>Commentary</strong>: press <strong>Rebuild basic draft</strong> for a draft written from the figures, then fill in the notes in square brackets with the real reasons. Edit it freely; it goes into the PDF exactly as written. When Acivaz is opened inside Claude, <strong>Draft with Claude</strong> writes a fuller version.</li>
               <li><strong>Ratios</strong>: ten ratios with a guide value and a flag of Healthy, Watch or Act.</li>
             </ul>
+            <p><strong>Results against budget and last year</strong> sets each line of the profit or loss against the budget and the comparative, with variances; the formal financial statements show only the period and its comparative, as IFRS for SMEs expects. Fill in <strong>Prepared and approved by</strong> at the bottom of the report, or of any Plan step, and the PDF ends with signature lines for both, while each Excel workbook opens on a cover sheet with the same names and its contents.</p>
             <p><strong>Download report PDF</strong> and <strong>Excel</strong> beside the title download the management report on its own. <strong>Download PDF pack</strong> and <strong>Excel</strong> in the top bar download the full pack: the management report and the financial statements together.</p>
           </section>
 
@@ -1354,6 +1378,7 @@ img { max-width: 100%; }
               <li><strong>Funding request</strong>: the amount, its form (loan, equity, grant or a mix) and what it pays for. For a loan, Acivaz checks the debt service cover each year for the amount sought, at the interest rate and term set in Loans and projects. For a mix, enter how much of it is loan. For equity, it shows the share an investor would get at the value from Valuation.</li>
               <li><strong>Risks</strong> and <strong>Milestones</strong> are short tables. <strong>Add risks suggested by the figures</strong> adds risks the numbers point to, such as cash running out in the downside case or slow-paying customers, each with a way to manage it.</li>
             </ul>
+            <p><strong>Milestones</strong> take a start month, an end month and who leads each one, and Acivaz draws them as a Gantt chart: on screen, in the PDF above the milestone table, and as a shaded month-by-month timeline in Excel.</p>
             <p>The list on the left shows which sections are ready, have gaps in brackets, or are still to write. <strong>Download PDF</strong> gives a plan with a cover, contents and every section; <strong>Excel</strong> gives the text, funding, risks, milestones and forecast. Your text is saved on this device for each company.</p>
           </section>
 
@@ -2136,18 +2161,52 @@ function varCell(curD, baseD) {
 }
 function renderIS(cur, cmp, bud, noteOf) {
   $("is-sub").textContent = `For ${S.cur}, ${unitText()}`;
-  const kinds = ["n"].concat(cmp ? ["n", "v", "p"] : []).concat(bud ? ["n", "v", "p"] : []), F = fsCols(kinds);
+  const F = fsCols(["n"].concat(cmp ? ["n"] : []));
   $("is").setAttribute("style", F.attr.slice(7, -1));
-  let h = F.cg + `<thead><tr><th>${esc(unitShort())}</th><th class="note">Note</th><th class="n">${esc(S.cur)}</th>${cmp ? `<th class="n">${esc(S.cmp)}</th><th class="n v">Change</th><th class="n v">%</th>` : ""}${bud ? `<th class="n">${esc(S.bud || "Budget")}</th><th class="n v">vs budget</th><th class="n v">%</th>` : ""}</tr></thead><tbody>`;
+  let h = F.cg + `<thead><tr><th>${esc(unitShort())}</th><th class="note">Note</th><th class="n">${esc(S.cur)}</th>${cmp ? `<th class="n">${esc(S.cmp)}</th>` : ""}</tr></thead><tbody>`;
   for (const L of IS_LINES) {
-    const c = isDisp(L, cur);
-    h += `<tr class="${L.total ? "total" : L.sub ? "sub" : ""}"><td class="lbl">${esc(L.l)}</td><td class="note">${L.note && noteOf[L.note] ? noteOf[L.note] : ""}</td><td class="n">${amt(c)}</td>`;
-    if (cmp) h += `<td class="n">${amt(isDisp(L, cmp))}</td>` + varCell(c, isDisp(L, cmp));
-    if (bud) h += `<td class="n">${amt(isDisp(L, bud))}</td>` + varCell(c, isDisp(L, bud));
-    h += "</tr>";
+    h += `<tr class="${L.total ? "total" : L.sub ? "sub" : ""}"><td class="lbl">${esc(L.l)}</td><td class="note">${L.note && noteOf[L.note] ? noteOf[L.note] : ""}</td><td class="n">${amt(isDisp(L, cur))}</td>${cmp ? `<td class="n">${amt(isDisp(L, cmp))}</td>` : ""}</tr>`;
   }
   $("is").innerHTML = h + "</tbody>";
+  renderResultsTable(cur, cmp, bud);
 }
+/* Management report: actual against budget and last year, with variances. Formal statements show only the period and its comparative. */
+function renderResultsTable(cur, cmp, bud) {
+  const t = $("res"); if (!t) return;
+  $("sec-results").hidden = !(bud || cmp);
+  $("res-sub").textContent = `For ${S.cur}, ${unitText()}. Costs in brackets; a positive variance is favourable.`;
+  const kinds = ["n"].concat(bud ? ["n", "v", "p"] : []).concat(cmp ? ["n", "v", "p"] : []);
+  const w = { n: FS_COL.n, v: FS_COL.v, p: FS_COL.p };
+  t.setAttribute("style", `width:${FS_COL.lab + kinds.reduce((x, k) => x + w[k], 0)}px`);
+  let h = `<colgroup><col style="width:${FS_COL.lab}px">${kinds.map(k => `<col style="width:${w[k]}px">`).join("")}</colgroup><thead><tr><th>${esc(unitShort())}</th><th class="n">${esc(S.cur)}</th>${bud ? `<th class="n">${esc(S.bud || "Budget")}</th><th class="n v">Variance</th><th class="n v">%</th>` : ""}${cmp ? `<th class="n">${esc(S.cmp)}</th><th class="n v">Change</th><th class="n v">%</th>` : ""}</tr></thead><tbody>`;
+  for (const L of IS_LINES) {
+    const c = isDisp(L, cur);
+    h += `<tr class="${L.total ? "total" : L.sub ? "sub" : ""}"><td class="lbl">${esc(L.l)}</td><td class="n">${amt(c)}</td>`;
+    if (bud) h += `<td class="n">${amt(isDisp(L, bud))}</td>` + varCell(c, isDisp(L, bud));
+    if (cmp) h += `<td class="n">${amt(isDisp(L, cmp))}</td>` + varCell(c, isDisp(L, cmp));
+    h += "</tr>";
+  }
+  t.innerHTML = h + "</tbody>";
+}
+/* Report sign-off: who prepared and who approved, kept for each company on this device */
+const sgKey = () => "acv:sg:" + String(S.company || "").trim().toLowerCase();
+function SG() { const k = sgKey(); if (SG.key !== k || !SG.data) { SG.key = k; SG.data = store.get(k) || {}; } return SG.data; }
+const sgLine = (n, r) => [String(n || "").trim(), String(r || "").trim()].filter(Boolean).join(", ");
+function renderSignoff() {
+  const d = SG();
+  document.querySelectorAll(".sg-box").forEach(box => {
+    if (box.dataset.key === SG.key && box.innerHTML) return;
+    box.dataset.key = SG.key;
+    box.innerHTML = `<div class="panel-head"><h3>Prepared and approved by</h3><span class="sub">Printed with signature lines at the end of this report's PDF, and on the cover sheet of the Excel workbook</span></div><div class="sg-grid">` +
+      [["prep", "Prepared by", "Name"], ["prepRole", "Position", "For example: Accountant"], ["appr", "Approved by", "Name"], ["apprRole", "Position", "For example: Managing Director"]]
+        .map(([k, l, ph]) => `<label>${l}<input type="text" data-sg="${k}" value="${esc(d[k] || "")}" placeholder="${esc(ph)}"></label>`).join("") + `</div>`;
+  });
+}
+document.addEventListener("input", e => {
+  const el = e.target.closest("[data-sg]"); if (!el) return;
+  SG()[el.dataset.sg] = el.value; store.set(SG.key, SG.data);
+  document.querySelectorAll(`[data-sg="${el.dataset.sg}"]`).forEach(x => { if (x !== el) x.value = el.value; });
+});
 function renderBS(cur, cmp, open, noteOf) {
   $("bs-sub").textContent = `As at ${S.cur}, ${unitText()}`;
   const showC = cmp && cmp.bsOk, showO = open && open.src === "opn";
@@ -2468,7 +2527,7 @@ function renderCostLines(cur, cmp) {
   $("costlines").innerHTML = `<div class="hbars">${h}</div>`;
   $("costlines-note").textContent = `Costs before tax took ${(totC * 100).toFixed(1)} of every 100 of revenue${totP !== null ? `, against ${(totP * 100).toFixed(1)} in ${S.cmp}` : ""}. Solid bars are ${S.cur}${cmp ? `, faint bars ${S.cmp}. A red change means the line took a bigger share of revenue` : ""}.`;
 }
-const PDF_SEG = [[91, 130, 176], [192, 138, 43], [110, 133, 64], [140, 107, 160], [154, 165, 177], [166, 71, 59], [217, 188, 128], [63, 138, 92]];
+const PDF_SEG = [[91, 130, 176], [192, 138, 43], [110, 133, 64], [89, 89, 89], [154, 165, 177], [166, 71, 59], [217, 188, 128], [63, 138, 92]];
 const PDF_ST = { good: [47, 122, 77], warn: [154, 106, 18], bad: [178, 58, 44] };
 const PDF_ZONE = { good: [208, 230, 214], warn: [240, 225, 196], bad: [240, 208, 202] };
 function pdfScorecard(doc, X, Y, Wd, cur, cmp) {
@@ -2580,6 +2639,7 @@ function renderPack() {
   const ck = commKey();
   if (!$("commentary").value.trim() || renderPack.lastKey !== ck) $("commentary").value = store.get(ck) || basicDraft();
   renderPack.lastKey = ck;
+  renderSignoff();
   refreshPlan().catch(() => {});
 }
 function renderMapping() {
@@ -3094,7 +3154,14 @@ function bpExample() {
     { r: "Power cuts stop production.", m: "Run a standby generator and schedule milling at off-peak hours." },
     { r: "Aflatoxin in maize would mean losing a batch and customers' trust.", m: "Test every batch before milling and reject maize above the limit." }
   ];
-  b.milestones = [{ d: "Q1 2027", l: "Loan approved and second milling line ordered" }, { d: "Q2 2027", l: "Second line installed and a second shift started" }, { d: "Q3 2027", l: "Layers' mash launched; two Northern Province distributors signed" }, { d: "Q4 2027", l: "Sales above RWF 110 million a month" }];
+  b.milestones = [
+    { l: "Loan approved and second milling line ordered", s: "2027-01", e: "2027-03", o: "Managing Director" },
+    { l: "Second line installed and tested", s: "2027-03", e: "2027-06", o: "Production Manager" },
+    { l: "Second shift recruited and trained", s: "2027-05", e: "2027-07", o: "HR Officer" },
+    { l: "Layers' mash launched", s: "2027-07", e: "2027-09", o: "Sales Manager" },
+    { l: "Two Northern Province distributors signed", s: "2027-08", e: "2027-10", o: "Sales Manager" },
+    { l: "Sales above RWF 110 million a month", s: "2027-10", e: "2027-12", o: "Managing Director" }
+  ];
   b.example = true;
   return b;
 }
@@ -3180,7 +3247,73 @@ function renderBplanToc() {
   const done = BP_SECS.filter(x => bpStatus(x).c === "ok").length;
   $("bp-toc").innerHTML = `<div class="bp-prog">${done} of ${BP_SECS.length} sections ready</div>` + BP_SECS.map(x => { const st = bpStatus(x); return `<button type="button" data-jump="bp-s-${x.id}"><span class="num">${x.n}</span><span>${esc(x.t)}</span><small class="${st.c}">${esc(st.l)}</small></button>`; }).join("");
 }
+/* Milestones carry a start and end month; older plans with text such as "Q1 2027" are converted */
+const ymOk = v => /^\d{4}-\d{2}$/.test(v || "");
+const ymIdx = v => +v.slice(0, 4) * 12 + (+v.slice(5, 7) - 1);
+const ymStr = i => `${Math.floor(i / 12)}-${String(i % 12 + 1).padStart(2, "0")}`;
+const ymLab = v => ymOk(v) ? `${MONTHS[+v.slice(5, 7) - 1]} ${v.slice(0, 4)}` : "";
+function msParse(d) {
+  const t = String(d || ""), sp = [], MN = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
+  t.replace(/Q([1-4])\s*((?:19|20)\d{2})/gi, (_, q, y) => { const b = +y * 12 + (q - 1) * 3; sp.push([b, b + 2]); return _; });
+  t.replace(/H([12])\s*((?:19|20)\d{2})/gi, (_, h, y) => { const b = +y * 12 + (h - 1) * 6; sp.push([b, b + 5]); return _; });
+  t.replace(/\b(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?\s+((?:19|20)\d{2})/gi, (_, mo, y) => { const b = +y * 12 + MN.indexOf(mo.slice(0, 3).toLowerCase()); sp.push([b, b]); return _; });
+  t.replace(/^\s*((?:19|20)\d{2})-(\d{2})\s*$/, (_, y, mo) => { const b = +y * 12 + (+mo - 1); sp.push([b, b]); return _; });
+  if (!sp.length) (t.match(/\b(?:19|20)\d{2}\b/g) || []).forEach(y => sp.push([+y * 12, +y * 12 + 11]));
+  if (!sp.length) return null;
+  return { s: ymStr(Math.min(...sp.map(x => x[0]))), e: ymStr(Math.max(...sp.map(x => x[1]))) };
+}
+function msList() {
+  const b = BP(); b.milestones = b.milestones || [];
+  for (const m of b.milestones) {
+    if (!ymOk(m.s) && m.d) { const p = msParse(m.d); if (p) { m.s = p.s; m.e = p.e; } }
+    if (ymOk(m.s) && !ymOk(m.e)) m.e = m.s;
+    if (ymOk(m.s) && ymOk(m.e) && m.e < m.s) [m.s, m.e] = [m.e, m.s];
+  }
+  return b.milestones.filter(m => String(m.l || "").trim() || ymOk(m.s));
+}
+function whenText(m) {
+  if (!ymOk(m.s)) return m.d || "";
+  if (m.s === m.e) return ymLab(m.s);
+  return m.s.slice(0, 4) === m.e.slice(0, 4) ? `${MONTHS[+m.s.slice(5, 7) - 1]} to ${ymLab(m.e)}` : `${ymLab(m.s)} to ${ymLab(m.e)}`;
+}
+const GANTT_COLS = ["--g1", "--g2", "--g3", "--g4", "--g5", "--g6", "--g7"];
+function ganttSVG(list) {
+  const rows = list.filter(m => ymOk(m.s));
+  if (!rows.length) return "";
+  let a = Math.min(...rows.map(m => ymIdx(m.s))), z = Math.max(...rows.map(m => ymIdx(m.e)));
+  a -= a % 3; z += 2 - z % 3;
+  const n = z - a + 1, labW = 250, W = 960, colW = (W - labW - 8) / n, rowH = 32, top = 46, H = top + rows.length * rowH + 10;
+  const cut = (t, k) => t.length > k ? t.slice(0, k - 1) + "…" : t;
+  let h = `<svg class="gantt" viewBox="0 0 ${W} ${H}" role="img" aria-label="Gantt chart of the milestones">`;
+  for (let i = 0; i < n; i += 3) {
+    const x = labW + i * colW, q = Math.floor(((a + i) % 12) / 3) + 1, yy = Math.floor((a + i) / 12);
+    if ((i / 3) % 2 === 0) h += `<rect x="${x.toFixed(1)}" y="${top - 30}" width="${(colW * 3).toFixed(1)}" height="${H - top + 26}" fill="var(--line-soft)"/>`;
+    h += `<text x="${(x + colW * 1.5).toFixed(1)}" y="${top - 15}" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--ink)">Q${q} ${yy}</text>`;
+  }
+  if (colW >= 12) for (let i = 0; i < n; i++) h += `<text x="${(labW + (i + 0.5) * colW).toFixed(1)}" y="${top - 2}" text-anchor="middle" font-size="10" fill="var(--muted)">${MONTHS[(a + i) % 12].slice(0, colW >= 30 ? 3 : 1)}</text>`;
+  h += `<line x1="${labW}" y1="${top + 3}" x2="${W - 8}" y2="${top + 3}" stroke="var(--line)"/>`;
+  rows.forEach((m, r) => {
+    const y = top + 8 + r * rowH, s0 = ymIdx(m.s) - a, e0 = ymIdx(m.e) - a, x = labW + s0 * colW, w = (e0 - s0 + 1) * colW, col = `var(${GANTT_COLS[r % GANTT_COLS.length]})`;
+    h += `<text x="0" y="${y + 15}" font-size="12.5" fill="var(--ink)">${esc(cut(String(m.l || "Untitled"), 36))}</text>`;
+    h += `<rect x="${(x + 1).toFixed(1)}" y="${y + 3}" width="${Math.max(4, w - 2).toFixed(1)}" height="18" rx="3" fill="${col}"><title>${esc(String(m.l || ""))}: ${esc(whenText(m))}${m.o ? " · " + esc(m.o) : ""}</title></rect>`;
+    if (m.o) { const inside = w > m.o.length * 6.6 + 16, tx = inside ? x + 8 : x + w + 6; if (inside || tx + m.o.length * 6.4 < W) h += `<text x="${tx.toFixed(1)}" y="${y + 16}" font-size="10.5" fill="${inside ? "var(--surface)" : "var(--muted)"}">${esc(m.o)}</text>`; }
+    h += `<line x1="0" y1="${y + rowH - 4}" x2="${W - 8}" y2="${y + rowH - 4}" stroke="var(--line-soft)"/>`;
+  });
+  const now = new Date(), ti = now.getFullYear() * 12 + now.getMonth() - a;
+  if (ti >= 0 && ti < n) { const x = labW + (ti + (now.getDate() - 1) / 31) * colW; h += `<line x1="${x.toFixed(1)}" y1="${top - 4}" x2="${x.toFixed(1)}" y2="${H - 4}" stroke="var(--bad)" stroke-dasharray="4 3" stroke-width="1.5"/><text x="${(x + 4).toFixed(1)}" y="${H - 6}" font-size="10" fill="var(--bad)">Today</text>`; }
+  return h + `</svg>`;
+}
+function renderGantt() {
+  const el = $("bp-gantt"); if (!el) return;
+  const svg = ganttSVG(msList());
+  el.innerHTML = svg || `<p class="gantt-empty">Add a start and end month to each milestone and the timeline appears here.</p>`;
+}
 const bpRowsHTML = list => {
+  if (list === "milestones") {
+    const rows = msList(), all = BP().milestones;
+    setTimeout(renderGantt, 0);
+    return `<div class="table-box"><table class="lines bp-rows"><thead><tr><th>Activity or milestone</th><th style="width:150px">Start</th><th style="width:150px">End</th><th style="width:20%">Responsible</th><th style="width:40px"></th></tr></thead><tbody>${all.map((r, i) => `<tr><td><textarea id="bp-milestones-${i}-l" data-bpr="milestones.${i}.l" aria-label="Milestone, row ${i + 1}" rows="2">${esc(r.l || "")}</textarea></td><td><input type="month" id="bp-milestones-${i}-s" data-bpr="milestones.${i}.s" value="${esc(ymOk(r.s) ? r.s : "")}" placeholder="YYYY-MM" aria-label="Start month, row ${i + 1}"></td><td><input type="month" id="bp-milestones-${i}-e" data-bpr="milestones.${i}.e" value="${esc(ymOk(r.e) ? r.e : "")}" placeholder="YYYY-MM" aria-label="End month, row ${i + 1}"></td><td><input type="text" id="bp-milestones-${i}-o" data-bpr="milestones.${i}.o" value="${esc(r.o || "")}" placeholder="Who leads it" aria-label="Responsible, row ${i + 1}"></td><td><button class="btn tiny" type="button" data-bp-act="del-row" data-list="milestones" data-i="${i}" aria-label="Remove row ${i + 1}">×</button></td></tr>`).join("") || `<tr><td colspan="5" class="muted">Nothing listed yet.</td></tr>`}</tbody></table></div><h4 style="margin:14px 0 2px">Timeline</h4><div class="gantt-box" id="bp-gantt"></div>`;
+  }
   const b = BP(), rows = b[list] || [];
   const cols = list === "risks" ? [["r", "Risk"], ["m", "How we manage it"]] : [["d", "When"], ["l", "Milestone"]];
   return `<div class="table-box"><table class="lines bp-rows"><thead><tr>${cols.map(([, h], i) => `<th style="${list === "milestones" && i === 0 ? "width:22%" : ""}">${h}</th>`).join("")}<th style="width:40px"></th></tr></thead><tbody>${rows.map((r, i) => `<tr>${cols.map(([k, h]) => `<td><textarea id="bp-${list}-${i}-${k}" data-bpr="${list}.${i}.${k}" aria-label="${h}, row ${i + 1}" rows="2">${esc(r[k] || "")}</textarea></td>`).join("")}<td><button class="btn tiny" type="button" data-bp-act="del-row" data-list="${list}" data-i="${i}" aria-label="Remove row ${i + 1}">×</button></td></tr>`).join("") || `<tr><td colspan="3" class="muted">Nothing listed yet.</td></tr>`}</tbody></table></div>`;
@@ -3279,7 +3412,14 @@ $("view-model").addEventListener("input", e => {
   if (el.dataset.bp) { b.text[el.dataset.bp] = el.value; delete b.example; const u = $("bp-undo-" + el.dataset.bp); if (u) u.hidden = true; bpSave(); renderBplanToc(); return; }
   if (el.dataset.bpf) { const k = el.dataset.bpf; if (k === "amount" || k === "loanPart") { const v = parseFloat(el.value); b.funding[k] = isFinite(v) ? v * (UNIT[S.unit] || UNIT.m).div : 0; } else { b.funding.type = el.value; $("bp-loanpart-f").hidden = el.value !== "mixed"; if (el.value === "mixed" && !b.funding.loanPart) b.funding.loanPart = b.funding.amount / 2; } delete b.example; $("bp-example").hidden = true; bpSave(); renderBplanToc(); renderBplanNumbers(); return; }
   if (el.dataset.bpu) { const [i, k] = el.dataset.bpu.split("."), u = b.funding.uses[+i]; if (k === "v") { const v = parseFloat(el.value); u.v = isFinite(v) ? v * (UNIT[S.unit] || UNIT.m).div : 0; } else u.l = el.value; bpSave(); renderBplanNumbers(); return; }
-  if (el.dataset.bpr) { const [list, i, k] = el.dataset.bpr.split("."); b[list][+i][k] = el.value; bpSave(); renderBplanToc(); }
+  if (el.dataset.bpr) {
+    const [list, i, k] = el.dataset.bpr.split(".");
+    let v = el.value;
+    if (list === "milestones" && (k === "s" || k === "e") && v && !ymOk(v)) { const p = msParse(v); if (p) v = p[k]; }
+    b[list][+i][k] = v;
+    if (list === "milestones") { if (k === "s" || k === "e") delete b[list][+i].d; clearTimeout(renderGantt.t); renderGantt.t = setTimeout(renderGantt, 250); }
+    bpSave(); renderBplanToc();
+  }
 });
 $("view-model").addEventListener("change", e => { if (e.target.dataset && e.target.dataset.bpf === "type") e.target.dispatchEvent(new Event("input", { bubbles: true })); });
 $("view-model").addEventListener("click", e => {
@@ -3290,7 +3430,7 @@ $("view-model").addEventListener("click", e => {
   else if (act === "draft-history") setText("history", bpDraftHistory());
   else if (act === "undo") { const k = a.dataset.s; b.text[k] = bpUndo[k] || ""; $("bp-t-" + k).value = b.text[k]; a.hidden = true; }
   else if (act === "starter") { const k = a.dataset.s, sec = BP_TEXT.find(x => x.id === k), ta = $("bp-t-" + k); b.text[k] = (ta.value.trim() ? ta.value.trim() + "\n\n" : "") + sec.starter.replace("[Company]", S.company || "[Company]"); ta.value = b.text[k]; ta.focus(); }
-  else if (act === "add-row") { const l = a.dataset.list; b[l] = b[l] || []; b[l].push(l === "risks" ? { r: "", m: "" } : { d: "", l: "" }); $("bp-rows-" + l).innerHTML = bpRowsHTML(l); const t = $(`bp-${l}-${b[l].length - 1}-${l === "risks" ? "r" : "d"}`); if (t) t.focus(); }
+  else if (act === "add-row") { const l = a.dataset.list; b[l] = b[l] || []; b[l].push(l === "risks" ? { r: "", m: "" } : { l: "", s: "", e: "", o: "" }); $("bp-rows-" + l).innerHTML = bpRowsHTML(l); const t = $(`bp-${l}-${b[l].length - 1}-${l === "risks" ? "r" : "l"}`); if (t) t.focus(); }
   else if (act === "del-row") { const l = a.dataset.list; b[l].splice(+a.dataset.i, 1); $("bp-rows-" + l).innerHTML = bpRowsHTML(l); }
   else if (act === "suggest-risks") { const n = bpSuggestRisks(); $("bp-rows-risks").innerHTML = bpRowsHTML("risks"); toast(n ? `${n} risk${n === 1 ? "" : "s"} added. Edit them to fit the business.` : "No new risks to suggest from the figures."); }
   else if (act === "add-use") { b.funding.uses.push({ l: "", v: 0 }); $("bp-uses").innerHTML = bpUsesHTML(); }
@@ -3633,7 +3773,7 @@ function pdfStacked(doc, X, Y, Wd, Ht, title, cur, cmp, bud) {
   const shares = rows.map(x => costShares(x.r));
   const maxTotal = Math.max(1, ...shares.map(s => s.reduce((t, v) => t + Math.max(0, v), 0)));
   const lw = 24, bx = X + lw, bwid = Wd - lw, rh = 6.5, gap = 3.5, top = Y + 4;
-  const fills = [[91, 130, 176], [192, 138, 43], [110, 133, 64], [140, 107, 160], [154, 165, 177], [166, 71, 59], [217, 188, 128], [63, 138, 92]];
+  const fills = [[91, 130, 176], [192, 138, 43], [110, 133, 64], [89, 89, 89], [154, 165, 177], [166, 71, 59], [217, 188, 128], [63, 138, 92]];
   const darkFill = [true, false, true, true, false, true, false, true];
   rows.forEach((row, ri) => {
     const yy = top + ri * (rh + gap);
@@ -3715,7 +3855,7 @@ async function exportPDF(only) {
     y += 2; font("normal", 15); doc.text(plain({ bplan: "Business plan", mgmt: "Management report", fs: "Financial statements" }[only] || "Management accounts"), M, y); y += 8;
     font("normal", 11); doc.text(plain(only === "bplan" ? `Built from the accounts for ${S.cur}` : `For ${S.cur}`), M, y); y += 6;
     doc.text(plain(`Amounts in ${unitText()} unless stated`), M, y); y += 6;
-    doc.text(plain(`Prepared ${prepared}`), M, y); y += 6;
+    { const pb = sgLine(SG().prep, SG().prepRole); doc.text(plain(`Prepared ${prepared}${pb ? " by " + pb : ""}`), M, y); y += 6; }
     doc.text(plain(only === "bplan" ? "Forecasts are management estimates. Confidential." : only === "fs" ? "Prepared in the IFRS for SMEs format. Unaudited." : "Unaudited management accounts"), M, y); y += 14;
     font("bold", 11); doc.text("Contents", M, y); y += 2; doc.setLineWidth(0.25); doc.line(M, y, R, y);
     var tocY = y + 7;
@@ -3767,6 +3907,20 @@ async function exportPDF(only) {
       doc.splitTextToSize(txt, R - M - indent).forEach((pt, i) => { ensure(5); if (indent && i === 0) doc.text("-", M, y); doc.text(pt, M + indent, y); y += size * 0.47; });
     }
   };
+  /* Prepared by and approved by, with lines to sign */
+  const sigBlock = label => {
+    const sg = SG(), wcol = (R - M - 16) / 2;
+    ensure(58); y += 8;
+    font("bold", 10.5); doc.text(plain(label), M, y); y += 2; doc.setLineWidth(0.25); doc.line(M, y, R, y); y += 7;
+    [["Prepared by", sgLine(sg.prep, sg.prepRole)], ["Approved by", sgLine(sg.appr, sg.apprRole)]].forEach(([t, who], i) => {
+      const x = M + i * (wcol + 16);
+      font("bold", 9); doc.text(t, x, y);
+      doc.setLineWidth(0.25); doc.line(x, y + 17, x + wcol - 6, y + 17);
+      font("normal", 9); doc.text(plain(who || "Name and position"), x, y + 22);
+      doc.text("Date: ____________________", x, y + 29);
+    });
+    y += 36;
+  };
   const part = !only ? "all" : only === "mgmt" || only === "fs" ? only : null;
   if (part === "all" || part === "mgmt") {
   // Key figures
@@ -3778,6 +3932,14 @@ async function exportPDF(only) {
     ["Cash and bank", amt(cur.cash), cmp && cmp.bsOk ? amt(cmp.cash) : "", ""],
     ["Net cash from operating activities", cf ? amt(cf.op) : "-", "", ""]
   ].map(c => ({ cells: c })));
+  if (bud || cmp) {
+    heading("Results against budget and last year");
+    font("normal", 8.5); doc.text(plain(`For ${S.cur}. Costs are shown in brackets; a positive variance is favourable.`), M, y); y += 5;
+    const rc = [{ t: unitShort(), w: bud && cmp ? 58 : 84 }, { t: S.cur, w: 21, a: "r" }];
+    if (bud) rc.push({ t: S.bud || "Budget", w: 21, a: "r" }, { t: "Variance", w: 19, a: "r", v: true });
+    if (cmp) rc.push({ t: S.cmp, w: 21, a: "r" }, { t: "Change", w: 19, a: "r", v: true });
+    table(rc, IS_LINES.map(L => { const c = isDisp(L, cur), cells = [L.l, amt(c)]; if (bud) cells.push(amt(isDisp(L, bud)), amt(c - isDisp(L, bud), { sign: true })); if (cmp) cells.push(amt(isDisp(L, cmp)), amt(c - isDisp(L, cmp), { sign: true })); return { cells, b: !!(L.sub || L.total), top: !!(L.sub || L.total), dbl: !!L.total }; }));
+  }
   // Commentary
   heading("Commentary");
   const heads = new Set(["performance", "margins and costs", "cash and working capital", "points for attention"]);
@@ -3806,8 +3968,9 @@ async function exportPDF(only) {
   y += pdfCostLines(doc, M, y + 1, R - M, cur, cmp) + 4;
   // Ratios
   heading("Ratios");
-  table([{ t: "Ratio", w: 54 }, { t: S.cur, w: 26, a: "r" }, { t: cmp ? S.cmp : "", w: 26, a: "r" }, { t: "Guide", w: 44 }, { t: "Status", w: 16 }],
-    RATIOS.map(d => { const v = ratioVal(d, cur), st = ratioStatus(d, v); return { cells: [d.l, ratioFmt(d, v), cmp ? ratioFmt(d, ratioVal(d, cmp)) : "", d.bench, st ? STATUS_TEXT[st] : "n/a"] }; }));
+  table([{ t: "Ratio", w: 50 }, { t: S.cur, w: 24, a: "r" }, { t: cmp ? S.cmp : "", w: 24, a: "r" }, { t: "", w: 7 }, { t: "Guide", w: 46 }, { t: "Status", w: 18 }],
+    RATIOS.map(d => { const v = ratioVal(d, cur), st = ratioStatus(d, v); return { cells: [d.l, ratioFmt(d, v), cmp ? ratioFmt(d, ratioVal(d, cmp)) : "", "", d.bench, st ? STATUS_TEXT[st] : "n/a"] }; }));
+  sigBlock("Management report sign-off");
   }
   if (part === "all" || part === "fs") {
   { const fd = FSD(), sg = fsSigners();
@@ -3848,12 +4011,10 @@ async function exportPDF(only) {
   heading("Statement of profit or loss", true);
   font("normal", 8.5); doc.text(plain(`For ${S.cur}. Costs are shown in brackets.`), M, y); y += 5;
   const isCols = gl().concat([gn(S.cur)]);
-  if (cmp) isCols.push(gn(S.cmp), gn("Change", true));
-  if (bud) isCols.push(gn(S.bud || "Budget"), gn("vs budget", true));
+  if (cmp) isCols.push(gn(S.cmp));
   table(isCols, IS_LINES.map(L => {
     const c = isDisp(L, cur), cells = [L.l, L.note && noteOf[L.note] ? String(noteOf[L.note]) : "", amt(c)];
-    if (cmp) cells.push(amt(isDisp(L, cmp)), amt(c - isDisp(L, cmp), { sign: true }));
-    if (bud) cells.push(amt(isDisp(L, bud)), amt(c - isDisp(L, bud), { sign: true }));
+    if (cmp) cells.push(amt(isDisp(L, cmp)));
     return { cells, b: !!(L.sub || L.total), top: !!(L.sub || L.total), dbl: !!L.total };
   }));
   heading("Statement of financial position", true);
@@ -3974,8 +4135,28 @@ async function exportPDF(only) {
     const rk = (b.risks || []).filter(r => r.r || r.m);
     if (rk.length) wrapTable([{ t: "Risk", w: 80 }, { t: "How we manage it", w: 94 }], rk.map(r => [r.r, r.m])); else { para("To be completed."); y += 3; }
     heading(`${sec("milestones").n}. ${sec("milestones").t}`);
-    const ms = (b.milestones || []).filter(r => r.d || r.l);
-    if (ms.length) wrapTable([{ t: "When", w: 34 }, { t: "Milestone", w: 140 }], ms.map(r => [r.d, r.l])); else { para("To be completed."); y += 3; }
+    const ms = msList(), gm = ms.filter(m => ymOk(m.s));
+    if (gm.length) {
+      let a = Math.min(...gm.map(m => ymIdx(m.s))), z = Math.max(...gm.map(m => ymIdx(m.e)));
+      a -= a % 3; z += 2 - z % 3;
+      const n = z - a + 1, labW = 56, cw = (R - M - labW) / n, rh = 7.5, gh = 12 + gm.length * rh + 4;
+      ensure(gh + 8);
+      const top = y + 10, x0 = M + labW, GC = [[31, 58, 95], [46, 117, 182], [84, 130, 53], [197, 90, 17], [191, 144, 0], [158, 42, 43], [89, 89, 89]];
+      for (let i = 0; i < n; i += 3) {
+        if ((i / 3) % 2 === 0) { doc.setFillColor(238, 241, 245); doc.rect(x0 + i * cw, y, cw * 3, gh - 2, "F"); }
+        font("bold", 8); doc.setTextColor(0, 0, 0); doc.text(`Q${Math.floor(((a + i) % 12) / 3) + 1} ${Math.floor((a + i) / 12)}`, x0 + (i + 1.5) * cw, y + 4.5, { align: "center" });
+      }
+      if (cw >= 3.5) { font("normal", 6.5); doc.setTextColor(90, 90, 90); for (let i = 0; i < n; i++) doc.text(MONTHS[(a + i) % 12].slice(0, cw >= 9 ? 3 : 1), x0 + (i + 0.5) * cw, y + 8.5, { align: "center" }); doc.setTextColor(0, 0, 0); }
+      gm.forEach((m, r) => {
+        const yy = top + r * rh, s0 = ymIdx(m.s) - a, e0 = ymIdx(m.e) - a, c = GC[r % GC.length];
+        font("normal", 8.2); const lab = doc.splitTextToSize(plain(m.l || "Untitled"), labW - 3); doc.text(lab[0] + (lab.length > 1 ? "..." : ""), M, yy + 4.3);
+        doc.setFillColor(c[0], c[1], c[2]); doc.roundedRect(x0 + s0 * cw + 0.4, yy + 1.2, Math.max(1.5, (e0 - s0 + 1) * cw - 0.8), 4.4, 0.8, 0.8, "F");
+        if (m.o) { const inW = (e0 - s0 + 1) * cw, tw = doc.getTextWidth(plain(m.o)) * 0.85; font("normal", 7); if (tw + 4 < inW) { doc.setTextColor(255, 255, 255); doc.text(plain(m.o), x0 + s0 * cw + 2, yy + 4.2); doc.setTextColor(0, 0, 0); } else if (x0 + (e0 + 1) * cw + 2 + tw < R) { doc.setTextColor(90, 90, 90); doc.text(plain(m.o), x0 + (e0 + 1) * cw + 1.5, yy + 4.2); doc.setTextColor(0, 0, 0); } }
+        doc.setDrawColor(220, 224, 230); doc.setLineWidth(0.1); doc.line(M, yy + rh - 0.6, R, yy + rh - 0.6); doc.setDrawColor(0, 0, 0);
+      });
+      y += gh + 6;
+    }
+    if (ms.length) wrapTable([{ t: "When", w: 40 }, { t: "Milestone", w: 94 }, { t: "Responsible", w: 40 }], ms.map(r => [whenText(r), r.l || "", r.o || ""])); else { para("To be completed."); y += 3; }
     y += 4; para("Prepared with Acivaz from the company's management accounts. Historical figures are unaudited and the projections are management estimates.", 8.4);
   }
   if ((only && MODEL_VIEWS.includes(only) && only !== "bplan") || (!only && S.pdfModel === true)) {
@@ -4039,6 +4220,7 @@ async function exportPDF(only) {
     ].map(c => ({ cells: c })));
     }
   }
+  if (only && MODEL_VIEWS.includes(only)) sigBlock(`${TASK_TITLE[only]} sign-off`);
   const n = doc.getNumberOfPages();
   if (cover) {
     doc.setPage(1); let ty = tocY; font("normal", 10);
@@ -4056,104 +4238,193 @@ async function exportPDF(only) {
 const fileBase = () => `${(S.company || "Management pack").replace(/[^\w\- ]+/g, "").trim()} - ${String(S.cur).replace(/[^\w\- ]+/g, "").trim()} pack`;
 
 /* ---------- Excel ---------- */
+/* ---------- Excel: every workbook gets a cover sheet, titles, number formats and ruled totals ---------- */
+const XL = { amt: '#,##0;(#,##0);"-"', dec: '#,##0.0##;(#,##0.0##);"-"', pct: '0.0%;(0.0%);"-"', x: '0.00"x"' };
+const xr = (tag, cells) => Object.assign(cells, { _s: tag });
+const xp = v => v === null || v === undefined || !isFinite(v) ? "" : { v, z: XL.pct };
+const XL_AUTO = /^(total\b|gross profit|operating profit|profit before tax|net profit|net cash|net increase|enterprise value|equity value|free cash flow|closing cash|ebitda)/i;
+function xlBook({ company, title, period, unit, fs = false }) {
+  const wb = XLSX.utils.book_new(), list = [], enc = XLSX.utils.encode_cell;
+  const prepared = new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+  const thin = { style: "thin", color: { rgb: "000000" } };
+  const style = (tag, num, long, numCol) => {
+    const st = { font: { name: "Calibri", sz: 10.5 }, alignment: { vertical: "top", wrapText: !!long } };
+    if (num || (numCol && (tag === "head" || tag === "colhead"))) st.alignment.horizontal = "right";
+    if (tag === "t1") { st.font.sz = 14; st.font.bold = true; }
+    if (tag === "t2") { st.font.sz = 12; st.font.bold = true; }
+    if (tag === "t3" || tag === "note") { st.font.italic = true; st.font.color = { rgb: "595959" }; }
+    if (tag === "head" || tag === "colhead") { st.font.bold = true; st.border = { bottom: thin }; st.alignment.wrapText = true; }
+    if (tag === "head") st.fill = { patternType: "solid", fgColor: { rgb: "EEF1F5" } };
+    if (tag === "sec") { st.font.bold = true; st.font.sz = 11; }
+    if (tag === "grp") st.font.italic = true;
+    if (tag === "b" || tag === "sub" || tag === "total") st.font.bold = true;
+    if (tag === "sub" && numCol) st.border = { top: thin };
+    if (tag === "total" && numCol) st.border = { top: thin, bottom: { style: "double", color: { rgb: "000000" } } };
+    if (tag === "text") st.alignment.wrapText = true;
+    return st;
+  };
+  function sheet(rows, name, widths, opt = {}) {
+    const all = [xr("t1", [company || "Company"]), xr("t2", [opt.title || name]), xr("t3", [[opt.period ?? period, opt.unit ?? unit].filter(Boolean).join(" · ")]), xr("gap", [])];
+    rows.forEach((r, i) => { r = Array.isArray(r) ? r : []; all.push(i === 0 && !opt.noHead && !r._s ? xr("head", r.slice()) : r); });
+    const isNum = v => typeof v === "number" || (v && typeof v === "object" && "v" in v && !("fill" in v));
+    const numCols = new Set(); all.forEach(r => r.forEach((v, c) => { if (c > 0 && isNum(v)) numCols.add(c); }));
+    const ws = {}; let maxC = Math.max(0, widths.length - 1);
+    all.forEach((r, R) => {
+      let tag = r._s || "";
+      if (!tag && typeof r[0] === "string" && XL_AUTO.test(r[0].trim())) tag = "sub";
+      const width = Math.max(r.length, (tag === "sub" || tag === "total") ? Math.max(0, ...numCols) + 1 : 0);
+      for (let C = 0; C < width; C++) {
+        let v = r[C];
+        const empty = v === "" || v === null || v === undefined;
+        if (empty && !((tag === "sub" || tag === "total") && numCols.has(C))) continue;
+        let cell;
+        if (empty) cell = { t: "s", v: "" };
+        else if (v && typeof v === "object" && "fill" in v) cell = { t: "s", v: "", _fill: v.fill };
+        else if (v && typeof v === "object" && "v" in v) cell = { t: "n", v: v.v, z: v.z || XL.amt };
+        else if (typeof v === "number") cell = isFinite(v) ? { t: "n", v, z: Number.isInteger(v) ? XL.amt : XL.dec } : { t: "s", v: "" };
+        else cell = { t: "s", v: String(v) };
+        const long = cell.t === "s" && cell.v.length > 70 && (tag === "" || tag === "text");
+        cell.s = style(tag, cell.t === "n", long, numCols.has(C));
+        if (cell.z) cell.s.numFmt = cell.z;
+        if (cell._fill) { cell.s.fill = { patternType: "solid", fgColor: { rgb: cell._fill } }; cell.s.border = { left: { style: "thin", color: { rgb: "FFFFFF" } } }; delete cell._fill; }
+        ws[enc({ r: R, c: C })] = cell; maxC = Math.max(maxC, C);
+      }
+    });
+    ws["!ref"] = XLSX.utils.encode_range({ s: { r: 0, c: 0 }, e: { r: all.length - 1, c: maxC } });
+    ws["!cols"] = widths.map(w => ({ wch: w }));
+    ws["!rows"] = [{ hpt: 21 }, { hpt: 17 }];
+    ws["!margins"] = { left: 0.5, right: 0.5, top: 0.6, bottom: 0.6, header: 0.3, footer: 0.3 };
+    XLSX.utils.book_append_sheet(wb, ws, name);
+    list.push({ name, desc: opt.desc || "" });
+  }
+  function finish() {
+    const sg = SG(), fd = fs ? FSD() : null;
+    const rows = [["Report", title], ["Period", period], ["Currency", String(unit || "").replace(/^Amounts in /, "")], ["Prepared on", prepared], ["Prepared by", sgLine(sg.prep, sg.prepRole)]];
+    rows.push(fs ? ["Approved by the board on", fd.approvedOn ? niceISO(fd.approvedOn) : "Not yet approved"] : ["Approved by", sgLine(sg.appr, sg.apprRole)]);
+    rows.push([], xr("sec", ["Contents"]));
+    list.forEach((x, i) => rows.push([`${i + 1}. ${x.name}`, x.desc]));
+    rows.push([], xr("sec", ["Sign-off"]), ["Prepared by", "Signature: ____________________", "Date: ____________"]);
+    if (!fs) rows.push(["Approved by", "Signature: ____________________", "Date: ____________"]);
+    else rows.push(["Directors", "Sign the Approval sheet", ""]);
+    rows.push([], xr("note", [fs ? "Management-prepared financial statements. Unaudited unless an auditor's report is attached." : "Unaudited management information. Check every figure before you rely on it."]));
+    sheet(rows, "Cover", [24, 44, 22], { noHead: true, title });
+    wb.SheetNames.unshift(wb.SheetNames.pop());
+    return wb;
+  }
+  return { sheet, finish };
+}
 async function exportXLSX(only) {
   if (!(await canDownload())) return;
   const want = k => !only || only === k || (only === "bplan" && k === "forecast");
   if (!window.XLSX) { toast("The Excel tool didn't load. Check your connection and reload."); return; }
   const { cur, cmp, bud, open, cf, built } = snapshot();
-  const wb = XLSX.utils.book_new();
   const R0 = v => v === null || v === undefined || !isFinite(v) ? "" : Math.round(v);
-  const isRows = [["Statement of profit or loss (" + S.currency + ")", "Note", S.cur].concat(cmp ? [S.cmp, "Change"] : []).concat(bud ? [S.bud, "vs budget"] : [])];
-  for (const L of IS_LINES) {
-    const c = isDisp(L, cur), row = [L.l, L.note && built.noteOf[L.note] ? built.noteOf[L.note] : "", R0(c)];
-    if (cmp) row.push(R0(isDisp(L, cmp)), R0(c - isDisp(L, cmp)));
-    if (bud) row.push(R0(isDisp(L, bud)), R0(c - isDisp(L, bud)));
-    isRows.push(row);
-  }
-  const showO = open && open.src === "opn";
-  const bsRows = [["Statement of financial position (" + S.currency + ")", "Note", S.cur].concat(cmp && cmp.bsOk ? [S.cmp] : []).concat(showO ? [open.label] : [])];
-  for (const L of BS_LINES) bsRows.push(L.h ? [L.h.toUpperCase()] : L.g ? [L.g] : [L.l, L.note && built.noteOf[L.note] ? built.noteOf[L.note] : "", R0(cur[L.k])].concat(cmp && cmp.bsOk ? [R0(cmp[L.k])] : []).concat(showO ? [R0(open.r[L.k])] : []));
-  const scRows = [["Statement of changes in equity (" + S.currency + ")", "Share capital and reserves", "Profit for the period", "Total equity"]];
-  { const sr = socRows(cur, open); if (sr) for (const r of sr) scRows.push([r.l, R0(r.a), R0(r.b), R0(r.c)]); else scRows.push(["Not prepared: no opening balance sheet supplied."]); }
-  const cfRows = [["Statement of cash flows (" + S.currency + ")", S.cur]];
-  if (cf) {
-    for (const s of cf.sections) { cfRows.push([s.h]); for (const l of s.lines) cfRows.push([l.l, R0(l.v)]); cfRows.push([s.total.l, R0(s.total.v)]); }
-    cfRows.push(["Net increase/(decrease) in cash", R0(cf.net)], ["Cash and bank at " + cf.openLabel, R0(cf.openCash)], ["Cash and bank at " + S.cur, R0(cf.closeCalc)]);
-  } else cfRows.push(["Not prepared: no opening balance sheet supplied."]);
-  const nRows = [];
-  for (const note of built.notes) {
-    nRows.push([`Note ${note.n}. ${note.title}`]);
-    if (note.id === "basis" || note.textOnly) { for (const l of note.text.split("\n")) nRows.push([l]); nRows.push([]); continue; }
-    nRows.push(["", S.cur].concat(cmp ? [S.cmp] : []));
-    const put = (rs, single) => { for (const r of rs) nRows.push(r.head ? [r.l] : [r.l, r.pct ? (r.cur === null ? "" : Math.round(r.cur * 1000) / 10 + "%") : R0(r.cur)].concat(cmp && !single ? [r.pct ? (r.cmp === null ? "" : Math.round(r.cmp * 1000) / 10 + "%") : R0(r.cmp)] : [])); };
-    put(note.rows);
-    for (const x of note.extra) { nRows.push([x.title]); put(x.rows, x.single); }
-    if (note.text) nRows.push([note.text]);
-    nRows.push([]);
-  }
-  const rRows = [["Ratio", S.cur, S.cmp, "Guide", "Status"]].concat(RATIOS.map(d => { const v = ratioVal(d, cur), st = ratioStatus(d, v); return [d.l, ratioFmt(d, v), ratioFmt(d, ratioVal(d, cmp)), d.bench, st ? STATUS_TEXT[st] : "n/a"]; }));
-  const cRows = $("commentary").value.split("\n").map(l => [l]);
-  const mRows = [["Account code", "Account name", S.cur, S.cmp, S.bud, S.opn || "Opening", "Pack line"]].concat(A.map(a => [a.code, a.name, a.cur, a.cmp, a.bud, a.opn, a.cat ? catLabel(a.cat) : "Not mapped"]));
-  const add = (rows, name, widths) => { const ws = XLSX.utils.aoa_to_sheet(rows); ws["!cols"] = widths.map(w => ({ wch: w })); XLSX.utils.book_append_sheet(wb, ws, name); };
   const part = !only ? "all" : only === "mgmt" || only === "fs" ? only : null;
+  const X = xlBook({ company: S.company, title: (only && TASK_TITLE[only]) || "Management accounts", period: S.cur, unit: `Amounts in ${S.currency}`, fs: part === "fs" });
   if (part === "all" || part === "mgmt") {
-  add(cRows, "Commentary", [110]);
-  add(rRows, "Ratios", [28, 14, 14, 22, 10]);
-  { const { rows, totC, totP } = costLines(cur, cmp), f = v => v === null || !isFinite(v) ? "" : Math.round(v * 1000) / 10, chg = (a, c) => a === null || c === null ? "" : Math.round((a - c) * 1000) / 10;
-    const clRows = [["Cost line, per 100 of revenue", "Pack line", S.cur].concat(cmp ? [S.cmp, "Change (points)"] : [])].concat(rows.map(r => [r.l, r.cat ? catLabel(r.cat) : "Several", f(r.c)].concat(cmp ? [f(r.p), chg(r.c, r.p)] : [])), [["All cost lines before tax", "", f(totC)].concat(cmp ? [f(totP), chg(totC, totP)] : [])]);
-    add(clRows, "Cost lines", [36, 26, 14, 14, 16]); }
+    if (bud || cmp) {
+      const rows = [["", S.cur].concat(bud ? [S.bud || "Budget", "Variance", "Variance %"] : []).concat(cmp ? [S.cmp, "Change", "Change %"] : [])];
+      for (const L of IS_LINES) {
+        const c = isDisp(L, cur), row = [L.l, R0(c)];
+        for (const base of [bud, cmp]) if (base) { const p = isDisp(L, base); row.push(R0(p), R0(c - p), xp(p ? (c - p) / Math.abs(p) : null)); }
+        rows.push(xr(L.total ? "total" : L.sub ? "sub" : "", row));
+      }
+      rows.push([], xr("note", ["Costs are shown as negative amounts. A positive variance or change is favourable."]));
+      X.sheet(rows, "Results", [34, 15, 15, 14, 11, 15, 14, 11], { desc: "Profit or loss against budget and last year" });
+    }
+    const heads = new Set(["performance", "margins and costs", "cash and working capital", "points for attention"]);
+    X.sheet($("commentary").value.split("\n").map(l => { const t = l.replace(/^#+\s*/, "").replace(/\*\*/g, ""); return heads.has(t.trim().toLowerCase()) ? xr("sec", [t.trim()]) : xr("text", [t]); }), "Commentary", [110], { noHead: true, unit: "", desc: "Commentary for owners and the board" });
+    X.sheet([["Ratio", S.cur, S.cmp || "Comparative", "Guide", "Status"]].concat(RATIOS.map(d => { const v = ratioVal(d, cur), st = ratioStatus(d, v); return [d.l, ratioFmt(d, v), cmp ? ratioFmt(d, ratioVal(d, cmp)) : "", d.bench, st ? STATUS_TEXT[st] : "n/a"]; })), "Ratios", [32, 14, 14, 24, 10], { unit: "", desc: "Ten ratios with Healthy, Watch or Act flags" });
+    { const { rows, totC, totP } = costLines(cur, cmp), f = v => v === null || !isFinite(v) ? "" : Math.round(v * 1000) / 10, chg = (a, c) => a === null || c === null ? "" : Math.round((a - c) * 1000) / 10;
+      X.sheet([["Cost line", "Pack line", S.cur].concat(cmp ? [S.cmp, "Change (points)"] : [])].concat(rows.map(r => [r.l, r.cat ? catLabel(r.cat) : "Several", f(r.c)].concat(cmp ? [f(r.p), chg(r.c, r.p)] : [])), [xr("total", ["All cost lines before tax", "", f(totC)].concat(cmp ? [f(totP), chg(totC, totP)] : []))]), "Cost lines", [36, 26, 14, 14, 16], { unit: "Per 100 of revenue", desc: "Each cost line per 100 of revenue" }); }
   }
   if (part === "all" || part === "fs") {
-  add(isRows, "Profit or loss", [32, 6, 16, 16, 16, 16, 16]);
-  add(bsRows, "Financial position", [34, 6, 16, 16, 16]);
-  add(scRows, "Changes in equity", [46, 24, 20, 16]);
-  add(cfRows, "Cash flows", [52, 16]);
-  add(nRows, "Notes", [52, 16, 16]);
-  { const rows = [["Directors' report"]], sv = solvency(cur);
-    for (const x of drSections(cur, cmp, cf)) { if (x.h) rows.push([x.h]); for (const l of x.t.split("\n")) rows.push(["", l]); rows.push([]); }
-    if (sv) rows.push([`Dividend solvency test (${S.currency})`, "After the dividend", "Must be more than", "Result"], ["Total assets left, against total liabilities", R0(sv.taA), R0(cur.tl), sv.bs ? "Passes" : "Fails"], ["Current assets left, against current liabilities", R0(sv.caA), R0(cur.cl), sv.cl ? "Passes" : "Fails"], ["Cash and bank left", R0(sv.cashA), 0, sv.cash ? "Passes" : "Fails"]);
-    add(rows, "Directors' report", [40, 100, 18, 10]); }
-  { const fd = FSD(); add([["Approval of the financial statements"], ["Approved by the board on", fd.approvedOn || ""], ["Signed on behalf of the board by"]].concat(String(fd.signers || "").split("\n").filter(t => t.trim()).map(t => ["", t.trim()])), "Approval", [36, 40]); }
-  add(mRows, "Mapping", [14, 40, 16, 16, 16, 16, 28]);
+    { const rows = [], sv = solvency(cur);
+      for (const x of drSections(cur, cmp, cf)) { if (x.h) rows.push(xr("sec", [x.h])); for (const l of x.t.split("\n")) if (l.trim()) rows.push(xr("text", [l])); rows.push([]); }
+      if (sv) rows.push(xr("sec", ["Dividend solvency test"]), xr("colhead", ["Test, after paying the dividend", "After the dividend", "Must be more than", "Result"]), ["Total assets left, against total liabilities", R0(sv.taA), R0(cur.tl), sv.bs ? "Passes" : "Fails"], ["Current assets left, against current liabilities", R0(sv.caA), R0(cur.cl), sv.cl ? "Passes" : "Fails"], ["Cash and bank left", R0(sv.cashA), 0, sv.cash ? "Passes" : "Fails"]);
+      X.sheet(rows, "Directors' report", [96, 18, 18, 10], { noHead: true, desc: "Law N° 007/2021, Article 89" }); }
+    { const fd = FSD(), sg = fsSigners();
+      const rows = [["Approved by the board on", fd.approvedOn ? niceISO(fd.approvedOn) : ""], [], xr("b", ["Signed on behalf of the board by", "Signature", "Date"])];
+      (sg.length ? sg : fd.single ? ["Name, Director"] : ["Name, Director", "Name, Director"]).forEach(t => rows.push([t, "______________________", "______________"]));
+      X.sheet(rows, "Approval", [40, 28, 18], { noHead: true, unit: "", desc: "Approval of the financial statements by the board" }); }
+    { const rows = [["", "Note", S.cur].concat(cmp ? [S.cmp] : [])];
+      for (const L of IS_LINES) rows.push(xr(L.total ? "total" : L.sub ? "sub" : "", [L.l, L.note && built.noteOf[L.note] ? String(built.noteOf[L.note]) : "", R0(isDisp(L, cur))].concat(cmp ? [R0(isDisp(L, cmp))] : [])));
+      rows.push([], xr("note", ["Costs are shown as negative amounts."]));
+      X.sheet(rows, "Profit or loss", [36, 6, 16, 16], { title: "Statement of profit or loss", desc: "Statement of profit or loss" }); }
+    { const showC = cmp && cmp.bsOk, showO = open && open.src === "opn";
+      const rows = [["", "Note", S.cur].concat(showC ? [S.cmp] : []).concat(showO ? [open.label] : [])];
+      for (const L of BS_LINES) rows.push(L.h ? xr("sec", [L.h]) : L.g ? xr("grp", [L.g]) : xr(L.total ? "total" : L.sub ? "sub" : "", [L.l, L.note && built.noteOf[L.note] ? String(built.noteOf[L.note]) : "", R0(cur[L.k])].concat(showC ? [R0(cmp[L.k])] : []).concat(showO ? [R0(open.r[L.k])] : [])));
+      X.sheet(rows, "Financial position", [36, 6, 16, 16, 16], { title: "Statement of financial position", period: `As at ${S.cur}`, desc: "Statement of financial position" }); }
+    { const sr = socRows(cur, open), rows = [["", "Share capital and reserves", "Profit for the period", "Total equity"]];
+      if (sr) for (const r of sr) rows.push(xr(r.total ? "total" : r.b1 ? "b" : "", [r.l, R0(r.a), R0(r.b), R0(r.c)])); else rows.push(xr("note", ["Not prepared: no opening balance sheet was supplied."]));
+      X.sheet(rows, "Changes in equity", [40, 18, 18, 16], { title: "Statement of changes in equity", desc: "Statement of changes in equity" }); }
+    { const rows = [["", S.cur]];
+      if (cf) {
+        for (const x of cf.sections) { rows.push(xr("sec", [x.h])); for (const l of x.lines) rows.push([l.l, R0(l.v)]); rows.push(xr("sub", [x.total.l, R0(x.total.v)])); rows.push([]); }
+        rows.push(xr("sub", ["Net increase/(decrease) in cash", R0(cf.net)]), [`Cash and bank at ${atLabel(cf.openLabel)}`, R0(cf.openCash)], xr("total", [`Cash and bank at ${S.cur}`, R0(cf.closeCalc)]));
+        if (Math.abs(cf.diff) >= 1) rows.push(xr("note", ["Difference to the balance sheet", R0(cf.diff)]));
+      } else rows.push(xr("note", ["Not prepared: no opening balance sheet was supplied."]));
+      X.sheet(rows, "Cash flows", [52, 16], { title: "Statement of cash flows", period: `For ${S.cur}, indirect method`, desc: "Statement of cash flows" }); }
+    { const rows = [];
+      for (const note of built.notes) {
+        rows.push(xr("sec", [`${note.n}. ${note.title}`]));
+        if (note.id === "basis" || note.textOnly) { for (const l of String(note.text).split("\n")) if (l.trim()) rows.push(xr("text", [l])); rows.push([]); continue; }
+        rows.push(xr("colhead", ["", S.cur].concat(cmp ? [S.cmp] : [])));
+        const put = (rs, single) => { for (const r of rs) rows.push(r.head ? xr("grp", [r.l]) : xr(r.total ? "total" : r.sub ? "sub" : "", [r.l, r.pct ? xp(r.cur) : R0(r.cur)].concat(cmp && !single ? [r.pct ? xp(r.cmp) : R0(r.cmp)] : []))); };
+        put(note.rows);
+        for (const x of note.extra) { rows.push(xr("grp", [x.title])); put(x.rows, x.single); }
+        if (note.text) rows.push(xr("text", [note.text]));
+        rows.push([]);
+      }
+      X.sheet(rows, "Notes", [70, 16, 16], { noHead: true, title: "Notes to the financial statements", desc: "Notes, including accounting policies" }); }
   }
+  if (part === "all" || part === "fs") X.sheet([["Account code", "Account name", S.cur, S.cmp, S.bud, S.opn || "Opening", "Line in the reports"]].concat(A.map(a => [a.code, a.name, R0(a.cur), R0(a.cmp), R0(a.bud), R0(a.opn), a.cat ? catLabel(a.cat) : "Not mapped"])), "Mapping", [14, 40, 16, 16, 16, 16, 30], { title: "Trial balance and mapping", desc: "Each account and the line it is reported on" });
   if (only === "bplan") {
     const b = BP(), N = bpNums(), f = b.funding;
-    add([["Section", "Text"]].concat(BP_TEXT.concat([BP_SECS.find(x => x.id === "history")]).map(x => [`${x.n}. ${x.t}`, b.text[x.id] || ""])), "Business plan", [30, 120]);
-    add([[`Funding sought (${S.currency})`, Math.round(f.amount || 0)], ["Form", BP_TYPE[f.type] || ""], [], ["Use of funds", S.currency]].concat((f.uses || []).filter(u => u.l || u.v).map(u => [u.l, Math.round(u.v || 0)])).concat([["Total", Math.round(N.usesTot)], [], ["Debt service cover", ...N.labels.slice(1)], ["Cash available for debt", ...N.dscr.map(d => Math.round(d.avail))], ["Existing interest and repayments", ...N.dscr.map(d => Math.round(d.exist))], ["New loan payments", ...N.dscr.map(d => Math.round(d.add))], ["Cover (times)", ...N.dscr.map(d => d.ratio === null ? "" : Math.round(d.ratio * 100) / 100)]]), "Funding", [40, 18, 16, 16]);
-    add([["Risk", "How we manage it"]].concat((b.risks || []).filter(r => r.r || r.m).map(r => [r.r, r.m])), "Risks", [60, 70]);
-    add([["When", "Milestone"]].concat((b.milestones || []).filter(r => r.d || r.l).map(r => [r.d, r.l])), "Milestones", [16, 80]);
+    const tx = [];
+    for (const x of BP_TEXT.concat([BP_SECS.find(z => z.id === "history")])) { tx.push(xr("sec", [`${x.n}. ${x.t}`])); for (const l of String(b.text[x.id] || "To be completed.").split("\n")) if (l.trim()) tx.push(xr("text", [l])); tx.push([]); }
+    X.sheet(tx, "Business plan", [110], { noHead: true, unit: "", desc: "The written plan" });
+    X.sheet([["", S.currency], xr("b", ["Funding sought", R0(f.amount || 0)]), ["Form", BP_TYPE[f.type] || ""], [], xr("colhead", ["Use of funds", S.currency])].concat((f.uses || []).filter(u => u.l || u.v).map(u => [u.l, R0(u.v || 0)])).concat([xr("total", ["Total", R0(N.usesTot)]), [], xr("colhead", ["Debt service cover", ...N.labels.slice(1)]), ["Cash available for debt", ...N.dscr.map(d => R0(d.avail))], ["Existing interest and repayments", ...N.dscr.map(d => R0(d.exist))], ["New loan payments", ...N.dscr.map(d => R0(d.add))], xr("b", ["Cover (times)", ...N.dscr.map(d => d.ratio === null ? "" : { v: d.ratio, z: XL.x })])]), "Funding", [40, 18, 16, 16], { desc: "Funding sought, use of funds and debt cover" });
+    X.sheet([["Risk", "How we manage it"]].concat((b.risks || []).filter(r => r.r || r.m).map(r => xr("text", [r.r, r.m]))), "Risks", [60, 70], { unit: "", desc: "Main risks and how they are managed" });
+    { const ms = msList(), gm = ms.filter(m => ymOk(m.s)), GX = ["1F3A5F", "2E75B6", "548235", "C55A11", "BF9000", "9E2A2B", "595959"];
+      let a = 0, z = -1;
+      if (gm.length) { a = Math.min(...gm.map(m => ymIdx(m.s))); z = Math.max(...gm.map(m => ymIdx(m.e))); a -= a % 3; z += 2 - z % 3; }
+      const months = []; for (let i = a; i <= z; i++) months.push(i);
+      const rows = [["Milestone", "Start", "End", "Responsible"].concat(months.map(i => `${MONTHS[i % 12]} ${String(Math.floor(i / 12)).slice(2)}`))];
+      ms.forEach((m, r) => rows.push([m.l || "", ymOk(m.s) ? ymLab(m.s) : (m.d || ""), ymOk(m.e) ? ymLab(m.e) : "", m.o || ""].concat(months.map(i => ymOk(m.s) && i >= ymIdx(m.s) && i <= ymIdx(m.e) ? { fill: GX[r % GX.length] } : ""))));
+      X.sheet(rows, "Milestones", [40, 11, 11, 20].concat(months.map(() => 5.5)), { unit: "", desc: "Milestones with a month-by-month timeline" }); }
   }
   if ((only && MODEL_VIEWS.includes(only)) || (!only && S.pdfModel === true)) {
     const { m, runs, years, labels, val, budget, loan, proj } = modelSnapshot();
     const scen = SCEN_LABEL[modelScen];
-    const xr = (v, f) => v === null || v === undefined || !isFinite(v) ? "" : f === "pct" ? Math.round(v * 1000) / 10 + "%" : f === "x" ? Math.round(v * 100) / 100 : Math.round(v);
-    const fRows = [[`Forecast, ${scen} case (${S.currency})`, labels[0] + " annualised"].concat(labels.slice(1))];
-    for (const r of FC_ROWS) { if (r.h) { fRows.push([r.h]); continue; } const [k, l, , f] = r; fRows.push([l].concat(years.map(yy => xr(yy[k], f)))); }
-    if (want("forecast")) add(fRows, "Forecast", [36, 18, 16, 16, 16]);
-    const sRows = [["Scenario comparison (" + S.currency + ")"].concat(labels)];
-    for (const sc of ["down", "base", "up"]) { sRows.push([SCEN_LABEL[sc] + " case"]); for (const [k, l] of [["rev", "Revenue"], ["np", "Net profit"], ["cash", "Closing cash"], ["debt", "Borrowings"]]) sRows.push([l].concat(runs[sc].map(yy => xr(yy[k])))); }
-    if (want("forecast")) add(sRows, "Scenarios", [28, 16, 16, 16, 16]);
-    const aRows = [["Assumption", "Value"]];
-    for (const gr of FC_INPUTS.concat(VAL_INPUTS)) { aRows.push([gr.g]); for (const [p, l, k] of gr.items) aRows.push([l, getPath(m, p), k === "money" ? S.currency : INPUT_UNITS[k]]); }
-    if (want("forecast") || want("valuation")) add(aRows, "Assumptions", [40, 16, 10]);
-    const bRows = [[`Budget ${labels[1]}, ${scen} case (${S.currency})`].concat(budget.map(x => x.label)).concat(["Total"])];
-    for (const [k, l] of BUDGET_ROWS) bRows.push([l].concat(budget.map(x => Math.round(x[k]))).concat([Math.round(budget.reduce((t, x) => t + x[k], 0))]));
-    if (want("budget")) add(bRows, "Budget", [26].concat(Array(13).fill(13)));
-    const vRows = [[`Valuation at ${m.val.wacc}% WACC, ${m.val.tg}% long-term growth (${S.currency})`].concat(val.rows.map(r => labels[r.t]))];
-    for (const [k, l] of [["ebit", "Operating profit"], ["nopat", "After tax"], ["dep", "Depreciation"], ["capex", "Capital spending"], ["dNwc", "Increase in working capital"], ["fcff", "Free cash flow"], ["df", "Discount factor"], ["pv", "Present value"]]) vRows.push([l].concat(val.rows.map(r => k === "df" ? Math.round(r.df * 1000) / 1000 : Math.round(r[k]))));
-    vRows.push([], ["Present value of years 1 to 3", Math.round(val.sumPV)], ["Present value after year 3", val.pvtv === null ? "" : Math.round(val.pvtv)], ["Enterprise value", val.ev === null ? "" : Math.round(val.ev)], ["Net debt", Math.round(val.netDebt)], ["Equity value", val.equity === null ? "" : Math.round(val.equity)], []);
+    const xv = (v, f) => v === null || v === undefined || !isFinite(v) ? "" : f === "pct" ? { v, z: XL.pct } : f === "x" ? { v, z: XL.x } : Math.round(v);
+    const fRows = [["", labels[0] + " annualised"].concat(labels.slice(1))];
+    for (const r of FC_ROWS) { if (r.h) { fRows.push(xr("sec", [r.h])); continue; } const [k, l, , f] = r; fRows.push([l].concat(years.map(yy => xv(yy[k], f)))); }
+    if (want("forecast")) X.sheet(fRows, "Forecast", [36, 18, 16, 16, 16], { title: `Three-year forecast, ${scen} case`, desc: `Profit, balance sheet and cash flow, ${scen} case` });
+    const sRows = [[""].concat(labels)];
+    for (const sc of ["down", "base", "up"]) { sRows.push(xr("sec", [SCEN_LABEL[sc] + " case"])); for (const [k, l] of [["rev", "Revenue"], ["np", "Net profit"], ["cash", "Closing cash"], ["debt", "Borrowings"]]) sRows.push([l].concat(runs[sc].map(yy => xv(yy[k])))); }
+    if (want("forecast")) X.sheet(sRows, "Scenarios", [28, 16, 16, 16, 16], { title: "Scenario comparison", desc: "Downside, base and upside cases" });
+    const aRows = [["Assumption", "Value", "Unit"]];
+    for (const gr of FC_INPUTS.concat(VAL_INPUTS)) { aRows.push(xr("sec", [gr.g])); for (const [p, l, k] of gr.items) aRows.push([l, getPath(m, p), k === "money" ? S.currency : INPUT_UNITS[k]]); }
+    if (want("forecast") || want("valuation")) X.sheet(aRows, "Assumptions", [40, 16, 12], { unit: "", desc: "Every assumption behind the forecast" });
+    const bRows = [[""].concat(budget.map(x => x.label)).concat(["Total"])];
+    for (const [k, l] of BUDGET_ROWS) bRows.push([l].concat(budget.map(x => R0(x[k]))).concat([R0(budget.reduce((t, x) => t + x[k], 0))]));
+    if (want("budget")) X.sheet(bRows, "Budget", [26].concat(Array(13).fill(12)), { title: `Budget ${labels[1]}, ${scen} case`, desc: "Month by month" });
+    const vRows = [[""].concat(val.rows.map(r => labels[r.t]))];
+    for (const [k, l] of [["ebit", "Operating profit"], ["nopat", "After tax"], ["dep", "Depreciation"], ["capex", "Capital spending"], ["dNwc", "Increase in working capital"], ["fcff", "Free cash flow"], ["df", "Discount factor"], ["pv", "Present value"]]) vRows.push([l].concat(val.rows.map(r => k === "df" ? { v: r.df, z: "0.000" } : R0(r[k]))));
+    vRows.push([], ["Present value of years 1 to 3", R0(val.sumPV)], ["Present value after year 3", R0(val.pvtv)], xr("b", ["Enterprise value", R0(val.ev)]), ["Net debt", R0(val.netDebt)], xr("total", ["Equity value", R0(val.equity)]), []);
     const gs = [-2, -1, 0, 1, 2].map(d => m.val.tg + d);
-    vRows.push(["Equity value: WACC (rows) by growth (columns)"].concat(gs.map(g => g + "%")));
-    for (const w of [-4, -2, 0, 2, 4].map(d => m.val.wacc + d)) vRows.push([w + "%"].concat(gs.map(g => { const r = dcf(years, m, w, g); return r.equity === null ? "" : Math.round(r.equity); })));
-    if (want("valuation")) add(vRows, "Valuation", [44, 16, 16, 16, 16, 16]);
-    const lRows = [["Month", "Opening", "Interest", "Principal", "Instalment", "Closing"]].concat(loan.rows.map(x => [x.i, Math.round(x.open), Math.round(x.interest), Math.round(x.principal), Math.round(x.pay), Math.round(x.close)]));
-    lRows.push([], ["Total interest", "", Math.round(loan.totInt)], ["Total repaid", "", "", "", Math.round(loan.totPay)]);
-    if (want("appraisal")) add(lRows, "Loan schedule", [8, 16, 14, 14, 14, 16]);
-    const pRows = [["Year", "Cash flow", "Discounted", "Cumulative", "Cumulative discounted"]].concat(proj.table.map(x => [x.t, Math.round(x.c), Math.round(x.d), Math.round(x.cum), Math.round(x.dcum)]));
-    pRows.push([], ["Net present value", Math.round(proj.npv)], ["Internal rate of return", proj.irr === null ? "" : Math.round(proj.irr * 1000) / 10 + "%"], ["Payback (years)", proj.pb === null ? "Not within life" : Math.round(proj.pb * 10) / 10], ["Discounted payback (years)", proj.dpb === null ? "Not within life" : Math.round(proj.dpb * 10) / 10], ["Profitability index", proj.pi === null ? "" : Math.round(proj.pi * 100) / 100]);
-    if (want("appraisal")) add(pRows, "Project appraisal", [24, 16, 16, 16, 20]);
+    vRows.push(xr("colhead", ["Equity value: discount rate (rows) by long-term growth (columns)"].concat(gs.map(g => ({ v: g / 100, z: "0%" })))));
+    for (const w of [-4, -2, 0, 2, 4].map(d => m.val.wacc + d)) vRows.push([{ v: w / 100, z: "0%" }].concat(gs.map(g => { const r = dcf(years, m, w, g); return R0(r.equity); })));
+    if (want("valuation")) X.sheet(vRows, "Valuation", [44, 16, 16, 16, 16, 16], { title: `Valuation at ${m.val.wacc}% discount rate, ${m.val.tg}% long-term growth`, desc: "Discounted cash flow and sensitivity" });
+    const lRows = [["Month", "Opening", "Interest", "Principal", "Instalment", "Closing"]].concat(loan.rows.map(x => [x.i, R0(x.open), R0(x.interest), R0(x.principal), R0(x.pay), R0(x.close)]));
+    lRows.push(xr("total", ["Total", "", R0(loan.totInt), R0(loan.totPay - loan.totInt), R0(loan.totPay), ""]));
+    if (want("appraisal")) X.sheet(lRows, "Loan schedule", [10, 16, 14, 14, 14, 16], { desc: "Repayment schedule" });
+    const pRows = [["Year", "Cash flow", "Discounted", "Cumulative", "Cumulative discounted"]].concat(proj.table.map(x => [x.t, R0(x.c), R0(x.d), R0(x.cum), R0(x.dcum)]));
+    pRows.push([], xr("b", ["Net present value", R0(proj.npv)]), ["Internal rate of return", xp(proj.irr)], ["Payback (years)", proj.pb === null ? "Not within life" : { v: proj.pb, z: "0.0" }], ["Discounted payback (years)", proj.dpb === null ? "Not within life" : { v: proj.dpb, z: "0.0" }], ["Profitability index", proj.pi === null ? "" : { v: proj.pi, z: "0.00" }]);
+    if (want("appraisal")) X.sheet(pRows, "Project appraisal", [26, 16, 16, 16, 20], { desc: "Net present value, IRR and payback" });
   }
-  const buf = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+  const buf = XLSX.write(X.finish(), { bookType: "xlsx", type: "array", cellStyles: true });
   await saveFile((only ? taskFileBase(only) : fileBase()) + ".xlsx", new Blob([buf]));
   noteDownload();
 }
@@ -5100,27 +5371,28 @@ async function bkBackup() {
 async function bkExportXLSX() {
   if (!window.XLSX) { toast("The Excel tool didn't load. Check your connection and reload."); return; }
   if (!(await canDownload(book().name))) return;
-  const b = book(), d = bkAsAt || todayISO(), bal = tbAt(b, d), wb = XLSX.utils.book_new();
-  const add = (rows, name, w) => { const ws = XLSX.utils.aoa_to_sheet(rows); ws["!cols"] = w.map(x => ({ wch: x })); XLSX.utils.book_append_sheet(wb, ws, name); };
-  const tb = [[`Trial balance at ${d} (${b.currency})`, "Account", "Debit", "Credit"]];
+  const b = book(), d = bkAsAt || todayISO(), bal = tbAt(b, d);
+  const X = xlBook({ company: b.name.replace(/\s*\(example\)\s*$/i, ""), title: "Books", period: `To ${niceISO(d)}`, unit: `Amounts in ${b.currency}` });
+  const add = (rows, name, w, opt) => X.sheet(rows, name, w, opt);
+  const tb = [["Code", "Account", "Debit", "Credit"]];
   let dr = 0, cr = 0;
   for (const a of b.accounts) { const v = Math.round(bal[a.code] || 0); if (!v) continue; tb.push([a.code, a.name, v > 0 ? v : "", v < 0 ? -v : ""]); if (v > 0) dr += v; else cr -= v; }
-  tb.push(["", "Total", dr, cr]);
-  add(tb, "Trial balance", [14, 36, 16, 16]);
+  tb.push(xr("total", ["", "Total", dr, cr]));
+  add(tb, "Trial balance", [12, 40, 16, 16], { period: `At ${niceISO(d)}`, desc: "Balances on every account" });
   const db = [["Date", "Type", "Reference", "Contact", "Account code", "Account", "Debit", "Credit", "Details"]];
   for (const t of b.txns) for (const p of postings(t, b)) db.push([t.date, KIND_LABEL[t.kind], t.ref || "", t.contact || "", p.code, acctName(b, p.code), p.v > 0 ? p.v : "", p.v < 0 ? -p.v : "", txnDesc(t, b)]);
-  add(db, "Day book", [12, 16, 12, 22, 10, 30, 14, 14, 40]);
+  add(db, "Day book", [12, 16, 12, 22, 10, 30, 14, 14, 44], { desc: "Every posting, in date order" });
   for (const [kind, name] of [["invoice", "Sales invoices"], ["bill", "Supplier bills"]]) {
     const r = [["Date", "Number", kind === "invoice" ? "Customer" : "Supplier", "Due", "Net", "VAT", "Total", "Paid", "Outstanding", "Status"]];
     for (const o of openItems(b, kind, "9999-12-31", todayISO())) { const tt = txnTotals(o.t, b); r.push([o.t.date, o.t.ref || "", o.t.contact || "", o.t.due || "", tt.net, tt.vat, tt.gross, o.paid, o.out, o.status]); }
-    add(r, name, [12, 12, 26, 12, 14, 12, 14, 14, 14, 10]);
+    add(r, name, [12, 12, 26, 12, 14, 12, 14, 14, 14, 10], { desc: kind === "invoice" ? "Customer invoices and what is still owed" : "Supplier bills and what is still owed" });
   }
   if (b.vatReg) {
     const p = bkVat || bkVatPeriod("last"), v = vatSummary(b, p.from, p.to);
-    add([[`VAT summary ${p.from} to ${p.to}`, "Value excluding VAT", "VAT"], ["Standard-rated sales at 18%", v.sS, v.oV], ["Zero-rated sales", v.sZ, 0], ["Exempt sales", v.sE, ""], ["Purchases at 18%", v.pS, v.iV], ["Zero-rated and exempt purchases", v.pZ + v.pE, ""], [v.net >= 0 ? "VAT payable" : "VAT refundable", "", Math.abs(v.net)]], "VAT summary", [36, 20, 14]);
+    add([["", "Value excluding VAT", "VAT"], ["Standard-rated sales at 18%", v.sS, v.oV], ["Zero-rated sales", v.sZ, 0], ["Exempt sales", v.sE, ""], ["Purchases at 18%", v.pS, v.iV], ["Zero-rated and exempt purchases", v.pZ + v.pE, ""], xr("total", [v.net >= 0 ? "VAT payable" : "VAT refundable", "", Math.abs(v.net)])], "VAT summary", [36, 20, 14], { period: `${niceISO(p.from)} to ${niceISO(p.to)}`, desc: "Output and input VAT for the period" });
   }
-  add([["Code", "Name", "Pack line"]].concat(b.accounts.map(a => [a.code, a.name, catLabel(a.cat)])), "Accounts", [10, 36, 28]);
-  const buf = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+  add([["Code", "Name", "Line in the reports"]].concat(b.accounts.map(a => [a.code, a.name, catLabel(a.cat)])), "Accounts", [10, 40, 30], { unit: "", desc: "Chart of accounts" });
+  const buf = XLSX.write(X.finish(), { bookType: "xlsx", type: "array", cellStyles: true });
   await saveFile(`${b.name.replace(/[^\w\- ]+/g, "").trim()} - books to ${d}.xlsx`, new Blob([buf]));
   noteDownload();
 }
@@ -5272,7 +5544,7 @@ function show(view) {
   closeMenus();
   if (view === "map") renderMapping();
   if (view === "pack" || view === "fs") renderPack();
-  if (isModel) renderModel();
+  if (isModel) { renderModel(); renderSignoff(); }
   if (view === "books") renderBooks();
   window.scrollTo({ top: 0 });
 }

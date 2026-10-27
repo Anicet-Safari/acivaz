@@ -1,9 +1,10 @@
 // Acivaz offline cache. Bump VERSION when you publish changes.
-const VERSION = "acivaz-v17";
+const VERSION = "acivaz-v18";
 const SHELL = [
   "./", "index.html", "manifest.webmanifest",
   "icon-192.png", "icon-512.png", "icon-maskable-512.png", "apple-touch-icon.png", "favicon-32.png",
-  "https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js",
+  "https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/cpexcel.js",
+  "https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js",
   "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"
 ];
 self.addEventListener("install", e => {
