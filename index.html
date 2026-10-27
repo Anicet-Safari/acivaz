@@ -592,6 +592,7 @@ img { max-width: 100%; }
             <div class="field"><label for="s-unit">Show amounts in</label>
               <select id="s-unit"><option value="m">Millions</option><option value="k">Thousands</option><option value="1">Units</option></select></div>
             <div class="field"><label for="s-currency">Currency code</label><input id="s-currency" type="text" maxlength="5"></div>
+            <div class="field"><label for="s-tax">Income tax rate (%)</label><input id="s-tax" type="number" min="0" max="100" step="0.5"></div>
           </div>
           <div style="margin-top:14px;display:flex;flex-direction:column;gap:10px">
             <label class="check"><input type="checkbox" id="s-flip"><span>My export shows credits as positive numbers (flip all signs)</span></label>
@@ -843,7 +844,7 @@ img { max-width: 100%; }
               <li><strong>Who owes what, by age</strong>: what customers owe you and what you owe suppliers, split into not yet due, 1–30, 31–60, 61–90 and over 90 days overdue.</li>
               <li><strong>Top customers</strong> by sales, with what each still owes, and the <strong>biggest costs</strong> as a share of revenue.</li>
             </ul>
-            <p>The <strong>VAT and tax tracker</strong> at the bottom shows output VAT, input VAT and VAT paid to RRA for each month, with the amount owed at each month end. Next to it, income tax at 28% of profit to date is drawn against the tax provided in the books. If they differ, press <strong>Post provision</strong> to bring the provision up to date.</p>
+            <p>The <strong>VAT and tax tracker</strong> at the bottom shows output VAT, input VAT and VAT paid to RRA for each month, with the amount owed at each month end. Next to it, income tax due on the year so far, under the company's regime and rate, is drawn against the tax provided in the books. If they differ, press <strong>Post provision</strong> to bring the provision up to date.</p>
             <p>The green check <strong>Debits equal credits</strong> confirms the books balance. A warning appears if opening balances are incomplete or if you haven't backed up recent changes.</p>
             <div class="actions"><button class="btn small" type="button" data-goto="books">Open Books</button></div>
 
@@ -853,6 +854,7 @@ img { max-width: 100%; }
               <li>Enter the company name, the month its financial year starts, and the date the books start. Starting on the first day of a financial year, such as 1 January, lets the pack include a cash flow statement.</li>
               <li>Tick <strong>Registered for VAT</strong> if the company is VAT registered, and press <strong>Save</strong>.</li>
             </ol>
+            <p>In <strong>Setup</strong>, also check three tax settings. <strong>Income tax regime</strong>: tax on profit, or the small business flat rate for turnover up to RWF 20 million. <strong>Tax rate on profit</strong>: 28% unless the company qualifies for a reduced rate. <strong>VAT and PAYE returns</strong>: quarterly for turnover up to RWF 200 million and monthly above it; Acivaz picks this from turnover unless you choose.</p>
             <p>You can keep books for as many companies as you like. Switch between them with the company list at the top right. Under <strong>Setup</strong> you can later change the name, financial year, start date, invoice numbering and currency.</p>
             <p>Every company starts with a chart of accounts built for Rwandan businesses, including bank, MoMo and petty cash, VAT payable to RRA, PAYE and RSSB, and income tax payable. In <strong>Setup → Chart of accounts</strong> you can rename accounts, add your own, and choose which line of the management pack each one feeds. Accounts Acivaz relies on, such as Trade receivables and VAT payable, can be renamed but not deleted.</p>
 
@@ -876,9 +878,10 @@ img { max-width: 100%; }
             <p>When the customer pays, press <strong>Receive</strong> next to the invoice, or <strong>Payment received</strong>. Choose the account the money went into, such as the bank or MoMo, and enter the amount and a reference, such as the MoMo transaction ID. Part payments are fine. The invoice shows as <strong>Part paid</strong> until the rest arrives.</p>
             <p>The list shows each invoice's status: <strong>Unpaid</strong>, <strong>Part paid</strong>, <strong>Overdue</strong> or <strong>Paid</strong>. Below it, <strong>What customers owe, by age</strong> groups the balances into not yet due, 1–30, 31–60, 61–90 and over 90 days, so you can see who to chase.</p>
             <p>For a cash or MoMo sale with no invoice, use <strong>Money in</strong> instead.</p>
+            <div class="m-tip m-warn"><strong>Acivaz invoices are bookkeeping records, not tax invoices.</strong> Under Ministerial Order 006/26/10/TC (September 2026), the invoice a customer receives must come from RRA's EBM or e-invoicing system. Issue it there, then type its receipt number into <strong>EBM / e-invoice receipt number</strong> on the sale in Acivaz. For a VAT-registered company, a check at the top of Books counts sales this year that have no receipt number.</div>
 
             <h3 id="m-books-purchases">Bills and suppliers</h3>
-            <p><strong>Purchases</strong> works the same way for suppliers. Press <strong>New supplier bill</strong> to record a bill you'll pay later, then <strong>Pay</strong> when you pay it. Choose an expense account for costs, or an asset account such as Property, plant and equipment for equipment. <strong>What you owe suppliers, by age</strong> shows what's due and when.</p>
+            <p><strong>Purchases</strong> works the same way for suppliers. Enter the supplier's EBM invoice number on each bill: RRA only allows input VAT that is backed by one. Press <strong>New supplier bill</strong> to record a bill you'll pay later, then <strong>Pay</strong> when you pay it. Choose an expense account for costs, or an asset account such as Property, plant and equipment for equipment. <strong>What you owe suppliers, by age</strong> shows what's due and when.</p>
 
             <h3 id="m-books-money">Money in, money out, transfers</h3>
             <ul>
@@ -907,11 +910,12 @@ img { max-width: 100%; }
             <p>Acivaz suggests a treatment from the account you choose; change it whenever it's wrong. Output VAT on sales and input VAT on purchases both go to <strong>VAT payable (RRA)</strong>.</p>
             <p>The <strong>VAT</strong> section summarises any period. Press <strong>Last month</strong>, <strong>This month</strong>, <strong>Last quarter</strong> or <strong>This year</strong>, or set your own dates. It shows standard-rated, zero-rated and exempt sales, purchases at 18%, and the net VAT payable or refundable. Open <strong>Show the lines behind these figures</strong> to check every entry. When you pay RRA, press <strong>Record VAT payment</strong>.</p>
             <div class="m-tip m-warn">Input VAT on costs that relate to exempt sales may not be claimable. Check before you file the return.</div>
-            <p>If the company isn't registered, untick <strong>Registered for VAT</strong> in Setup and no VAT is added anywhere.</p>
+            <p>Businesses with turnover up to RWF 200 million declare VAT quarterly and others monthly, within 15 days after the period ends, even when nothing is payable. The VAT section opens on the period that matches the company's filing and shows the due date.</p>
+            <p>If the company isn't registered, untick <strong>Registered for VAT</strong> in Setup and no VAT is added anywhere. Registration is required once sales pass RWF 20 million in a year or RWF 5 million in a quarter, and a warning appears at the top of Books when they do.</p>
 
-            <h3 id="m-books-tax">Income tax at 28%</h3>
-            <p>Acivaz uses Rwanda's corporate income tax rate of 28%. The Overview shows the estimated tax on profit so far, and <strong>Reports → Corporate income tax at 28%</strong> compares it with the tax already provided in the books. Press <strong>Post provision</strong> to record the difference as a journal: debit Income tax expense, credit Income tax payable.</p>
-            <p>The estimate uses accounting profit. Taxable profit can differ, for example through expenses that aren't deductible or tax depreciation, so treat it as a provision rather than the tax return. The forecast also uses 28% unless you change it, and the tax note in the pack compares the effective rate with 28%.</p>
+            <h3 id="m-books-tax">Income tax</h3>
+            <p>By default Acivaz uses Rwanda's standard corporate income tax rate of 28%. Change the rate in Setup if the company has a reduced rate. For the small business flat rate, there is no tax on annual turnover up to RWF 2 million, then RWF 60,000, 120,000, 210,000 or 300,000 a year up to RWF 12 million, and 3% of turnover up to RWF 20 million. The Overview shows the estimated tax so far, and <strong>Reports</strong> compares it with the tax already provided in the books. Press <strong>Post provision</strong> to record the difference as a journal: debit Income tax expense, credit Income tax payable.</p>
+            <p>The estimate uses accounting profit. Taxable profit can differ, for example through expenses that aren't deductible or tax depreciation, so treat it as a provision rather than the tax return. Quarterly prepayments are due by 30 June, 30 September and 31 December, and the annual return by 31 March. A pack built from the books carries the company's rate into the forecast and the tax note; for an uploaded trial balance, set it under <strong>Income tax rate</strong> in Pack settings.</p>
 
             <h3 id="m-books-recon">Bank reconciliation</h3>
             <ol>
@@ -1499,11 +1503,11 @@ function buildNotes(cur, cmp, open) {
           { l: "Profit before tax", cur: cur.pbt, cmp: cmp ? cmp.pbt : null },
           { l: "Income tax expense", cur: cur.tax, cmp: cmp ? cmp.tax : null },
           { l: "Effective tax rate", cur: cur.pbt ? cur.tax / cur.pbt : null, cmp: cmp && cmp.pbt ? cmp.tax / cmp.pbt : null, pct: true, sub: true },
-          { l: "Corporate income tax rate", cur: 0.28, cmp: cmp ? 0.28 : null, pct: true },
-          { l: "Tax at 28% on profit before tax", cur: Math.max(0, cur.pbt) * 0.28, cmp: cmp ? Math.max(0, cmp.pbt) * 0.28 : null }
+          { l: "Corporate income tax rate", cur: (S.taxRate ?? 28) / 100, cmp: cmp ? (S.taxRate ?? 28) / 100 : null, pct: true },
+          { l: `Tax at ${S.taxRate ?? 28}% on profit before tax`, cur: Math.max(0, cur.pbt) * (S.taxRate ?? 28) / 100, cmp: cmp ? Math.max(0, cmp.pbt) * (S.taxRate ?? 28) / 100 : null }
         ]
       });
-      note.text = "The corporate income tax rate in Rwanda is 28%. The effective rate is the tax expense divided by profit before tax. Explain any material difference from 28%, such as expenses that are not deductible or tax depreciation.";
+      note.text = `The income tax rate applied is ${S.taxRate ?? 28}%${(S.taxRate ?? 28) === 28 ? ", Rwanda's standard corporate rate" : "; Rwanda's standard corporate rate is 28%"}. The effective rate is the tax expense divided by profit before tax. Explain any material difference from ${S.taxRate ?? 28}%, such as expenses that are not deductible or tax depreciation.`;
     }
     if (def.id === "nca") {
       if (open) {
@@ -2016,7 +2020,7 @@ function renderMapping() {
 }
 function renderSettings() {
   $("s-company").value = S.company; $("s-cur").value = S.cur; $("s-cmp").value = S.cmp; $("s-bud").value = S.bud; $("s-opn").value = S.opn || "";
-  $("s-months").value = S.months; $("s-unit").value = S.unit; $("s-currency").value = S.currency;
+  $("s-months").value = S.months; $("s-unit").value = S.unit; $("s-currency").value = S.currency; $("s-tax").value = S.taxRate ?? 28;
   $("s-flip").checked = !!S.flip; $("s-cmpopen").checked = !!S.cmpOpen;
 }
 function renderAll() { renderSettings(); renderMapping(); renderPack(); }
@@ -2163,7 +2167,7 @@ function modelDefaults() {
     ocaPct: r1(cur.oca / rev * 100), oclPct: r1(cur.ocl / rev * 100),
     rate: avgDebt > 0 ? r05(b.fin / avgDebt * 100) : 15,
     repay: roundM(Math.min(repayAnn, cur.ncl)), newDebt: 0,
-    tax: 28, div: 0,
+    tax: S.taxRate ?? 28, div: 0,
     scen: { down: { g: -10, gm: -2, dd: 15 }, up: { g: 5, gm: 1, dd: -5 } },
     val: { wacc: 18, tg: 5 },
     fyStart: 1, season: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
@@ -3195,12 +3199,67 @@ function readSettingsForm() {
   S.unit = $("s-unit").value;
   S.currency = ($("s-currency").value.trim() || "RWF").toUpperCase();
   S.cmpOpen = $("s-cmpopen").checked;
+  const tr = parseFloat($("s-tax").value); S.taxRate = isFinite(tr) ? Math.min(100, Math.max(0, tr)) : 28;
   return prevKey !== mapKey();
 }
 
 /* ---------- Bookkeeping ---------- */
 const BK_KEY = "acv:books";
 const CIT_RATE = 0.28, VAT_RATE = 0.18;
+/* Rwandan tax rules: RRA "Basic information on taxation" (Oct 2023), Law 027/2022 as amended, MO 006/26/10/TC on e-invoicing */
+const RW_FLAT = [[2e6, 0], [4e6, 60000], [7e6, 120000], [10e6, 210000], [12e6, 300000]];
+const RW_VAT_YEAR = 20e6, RW_VAT_QTR = 5e6, RW_QTR_FILER = 200e6, RW_SMALL_MAX = 20e6;
+const bkCitPct = b => { const r = Number(b && b.citRate); return b && b.citRate !== undefined && b.citRate !== null && b.citRate !== "" && isFinite(r) ? r : 28; };
+function flatTaxAnnual(t) { if (t <= RW_FLAT[0][0]) return 0; for (const [hi, v] of RW_FLAT) if (t <= hi) return v; return t <= RW_SMALL_MAX ? t * 0.03 : null; }
+function bkTaxEst(b, pbt, turnover, months) {
+  const rate = bkCitPct(b), m = Math.max(1, Math.min(12, months || 12));
+  const real = { est: Math.max(0, pbt) * rate / 100, label: `Income tax at ${rate}%`, short: `${rate}% of profit`, regime: "real", rate };
+  if (b.taxReg !== "flat") return real;
+  const annual = Math.max(0, turnover) * 12 / m, a = flatTaxAnnual(annual);
+  if (a === null) return { ...real, over: true };
+  return { est: a * m / 12, label: "Income tax, flat-rate regime", short: annual <= 12e6 ? "Flat amount for the turnover" : "3% of turnover", regime: "flat", annual, rate };
+}
+function bkTaxNote(TX) {
+  if (TX.regime === "flat") return "Small business flat-rate regime: no tax on annual turnover up to RWF 2 million, then RWF 60,000, 120,000, 210,000 or 300,000 a year up to RWF 12 million, and 3% of turnover up to RWF 20 million. It is declared and paid quarterly on each quarter's turnover. The estimate spreads this year's amount over the months so far, based on turnover to date.";
+  return `${TX.over ? "Turnover is heading above RWF 20 million, so the flat-rate regime no longer applies and tax is on profit. " : ""}This is ${TX.rate}% of accounting profit. Taxable profit can differ, for example through expenses that aren't deductible or tax depreciation, so treat it as a provision, not the tax return. Quarterly prepayments are due by 30 June, 30 September and 31 December, and the annual return by 31 March.`;
+}
+const monthsIn = (fs, d) => (+d.slice(0, 4) - +fs.slice(0, 4)) * 12 + (+d.slice(5, 7) - +fs.slice(5, 7)) + 1;
+function bkTurnoverByMonth(b) {
+  const cat = {}, m = {};
+  for (const a of b.accounts) cat[a.code] = a.cat;
+  for (const t of b.txns) {
+    if (t.kind === "opening" || t.opening) continue;
+    for (const p of postings(t, b)) if (cat[p.code] === "rev" || cat[p.code] === "oi") m[t.date.slice(0, 7)] = (m[t.date.slice(0, 7)] || 0) - p.v;
+  }
+  return m;
+}
+function bkVatFreq(b) {
+  if (b.vatFreq === "m" || b.vatFreq === "q") return b.vatFreq;
+  const tm = bkTurnoverByMonth(b), now = todayISO().slice(0, 7), ks = Object.keys(tm).filter(k => k <= now).sort().slice(-12);
+  const yr = ks.reduce((t, k) => t + tm[k], 0) * 12 / Math.max(1, ks.length);
+  return yr > RW_QTR_FILER ? "m" : "q";
+}
+const vatDue = to => isoOf(new Date(+to.slice(0, 4), +to.slice(5, 7), 15));
+const isSale = (b, t) => !t.opening && (t.kind === "invoice" || (t.kind === "moneyin" && (t.lines || []).some(l => { const a = acctOf(b, l.acct); return a && (a.cat === "rev" || a.cat === "oi"); })));
+function bkTaxChips(b) {
+  const out = [], d = todayISO(), fs = fyStartFor(b, d);
+  if (!b.vatReg) {
+    const tm = bkTurnoverByMonth(b), from = addDays(d, -365).slice(0, 7), qs = {};
+    let yr = 0;
+    for (const [k, v] of Object.entries(tm)) {
+      if (k >= fs.slice(0, 7) && k <= d.slice(0, 7)) yr += v;
+      if (k >= from && k <= d.slice(0, 7)) { const q = k.slice(0, 4) + "Q" + Math.ceil(+k.slice(5, 7) / 3); qs[q] = (qs[q] || 0) + v; }
+    }
+    const qMax = Math.max(0, ...Object.values(qs));
+    if (yr > RW_VAT_YEAR || qMax > RW_VAT_QTR) out.push(`<span class="chip warn">Sales passed the VAT threshold (RWF 20 million a year or 5 million in a quarter): register with RRA within 7 days <button class="linkish" type="button" data-act="bk-tab" data-bk="setup">Setup</button></span>`);
+  } else {
+    const sales = b.txns.filter(t => t.date >= fs && t.date <= d && isSale(b, t)), miss = sales.filter(t => !t.ebm).length;
+    if (sales.length) out.push(miss ? `<span class="chip warn">${miss} sale${miss === 1 ? "" : "s"} this year without an EBM receipt number <button class="linkish" type="button" data-act="bk-tab" data-bk="sales">Check</button></span>` : `<span class="chip good">Every sale this year has an EBM receipt number</span>`);
+    const buys = b.txns.filter(t => t.date >= fs && t.date <= d && !t.opening && (t.kind === "bill" || t.kind === "moneyout") && (t.lines || []).some(l => l.vat === "S")), mb = buys.filter(t => !t.ebm).length;
+    if (mb) out.push(`<span class="chip plain">${mb} purchase${mb === 1 ? "" : "s"} with VAT lack the supplier's EBM invoice number, needed to claim input VAT</span>`);
+  }
+  return out;
+}
 const VAT_OPTS = [["S", "18%"], ["Z", "Zero-rated"], ["E", "Exempt"], ["N", "No VAT"]];
 const KIND_LABEL = { invoice: "Sales invoice", bill: "Supplier bill", receipt: "Payment received", billpay: "Bill paid", moneyin: "Money in", moneyout: "Money out", transfer: "Transfer", journal: "Journal", opening: "Opening balances" };
 const FORM_TITLE = { invoice: "sales invoice", bill: "supplier bill", receipt: "payment received", billpay: "bill payment", moneyin: "money in", moneyout: "money out", transfer: "transfer", journal: "journal entry", opening: "opening balances" };
@@ -3420,6 +3479,12 @@ function seedExample() {
   for (const r of rows) b.recon[r.key] = true;
   if (rows.length) b.recons.push({ acct: "1000", date: "2026-09-30", balance: rows[rows.length - 1].bal, diff: 0 });
   b.nextInv = no;
+  let ebmNo = 40118230;
+  for (const t of b.txns.slice().sort(byDate)) {
+    if (t.date < "2026-01-01") continue;
+    if (isSale(b, t) && t.date < "2026-10-01") t.ebm = "SDC-" + (ebmNo += 37);
+    else if ((t.kind === "bill" || t.kind === "moneyout") && (t.lines || []).some(l => l.vat === "S")) t.ebm = "EIS-" + (ebmNo += 53);
+  }
   b.lastBackup = null; b.changedAt = null;
   return b;
 }
@@ -3440,6 +3505,7 @@ function renderBooks() {
   document.querySelectorAll("#bk-nav [data-bk]").forEach(x => x.setAttribute("aria-selected", x.dataset.bk === bkView));
   const all = tbAt(b, "9999-12-31"), sum = Object.values(all).reduce((s, v) => s + v, 0), obe = all[roleCode(b, "obe")] || 0;
   const chips = [Math.abs(sum) < 1 ? `<span class="chip good">Debits equal credits</span>` : `<span class="chip bad">Books out by ${rwf(sum)}</span>`];
+  chips.push(...bkTaxChips(b));
   if (Math.abs(obe) >= 1) chips.push(`<span class="chip warn">Opening balances: ${rwf(Math.abs(obe))} still to explain <button class="linkish" type="button" data-act="bk-tab" data-bk="setup">Check</button></span>`);
   if (b.example) chips.push(`<span class="chip plain">Example data</span>`);
   else if (!b.lastBackup) chips.push(b.txns.length ? `<span class="chip warn">Not backed up yet <button class="linkish" type="button" data-act="backup">Back up now</button></span>` : `<span class="chip plain">No entries yet</span>`);
@@ -3624,21 +3690,21 @@ function bkDashboard(b) {
     const net = D.vatOut.map((v, i) => v - D.vatIn[i]), paid = R.map(r => r.vatPaid);
     h += `<div class="panel"><div class="panel-head"><h3>VAT by month</h3><button class="linkish" type="button" data-act="bk-tab" data-bk="vat">Open VAT return</button></div><div class="chart-box">${groupedBarsSVG(cats, [{ l: "Output VAT", vals: D.vatOut, fill: "var(--seg1)" }, { l: "Input VAT", vals: D.vatIn, fill: "var(--seg3)" }, { l: "Paid to RRA", vals: paid, fill: "var(--seg2)" }], "Output VAT, input VAT and VAT paid to RRA by month", fmtM, cur)}</div><div class="legend"><span><i style="background:var(--seg1)"></i>Output VAT on sales</span><span><i style="background:var(--seg3)"></i>Input VAT on costs</span><span><i style="background:var(--seg2)"></i>Paid to RRA</span></div>
     <div class="table-box" style="margin-top:10px"><table class="st narrow"><thead><tr><th>${esc(cur)}</th><th class="n">Output</th><th class="n">Input</th><th class="n">Paid to RRA</th><th class="n">Owed at end</th></tr></thead><tbody>${cats.map((c, i) => `<tr><td>${c}</td><td class="n">${rwf(D.vatOut[i])}</td><td class="n">${rwf(D.vatIn[i])}</td><td class="n">${rwf(paid[i])}</td><td class="n">${rwf(D.vatOwed[i])}</td></tr>`).join("")}<tr class="total"><td class="lbl">Year to date</td><td class="n">${rwf(sum(D.vatOut))}</td><td class="n">${rwf(sum(D.vatIn))}</td><td class="n">${rwf(sum(paid))}</td><td class="n">${rwf(last(D.vatOwed))}</td></tr></tbody></table></div>
-    <p class="dash-note">Each month's VAT is normally paid to RRA by the 15th of the next month, so the amount owed at the end of a month should equal that month's output VAT less input VAT, less any credit carried forward from an earlier month.</p></div>`;
+    <p class="dash-note">${bkVatFreq(b) === "q" ? "This company declares VAT quarterly, so each quarter's VAT is paid to RRA by the 15th of the month after the quarter ends. The amount owed builds up through the quarter and should drop after each payment." : "This company declares VAT monthly, so each month's VAT is paid to RRA by the 15th of the next month. The amount owed at the end of a month should equal that month's output VAT less input VAT, less any credit carried forward."}</p></div>`;
   } else h += `<div class="panel"><div class="panel-head"><h3>VAT by month</h3></div><p class="help">This company isn't registered for VAT, so there is nothing to track. Turn VAT on in Setup if it registers.</p></div>`;
-  let cum = 0, cumT = 0; const est = [], prov = [];
-  R.forEach((r, i) => { cum += pbt[i]; cumT += r.tax; est.push(Math.max(0, cum) * CIT_RATE); prov.push(cumT); });
+  let cum = 0, cumT = 0, cumInc = 0, TX = bkTaxEst(b, 0, 0, 1); const est = [], prov = [];
+  R.forEach((r, i) => { cum += pbt[i]; cumT += r.tax; cumInc += r.inc; TX = bkTaxEst(b, cum, cumInc, i + 1); est.push(TX.est); prov.push(cumT); });
   const gap = Math.round(last(est) - last(prov));
-  h += `<div class="panel"><div class="panel-head"><h3>Income tax at 28%</h3><button class="linkish" type="button" data-act="bk-tab" data-bk="reports">Open reports</button></div><div class="chart-box">${linesSVG(cats, [{ l: "Provided", vals: prov, stroke: "var(--accent)", bold: true }, { l: "28% of profit", vals: est, stroke: "var(--seg2)", dash: "6 4" }], "Income tax at 28% of profit to date against tax provided in the books", fmtM)}</div>
-    <div class="table-box" style="margin-top:10px"><table class="st narrow"><tbody><tr><td class="lbl">Profit before tax, year to date</td><td class="n">${rwf(totPbt)}</td></tr><tr><td class="lbl">Income tax at 28%</td><td class="n">${rwf(last(est))}</td></tr><tr><td class="lbl">Provided in the books</td><td class="n">${rwf(last(prov))}</td></tr><tr class="total"><td class="lbl">${gap >= 0 ? "Still to provide" : "Over-provided"}</td><td class="n">${rwf(Math.abs(gap))}</td></tr><tr><td class="lbl muted">Income tax payable account</td><td class="n muted">${rwf(last(D.citOwed))}</td></tr></tbody></table></div>
+  h += `<div class="panel"><div class="panel-head"><h3>${esc(TX.label)}</h3><button class="linkish" type="button" data-act="bk-tab" data-bk="reports">Open reports</button></div><div class="chart-box">${linesSVG(cats, [{ l: "Provided", vals: prov, stroke: "var(--accent)", bold: true }, { l: TX.short, vals: est, stroke: "var(--seg2)", dash: "6 4" }], `${TX.label} to date against tax provided in the books`, fmtM)}</div>
+    <div class="table-box" style="margin-top:10px"><table class="st narrow"><tbody><tr><td class="lbl">Profit before tax, year to date</td><td class="n">${rwf(totPbt)}</td></tr><tr><td class="lbl">${esc(TX.label)}</td><td class="n">${rwf(last(est))}</td></tr><tr><td class="lbl">Provided in the books</td><td class="n">${rwf(last(prov))}</td></tr><tr class="total"><td class="lbl">${gap >= 0 ? "Still to provide" : "Over-provided"}</td><td class="n">${rwf(Math.abs(gap))}</td></tr><tr><td class="lbl muted">Income tax payable account</td><td class="n muted">${rwf(last(D.citOwed))}</td></tr></tbody></table></div>
     <div class="actions" style="margin-top:10px">${Math.abs(gap) >= 1 ? `<button class="btn small primary" type="button" data-act="post-tax">${gap > 0 ? "Post provision" : "Reverse over-provision"} of ${rwf(Math.abs(gap))}</button>` : `<span class="chip good">Provision is up to date</span>`}</div>
-    <p class="dash-note">The dashed line is 28% of accounting profit to each month end. Taxable profit can differ, so treat this as a provision, not the tax return.</p></div></div>`;
+    <p class="dash-note">The dashed line is the tax due on the year so far at each month end. ${esc(bkTaxNote(TX))}</p></div></div>`;
   return h;
 }
 function bkOverview(b) {
   const d = bkAsAt, bal = tbAt(b, d), fs = fyStartFor(b, d), pl = plFrom(b, bal);
   const cash = sumWhere(b, bal, a => a.cat === "cash"), ar = bal[roleCode(b, "ar")] || 0, ap = -(bal[roleCode(b, "ap")] || 0), vat = -(bal[roleCode(b, "vat")] || 0);
-  const est = Math.max(0, pl.pbt) * CIT_RATE, od = openItems(b, "invoice", d).filter(o => o.status === "Overdue").reduce((s, o) => s + o.out, 0);
+  const TX = bkTaxEst(b, pl.pbt, pl.rev + pl.oi, monthsIn(fs, d)), est = TX.est, od = openItems(b, "invoice", d).filter(o => o.status === "Overdue").reduce((s, o) => s + o.out, 0);
   let h = asAtField("Figures as at");
   h += `<div class="kpis">` + [
     bkTile("Cash and bank", rwf(cash), b.currency),
@@ -3646,7 +3712,7 @@ function bkOverview(b) {
     bkTile("You owe suppliers", rwf(ap), b.currency),
     bkTile("Profit before tax this year", rwf(pl.pbt), b.currency, `<span class="flat">Since ${niceISO(fs)}</span>`),
     b.vatReg ? bkTile("VAT payable to RRA", rwf(vat), b.currency) : "",
-    bkTile("Income tax at 28%", rwf(est), b.currency, `<span class="flat">Provided so far: ${rwf(pl.tax)}</span>`)
+    bkTile(TX.label, rwf(est), b.currency, `<span class="flat">Provided so far: ${rwf(pl.tax)}</span>`)
   ].join("") + `</div>`;
   h += `<div class="panel"><div class="panel-head"><h3>Record a transaction</h3></div><div class="bk-quick">` + [["invoice", "New sales invoice"], ["receipt", "Payment received"], ["bill", "New supplier bill"], ["billpay", "Pay a bill"], ["moneyin", "Money in"], ["moneyout", "Money out"], ["transfer", "Transfer between accounts"], ["journal", "Journal entry"]].map(([k, l], i) => `<button class="btn ${i === 0 ? "primary" : ""}" type="button" data-act="new" data-kind="${k}">${l}</button>`).join("") + `</div></div>`;
   const months = [];
@@ -3730,9 +3796,10 @@ function bkVatPeriod(kind) {
 }
 function bkVatView(b) {
   if (!b.vatReg) return `<div class="panel"><h3>VAT</h3><p class="help" style="margin-top:8px">This company is set as not registered for VAT, so no VAT is added to entries. Turn VAT on in Setup if it registers.</p><div class="actions" style="margin-top:10px"><button class="btn small" type="button" data-act="bk-tab" data-bk="setup">Open Setup</button></div></div>`;
-  if (!bkVat) bkVat = bkVatPeriod("last");
+  const vf = bkVatFreq(b);
+  if (!bkVat) bkVat = bkVatPeriod(vf === "q" ? "quarter" : "last");
   const v = vatSummary(b, bkVat.from, bkVat.to), vatBal = -(tbAt(b, bkVat.to)[roleCode(b, "vat")] || 0);
-  let h = `<div class="panel"><div class="panel-head"><h3>VAT return summary</h3><div class="actions">${[["last", "Last month"], ["this", "This month"], ["quarter", "Last quarter"], ["year", "This year"]].map(([k, l]) => `<button class="btn small" type="button" data-act="vat-period" data-p="${k}">${l}</button>`).join("")}</div></div>
+  let h = `<div class="panel"><div class="panel-head"><h3>VAT return summary</h3><div class="actions">${(vf === "q" ? [["quarter", "Last quarter"], ["last", "Last month"], ["this", "This month"], ["year", "This year"]] : [["last", "Last month"], ["this", "This month"], ["quarter", "Last quarter"], ["year", "This year"]]).map(([k, l]) => `<button class="btn small" type="button" data-act="vat-period" data-p="${k}">${l}</button>`).join("")}</div></div>
   <div class="fgrid" style="max-width:420px"><div><label for="bk-vat-from">From</label><input type="date" id="bk-vat-from" value="${bkVat.from}"></div><div><label for="bk-vat-to">To</label><input type="date" id="bk-vat-to" value="${bkVat.to}"></div></div>
   <div class="table-box" style="margin-top:12px"><table class="st narrow"><thead><tr><th>${esc(b.currency)}</th><th class="n">Value excluding VAT</th><th class="n">VAT</th></tr></thead><tbody>
   <tr class="sec"><td colspan="3">Sales (output VAT)</td></tr>
@@ -3744,22 +3811,22 @@ function bkVatView(b) {
   <tr><td class="lbl">Purchases at 18%</td><td class="n">${rwf(v.pS)}</td><td class="n">${rwf(v.iV)}</td></tr>
   <tr><td class="lbl">Zero-rated and exempt purchases</td><td class="n">${rwf(v.pZ + v.pE)}</td><td class="n">–</td></tr>
   <tr class="total"><td class="lbl">${v.net >= 0 ? "VAT payable to RRA" : "VAT refundable"}</td><td></td><td class="n">${rwf(Math.abs(v.net))}</td></tr></tbody></table></div>
-  <p class="help" style="margin-top:10px">Exempt sales carry no VAT. Input VAT on costs that relate to exempt sales may not be claimable, so check before filing. The VAT payable account stood at ${esc(b.currency)} ${rwf(vatBal)} on ${niceISO(bkVat.to)}.</p>
+  <p class="help" style="margin-top:10px"><strong>Declared ${vf === "q" ? "quarterly" : "monthly"}.</strong> The return and payment for a period ending ${niceISO(bkVat.to)} are due by ${niceISO(vatDue(bkVat.to))}, even if nothing is payable. Exempt sales carry no VAT. Input VAT on costs that relate to exempt sales may not be claimable, so check before filing. The VAT payable account stood at ${esc(b.currency)} ${rwf(vatBal)} on ${niceISO(bkVat.to)}.</p>
   <div class="actions" style="margin-top:10px">${v.net > 0 ? `<button class="btn small primary" type="button" data-act="vat-pay">Record VAT payment of ${rwf(v.net)}</button>` : ""}</div>`;
   h += `<details class="sched"><summary>Show the ${v.rows.length} lines behind these figures</summary><div class="table-box"><table class="st"><thead><tr><th>Date</th><th>Entry</th><th>Treatment</th><th class="n">Net</th><th class="n">VAT</th></tr></thead><tbody>${v.rows.map(x => `<tr><td>${niceISO(x.t.date)}</td><td class="lbl">${esc(KIND_LABEL[x.t.kind])} ${esc(x.t.ref || "")} <span class="muted">${esc(x.t.contact || "")} · ${esc(x.l.desc || "")}</span></td><td>${{ S: "Standard 18%", Z: "Zero-rated", E: "Exempt" }[x.s.code]}</td><td class="n">${rwf(x.sale ? x.s.net : -x.s.net)}</td><td class="n">${rwf(x.sale ? x.s.vat : -x.s.vat)}</td></tr>`).join("")}</tbody></table></div></details>`;
   return h + `</div>`;
 }
 function bkReports(b) {
-  const d = bkAsAt, bal = tbAt(b, d), fs = fyStartFor(b, d), pl = plFrom(b, bal), est = Math.max(0, pl.pbt) * CIT_RATE, toPost = Math.round(est - pl.tax);
+  const d = bkAsAt, bal = tbAt(b, d), fs = fyStartFor(b, d), pl = plFrom(b, bal), TX = bkTaxEst(b, pl.pbt, pl.rev + pl.oi, monthsIn(fs, d)), est = TX.est, toPost = Math.round(est - pl.tax);
   let h = asAtField("Reports as at");
   const L = [["Revenue", pl.rev], ["Cost of sales", -pl.cos], ["Gross profit", pl.gp, 1], ["Staff costs", -pl.staff], ["Selling and distribution", -pl.selling], ["Administration and other", -pl.admin], ["Depreciation", -pl.dep], ["Other income", pl.oi], ["Operating profit", pl.op, 1], ["Finance costs", -pl.fin], ["Profit before tax", pl.pbt, 1], ["Income tax", -pl.tax], ["Net profit", pl.np, 2]];
   h += `<div class="grid-2"><div class="panel"><div class="panel-head"><h3>Profit or loss</h3><span class="sub">${niceISO(fs)} to ${niceISO(d)}, ${esc(b.currency)}</span></div><div class="table-box"><table class="st narrow"><tbody>${L.map(([l, v, s]) => `<tr class="${s === 2 ? "total" : s ? "sub" : ""}"><td class="lbl">${l}</td><td class="n">${rwf(v)}</td></tr>`).join("")}</tbody></table></div></div>`;
-  h += `<div class="panel"><div class="panel-head"><h3>Corporate income tax at 28%</h3></div><div class="table-box"><table class="st narrow"><tbody>
+  h += `<div class="panel"><div class="panel-head"><h3>${esc(TX.label)}</h3></div><div class="table-box"><table class="st narrow"><tbody>
    <tr><td class="lbl">Profit before tax for the year so far</td><td class="n">${rwf(pl.pbt)}</td></tr>
-   <tr><td class="lbl">Income tax at 28%</td><td class="n">${rwf(est)}</td></tr>
+   ${TX.regime === "flat" ? `<tr><td class="lbl">Turnover for the year so far</td><td class="n">${rwf(pl.rev + pl.oi)}</td></tr>` : ""}<tr><td class="lbl">${esc(TX.label)}</td><td class="n">${rwf(est)}</td></tr>
    <tr><td class="lbl">Already provided in the books</td><td class="n">${rwf(pl.tax)}</td></tr>
    <tr class="total"><td class="lbl">${toPost >= 0 ? "Provision still to post" : "Over-provided"}</td><td class="n">${rwf(Math.abs(toPost))}</td></tr></tbody></table></div>
-   <p class="help" style="margin-top:10px">This estimate uses accounting profit. Taxable profit can differ, for example through expenses that aren't deductible or tax depreciation, so treat it as a provision, not the tax return.</p>
+   <p class="help" style="margin-top:10px">${esc(bkTaxNote(TX))} Change the regime or rate in Setup.</p>
    <div class="actions" style="margin-top:10px">${Math.abs(toPost) >= 1 ? `<button class="btn small primary" type="button" data-act="post-tax">${toPost > 0 ? "Post provision" : "Reverse over-provision"} of ${rwf(Math.abs(toPost))}</button>` : `<span class="chip good">Provision is up to date</span>`}</div></div></div>`;
   const rows = b.accounts.filter(a => Math.abs(bal[a.code] || 0) >= 1);
   let dr = 0, cr = 0; rows.forEach(a => { const v = bal[a.code]; if (v > 0) dr += v; else cr -= v; });
@@ -3791,6 +3858,11 @@ function bkSetup(b) {
    <div><label for="bk-s-next">Next invoice number</label><input id="bk-s-next" type="number" min="1" step="1" value="${b.nextInv}"></div>
    <div><label for="bk-s-cur">Currency</label><input id="bk-s-cur" type="text" maxlength="5" value="${esc(b.currency)}"></div></div>
    <label class="check" style="margin-top:12px"><input type="checkbox" id="bk-s-vat" ${b.vatReg ? "checked" : ""}><span>Registered for VAT: 18% standard rate, with zero-rated and exempt options. Changing this recalculates VAT on all entries.</span></label>
+   <div class="fgrid" style="margin-top:12px">
+    <div><label for="bk-s-taxreg">Income tax regime</label><select id="bk-s-taxreg"><option value="real" ${b.taxReg !== "flat" ? "selected" : ""}>Tax on profit</option><option value="flat" ${b.taxReg === "flat" ? "selected" : ""}>Small business flat rate</option></select></div>
+    <div><label for="bk-s-cit">Tax rate on profit (%)</label><input id="bk-s-cit" type="number" min="0" max="100" step="0.5" value="${bkCitPct(b)}"></div>
+    <div><label for="bk-s-vatfreq">VAT and PAYE returns</label><select id="bk-s-vatfreq"><option value="auto" ${!b.vatFreq ? "selected" : ""}>By turnover: now ${bkVatFreq(b) === "q" ? "quarterly" : "monthly"}</option><option value="m" ${b.vatFreq === "m" ? "selected" : ""}>Monthly</option><option value="q" ${b.vatFreq === "q" ? "selected" : ""}>Quarterly</option></select></div></div>
+   <p class="help" style="margin-top:8px">28% is the standard rate. Some entities pay less, for example 0% for approved microfinance institutions and cooperatives, 20% or 25% for newly listed companies, and 3% or 15% under investment incentives. Businesses with turnover up to RWF 20 million may pay the flat rate instead; choosing tax on profit binds for three years. Businesses with turnover up to RWF 200 million declare VAT and PAYE quarterly, or monthly if they choose.</p>
    <div class="actions" style="margin-top:12px"><button class="btn primary small" type="button" data-act="save-settings">Save company settings</button></div></div>`;
   const op = b.txns.find(t => t.kind === "opening"), oinv = b.txns.filter(t => t.opening && t.kind === "invoice").length, obill = b.txns.filter(t => t.opening && t.kind === "bill").length;
   h += `<div class="panel"><div class="panel-head"><h3>Opening balances</h3>${Math.abs(obe) < 1 ? (op ? `<span class="chip good">Complete</span>` : "") : `<span class="chip warn">${rwf(Math.abs(obe))} still to explain</span>`}</div>
@@ -3813,7 +3885,7 @@ function defaultVat(b, code) { if (!b.vatReg) return "N"; const a = acctOf(b, co
 const blankLine = (b, kind) => ["journal", "opening"].includes(kind) ? { acct: "", desc: "", dr: "", cr: "" } : { acct: "", desc: "", amt: "", vat: b.vatReg && (kind === "invoice" || kind === "bill") ? "S" : "N" };
 function openForm(kind, init = {}) {
   const b = book(), t0 = todayISO(), d0 = t0 < b.start ? b.start : t0;
-  const F = Object.assign({ kind, date: d0, ref: "", contact: "", due: addDays(d0, 30), bank: (bankAccts(b)[0] || {}).code || "", incl: false, memo: "", lines: [], amount: "", inv: "", from: "", to: "", opening: false }, JSON.parse(JSON.stringify(init)));
+  const F = Object.assign({ kind, date: d0, ref: "", contact: "", due: addDays(d0, 30), bank: (bankAccts(b)[0] || {}).code || "", incl: false, memo: "", lines: [], amount: "", inv: "", from: "", to: "", opening: false, ebm: "" }, JSON.parse(JSON.stringify(init)));
   F.kind = kind;
   if (kind === "invoice" && !F.id && !F.ref && !F.opening) F.ref = b.invPrefix + pad4(b.nextInv);
   if (F.opening && !F.id) { F.date = addDays(b.start, -1); F.due = addDays(b.start, 29); }
@@ -3863,10 +3935,10 @@ function renderForm() {
     h = `<div class="fgrid">${L("Company name", "name", I("name", "text", F.name), true)}${L("Financial year starts in", "fyStart", `<select id="bkf-fyStart" data-f="fyStart">${MONTHS.map((m, i) => `<option value="${i + 1}" ${+F.fyStart === i + 1 ? "selected" : ""}>${m}</option>`).join("")}</select>`)}${L("Books start on", "start", I("start", "date", F.start))}</div><label class="check" style="margin-top:12px"><input type="checkbox" id="bkf-vatReg" data-f="vatReg" ${F.vatReg ? "checked" : ""}><span>Registered for VAT</span></label><p class="help" style="margin-top:10px">Start on the first day of a financial year if you can, so the pack can include a cash flow statement. Then enter the opening balances from last year's accounts in Setup.</p>`;
   } else if (k === "invoice" || k === "bill") {
     const who = k === "invoice" ? "Customer" : "Supplier";
-    h = dl(k === "invoice" ? ["invoice", "receipt"] : ["bill", "billpay"]) + `<div class="fgrid">${L(who, "contact", I("contact", "text", F.contact, 'list="bk-dl" autocomplete="off"'))}${L(k === "invoice" ? "Invoice number" : "Supplier's bill number", "ref", I("ref", "text", F.ref))}${L(F.opening ? "Original date" : "Date", "date", I("date", "date", F.date))}${L("Due date", "due", I("due", "date", F.due))}${F.opening ? L(`Amount still unpaid (${esc(b.currency)})`, "amount", I("amount", "text", F.amount, 'inputmode="decimal"')) : ""}</div>`;
-    if (!F.opening) h += linesHTML(b, F);
+    h = dl(k === "invoice" ? ["invoice", "receipt"] : ["bill", "billpay"]) + `<div class="fgrid">${L(who, "contact", I("contact", "text", F.contact, 'list="bk-dl" autocomplete="off"'))}${L(k === "invoice" ? "Invoice number" : "Supplier's bill number", "ref", I("ref", "text", F.ref))}${L(F.opening ? "Original date" : "Date", "date", I("date", "date", F.date))}${L("Due date", "due", I("due", "date", F.due))}${F.opening ? L(`Amount still unpaid (${esc(b.currency)})`, "amount", I("amount", "text", F.amount, 'inputmode="decimal"')) : L(k === "invoice" ? "EBM / e-invoice receipt number" : "Supplier's EBM invoice number", "ebm", I("ebm", "text", F.ebm, 'autocomplete="off"'))}</div>`;
+    if (!F.opening) h += linesHTML(b, F) + (k === "invoice" ? `<p class="help" style="margin-top:8px">This records the sale in your books. The customer's invoice itself must come from RRA's EBM or e-invoicing system; enter its receipt number above.</p>` : `<p class="help" style="margin-top:8px">Input VAT can only be claimed with the supplier's EBM invoice, so enter its number above.</p>`);
   } else if (k === "moneyin" || k === "moneyout") {
-    h = dl(["moneyin", "moneyout", "invoice", "bill"]) + `<div class="fgrid">${L("Date", "date", I("date", "date", F.date))}${L(k === "moneyin" ? "Into account" : "From account", "bank", bankSel("bank", F.bank))}${L(k === "moneyin" ? "Received from" : "Paid to", "contact", I("contact", "text", F.contact, 'list="bk-dl" autocomplete="off"'))}${L("Reference", "ref", I("ref", "text", F.ref))}</div>` + linesHTML(b, F);
+    h = dl(["moneyin", "moneyout", "invoice", "bill"]) + `<div class="fgrid">${L("Date", "date", I("date", "date", F.date))}${L(k === "moneyin" ? "Into account" : "From account", "bank", bankSel("bank", F.bank))}${L(k === "moneyin" ? "Received from" : "Paid to", "contact", I("contact", "text", F.contact, 'list="bk-dl" autocomplete="off"'))}${L("Reference", "ref", I("ref", "text", F.ref))}${L(k === "moneyin" ? "EBM receipt number, if this is a sale" : "Supplier's EBM invoice number, if any", "ebm", I("ebm", "text", F.ebm, 'autocomplete="off"'))}</div>` + linesHTML(b, F);
   } else if (k === "receipt" || k === "billpay") {
     const items = openItems(b, k === "receipt" ? "invoice" : "bill", "9999-12-31").filter(o => o.out > 0 || o.t.id === F.inv);
     const who = [...new Set(items.map(o => o.t.contact))].sort();
@@ -3913,6 +3985,7 @@ function saveForm() {
   if (!openItem && k !== "opening" && F.date < b.start) return err(`That date is before the books start on ${niceISO(b.start)}. Change the start date in Setup if you need to.`);
   if (openItem && F.date >= b.start) return err(`Unpaid items at the start must be dated before ${niceISO(b.start)}.`);
   const t = { id: F.id || uid(), kind: k, date: F.date, ref: String(F.ref || "").trim(), memo: String(F.memo || "").trim() };
+  if (["invoice", "bill", "moneyin", "moneyout"].includes(k) && !openItem && String(F.ebm || "").trim()) t.ebm = String(F.ebm).trim();
   const clean = () => F.lines.filter(l => l.acct || num(l.amt)).map(l => ({ acct: l.acct, desc: String(l.desc || "").trim(), amt: num(l.amt), vat: b.vatReg ? (l.vat || "N") : "N" }));
   const checkLines = ls => !ls.length ? "Add at least one line." : ls.some(l => !l.acct) ? "Choose an account on every line." : ls.some(l => l.amt <= 0) ? "Amounts must be more than zero." : "";
   if (k === "invoice" || k === "bill") {
@@ -3978,6 +4051,10 @@ function bkSaveSettings() {
   b.nextInv = Math.max(1, parseInt($("bk-s-next").value, 10) || 1);
   b.currency = ($("bk-s-cur").value.trim() || "RWF").toUpperCase();
   b.vatReg = $("bk-s-vat").checked;
+  b.taxReg = $("bk-s-taxreg").value === "flat" ? "flat" : "real";
+  const cr = parseFloat($("bk-s-cit").value); b.citRate = isFinite(cr) ? Math.min(100, Math.max(0, cr)) : 28;
+  const vf = $("bk-s-vatfreq").value; b.vatFreq = vf === "m" || vf === "q" ? vf : null;
+  bkVat = null;
   b.txns.sort(byDate);
   bkSave(); renderBooks(); toast("Company settings saved.");
 }
@@ -4032,7 +4109,7 @@ function sendBooksToPack() {
   const rev = -sumWhere(b, cur, a => a.cat === "rev");
   const keepPdf = S ? S.pdfModel : undefined;
   A = rows;
-  S = { ...SAMPLE_SETTINGS, company: b.name.replace(/\s*\(example\)\s*$/i, ""), cur: `${MONTHS[m - 1]} ${y} YTD`, cmp: `${MONTHS[m - 1]} ${y - 1} YTD`, bud: "Budget", opn: `Opening ${niceISO(fs)}`, months: Math.min(12, Math.max(1, months)), unit: Math.abs(rev) >= 2e7 ? "m" : "k", currency: b.currency, flip: false, cmpOpen: false, policies: null, model: null, pdfModel: keepPdf };
+  S = { ...SAMPLE_SETTINGS, company: b.name.replace(/\s*\(example\)\s*$/i, ""), cur: `${MONTHS[m - 1]} ${y} YTD`, cmp: `${MONTHS[m - 1]} ${y - 1} YTD`, bud: "Budget", opn: `Opening ${niceISO(fs)}`, months: Math.min(12, Math.max(1, months)), unit: Math.abs(rev) >= 2e7 ? "m" : "k", currency: b.currency, flip: false, cmpOpen: false, policies: null, model: null, pdfModel: keepPdf, taxRate: bkCitPct(b) };
   isSample = false; compareTo = "cmp"; $("commentary").value = "";
   persist(); renderAll(); show("pack");
   toast(`Pack built from the books to ${niceISO(d)}.`);
@@ -4073,12 +4150,12 @@ $("view-books").addEventListener("click", e => {
     openForm("moneyout", { contact: "RRA", lines: [{ acct: roleCode(b, "vat"), desc: `VAT return ${niceISO(bkVat.from)} to ${niceISO(bkVat.to)}`, amt: String(Math.round(v.net)), vat: "N" }] });
   }
   else if (act === "post-tax") {
-    const d = bkAsAt, pl = plFrom(b, tbAt(b, d)), amt = Math.round(Math.max(0, pl.pbt) * CIT_RATE - pl.tax);
+    const d = bkAsAt, pl = plFrom(b, tbAt(b, d)), TX = bkTaxEst(b, pl.pbt, pl.rev + pl.oi, monthsIn(fyStartFor(b, d), d)), amt = Math.round(TX.est - pl.tax);
     const tx = (b.accounts.find(x => x.cat === "tax") || {}).code, cit = roleCode(b, "cit");
     if (Math.abs(amt) < 1) return;
     if (!tx || !cit) { toast("Add an income tax expense account first."); return; }
     if (d < b.start) { toast("Choose a date on or after the start of the books."); return; }
-    b.txns.push({ id: uid(), kind: "journal", date: d, ref: "", memo: `Income tax provision at 28% to ${niceISO(d)}`, lines: amt > 0 ? [{ acct: tx, desc: "", dr: amt, cr: 0 }, { acct: cit, desc: "", dr: 0, cr: amt }] : [{ acct: cit, desc: "", dr: -amt, cr: 0 }, { acct: tx, desc: "", dr: 0, cr: -amt }] });
+    b.txns.push({ id: uid(), kind: "journal", date: d, ref: "", memo: `${TX.regime === "flat" ? "Income tax provision, flat-rate regime," : `Income tax provision at ${TX.rate}%`} to ${niceISO(d)}`, lines: amt > 0 ? [{ acct: tx, desc: "", dr: amt, cr: 0 }, { acct: cit, desc: "", dr: 0, cr: amt }] : [{ acct: cit, desc: "", dr: -amt, cr: 0 }, { acct: tx, desc: "", dr: 0, cr: -amt }] });
     b.txns.sort(byDate); bkSave(); renderBooks(); toast("Income tax provision posted.");
   }
   else if (act === "to-pack") sendBooksToPack();
@@ -4200,7 +4277,7 @@ const drop = $("drop");
 ["dragenter", "dragover"].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add("over"); }));
 ["dragleave", "drop"].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove("over"); }));
 drop.addEventListener("drop", e => { const f = e.dataTransfer.files[0]; if (f) readFile(f); });
-for (const id of ["s-company", "s-cur", "s-cmp", "s-bud", "s-opn", "s-months", "s-unit", "s-currency", "s-cmpopen"]) {
+for (const id of ["s-company", "s-cur", "s-cmp", "s-bud", "s-opn", "s-months", "s-unit", "s-currency", "s-tax", "s-cmpopen"]) {
   $(id).addEventListener("change", () => {
     if (readSettingsForm()) autoMap(true);
     persist(); renderMapping(); renderPack();
