@@ -479,6 +479,14 @@ body { margin: 0; }
 img { max-width: 100%; }
 :root { padding-bottom: env(safe-area-inset-bottom, 0px); }
 .foot { padding-block: 22px 30px; font-size: 12px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 6px 18px; border-top: 1px solid var(--line); }
+.hello { position: fixed; right: max(16px, env(safe-area-inset-right, 0px)); bottom: calc(16px + env(safe-area-inset-bottom, 0px)); z-index: 15; width: min(380px, calc(100% - 32px)); background: var(--surface); border: 1px solid var(--line); border-top: 3px solid var(--accent); border-radius: var(--radius); box-shadow: 0 10px 30px rgba(0, 0, 0, .14); padding: 16px 18px; }
+.hello h3 { font-size: 16px; margin: 0 0 6px; }
+.hello p { margin: 0 0 10px; color: var(--muted); font-size: 13.5px; line-height: 1.5; }
+.hello .hl-grid { display: grid; gap: 8px; margin-bottom: 12px; }
+.hello input { width: 100%; padding: 7px 9px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg); font-size: 14px; }
+.hello .hl-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.hello .modal-x { position: absolute; top: 6px; right: 8px; }
+.trial-soon { color: var(--warn); font-weight: 600; }
 .toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(18px + env(safe-area-inset-bottom, 0px)); background: var(--ink); color: var(--surface); padding: 9px 16px; border-radius: var(--radius); font-size: 13px; z-index: 20; max-width: calc(100% - 32px); }
 @media (max-width: 640px) {
   .brand { flex-basis: 100%; }
@@ -840,6 +848,7 @@ table.lines.bp-rows input { width: 100%; padding: 6px 7px; border: 1px solid var
           <div class="actions"><button class="btn small" type="button" id="btn-fs-xlsx">Excel</button><button class="btn small primary" type="button" id="btn-fs-pdf">Download statements PDF</button></div>
           <div class="pack-nav">
             <button type="button" data-jump="fs-p-dr">Directors' report</button>
+            <button type="button" data-jump="fs-p-aud">Auditor's report</button>
             <button type="button" data-jump="fs-p-is">Profit or loss</button>
             <button type="button" data-jump="fs-p-bs">Position</button>
             <button type="button" data-jump="fs-p-soce">Equity</button>
@@ -855,6 +864,11 @@ table.lines.bp-rows input { width: 100%; padding: 6px 7px; border: 1px solid var
         <div class="panel-head"><h3>Directors' report</h3><span class="sub">Law N° 007/2021 governing companies, Article 89</span></div>
         <div class="dr" id="dr"></div>
         <div><button class="linkish" type="button" data-jump="sec-disc">Edit in year-end disclosures</button></div>
+      </div>
+      <div class="panel" id="fs-p-aud" style="scroll-margin-top:90px">
+        <div class="panel-head"><h3>Independent auditor's report</h3><span class="sub" id="aud-sub"></span></div>
+        <div class="dr" id="aud-view"></div>
+        <div><button class="linkish" type="button" data-jump="fs-aud-sec">Edit the auditor's report</button></div>
       </div>
       <div class="panel fs-panel" id="fs-p-is">
         <div class="panel-head"><h3>Statement of profit or loss</h3><span class="sub" id="is-sub"></span></div>
@@ -1345,7 +1359,7 @@ table.lines.bp-rows input { width: 100%; padding: 6px 7px; border: 1px solid var
               <li><strong>Directors' report</strong> (Article 89): principal activities, a review of the business, the dividend and any transfer to reserves, donations, and entries in the register of directors' interests. Left blank, the review is written from the figures; other blank items show "To be completed". A public company must include its principal activities.</li>
               <li><strong>Signing</strong> (Articles 89 and 125): the statements and the report are signed by two directors, or by the only director. A red chip shows if only one is named.</li>
               <li><strong>Dividend solvency test</strong> (Article 69): enter a recommended dividend and Acivaz checks that, after paying it, assets still exceed liabilities, current assets still cover current liabilities, and cash covers it. If it passes, the PDF adds a certificate for the directors to sign; a private company whose shareholders have opted out (Article 209) can leave it out. A dividend note explains that it is not a liability until approved.</li>
-              <li><strong>Independent auditor's report</strong> (Articles 131 to 135): set the audit status and attach the auditor's signed report, as a PDF or photos of the pages. It goes into the statements PDF after the approval page and into the contents, and the cover changes from "Unaudited" to "Audited by" the firm. For audit firms, <strong>Draft the report</strong> writes a draft in ISA format, with the statements Article 135 asks for, following the opinion chosen: unmodified, qualified, adverse or disclaimer, with optional going-concern and emphasis-of-matter paragraphs. The draft is watermarked and is never added to the statements; only the auditor can issue and sign the report.</li>
+              <li><strong>Independent auditor's report</strong> (Articles 131 to 135): set the audit status and attach the auditor's signed report, as a PDF or photos of the pages. It goes into the statements PDF after the approval page and into the contents, and the cover changes from "Unaudited" to "Audited by" the firm. For audit firms, <strong>Draft the report</strong> writes a draft in ISA format, with the statements Article 135 asks for, following the opinion chosen: unmodified, qualified, adverse or disclaimer, with optional going-concern and emphasis-of-matter paragraphs. Once the auditor confirms the text is final, tick <strong>Issued</strong> and the report prints in the financial statements after the approval page, on screen, in the PDF and in Excel, with a line for the engagement partner to sign. Until then it is shown as a draft and the statements stay marked as unaudited. Only the auditor can issue the report.</li>
               <li><strong>Filing deadlines</strong> (Articles 88, 142 and 143): signed accounts, the auditor's report and the directors' report go to shareholders and the Registrar General within 7 months of the year end for a private company, or 4 months for a public one. Set the year end and the annual return month, and the chips count down. Late filing can cost each director RWF 1 million to 10 million (Article 332).</li>
             </ul>
             <p><strong>Download statements PDF</strong> gives a cover, contents, the directors' report, the solvency certificate when a dividend passes the test, the approval page, each statement on its own page, and the notes. Once the auditor's signed report is attached, it sits after the approval page. Every company needs an external audit unless a Minister's order exempts it (Articles 131 and 210).</p>
@@ -1412,6 +1426,7 @@ table.lines.bp-rows input { width: 100%; padding: 6px 7px; border: 1px solid var
             <p>Acivaz is a single web page that runs entirely in the browser. Nothing a customer enters is sent to a server, which keeps client data private and means there are no hosting costs beyond the free GitHub Pages site.</p>
             <figure class="m-fig"><div class="fig-box"><svg viewBox="0 0 800 410" role="img" aria-label="Acivaz runs in the browser on the customer's device; GitHub Pages and cdnjs only deliver the page and libraries; books and files stay on the device; unlock codes are signed by your private generator and checked in the app" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-size="12"><defs><marker id="mfb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker></defs><rect x="230" y="20" width="550" height="270" rx="6" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="6 5"/><text x="246" y="42" font-weight="600" font-size="12" fill="var(--accent)">Customer's computer or phone</text><rect x="290" y="58" width="220" height="210" rx="4" fill="var(--accent)" fill-opacity=".13" stroke="var(--accent)" stroke-width="1.5"/><text x="304" y="84" font-weight="700" font-size="13" fill="var(--ink)">Acivaz app</text><text x="304" y="102" font-size="11.5" fill="var(--muted)">One web page</text><text x="304" y="124" fill="var(--ink)">Books engine</text><text x="304" y="143" fill="var(--ink)">Pack and notes builder</text><text x="304" y="162" fill="var(--ink)">Forecast, budget,</text><text x="304" y="181" fill="var(--ink)">valuation, loans</text><text x="304" y="200" fill="var(--ink)">PDF and Excel export</text><text x="304" y="219" fill="var(--ink)">Unlock check</text><rect x="600" y="58" width="160" height="62" rx="4" fill="var(--seg1)" fill-opacity=".13" stroke="var(--seg1)" stroke-width="1.5"/><text x="614" y="84" font-weight="700" font-size="13" fill="var(--ink)">Browser storage</text><text x="614" y="106" fill="var(--ink)">Books, mappings, code</text><rect x="600" y="136" width="160" height="62" rx="4" fill="var(--seg1)" fill-opacity=".13" stroke="var(--seg1)" stroke-width="1.5"/><text x="614" y="162" font-weight="700" font-size="13" fill="var(--ink)">Your files</text><text x="614" y="184" fill="var(--ink)">Excel or CSV</text><rect x="600" y="214" width="160" height="54" rx="4" fill="var(--seg1)" fill-opacity=".13" stroke="var(--seg1)" stroke-width="1.5"/><text x="614" y="240" font-weight="700" font-size="13" fill="var(--ink)">Backup file</text><text x="614" y="262" fill="var(--ink)">.json, kept by you</text><rect x="20" y="58" width="160" height="62" rx="4" fill="var(--seg5)" fill-opacity=".13" stroke="var(--seg5)" stroke-width="1.5"/><text x="34" y="84" font-weight="700" font-size="13" fill="var(--ink)">GitHub Pages</text><text x="34" y="106" fill="var(--ink)">anicet-safari.github.io</text><rect x="20" y="158" width="160" height="62" rx="4" fill="var(--seg5)" fill-opacity=".13" stroke="var(--seg5)" stroke-width="1.5"/><text x="34" y="184" font-weight="700" font-size="13" fill="var(--ink)">cdnjs</text><text x="34" y="206" fill="var(--ink)">PDF, Excel libraries</text><path d="M510 90 H599" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfb)" marker-start="url(#mfb)"/><text x="555" y="82" text-anchor="middle" font-size="11" fill="var(--muted)">saves, reads</text><path d="M600 167 H511" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfb)"/><text x="555" y="159" text-anchor="middle" font-size="11" fill="var(--muted)">read here</text><path d="M510 241 H599" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfb)" marker-start="url(#mfb)"/><text x="555" y="233" text-anchor="middle" font-size="11" fill="var(--muted)">backup, restore</text><path d="M180 89 H289" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfb)"/><text x="205" y="81" text-anchor="middle" font-size="11" fill="var(--muted)">the page</text><path d="M180 189 H289" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfb)"/><text x="205" y="181" text-anchor="middle" font-size="11" fill="var(--muted)">libraries</text><text x="20" y="322" font-weight="600" font-size="12" fill="var(--muted)">Unlocking downloads</text><rect x="20" y="336" width="150" height="60" rx="4" fill="var(--seg2)" fill-opacity=".13" stroke="var(--seg2)" stroke-width="1.5"/><text x="34" y="362" font-weight="700" font-size="13" fill="var(--ink)">Customer</text><text x="34" y="384" fill="var(--ink)">pays by MTN MoMo</text><rect x="240" y="336" width="160" height="60" rx="4" fill="var(--seg2)" fill-opacity=".13" stroke="var(--seg2)" stroke-width="1.5"/><text x="254" y="362" font-weight="700" font-size="13" fill="var(--ink)">You</text><text x="254" y="384" fill="var(--ink)">check the MoMo SMS</text><rect x="470" y="336" width="210" height="60" rx="4" fill="var(--seg2)" fill-opacity=".13" stroke="var(--seg2)" stroke-width="1.5"/><text x="484" y="362" font-weight="700" font-size="13" fill="var(--ink)">Unlock-code generator</text><text x="484" y="384" fill="var(--ink)">private key, your device</text><path d="M170 366 H239" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfb)"/><text x="205" y="358" text-anchor="middle" font-size="11" fill="var(--muted)">WhatsApp</text><path d="M400 366 H469" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfb)"/><text x="435" y="358" text-anchor="middle" font-size="11" fill="var(--muted)">create code</text><path d="M490 336 V269" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfb)"/><text x="500" y="305" text-anchor="start" font-size="11" fill="var(--muted)">code sent by WhatsApp</text><text x="500" y="321" text-anchor="start" font-size="11" fill="var(--muted)">checked with public key</text></svg></div>
               <figcaption>GitHub Pages delivers the page once, and cdnjs supplies the PDF and Excel libraries. After the first visit the app works offline. Books, mappings and the unlock code are saved in the browser's own storage, and backups are files the customer keeps. Unlock codes are signed by your private generator and checked in the app with the matching public key, so a code can't be faked or moved to another device.</figcaption></figure>
+            <p>On the public website, Acivaz counts visits and a few actions anonymously with GoatCounter: a trial starting, a trial balance being loaded, a download, the payment screen opening. No cookies are set, and no figures, names, company details or files are ever sent.</p>
             <p>Because everything lives in the browser, two limits follow: clearing browser data erases the books unless they're backed up, and the free trial restarts if someone clears it. Proper user accounts would need a server, which belongs in a later paid version.</p>
           </section>
 
@@ -1479,7 +1494,14 @@ table.lines.bp-rows input { width: 100%; padding: 6px 7px; border: 1px solid var
     </ol>
   </div>
 </div>
-<footer class="gutter"><div class="wrap foot"><span>Acivaz</span><span id="plan-status"></span><span>Your files are processed on this device. Nothing is uploaded.</span><button class="linkish" type="button" data-goto="manual">Read the manual</button><span>Management accounts are unaudited. Check every figure before you send a pack.</span></div></footer>
+<footer class="gutter"><div class="wrap foot"><span>Acivaz</span><span id="plan-status"></span><span>Your figures are processed on this device and never uploaded. Visits are counted anonymously.</span><button class="linkish" type="button" data-goto="manual">Read the manual</button><span>Management accounts are unaudited. Check every figure before you send a pack.</span></div></footer>
+<div class="hello" id="hello" role="dialog" aria-labelledby="hello-title" hidden>
+  <button class="modal-x" type="button" id="hello-x" aria-label="Close">×</button>
+  <h3 id="hello-title">Using Acivaz for real work?</h3>
+  <p>Say hello on WhatsApp to get tips, news of new features and a reminder before your free trial ends. Your figures are never shared.</p>
+  <div class="hl-grid"><input type="text" id="hello-name" placeholder="Your name (optional)" autocomplete="name" aria-label="Your name"><input type="text" id="hello-co" placeholder="Company or firm (optional)" autocomplete="organization" aria-label="Company or firm"></div>
+  <div class="hl-actions"><a class="btn primary small" id="hello-wa" href="https://wa.me/250784551341" target="_blank" rel="noopener">Say hello on WhatsApp</a><button class="btn small" type="button" id="hello-no">No thanks</button></div>
+</div>
 <div class="toast" id="toast" hidden></div>
 
 <script>
@@ -1891,7 +1913,7 @@ function renderFSDisc(force) {
       `<div class="disc"><label for="fs-d-approved">Approved by the board on</label><span class="help">The date the directors approve and sign the statements and their report.</span><input type="date" id="fs-d-approved" data-fsd="approvedOn" value="${esc(d.approvedOn || "")}"></div>` +
       `<div class="disc"><label for="fs-d-signers">Signed on behalf of the board by</label><span class="help">One per line, for example: Jane Uwase, Director. Two directors sign, or the only director. Left blank, the PDF prints lines to sign by hand.</span><textarea id="fs-d-signers" data-fsd="signers" style="min-height:70px">${esc(d.signers || "")}</textarea><div id="fs-sign-msg"></div></div>` +
     `</div>` +
-    `<h3 class="fs-h">Independent auditor's report</h3><div class="disc-grid">` +
+    `<h3 class="fs-h" id="fs-aud-sec" style="scroll-margin-top:90px">Independent auditor's report</h3><div class="disc-grid">` +
       `<div class="disc"><label for="fs-d-auditStatus">Audit status</label><span class="help">Every company appoints an external auditor unless a Minister's order exempts it (Articles 131 and 210). Only the auditor issues the report: attach it here once it is signed.</span><select id="fs-d-auditStatus" data-fsd="auditStatus"><option value="">Not audited yet</option><option value="audited"${d.auditStatus === "audited" ? " selected" : ""}>Audited</option><option value="exempt"${d.auditStatus === "exempt" ? " selected" : ""}>Exempt from audit (Article 210)</option></select></div>` +
     `</div>` +
     `<div id="fs-audit-fields"><div class="disc-grid" style="margin-top:16px">` +
@@ -1899,12 +1921,13 @@ function renderFSDisc(force) {
       `<div class="disc"><label for="fs-d-auditDate">Date of the auditor's report</label><span class="help">On or after the date the board approves the statements.</span><input type="date" id="fs-d-auditDate" data-fsd="auditDate" value="${esc(d.auditDate || "")}"><label for="fs-d-auditOpinion" style="margin-top:10px">Opinion</label><select id="fs-d-auditOpinion" data-fsd="auditOpinion">${AUD_OPS.map(([k, l]) => `<option value="${k}"${(d.auditOpinion || "unmodified") === k ? " selected" : ""}>${l}</option>`).join("")}</select><label class="chk"><input type="checkbox" id="fs-d-auditGC" data-fsd="auditGC"${d.auditGC ? " checked" : ""}> Material uncertainty related to going concern</label><label class="chk"><input type="checkbox" id="fs-d-auditEOM" data-fsd="auditEOM"${d.auditEOM ? " checked" : ""}> Emphasis of matter</label></div>` +
       `<div class="disc"><label for="fs-audit-upload">The auditor's signed report</label><span class="help">The PDF from the auditor, or clear photos or scans of each page. It goes into the statements PDF after the approval page. Kept on this device only.</span><div id="fs-audit-file"></div><div><label class="btn small" for="fs-audit-upload">Attach the signed report</label><input type="file" id="fs-audit-upload" accept="application/pdf,image/png,image/jpeg" multiple hidden></div></div>` +
     `</div>` +
-    `<details class="aud-draft"><summary>For audit firms: draft the report</summary>` +
-      `<p class="help">Acivaz drafts the report in the format of the International Standards on Auditing, with the statements Article 135 of Law N° 007/2021 asks for, following the opinion chosen above. The auditor reviews and completes it, then signs it on the firm's letterhead. A draft is never added to the statements.</p>` +
+    `<div class="aud-draft"><h4 style="margin:0 0 6px">The report text</h4>` +
+      `<p class="help">For audit firms. Acivaz drafts the report in the format of the International Standards on Auditing, with the statements Article 135 of Law N° 007/2021 asks for, following the opinion chosen above. Review and complete it. Once it is final, tick <strong>Issued</strong> and it prints in the financial statements after the approval page, with a line for the partner to sign. A signed PDF attached above takes its place.</p>` +
       `<div class="disc-grid" style="margin-top:10px">` + ta("auditBasis", "Matter behind a modified opinion", "For a qualified, adverse or disclaimer opinion: what the matter is and its effect on the figures.", "", 70) + ta("auditEOMText", "Emphasis of matter", "The note the auditor draws attention to, and why it matters.", "", 70) + `</div>` +
       `<div class="bp-tools" style="margin-top:10px"><button class="btn small primary" type="button" id="btn-aud-draft">Write the draft</button><button class="btn small" type="button" id="btn-aud-undo" hidden>Undo</button><button class="btn small" type="button" id="btn-aud-pdf">Download draft PDF</button></div>` +
-      `<textarea id="fs-d-auditDraft" data-fsd="auditDraft" aria-label="Draft auditor's report" placeholder="Press Write the draft.">${esc(d.auditDraft || "")}</textarea>` +
-    `</details></div>`;
+      `<textarea id="fs-d-auditDraft" data-fsd="auditDraft" aria-label="Auditor's report text" placeholder="Press Write the draft.">${esc(d.auditDraft || "")}</textarea>` +
+      `<label class="chk"><input type="checkbox" id="fs-d-auditIssued" data-fsd="auditIssued"${d.auditIssued ? " checked" : ""}> <span><strong>Issued:</strong> this is the auditor's final report, approved by the engagement partner named above, who will sign the printed copy.</span></label><div id="fs-aud-issue-msg"></div>` +
+    `</div></div>`;
 }
 
 /* ---------- Law N° 007/2021 governing companies: directors' report, solvency test, filing ---------- */
@@ -2005,7 +2028,33 @@ const audKey = () => "audit:" + String(S.company || "").trim().toLowerCase();
 const auditFileRec = async () => AUD_MEM[audKey()] || await IDB.get(audKey());
 function loadScript(src) { return new Promise((res, rej) => { const el = document.createElement("script"); el.src = src; el.onload = res; el.onerror = rej; document.head.appendChild(el); }); }
 async function loadPdfLib() { if (!window.PDFLib) await loadScript("https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"); if (!window.PDFLib) throw new Error("pdf-lib did not load"); }
-function auditState() { const d = FSD(); return d.auditStatus === "audited" ? (d.auditFile ? "audited" : "pending") : d.auditStatus === "exempt" ? "exempt" : "none"; }
+const auditReady = () => { const d = FSD(); return !!(String(d.auditor || "").trim() && String(d.auditPartner || "").trim() && d.auditDate && String(d.auditDraft || "").trim()); };
+const auditTextIssued = () => { const d = FSD(); return d.auditStatus === "audited" && !!d.auditIssued && auditReady() && !d.auditFile; };
+function auditState() { const d = FSD(); return d.auditStatus === "audited" ? (d.auditFile || auditTextIssued() ? "audited" : "pending") : d.auditStatus === "exempt" ? "exempt" : "none"; }
+/* The report text as headed sections, for the screen, the PDF and Excel */
+function auditSections() {
+  const heads = new Set(AUD_HEADS), out = [];
+  let cur = { h: "", t: [] };
+  for (const raw of String(FSD().auditDraft || "").split("\n")) {
+    const line = raw.trimEnd();
+    if (/^INDEPENDENT AUDITOR'S REPORT\s*$/i.test(line.trim())) continue;
+    if (heads.has(line.trim())) { if (cur.h || cur.t.join("").trim()) out.push(cur); cur = { h: line.trim(), t: [] }; continue; }
+    cur.t.push(line);
+  }
+  if (cur.h || cur.t.join("").trim()) out.push(cur);
+  return out.map(x => ({ h: x.h, t: x.t.join("\n").replace(/^\n+|\n+$/g, "") }));
+}
+function renderAuditView() {
+  const el = $("aud-view"); if (!el) return;
+  const d = FSD(), st = auditState(), firm = String(d.auditor || "").trim();
+  $("aud-sub").textContent = st === "audited" ? auditLine().replace(/\.$/, "") : st === "pending" ? "Not yet issued" : st === "exempt" ? "Exempt from audit" : "Not audited yet";
+  if (st === "audited" && d.auditFile) { el.innerHTML = `<p>The auditor's signed report (${esc(d.auditFile)}) is included in the statements PDF, after the directors' approval page.</p>`; return; }
+  if (st === "exempt") { el.innerHTML = `<p>The company is exempt from audit under a Minister's order, and the shareholders have resolved unanimously to opt out (Law N° 007/2021, Article 210). The statements are issued without an auditor's report.</p>`; return; }
+  if (st === "none") { el.innerHTML = `<p>Every company appoints an external auditor unless a Minister's order exempts it (Articles 131 and 210). When the audit is done, set the audit status to Audited and attach the auditor's signed report, or ${firm ? esc(firm) + " can" : "the auditor can"} prepare the report here.</p>`; return; }
+  const secs = String(d.auditDraft || "").trim() ? auditSections() : [];
+  el.innerHTML = (st === "pending" ? `<p><span class="chip warn" style="white-space:normal">${!secs.length ? "No report yet: attach the auditor's signed report, or write the report text." : !auditReady() ? "Draft: add the audit firm, engagement partner and report date, then tick Issued." : "Draft: not yet issued by the auditor."}</span></p>` : "") +
+    secs.map(x => (x.h ? `<h4>${esc(x.h)}</h4>` : "") + `<p>${esc(x.t)}</p>`).join("");
+}
 function auditLine() {
   const d = FSD(), st = auditState(), firm = String(d.auditor || "").trim();
   return st === "audited" ? `Audited${firm ? " by " + firm : ""}${d.auditDate ? ", report dated " + niceISO(d.auditDate) : ""}.` : st === "pending" ? "Audited: the auditor's report is to be attached." : st === "exempt" ? "Not audited: exempt from audit under Article 210." : "Unaudited.";
@@ -2070,6 +2119,7 @@ async function exportAuditDraft() {
     doc.setTextColor(0, 0, 0); doc.setFont("helvetica", "normal"); doc.setFontSize(7.5); doc.text(plain(`${S.company} - draft auditor's report - page ${i} of ${n}`), M, 290);
   }
   await saveFile(`${(S.company || "Company").replace(/[^\w\- ]+/g, "").trim()} - draft auditor's report.pdf`, doc.output("blob"));
+  track("download-pdf-audit-draft");
   noteDownload();
 }
 document.addEventListener("change", async e => {
@@ -2107,6 +2157,8 @@ document.addEventListener("click", async e => {
 });
 function renderFSAct(cur) {
   renderAuditBox();
+  renderAuditView();
+  { const m = $("fs-aud-issue-msg"), d = FSD(); if (m) m.innerHTML = d.auditIssued && !auditReady() ? `<span class="chip warn" style="white-space:normal">To issue, add the audit firm, the engagement partner, the report date and the report text.</span>` : d.auditIssued && d.auditFile ? `<span class="chip plain" style="white-space:normal">The signed PDF attached above is used in the statements instead of this text.</span>` : d.auditIssued ? `<span class="chip good">Issued: printed in the financial statements</span>` : ""; }
   const sv = $("fs-solv");
   if (sv) {
     const s = solvency(cur), res = ok => ok ? `<span class="chip good">Passes</span>` : `<span class="chip bad">Fails</span>`;
@@ -2130,7 +2182,7 @@ function fsDiscChip() {
   const du = fsDue();
   out.push(d.filed ? `<span class="chip good">Filed with the Registrar General</span>` : du.left < 0 ? `<span class="chip bad">Accounts were due at RDB by ${fsNice(du.due)}</span>` : du.left <= 45 ? `<span class="chip warn">Accounts due at RDB by ${fsNice(du.due)}, ${du.left} day${du.left === 1 ? "" : "s"} left</span>` : `<span class="chip plain">Accounts due to shareholders and RDB by ${fsNice(du.due)}</span>`);
   if (+d.arMonth) out.push(`<span class="chip plain">Annual return due in ${FULL_MONTHS[+d.arMonth - 1]}</span>`);
-  { const st = auditState(); out.push(st === "audited" ? `<span class="chip good">Auditor's report attached</span>` : st === "pending" ? `<span class="chip warn">Audited: attach the auditor's signed report</span>` : st === "exempt" ? `<span class="chip plain">Exempt from audit (Article 210)</span>` : `<span class="chip plain">Not audited yet</span>`); }
+  { const st = auditState(); out.push(st === "audited" ? `<span class="chip good">Auditor's report included</span>` : st === "pending" ? `<span class="chip warn">Audited: attach the auditor's signed report</span>` : st === "exempt" ? `<span class="chip plain">Exempt from audit (Article 210)</span>` : `<span class="chip plain">Not audited yet</span>`); }
   return out.join("");
 }
 const fsSave = e => {
@@ -3774,10 +3826,39 @@ async function unlockDate(name) {
 }
 const isLive = d => !!d && d >= new Date();
 const usedDownloads = () => Number(store.get("acv:dl") || 0);
+/* Anonymous usage counts (GoatCounter): public site only, events carry no figures, names or files */
+const GC_CODE = "acivaz";
+const GC_ON = PW_ON && /github\.io$/i.test(location.hostname) && !!GC_CODE;
+const gcQueue = [];
+function track(name) {
+  if (!GC_ON) return;
+  const go = n => { try { window.goatcounter.count({ path: n, title: n, event: true }); } catch (e) {} };
+  if (window.goatcounter && window.goatcounter.count) go(name); else gcQueue.push(name);
+}
+if (GC_ON) {
+  const sc = document.createElement("script");
+  sc.async = true; sc.src = "https://gc.zgo.at/count.js"; sc.dataset.goatcounter = `https://${GC_CODE}.goatcounter.com/count`;
+  sc.onload = () => { const w = setInterval(() => { if (window.goatcounter && window.goatcounter.count) { clearInterval(w); while (gcQueue.length) track(gcQueue.shift()); } }, 300); setTimeout(() => clearInterval(w), 10000); };
+  document.head.appendChild(sc);
+}
+/* A one-time WhatsApp hello when someone starts real work: their own trial balance, books, or a first download */
+function maybeHello(reason) {
+  if (!PW_ON || isSample || store.get("acv:hello") || dlUnlocked) return;
+  if (!$("hello").hidden) return;
+  setTimeout(() => { $("hello").hidden = false; track("hello-shown"); }, 1200);
+}
+function helloLink() {
+  const n = $("hello-name").value.trim(), c = $("hello-co").value.trim() || (isSample ? "" : S.company || "");
+  return `https://wa.me/${PAY.wa}?text=` + encodeURIComponent(`Hello, I'm trying Acivaz.${n ? "\nName: " + n : ""}${c ? "\nCompany or firm: " + c : ""}\nTrial started: ${niceDate(parseISO(store.get("acv:trial") || todayISO()))}`);
+}
+const closeHello = v => { store.set("acv:hello", v); $("hello").hidden = true; };
+$("hello-wa").addEventListener("click", () => { $("hello-wa").href = helloLink(); track("hello-whatsapp"); closeHello("sent"); });
+$("hello-no").onclick = () => { track("hello-no"); closeHello("no"); };
+$("hello-x").onclick = () => closeHello("no");
 /* Free trial: 30 days of unlimited downloads from the first visit on this device, for any company. */
 function trialEnd() {
   let st = store.get("acv:trial");
-  if (!isISO(st)) { st = todayISO(); store.set("acv:trial", st); }
+  if (!isISO(st)) { st = todayISO(); store.set("acv:trial", st); track("trial-start"); }
   const e = parseISO(st); e.setDate(e.getDate() + PAY.trialDays - 1); e.setHours(23, 59, 59, 0);
   return e;
 }
@@ -3787,7 +3868,7 @@ function renderPlan() {
   const el = $("plan-status"); if (!el) return;
   if (!PW_ON) { el.textContent = ""; return; }
   const btn = `<button class="linkish" type="button" id="btn-open-pay">Unlock this company</button>`;
-  el.innerHTML = isLive(unlockUntil) ? `${esc(S.company || "This company")}: unlocked on this device until ${niceDate(unlockUntil)}` : inTrial() ? `Free trial: ${trialDaysLeft()} day${trialDaysLeft() === 1 ? "" : "s"} left, until ${niceDate(trialEnd())} · ${btn}` : `Free trial ended on ${niceDate(trialEnd())} · ${btn}`;
+  el.innerHTML = isLive(unlockUntil) ? `${esc(S.company || "This company")}: unlocked on this device until ${niceDate(unlockUntil)}` : inTrial() ? `<span class="${trialDaysLeft() <= 5 ? "trial-soon" : ""}">Free trial: ${trialDaysLeft()} day${trialDaysLeft() === 1 ? "" : "s"} left, until ${niceDate(trialEnd())}</span> · ${btn}` : `Free trial ended on ${niceDate(trialEnd())} · ${btn}`;
 }
 async function refreshPlan() {
   if (!PW_ON) return;
@@ -3795,6 +3876,7 @@ async function refreshPlan() {
   if (co === S.company) { unlockUntil = d; renderPlan(); }
 }
 function openPaywall(name, ended) {
+  track(inTrial() ? "paywall-opened" : "paywall-trial-ended");
   payCo = String(name ?? S.company ?? "").replace(/\s*\(example\)\s*$/i, "").trim(); payId = companyId(payCo);
   $("pw-co").textContent = payCo || "this company";
   $("pw-dev").textContent = payId;
@@ -3819,7 +3901,8 @@ function noteDownload() {
   store.set("acv:dl", usedDownloads() + 1);
   renderPlan();
   const left = trialDaysLeft();
-  toast(`Downloaded. Free trial: ${left} day${left === 1 ? "" : "s"} left.`);
+  toast(left <= 5 ? `Downloaded. Your free trial ends in ${left} day${left === 1 ? "" : "s"}, on ${niceDate(trialEnd())}.` : `Downloaded. Free trial: ${left} day${left === 1 ? "" : "s"} left.`);
+  maybeHello("download");
 }
 async function submitCode() {
   const code = $("pw-code").value.trim(), st = $("pw-status");
@@ -3835,6 +3918,7 @@ async function submitCode() {
   closePaywall(); $("pw-code").value = "";
   await refreshPlan();
   toast(`${payCo || "This company"} is unlocked until ${niceDate(d)}. Thank you.`);
+  track("unlock-success");
 }
 async function loadUnlock() { await refreshPlan(); }
 $("pw-close").onclick = closePaywall;
@@ -4162,6 +4246,17 @@ async function exportPDF(only) {
           doc.addImage(im.url, im.fmt, (W - w) / 2, 12, w, h);
         });
         y = 20;
+      } else if (auditTextIssued()) {
+        heading("Independent auditor's report", true);
+        for (const x of auditSections()) {
+          if (x.h) { ensure(14); y += 1.5; font("bold", 10); doc.text(plain(x.h), M, y); y += 5; }
+          for (const ln of x.t.split("\n")) {
+            if (/^_{6,}\s*$/.test(ln.trim())) { ensure(16); y += 8; doc.setLineWidth(0.25); doc.line(M, y, M + 70, y); y += 5; continue; }
+            if (!ln.trim()) { y += 2; continue; }
+            para(ln, 9.2);
+          }
+          y += 2;
+        }
       } else {
         heading("Independent auditor's report", true);
         para(`The auditor's signed report${String(fd.auditor || "").trim() ? ", from " + String(fd.auditor).trim() + "," : ""} is to be inserted here before these financial statements are issued.`, 9.6);
@@ -4411,6 +4506,7 @@ async function exportPDF(only) {
     } catch (err) { toast("The auditor's report couldn't be added, so its pages are blank. Attach it again and retry."); }
   }
   await saveFile((only ? taskFileBase(only) : fileBase()) + ".pdf", blob);
+  track(`download-pdf-${only || "pack"}`);
   noteDownload();
 }
 const fileBase = () => `${(S.company || "Management pack").replace(/[^\w\- ]+/g, "").trim()} - ${String(S.cur).replace(/[^\w\- ]+/g, "").trim()} pack`;
@@ -4526,6 +4622,14 @@ async function exportXLSX(only) {
       const rows = [["Approved by the board on", fd.approvedOn ? niceISO(fd.approvedOn) : ""], [], xr("b", ["Signed on behalf of the board by", "Signature", "Date"])];
       (sg.length ? sg : fd.single ? ["Name, Director"] : ["Name, Director", "Name, Director"]).forEach(t => rows.push([t, "______________________", "______________"]));
       X.sheet(rows, "Approval", [40, 28, 18], { noHead: true, unit: "", desc: "Approval of the financial statements by the board" }); }
+    { const st = auditState(), d = FSD();
+      if (st === "audited" || st === "pending") {
+        const rows = [];
+        if (auditTextIssued()) for (const x of auditSections()) { if (x.h) rows.push(xr("sec", [x.h])); for (const l of x.t.split("\n")) if (l.trim()) rows.push(xr("text", [l])); rows.push([]); }
+        else if (d.auditFile) rows.push(xr("text", [`${auditLine()} The auditor's signed report (${d.auditFile}) is in the statements PDF, after the approval page.`]));
+        else rows.push(xr("note", ["The auditor's report is not yet issued."]));
+        X.sheet(rows, "Auditor's report", [100], { noHead: true, unit: "", title: "Independent auditor's report", desc: "Independent auditor's report" });
+      } }
     { const rows = [["", "Note", S.cur].concat(cmp ? [S.cmp] : [])];
       for (const L of IS_LINES) rows.push(xr(L.total ? "total" : L.sub ? "sub" : "", [L.l, L.note && built.noteOf[L.note] ? String(built.noteOf[L.note]) : "", R0(isDisp(L, cur))].concat(cmp ? [R0(isDisp(L, cmp))] : [])));
       rows.push([], xr("note", ["Costs are shown as negative amounts."]));
@@ -4605,6 +4709,7 @@ async function exportXLSX(only) {
   }
   const buf = XLSX.write(X.finish(), { bookType: "xlsx", type: "array", cellStyles: true });
   await saveFile((only ? taskFileBase(only) : fileBase()) + ".xlsx", new Blob([buf]));
+  track(`download-xlsx-${only || "pack"}`);
   noteDownload();
 }
 async function saveFile(filename, data) {
@@ -4661,6 +4766,7 @@ function useColumns() {
   renderAll();
   const un = A.filter(a => !a.cat).length;
   toast(`${A.length} accounts loaded${un ? `, ${un} need a line` : ""}.`);
+  track("load-trial-balance"); maybeHello("tb");
   show(un ? "map" : "pack");
 }
 function readSettingsForm() {
@@ -5573,6 +5679,7 @@ async function bkExportXLSX() {
   add([["Code", "Name", "Line in the reports"]].concat(b.accounts.map(a => [a.code, a.name, catLabel(a.cat)])), "Accounts", [10, 40, 30], { unit: "", desc: "Chart of accounts" });
   const buf = XLSX.write(X.finish(), { bookType: "xlsx", type: "array", cellStyles: true });
   await saveFile(`${b.name.replace(/[^\w\- ]+/g, "").trim()} - books to ${d}.xlsx`, new Blob([buf]));
+  track("download-xlsx-books");
   noteDownload();
 }
 function sendBooksToPack() {
@@ -5588,6 +5695,7 @@ function sendBooksToPack() {
   S = { ...SAMPLE_SETTINGS, company: b.name.replace(/\s*\(example\)\s*$/i, ""), cur: `${MONTHS[m - 1]} ${y} YTD`, cmp: `${MONTHS[m - 1]} ${y - 1} YTD`, bud: "Budget", opn: `Opening ${niceISO(fs)}`, months: Math.min(12, Math.max(1, months)), unit: Math.abs(rev) >= 2e7 ? "m" : "k", currency: b.currency, flip: false, cmpOpen: false, policies: null, model: null, pdfModel: keepPdf, taxRate: bkCitPct(b) };
   isSample = false; compareTo = "cmp"; $("commentary").value = "";
   persist(); renderAll(); show("pack");
+  track("books-to-reports"); maybeHello("books");
   toast(`Pack built from the books to ${niceISO(d)}.`);
 }
 
@@ -5712,6 +5820,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !$("bk-mod
 
 /* ---------- Views and events ---------- */
 function show(view) {
+  if (typeof track === "function" && show.last !== view) { show.last = view; try { track("view-" + view); } catch (e) {} }
   const isModel = MODEL_VIEWS.includes(view);
   if (isModel) modelView = view;
   for (const v of ["home", "pack", "fs", "data", "map", "books", "manual"]) $("view-" + v).hidden = v !== view;

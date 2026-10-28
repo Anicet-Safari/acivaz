@@ -1,5 +1,5 @@
 // Acivaz offline cache. Bump VERSION when you publish changes.
-const VERSION = "acivaz-v19";
+const VERSION = "acivaz-v21";
 const SHELL = [
   "./", "index.html", "manifest.webmanifest",
   "icon-192.png", "icon-512.png", "icon-maskable-512.png", "apple-touch-icon.png", "favicon-32.png",
@@ -17,6 +17,8 @@ self.addEventListener("activate", e => {
 self.addEventListener("fetch", e => {
   const req = e.request;
   if (req.method !== "GET") return;
+  // Anonymous visit counts go straight to the network, never into the cache
+  if (/goatcounter\.com|gc\.zgo\.at/.test(req.url)) return;
   if (req.mode === "navigate") {
     // Network first so updates arrive; fall back to the cached app offline.
     e.respondWith(fetch(req).then(res => { const copy = res.clone(); caches.open(VERSION).then(c => c.put("index.html", copy)); return res; })
