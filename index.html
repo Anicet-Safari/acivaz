@@ -21,12 +21,10 @@
 <link rel="icon" type="image/png" href="favicon-32.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <title>Acivaz · Financial statements and reports from a trial balance</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
-<script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/cpexcel.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<link rel="stylesheet" href="fonts/fonts.css">
+<script src="vendor/cpexcel.js"></script>
+<script src="vendor/xlsx.bundle.js"></script>
+<script src="vendor/jspdf.umd.min.js"></script>
 <style>
 /* Layout: a set of management accounts from a good firm. White paper on a cool grey desk, navy as the house colour, ruled tables (single rule above subtotals, double rule under totals), serif headings like an annual report. Charts use a distinct palette: green up, brick red down, steel and ochre for comparisons. */
 :root {
@@ -479,6 +477,10 @@ body { margin: 0; }
 img { max-width: 100%; }
 :root { padding-bottom: env(safe-area-inset-bottom, 0px); }
 .foot { padding-block: 22px 30px; font-size: 12px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 6px 18px; border-top: 1px solid var(--line); }
+.consent { position: fixed; left: max(16px, env(safe-area-inset-left, 0px)); bottom: calc(16px + env(safe-area-inset-bottom, 0px)); z-index: 16; width: min(400px, calc(100% - 32px)); background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: 0 10px 30px rgba(0, 0, 0, .14); padding: 14px 16px; font-size: 13.5px; line-height: 1.5; }
+.consent p { margin: 0 0 10px; }
+.consent .hl-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+#priv-state { font-weight: 600; }
 .hello { position: fixed; right: max(16px, env(safe-area-inset-right, 0px)); bottom: calc(16px + env(safe-area-inset-bottom, 0px)); z-index: 15; width: min(380px, calc(100% - 32px)); background: var(--surface); border: 1px solid var(--line); border-top: 3px solid var(--accent); border-radius: var(--radius); box-shadow: 0 10px 30px rgba(0, 0, 0, .14); padding: 16px 18px; }
 .hello h3 { font-size: 16px; margin: 0 0 6px; }
 .hello p { margin: 0 0 10px; color: var(--muted); font-size: 13.5px; line-height: 1.5; }
@@ -1179,6 +1181,7 @@ table.lines.bp-rows input { width: 100%; padding: 6px 7px; border: 1px solid var
           <button type="button" data-jump="m-appraisal">9 · Loans and projects</button>
           <button type="button" data-jump="m-bplan">10 · Business plan</button>
           <button type="button" data-jump="m-downloads">Downloads and unlocking</button>
+          <button type="button" data-jump="m-privacy">Privacy and your data</button>
           <button type="button" data-jump="m-install">Install and offline use</button>
           <button type="button" data-jump="m-built">How Acivaz is built</button>
           <button type="button" data-jump="m-faq">Problems and questions</button>
@@ -1421,12 +1424,24 @@ table.lines.bp-rows input { width: 100%; padding: 6px 7px; border: 1px solid var
             <p>Acivaz can be installed like an app. In Chrome or Edge on a computer, press <strong>Install app</strong> in the top bar. On a phone, open the browser menu and choose <strong>Add to Home Screen</strong>. It then opens from its own icon, in its own window, and works offline after the first visit.</p>
           </section>
 
+          <section id="m-privacy">
+            <h2>Privacy and your data</h2>
+            <p>Acivaz is built so that your figures and your clients' figures stay with you.</p>
+            <ul>
+              <li><strong>On your device only:</strong> trial balances, books, mappings, notes, plans, the auditor's report you attach and unlock codes are kept in this browser's own storage. Nothing you enter is sent to a server. Back up from Books, because clearing the browser's data erases them.</li>
+              <li><strong>Served from one place:</strong> the app, its fonts and its PDF and Excel tools all come from the Acivaz website itself, hosted on GitHub Pages, so no font service or library server learns that you opened it.</li>
+              <li><strong>Visit counts, only if you allow them:</strong> with your permission, Acivaz counts visits and a few actions (a trial starting, a trial balance loaded, a download, the payment screen opening) using GoatCounter. GoatCounter sets no cookies and does not store IP addresses; its servers are in Finland and Germany. No figures, names, company details or files are ever sent. Browsers set to Do Not Track are never counted.</li>
+              <li><strong>WhatsApp, only what you send:</strong> paying, or saying hello, opens a WhatsApp message that you read and send yourself. It holds only what you type and, for payment, the company name and its company ID.</li>
+            </ul>
+            <p>Visit counts are <span id="priv-state">off</span> on this device. <button class="btn small" type="button" id="priv-toggle">Allow counts</button></p>
+            <p>To remove everything Acivaz keeps on this device, delete each company in Books, or clear this site's data in the browser's settings. Questions about your data: WhatsApp <strong>0784 551 341</strong>.</p>
+          </section>
+
           <section id="m-built">
             <h2>How Acivaz is built</h2>
             <p>Acivaz is a single web page that runs entirely in the browser. Nothing a customer enters is sent to a server, which keeps client data private and means there are no hosting costs beyond the free GitHub Pages site.</p>
-            <figure class="m-fig"><div class="fig-box"><svg viewBox="0 0 800 410" role="img" aria-label="Acivaz runs in the browser on the customer's device; GitHub Pages and cdnjs only deliver the page and libraries; books and files stay on the device; unlock codes are signed by your private generator and checked in the app" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-size="12"><defs><marker id="mfb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker></defs><rect x="230" y="20" width="550" height="270" rx="6" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="6 5"/><text x="246" y="42" font-weight="600" font-size="12" fill="var(--accent)">Customer's computer or phone</text><rect x="290" y="58" width="220" height="210" rx="4" fill="var(--accent)" fill-opacity=".13" stroke="var(--accent)" stroke-width="1.5"/><text x="304" y="84" font-weight="700" font-size="13" fill="var(--ink)">Acivaz app</text><text x="304" y="102" font-size="11.5" fill="var(--muted)">One web page</text><text x="304" y="124" fill="var(--ink)">Books engine</text><text x="304" y="143" fill="var(--ink)">Pack and notes builder</text><text x="304" y="162" fill="var(--ink)">Forecast, budget,</text><text x="304" y="181" fill="var(--ink)">valuation, loans</text><text x="304" y="200" fill="var(--ink)">PDF and Excel export</text><text x="304" y="219" fill="var(--ink)">Unlock check</text><rect x="600" y="58" width="160" height="62" rx="4" fill="var(--seg1)" fill-opacity=".13" stroke="var(--seg1)" stroke-width="1.5"/><text x="614" y="84" font-weight="700" font-size="13" fill="var(--ink)">Browser storage</text><text x="614" y="106" fill="var(--ink)">Books, mappings, code</text><rect x="600" y="136" width="160" height="62" rx="4" fill="var(--seg1)" fill-opacity=".13" stroke="var(--seg1)" stroke-width="1.5"/><text x="614" y="162" font-weight="700" font-size="13" fill="var(--ink)">Your files</text><text x="614" y="184" fill="var(--ink)">Excel or CSV</text><rect x="600" y="214" width="160" height="54" rx="4" fill="var(--seg1)" fill-opacity=".13" stroke="var(--seg1)" stroke-width="1.5"/><text x="614" y="240" font-weight="700" font-size="13" fill="var(--ink)">Backup file</text><text x="614" y="262" fill="var(--ink)">.json, kept by you</text><rect x="20" y="58" width="160" height="62" rx="4" fill="var(--seg5)" fill-opacity=".13" stroke="var(--seg5)" stroke-width="1.5"/><text x="34" y="84" font-weight="700" font-size="13" fill="var(--ink)">GitHub Pages</text><text x="34" y="106" fill="var(--ink)">anicet-safari.github.io</text><rect x="20" y="158" width="160" height="62" rx="4" fill="var(--seg5)" fill-opacity=".13" stroke="var(--seg5)" stroke-width="1.5"/><text x="34" y="184" font-weight="700" font-size="13" fill="var(--ink)">cdnjs</text><text x="34" y="206" fill="var(--ink)">PDF, Excel libraries</text><path d="M510 90 H599" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfb)" marker-start="url(#mfb)"/><text x="555" y="82" text-anchor="middle" font-size="11" fill="var(--muted)">saves, reads</text><path d="M600 167 H511" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfb)"/><text x="555" y="159" text-anchor="middle" font-size="11" fill="var(--muted)">read here</text><path d="M510 241 H599" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfb)" marker-start="url(#mfb)"/><text x="555" y="233" text-anchor="middle" font-size="11" fill="var(--muted)">backup, restore</text><path d="M180 89 H289" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfb)"/><text x="205" y="81" text-anchor="middle" font-size="11" fill="var(--muted)">the page</text><path d="M180 189 H289" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfb)"/><text x="205" y="181" text-anchor="middle" font-size="11" fill="var(--muted)">libraries</text><text x="20" y="322" font-weight="600" font-size="12" fill="var(--muted)">Unlocking downloads</text><rect x="20" y="336" width="150" height="60" rx="4" fill="var(--seg2)" fill-opacity=".13" stroke="var(--seg2)" stroke-width="1.5"/><text x="34" y="362" font-weight="700" font-size="13" fill="var(--ink)">Customer</text><text x="34" y="384" fill="var(--ink)">pays by MTN MoMo</text><rect x="240" y="336" width="160" height="60" rx="4" fill="var(--seg2)" fill-opacity=".13" stroke="var(--seg2)" stroke-width="1.5"/><text x="254" y="362" font-weight="700" font-size="13" fill="var(--ink)">You</text><text x="254" y="384" fill="var(--ink)">check the MoMo SMS</text><rect x="470" y="336" width="210" height="60" rx="4" fill="var(--seg2)" fill-opacity=".13" stroke="var(--seg2)" stroke-width="1.5"/><text x="484" y="362" font-weight="700" font-size="13" fill="var(--ink)">Unlock-code generator</text><text x="484" y="384" fill="var(--ink)">private key, your device</text><path d="M170 366 H239" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfb)"/><text x="205" y="358" text-anchor="middle" font-size="11" fill="var(--muted)">WhatsApp</text><path d="M400 366 H469" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfb)"/><text x="435" y="358" text-anchor="middle" font-size="11" fill="var(--muted)">create code</text><path d="M490 336 V269" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfb)"/><text x="500" y="305" text-anchor="start" font-size="11" fill="var(--muted)">code sent by WhatsApp</text><text x="500" y="321" text-anchor="start" font-size="11" fill="var(--muted)">checked with public key</text></svg></div>
-              <figcaption>GitHub Pages delivers the page once, and cdnjs supplies the PDF and Excel libraries. After the first visit the app works offline. Books, mappings and the unlock code are saved in the browser's own storage, and backups are files the customer keeps. Unlock codes are signed by your private generator and checked in the app with the matching public key, so a code can't be faked or moved to another device.</figcaption></figure>
-            <p>On the public website, Acivaz counts visits and a few actions anonymously with GoatCounter: a trial starting, a trial balance being loaded, a download, the payment screen opening. No cookies are set, and no figures, names, company details or files are ever sent.</p>
+            <figure class="m-fig"><div class="fig-box"><svg viewBox="0 0 800 410" role="img" aria-label="Acivaz runs in the browser on the customer's device; GitHub Pages delivers the page, fonts and tools; GoatCounter receives anonymous counts only if allowed; books and files stay on the device; unlock codes are signed by your private generator and checked in the app" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-size="12"><defs><marker id="mfb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker></defs><rect x="230" y="20" width="550" height="270" rx="6" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="6 5"/><text x="246" y="42" font-weight="600" font-size="12" fill="var(--accent)">Customer's computer or phone</text><rect x="290" y="58" width="220" height="210" rx="4" fill="var(--accent)" fill-opacity=".13" stroke="var(--accent)" stroke-width="1.5"/><text x="304" y="84" font-weight="700" font-size="13" fill="var(--ink)">Acivaz app</text><text x="304" y="102" font-size="11.5" fill="var(--muted)">One web page</text><text x="304" y="124" fill="var(--ink)">Books engine</text><text x="304" y="143" fill="var(--ink)">Pack and notes builder</text><text x="304" y="162" fill="var(--ink)">Forecast, budget,</text><text x="304" y="181" fill="var(--ink)">valuation, loans</text><text x="304" y="200" fill="var(--ink)">PDF and Excel export</text><text x="304" y="219" fill="var(--ink)">Unlock check</text><rect x="600" y="58" width="160" height="62" rx="4" fill="var(--seg1)" fill-opacity=".13" stroke="var(--seg1)" stroke-width="1.5"/><text x="614" y="84" font-weight="700" font-size="13" fill="var(--ink)">Browser storage</text><text x="614" y="106" fill="var(--ink)">Books, mappings, code</text><rect x="600" y="136" width="160" height="62" rx="4" fill="var(--seg1)" fill-opacity=".13" stroke="var(--seg1)" stroke-width="1.5"/><text x="614" y="162" font-weight="700" font-size="13" fill="var(--ink)">Your files</text><text x="614" y="184" fill="var(--ink)">Excel or CSV</text><rect x="600" y="214" width="160" height="54" rx="4" fill="var(--seg1)" fill-opacity=".13" stroke="var(--seg1)" stroke-width="1.5"/><text x="614" y="240" font-weight="700" font-size="13" fill="var(--ink)">Backup file</text><text x="614" y="262" fill="var(--ink)">.json, kept by you</text><rect x="20" y="58" width="160" height="62" rx="4" fill="var(--seg5)" fill-opacity=".13" stroke="var(--seg5)" stroke-width="1.5"/><text x="34" y="84" font-weight="700" font-size="13" fill="var(--ink)">GitHub Pages</text><text x="34" y="106" fill="var(--ink)">anicet-safari.github.io</text><rect x="20" y="158" width="160" height="62" rx="4" fill="var(--seg5)" fill-opacity=".13" stroke="var(--seg5)" stroke-width="1.5"/><text x="34" y="184" font-weight="700" font-size="13" fill="var(--ink)">GoatCounter</text><text x="34" y="206" fill="var(--ink)">Counts, if allowed</text><path d="M510 90 H599" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfb)" marker-start="url(#mfb)"/><text x="555" y="82" text-anchor="middle" font-size="11" fill="var(--muted)">saves, reads</text><path d="M600 167 H511" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfb)"/><text x="555" y="159" text-anchor="middle" font-size="11" fill="var(--muted)">read here</text><path d="M510 241 H599" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfb)" marker-start="url(#mfb)"/><text x="555" y="233" text-anchor="middle" font-size="11" fill="var(--muted)">backup, restore</text><path d="M180 89 H289" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfb)"/><text x="235" y="81" text-anchor="middle" font-size="11" fill="var(--muted)">page, fonts, tools</text><path d="M289 189 H181" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfb)"/><text x="235" y="181" text-anchor="middle" font-size="11" fill="var(--muted)">counts</text><text x="20" y="322" font-weight="600" font-size="12" fill="var(--muted)">Unlocking downloads</text><rect x="20" y="336" width="150" height="60" rx="4" fill="var(--seg2)" fill-opacity=".13" stroke="var(--seg2)" stroke-width="1.5"/><text x="34" y="362" font-weight="700" font-size="13" fill="var(--ink)">Customer</text><text x="34" y="384" fill="var(--ink)">pays by MTN MoMo</text><rect x="240" y="336" width="160" height="60" rx="4" fill="var(--seg2)" fill-opacity=".13" stroke="var(--seg2)" stroke-width="1.5"/><text x="254" y="362" font-weight="700" font-size="13" fill="var(--ink)">You</text><text x="254" y="384" fill="var(--ink)">check the MoMo SMS</text><rect x="470" y="336" width="210" height="60" rx="4" fill="var(--seg2)" fill-opacity=".13" stroke="var(--seg2)" stroke-width="1.5"/><text x="484" y="362" font-weight="700" font-size="13" fill="var(--ink)">Unlock-code generator</text><text x="484" y="384" fill="var(--ink)">private key, your device</text><path d="M170 366 H239" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfb)"/><text x="205" y="358" text-anchor="middle" font-size="11" fill="var(--muted)">WhatsApp</text><path d="M400 366 H469" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfb)"/><text x="435" y="358" text-anchor="middle" font-size="11" fill="var(--muted)">create code</text><path d="M490 336 V269" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfb)"/><text x="500" y="305" text-anchor="start" font-size="11" fill="var(--muted)">code sent by WhatsApp</text><text x="500" y="321" text-anchor="start" font-size="11" fill="var(--muted)">checked with public key</text></svg></div>
+              <figcaption>GitHub Pages delivers the page, its fonts and its PDF and Excel tools; no other site is contacted, except GoatCounter for anonymous counts when the user allows them. After the first visit the app works offline. Books, mappings and the unlock code are saved in the browser's own storage, and backups are files the customer keeps. Unlock codes are signed by your private generator and checked in the app with the matching public key, so a code can't be faked or moved to another device.</figcaption></figure>
             <p>Because everything lives in the browser, two limits follow: clearing browser data erases the books unless they're backed up, and the free trial restarts if someone clears it. Proper user accounts would need a server, which belongs in a later paid version.</p>
           </section>
 
@@ -1494,7 +1509,11 @@ table.lines.bp-rows input { width: 100%; padding: 6px 7px; border: 1px solid var
     </ol>
   </div>
 </div>
-<footer class="gutter"><div class="wrap foot"><span>Acivaz</span><span id="plan-status"></span><span>Your figures are processed on this device and never uploaded. Visits are counted anonymously.</span><button class="linkish" type="button" data-goto="manual">Read the manual</button><span>Management accounts are unaudited. Check every figure before you send a pack.</span></div></footer>
+<footer class="gutter"><div class="wrap foot"><span>Acivaz</span><span id="plan-status"></span><span>Your figures are processed on this device and never uploaded.</span><button class="linkish" type="button" id="foot-privacy">Privacy</button><button class="linkish" type="button" data-goto="manual">Read the manual</button><span>Management accounts are unaudited. Check every figure before you send a pack.</span></div></footer>
+<div class="consent" id="consent" role="dialog" aria-label="Anonymous visit counts" hidden>
+  <p><strong>Help improve Acivaz?</strong> Allow anonymous counts of visits and actions such as downloads. No cookies, and no figures, names or files are ever sent. <button class="linkish" type="button" data-jump-after="m-privacy">Privacy</button></p>
+  <div class="hl-actions"><button class="btn small primary" type="button" id="consent-yes">Allow</button><button class="btn small" type="button" id="consent-no">No thanks</button></div>
+</div>
 <div class="hello" id="hello" role="dialog" aria-labelledby="hello-title" hidden>
   <button class="modal-x" type="button" id="hello-x" aria-label="Close">×</button>
   <h3 id="hello-title">Using Acivaz for real work?</h3>
@@ -2027,7 +2046,7 @@ const AUD_MEM = {};
 const audKey = () => "audit:" + String(S.company || "").trim().toLowerCase();
 const auditFileRec = async () => AUD_MEM[audKey()] || await IDB.get(audKey());
 function loadScript(src) { return new Promise((res, rej) => { const el = document.createElement("script"); el.src = src; el.onload = res; el.onerror = rej; document.head.appendChild(el); }); }
-async function loadPdfLib() { if (!window.PDFLib) await loadScript("https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"); if (!window.PDFLib) throw new Error("pdf-lib did not load"); }
+async function loadPdfLib() { if (!window.PDFLib) await loadScript("vendor/pdf-lib.min.js"); if (!window.PDFLib) throw new Error("pdf-lib did not load"); }
 const auditReady = () => { const d = FSD(); return !!(String(d.auditor || "").trim() && String(d.auditPartner || "").trim() && d.auditDate && String(d.auditDraft || "").trim()); };
 const auditTextIssued = () => { const d = FSD(); return d.auditStatus === "audited" && !!d.auditIssued && auditReady() && !d.auditFile; };
 function auditState() { const d = FSD(); return d.auditStatus === "audited" ? (d.auditFile || auditTextIssued() ? "audited" : "pending") : d.auditStatus === "exempt" ? "exempt" : "none"; }
@@ -3828,23 +3847,49 @@ const isLive = d => !!d && d >= new Date();
 const usedDownloads = () => Number(store.get("acv:dl") || 0);
 /* Anonymous usage counts (GoatCounter): public site only, events carry no figures, names or files */
 const GC_CODE = "acivaz";
-const GC_ON = PW_ON && /github\.io$/i.test(location.hostname) && !!GC_CODE;
+const DNT = navigator.doNotTrack === "1" || window.doNotTrack === "1" || navigator.globalPrivacyControl === true;
+const GC_ELIGIBLE = PW_ON && /github\.io$/i.test(location.hostname) && !!GC_CODE && !DNT;
+const gcConsent = () => store.get("acv:count");
 const gcQueue = [];
+let gcLoaded = false;
 function track(name) {
-  if (!GC_ON) return;
+  if (!GC_ELIGIBLE || gcConsent() === "no") return;
   const go = n => { try { window.goatcounter.count({ path: n, title: n, event: true }); } catch (e) {} };
-  if (window.goatcounter && window.goatcounter.count) go(name); else gcQueue.push(name);
+  if (gcConsent() === "yes" && window.goatcounter && window.goatcounter.count) go(name);
+  else if (gcQueue.length < 50) gcQueue.push(name);
 }
-if (GC_ON) {
+/* GoatCounter is loaded only after the user allows it; actions from this visit before that are sent then, never without permission */
+function gcLoad() {
+  if (gcLoaded || !GC_ELIGIBLE || gcConsent() !== "yes") return;
+  gcLoaded = true;
   const sc = document.createElement("script");
   sc.async = true; sc.src = "https://gc.zgo.at/count.js"; sc.dataset.goatcounter = `https://${GC_CODE}.goatcounter.com/count`;
   sc.onload = () => { const w = setInterval(() => { if (window.goatcounter && window.goatcounter.count) { clearInterval(w); while (gcQueue.length) track(gcQueue.shift()); } }, 300); setTimeout(() => clearInterval(w), 10000); };
   document.head.appendChild(sc);
 }
+function setConsent(v) {
+  store.set("acv:count", v); $("consent").hidden = true;
+  if (v === "yes") gcLoad(); else gcQueue.length = 0;
+  renderPrivacy();
+}
+function renderPrivacy() {
+  const st = $("priv-state"), bt = $("priv-toggle"); if (!st || !bt) return;
+  if (!GC_ELIGIBLE) { st.textContent = DNT ? "off (your browser asks not to be tracked)" : "off"; bt.hidden = true; return; }
+  const on = gcConsent() === "yes";
+  st.textContent = on ? "on" : "off"; bt.hidden = false; bt.textContent = on ? "Stop counting" : "Allow counts";
+}
+$("consent-yes").onclick = () => setConsent("yes");
+$("consent-no").onclick = () => setConsent("no");
+document.addEventListener("click", e => {
+  if (e.target.closest("#priv-toggle")) setConsent(gcConsent() === "yes" ? "no" : "yes");
+  if (e.target.closest("#foot-privacy") || e.target.closest("[data-jump-after='m-privacy']")) { show("manual"); setTimeout(() => { const el = $("m-privacy"); if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 90, behavior: "instant" }); }, 80); }
+});
+if (GC_ELIGIBLE) { if (gcConsent() === "yes") gcLoad(); else if (!gcConsent()) setTimeout(() => { $("consent").hidden = false; }, 2500); }
 /* A one-time WhatsApp hello when someone starts real work: their own trial balance, books, or a first download */
 function maybeHello(reason) {
   if (!PW_ON || isSample || store.get("acv:hello") || dlUnlocked) return;
   if (!$("hello").hidden) return;
+  if (!$("consent").hidden) $("consent").hidden = true; /* no choice saved, so it returns next visit */
   setTimeout(() => { $("hello").hidden = false; track("hello-shown"); }, 1200);
 }
 function helloLink() {
@@ -5826,6 +5871,7 @@ function show(view) {
   for (const v of ["home", "pack", "fs", "data", "map", "books", "manual"]) $("view-" + v).hidden = v !== view;
   document.body.classList.toggle("on-home", view === "home");
   if (view === "home") renderHome();
+  if (view === "manual") renderPrivacy();
   $("view-model").hidden = !isModel;
   for (const v of ["books", "pack", "fs", "data", "map", "manual", ...MODEL_VIEWS]) { const t = $("tab-" + v); if (t) { if (v === view) t.setAttribute("aria-current", "page"); else t.removeAttribute("aria-current"); } }
   document.querySelectorAll(".tab-group").forEach(g => { const c = g.querySelector('.tab-item[aria-current="page"]'), p = g.querySelector(".tab-parent"); p.classList.toggle("has-current", !!c); p.querySelector(".tab-cur").textContent = c ? "· " + c.querySelector("b").textContent : ""; });

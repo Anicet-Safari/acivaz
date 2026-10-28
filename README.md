@@ -16,7 +16,9 @@ Everything downloads as PDF and Excel.
 
 ## Your data
 
-Files are read and processed in the browser on your own device. Nothing is uploaded to a server. Books, mappings and drafts are saved in that browser only, so keep a backup from Books.
+Files are read and processed in the browser on your own device. Nothing you enter is uploaded to a server. Books, mappings and drafts are saved in that browser only, so keep a backup from Books.
+
+The app, its fonts and its PDF and Excel tools are all served from this site, so no other company is contacted when you use it. Anonymous visit counts (GoatCounter: no cookies, no IP addresses stored) are sent only if the user allows them, and never from browsers set to Do Not Track. Details are in the app's manual under Privacy and your data.
 
 ## Pricing
 

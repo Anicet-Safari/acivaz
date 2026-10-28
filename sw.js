@@ -1,12 +1,13 @@
 // Acivaz offline cache. Bump VERSION when you publish changes.
-const VERSION = "acivaz-v21";
+const VERSION = "acivaz-v22";
 const SHELL = [
   "./", "index.html", "manifest.webmanifest",
   "icon-192.png", "icon-512.png", "icon-maskable-512.png", "apple-touch-icon.png", "favicon-32.png",
-  "https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/cpexcel.js",
-  "https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js",
-  "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js",
-  "https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"
+  "vendor/cpexcel.js", "vendor/xlsx.bundle.js", "vendor/jspdf.umd.min.js", "vendor/pdf-lib.min.js",
+  "fonts/fonts.css",
+  "fonts/source-serif-4-latin-500-normal.woff2", "fonts/source-serif-4-latin-600-normal.woff2", "fonts/source-serif-4-latin-700-normal.woff2",
+  "fonts/ibm-plex-sans-latin-400-normal.woff2", "fonts/ibm-plex-sans-latin-500-normal.woff2", "fonts/ibm-plex-sans-latin-600-normal.woff2",
+  "fonts/ibm-plex-mono-latin-400-normal.woff2", "fonts/ibm-plex-mono-latin-500-normal.woff2"
 ];
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(VERSION).then(c => Promise.all(SHELL.map(u => c.add(u).catch(() => null)))).then(() => self.skipWaiting()));
