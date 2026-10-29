@@ -8,6 +8,7 @@ Acivaz is built for accountants, bookkeepers and business owners in Rwanda. Load
 
 - **Financial statements** in the IFRS for SMEs format: profit or loss, financial position, changes in equity and cash flows, with numbered notes, significant accounting policies and year-end disclosures
 - **Directors' report, approval page and dividend solvency test**, in line with Law N° 007/2021 governing companies, with filing-deadline reminders
+- **Legal papers**: board and AGM minutes, the AGM notice or a written resolution, registers of directors, shareholders, beneficial owners and directors' interests, the lawyer's letter for the audit, and a compliance calendar, as drafts for review by the company secretary or a lawyer
 - **Management report**: key figures, charts that explain each movement, a ratio scorecard and a commentary draft
 - **Books**: sales, purchases, bank and VAT under RRA rules, with EBM receipt numbers and income tax estimates
 - **Plans**: a three-year forecast in three scenarios, a monthly budget, a valuation, loan and project schedules, and a full business plan for lenders and investors

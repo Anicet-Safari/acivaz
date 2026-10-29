@@ -513,7 +513,21 @@ table.lines.bp-rows input { width: 100%; padding: 6px 7px; border: 1px solid var
 .sg-grid input { padding: 7px 9px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg); font-weight: 400; font-size: 14px; }
 /* Welcome page */
 .brand-mark { background: none; border: 0; padding: 0; cursor: pointer; text-align: left; }
-.on-home #btn-xlsx, .on-home #btn-pdf { display: none; }
+.on-home #btn-xlsx, .on-home #btn-pdf, .on-legal #btn-xlsx, .on-legal #btn-pdf { display: none; }
+table.lines.lg-rows { min-width: 760px; }
+table.lines.lg-rows input, table.lines.lg-rows select { width: 100%; padding: 6px 7px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); color: var(--ink); font: inherit; font-size: 13.5px; }
+.lg-doc { padding: 0; }
+.lg-doc > summary { cursor: pointer; padding: 14px 18px; font-weight: 600; list-style-position: inside; }
+.lg-paper { margin: 0 18px 18px; padding: 26px 28px; border: 1px solid var(--line); background: var(--bg); line-height: 1.6; font-size: 14px; max-width: 820px; overflow-x: auto; }
+.lg-paper .lg-doc-title { font-family: var(--font-display); font-size: 19px; margin: 0 0 4px; }
+.lg-paper .lg-sub, .lg-paper .lg-note { color: var(--muted); font-size: 13px; }
+.lg-paper ol { padding-left: 22px; } .lg-paper li { margin-bottom: 6px; }
+.lg-paper table.lg-t { width: 100%; border-collapse: collapse; margin: 8px 0 12px; font-size: 13px; }
+.lg-paper table.lg-t th { text-align: left; font-weight: 600; border-bottom: 1px solid var(--ink); padding: 4px 6px; }
+.lg-paper table.lg-t td { border-bottom: 1px solid var(--line-soft); padding: 4px 6px; vertical-align: top; }
+.lg-paper table.lg-sig { width: 100%; margin-top: 18px; } .lg-paper table.lg-sig td { width: 50%; vertical-align: top; font-size: 13px; color: var(--muted); }
+.lg-disclaimer { font-size: 13px; color: var(--muted); }
+@media (max-width: 560px) { .lg-paper { margin: 0 10px 12px; padding: 16px 14px; } }
 .home { gap: 30px; }
 .hm-hero { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); gap: 36px; align-items: center; padding: 30px 0 4px; }
 .hm-copy h1 { font-size: clamp(31px, 4.1vw, 47px); line-height: 1.08; margin: 12px 0 16px; letter-spacing: -0.015em; }
@@ -588,6 +602,7 @@ table.lines.bp-rows input { width: 100%; padding: 6px 7px; border: 1px solid var
           <button class="tab-item" type="button" id="tab-bplan" data-view="bplan"><span class="step">10</span><span><b>Business plan</b><small>A full plan for lenders and investors, built on the forecast</small></span></button>
         </div>
       </div>
+      <button class="tab" type="button" id="tab-legal" data-view="legal">Legal</button>
       <button class="tab" type="button" id="tab-manual" data-view="manual">Manual</button>
     </nav>
     <div class="actions" id="export-actions">
@@ -699,6 +714,13 @@ table.lines.bp-rows input { width: 100%; padding: 6px 7px; border: 1px solid var
           <ul><li>Three-year forecast in three scenarios</li><li>Monthly budget, valuation and loan schedules</li><li>A full business plan for lenders and investors</li></ul>
           <button class="linkish go" type="button" data-goto="bplan">Open the business plan →</button>
         </div>
+        <div class="panel hm-card" style="--c: var(--g6)">
+          <div class="ic"><svg viewBox="0 0 24 24"><path d="M12 3v18"/><path d="M5 7h14"/><path d="M5 7l-3 7h6z"/><path d="M19 7l-3 7h6z"/><path d="M8 21h8"/></svg></div>
+          <h3>Legal papers</h3>
+          <p>The company secretarial work that goes with the accounts.</p>
+          <ul><li>Board and AGM minutes, notice or written resolution</li><li>Registers of directors, shareholders and beneficial owners</li><li>Lawyer's letter for the audit and a filing calendar</li></ul>
+          <button class="linkish go" type="button" data-goto="legal">Open the legal papers →</button>
+        </div>
       </div>
 
       <div class="section-title"><h2>How it works</h2></div>
@@ -732,6 +754,33 @@ table.lines.bp-rows input { width: 100%; padding: 6px 7px; border: 1px solid var
       </div>
 
       <p class="hm-foot"><span>Built in Kigali by Anicet Safari, CPA.</span><button class="linkish" type="button" data-goto="manual">Read the manual</button><button class="linkish" type="button" id="hm-install" hidden>Install Acivaz as an app</button></p>
+    </section>
+
+    <!-- LEGAL -->
+    <section class="view" id="view-legal" hidden>
+      <div class="pack-title">
+        <div>
+          <div class="eyebrow">Company secretarial papers</div>
+          <h1 id="lg-company">Company</h1>
+          <div class="sub">Board and shareholder resolutions, minutes, registers, the lawyer's letter for the audit and the filing calendar, under Law N° 007/2021 governing companies</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">
+          <div class="actions"><button class="btn small" type="button" id="lg-xlsx">Registers in Excel</button><button class="btn small" type="button" id="lg-word">Word</button><button class="btn small primary" type="button" id="lg-pdf">Download papers PDF</button></div>
+          <div class="pack-nav">
+            <button type="button" data-jump="lg-s-co">Company</button>
+            <button type="button" data-jump="lg-s-people">Directors and shareholders</button>
+            <button type="button" data-jump="lg-s-bo">Beneficial owners</button>
+            <button type="button" data-jump="lg-s-board">Board</button>
+            <button type="button" data-jump="lg-s-sh">Shareholders</button>
+            <button type="button" data-jump="lg-s-law">Lawyer's letter</button>
+            <button type="button" data-jump="lg-s-cal">Calendar</button>
+            <button type="button" data-jump="lg-s-docs">The papers</button>
+          </div>
+        </div>
+      </div>
+      <div class="notice"><span class="lg-disclaimer"><strong>Drafts, not legal advice.</strong> Acivaz fills in standard wording from your figures and the details below. Have the company secretary or a lawyer review each paper, and check it against the company's articles of association, before it is signed or filed.</span></div>
+      <div class="checks" id="lg-checks" style="margin:12px 0"></div>
+      <div id="lg-body"></div>
     </section>
 
     <!-- PACK -->
@@ -1180,6 +1229,7 @@ table.lines.bp-rows input { width: 100%; padding: 6px 7px; border: 1px solid var
           <button type="button" data-jump="m-valuation">8 · Valuation</button>
           <button type="button" data-jump="m-appraisal">9 · Loans and projects</button>
           <button type="button" data-jump="m-bplan">10 · Business plan</button>
+          <button type="button" data-jump="m-legal">Legal papers</button>
           <button type="button" data-jump="m-downloads">Downloads and unlocking</button>
           <button type="button" data-jump="m-privacy">Privacy and your data</button>
           <button type="button" data-jump="m-install">Install and offline use</button>
@@ -1405,6 +1455,21 @@ table.lines.bp-rows input { width: 100%; padding: 6px 7px; border: 1px solid var
             </ul>
             <p><strong>Milestones</strong> take a start month, an end month and who leads each one, and Acivaz draws them as a Gantt chart: on screen, in the PDF above the milestone table, and as a shaded month-by-month timeline in Excel.</p>
             <p>The list on the left shows which sections are ready, have gaps in brackets, or are still to write. <strong>Download PDF</strong> gives a plan with a cover, contents and every section; <strong>Excel</strong> gives the text, funding, risks, milestones and forecast. Your text is saved on this device for each company.</p>
+          </section>
+
+          <section id="m-legal">
+            <h2>Legal papers</h2>
+            <p>The <strong>Legal</strong> tab prepares the company secretarial papers that go with the year-end accounts, following Law N° 007/2021 governing companies. They draw on the figures, the dividend, the auditor and the approval date entered in Financial statements, so fill those in first. Everything is kept for each company on this device.</p>
+            <ul>
+              <li><strong>Company, directors and shareholders</strong>: the company code, registered office, issued shares and the date of the last AGM. Acivaz checks that the shares registered add up to the shares issued, that a public company has at least two directors (Article 153) and a company secretary (Article 172).</li>
+              <li><strong>Beneficial owners</strong> (Article 116): the people who ultimately own or control the company, with residential address, nationality and date of birth. <strong>Copy individual shareholders</strong> starts the list. The register is filed with the Registrar General, and changes are reported within 14 days.</li>
+              <li><strong>Directors' interests</strong> (Article 167): <strong>Use in the directors' report</strong> writes the entries into the directors' report.</li>
+              <li><strong>Board minutes</strong>: approving the statements and the directors' report, recommending the dividend after the solvency test, recommending the auditor, calling the AGM and authorising filing. Untick any resolution you don't need.</li>
+              <li><strong>Shareholders</strong>: either the AGM notice (sent at least 21 days ahead, Article 100) and the AGM minutes, or a written resolution signed by holders of at least 75% of the votes in place of a meeting (Article 105).</li>
+              <li><strong>Letter to the company's lawyers</strong>: the request auditors rely on for litigation and claims (ISA 501). Record each matter and the lawyer's view; <strong>Use in the contingencies note</strong> writes the note in Financial statements. A payment the lawyer thinks probable needs a provision in the accounts, not only a note.</li>
+              <li><strong>Compliance calendar</strong>: year end, board approval, the auditor's report, filing with the Registrar General (7 months after the year end, 4 for a public company), the AGM notice and the latest AGM date (15 months after the last one and 6 months after approval), the annual return, and changes in beneficial owners.</li>
+            </ul>
+            <p><strong>Download papers PDF</strong> gives every paper with a contents page; <strong>Word</strong> gives the same papers in a document you can edit and print on the company's letterhead; <strong>Registers in Excel</strong> gives the four registers and the calendar. These are drafts: the company secretary or a lawyer should review them against the articles of association before they are signed or filed.</p>
           </section>
 
           <section id="m-downloads">
@@ -5863,17 +5928,412 @@ $("bk-m-save").onclick = saveForm;
 document.addEventListener("keydown", e => { if (e.key === "Escape" && !$("bk-modal").hidden) closeForm(); });
 
 
+/* ---------- Legal: company secretarial papers, registers, the lawyer's letter and the compliance calendar ----------
+   Drafts for review by the company secretary or a lawyer, built on Law N° 007/2021 governing companies. Kept for each company on this device. */
+const lgKey = () => "acv:legal:" + String(S.company || "").trim().toLowerCase();
+const lgBlank = () => ({
+  co: { code: "", office: "", incorporated: "", shares: "", nominal: "", cls: "Ordinary", secretary: "", lastAgm: "" },
+  dirs: [], holders: [], bos: [], ints: [],
+  board: { date: "", time: "10:00", place: "", chair: "", present: [], attending: "", res: {} },
+  sh: { mode: "agm", date: "", time: "10:00", place: "", reelect: "", res: {} },
+  law: { firm: "", lawyer: "", address: "", date: "", reply: "", items: [] }
+});
+function lgExample() {
+  const L = lgBlank();
+  L.co = { code: "100000000", office: "KG 7 Ave, Kacyiru, Kigali", incorporated: "2018-03-12", shares: "10000", nominal: "10000", cls: "Ordinary", secretary: "Alice Uwera", lastAgm: "2026-05-20" };
+  L.dirs = [{ name: "Grace Mukamana", role: "Chair", nat: "Rwandan", addr: "Kimihurura, Kigali", from: "2018-03-12", to: "" }, { name: "Eric Habimana", role: "Managing Director", nat: "Rwandan", addr: "Kicukiro, Kigali", from: "2018-03-12", to: "" }];
+  L.holders = [{ name: "Eric Habimana", addr: "Kicukiro, Kigali", nat: "Rwandan", shares: "6000", cls: "Ordinary", from: "2018-03-12" }, { name: "Grace Mukamana", addr: "Kimihurura, Kigali", nat: "Rwandan", shares: "3000", cls: "Ordinary", from: "2018-03-12" }, { name: "Kigali Seed Partners Ltd", addr: "Nyarugenge, Kigali", nat: "Rwanda (company)", shares: "1000", cls: "Ordinary", from: "2023-07-01" }];
+  L.bos = [{ name: "Eric Habimana", addr: "Kicukiro, Kigali", nat: "Rwandan", dob: "1984-02-10", how: "Holds 60% of the shares directly", since: "2018-03-12" }, { name: "Grace Mukamana", addr: "Kimihurura, Kigali", nat: "Rwandan", dob: "1987-09-23", how: "Holds 30% of the shares directly", since: "2018-03-12" }];
+  L.ints = [{ dir: "Eric Habimana", what: "Purchase of maize from Habimana Farms Ltd", nature: "Owns Habimana Farms Ltd", value: "12000000", date: "2026-02-03" }];
+  L.board.place = "the registered office"; L.board.chair = "Grace Mukamana"; L.board.present = ["Grace Mukamana", "Eric Habimana"]; L.board.attending = "Alice Uwera (company secretary)";
+  L.sh.place = "the registered office";
+  L.law = { firm: "Example Advocates", lawyer: "Me Jean Bosco Nkurunziza", address: "KN 3 Rd, Kigali", date: "", reply: "", items: [{ what: "Claim by a former distributor for breach of contract", amount: "8500000", like: "possible", note: "Hearing set for early 2027" }] };
+  return L;
+}
+function LG() {
+  const k = lgKey();
+  if (LG.key !== k || !LG.data) { LG.key = k; const st = store.get(k); LG.data = st || (isSample ? lgExample() : lgBlank()); }
+  return LG.data;
+}
+const lgSave = () => store.set(LG.key, LG.data);
+const lgN = v => { const n = parseFloat(String(v ?? "").replace(/[, ]/g, "")); return isFinite(n) ? n : 0; };
+const lgDate = (v, ph) => isISO(v) ? niceISO(v) : (ph ?? "[date]");
+const lgCo = () => S.company || "the company";
+const lgDirs = () => LG().dirs.filter(d => String(d.name || "").trim() && !isISO(d.to));
+const lgHolders = () => LG().holders.filter(h => String(h.name || "").trim());
+const lgShTotal = () => lgHolders().reduce((t, h) => t + lgN(h.shares), 0);
+const fmtInt = n => Math.round(n).toLocaleString("en-US");
+const fmtRWF = n => "RWF " + fmtInt(n);
+const addMonths = (iso, n) => { const d = parseISO(iso), t = new Date(d.getFullYear(), d.getMonth() + n + 1, 0); t.setDate(Math.min(d.getDate(), t.getDate())); return t; };
+const isoDate = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+
+/* Resolutions */
+function lgBoardRes() {
+  const d = FSD(), L = LG(), out = [], div = Number(d.dividend) || 0, aud = String(d.auditor || "").trim(), sg = fsSigners();
+  const on = k => L.board.res[k] !== false;
+  const who = sg.length ? sg.join(" and ") : d.single ? "the director" : "two directors";
+  if (on("fs")) out.push({ k: "fs", t: `THAT the financial statements of ${lgCo()} for ${S.cur}, comprising the statement of financial position, the statement of profit or loss, the statement of changes in equity, the statement of cash flows and the notes, be approved, and that ${who} be authorised to sign them on behalf of the Board (Articles 124 and 125 of Law N° 007/2021 governing companies).` });
+  if (on("dr")) out.push({ k: "dr", t: `THAT the directors' report for ${S.cur} be approved and signed on behalf of the Board (Article 89).` });
+  if (div > 0 && on("div")) out.push({ k: "div", t: `THAT, the Board being satisfied that the company will satisfy the solvency test immediately after the distribution, a dividend of ${money(div)} be recommended to the shareholders, and that the directors voting in favour sign the solvency certificate (Article 69).` });
+  if (aud && on("aud")) out.push({ k: "aud", t: `THAT ${aud} be recommended to the shareholders for appointment as auditor of the company for the next financial year (Article 132).` });
+  if (on("sh")) out.push({ k: "sh", t: L.sh.mode === "written" ? `THAT the business of the annual general meeting be put to the shareholders as a written resolution in lieu of a general meeting (Article 105).` : `THAT the annual general meeting be held on ${lgDate(L.sh.date)} at ${L.sh.time || "[time]"} at ${L.sh.place || "[place]"}, and that notice be sent to every shareholder at least 21 days before it (Article 100).` });
+  if (on("file")) out.push({ k: "file", t: `THAT ${String(L.co.secretary || "").trim() ? L.co.secretary.trim() + ", the company secretary," : "the Board"} deliver the signed financial statements, the auditor's report and the directors' report to the Registrar General within ${fsDue().months} months of the year end, and file the annual return (Articles 142 and 143).` });
+  if (on("bo")) out.push({ k: "bo", t: `THAT the register of beneficial owners as presented be confirmed, and that a copy be filed with the Registrar General (Article 116).` });
+  return out;
+}
+const LG_BOARD_OPTS = [["fs", "Approve the financial statements"], ["dr", "Approve the directors' report"], ["div", "Recommend the dividend"], ["aud", "Recommend the auditor"], ["sh", "Call the AGM or a written resolution"], ["file", "Authorise filing with the Registrar General"], ["bo", "Confirm the beneficial owners register"]];
+function lgShRes() {
+  const d = FSD(), L = LG(), out = [], div = Number(d.dividend) || 0, aud = String(d.auditor || "").trim(), on = k => L.sh.res[k] !== false;
+  const audited = d.auditStatus === "audited";
+  if (on("adopt")) out.push({ k: "adopt", t: `THAT the financial statements for ${S.cur}, together with the directors' report${audited ? " and the independent auditor's report" : ""}, be received and adopted (Articles 88 and 101 of Law N° 007/2021 governing companies).` });
+  if (div > 0 && on("div")) out.push({ k: "div", t: `THAT a dividend of ${money(div)}, as recommended by the directors, be declared (Article 69).` });
+  if (aud && on("aud")) out.push({ k: "aud", t: `THAT ${aud} be appointed as auditor of the company for the next financial year, and that the directors be authorised to agree the auditor's remuneration (Article 132).` });
+  if (on("rem")) out.push({ k: "rem", t: `THAT the remuneration and other benefits of the directors for the period, as disclosed to the shareholders, be approved (Article 164).` });
+  String(L.sh.reelect || "").split(/\n|,/).map(t => t.trim()).filter(Boolean).forEach((n, i) => { if (on("re" + i)) out.push({ k: "re" + i, t: `THAT ${n} be elected as a director of the company (Article 154).` }); });
+  return out;
+}
+const LG_SH_OPTS = [["adopt", "Adopt the statements and reports"], ["div", "Declare the dividend"], ["aud", "Appoint the auditor"], ["rem", "Approve directors' remuneration"]];
+
+/* Compliance calendar */
+function lgCalendar() {
+  const d = FSD(), L = LG(), rows = [], ye = fsYearEnd(), du = fsDue();
+  rows.push({ what: "Financial year end", when: parseISO(ye), basis: "Article 122" });
+  rows.push({ what: "Board approves the financial statements", when: isISO(d.approvedOn) ? parseISO(d.approvedOn) : null, basis: "Articles 124 and 125", hint: "Set the approval date in Financial statements" });
+  if (d.auditStatus === "audited") rows.push({ what: "Auditor's report signed", when: isISO(d.auditDate) ? parseISO(d.auditDate) : null, basis: "Article 135", hint: "Set the report date in Financial statements" });
+  rows.push({ what: "Accounts, auditor's report and directors' report to shareholders and the Registrar General", when: du.due, basis: "Articles 88 and 142" });
+  const lim = [];
+  if (isISO(L.co.lastAgm)) lim.push(addMonths(L.co.lastAgm, 15));
+  if (isISO(d.approvedOn)) lim.push(addMonths(d.approvedOn, 6));
+  if (L.sh.mode === "written") rows.push({ what: "Written resolution signed by holders of at least 75% of votes", when: isISO(L.sh.date) ? parseISO(L.sh.date) : null, basis: "Article 105", hint: "Set the date of the written resolution" });
+  else {
+    if (isISO(L.sh.date)) { const n = parseISO(L.sh.date); n.setDate(n.getDate() - 21); rows.push({ what: "Send the AGM notice to every shareholder", when: n, basis: "Article 100 (21 days)" }); }
+    rows.push({ what: "Annual general meeting" + (isISO(L.sh.date) ? "" : " (latest date allowed)"), when: isISO(L.sh.date) ? parseISO(L.sh.date) : lim.length ? new Date(Math.min(...lim)) : null, basis: "Article 100", hint: "Set the last AGM date or the approval date" });
+  }
+  if (+d.arMonth) { const now = new Date(); let y = now.getFullYear(); if (now.getMonth() + 1 > +d.arMonth) y++; rows.push({ what: "Annual return", when: new Date(y, +d.arMonth, 0), basis: "Article 143" }); }
+  else rows.push({ what: "Annual return", when: null, basis: "Article 143", hint: "Set the annual return month in Financial statements" });
+  rows.push({ what: "Report any change in beneficial owners to the Registrar General", when: null, basis: "Article 116", always: "Within 14 days of the change" });
+  return rows;
+}
+const lgDays = dt => Math.ceil((dt - new Date()) / 864e5);
+function lgCalChip(r) {
+  if (r.always) return "";
+  if (!r.when) return `<span class="chip plain">${esc(r.hint || "Date not set")}</span>`;
+  const n = lgDays(r.when);
+  return n < 0 ? `<span class="chip plain">Passed</span>` : n <= 30 ? `<span class="chip warn">${n} day${n === 1 ? "" : "s"} left</span>` : `<span class="chip plain">In ${n} days</span>`;
+}
+
+/* Contingencies note from the lawyer's reply */
+function lgContNote() {
+  const L = LG(), firm = String(L.law.firm || "").trim(), items = L.law.items.filter(i => String(i.what || "").trim());
+  const poss = items.filter(i => i.like === "possible"), prob = items.filter(i => i.like === "probable");
+  if (!items.length || !poss.length && !prob.length) return `The company is not party to any litigation or claim that could have a material effect on these financial statements${firm ? `, as confirmed by its legal advisers, ${firm}` : ""}.`;
+  const s = [];
+  prob.forEach(i => s.push(`${i.what}: the directors${firm ? `, advised by ${firm},` : ""} consider it probable that the company will have to pay${lgN(i.amount) ? ` about ${fmtRWF(lgN(i.amount))}` : ""}. A provision has been recognised for this amount.`));
+  poss.forEach(i => s.push(`${i.what}${lgN(i.amount) ? ` (amount claimed ${fmtRWF(lgN(i.amount))})` : ""}: the directors${firm ? `, advised by ${firm},` : ""} consider a payment possible but not probable, so no provision has been made.`));
+  return s.join("\n\n");
+}
+
+/* Documents: one model drawn on screen, in the PDF and in Word */
+function lgDocs() {
+  const d = FSD(), L = LG(), co = lgCo(), sec = String(L.co.secretary || "").trim(), dirs = lgDirs(), hold = lgHolders(), tot = lgShTotal();
+  const docs = [], bRes = lgBoardRes(), sRes = lgShRes(), present = (L.board.present || []).filter(n => dirs.some(x => x.name === n));
+  const ints = L.ints.filter(i => String(i.dir || "").trim() || String(i.what || "").trim());
+  const header = [{ t: "sub", v: `${co}${L.co.code ? ` · Company code ${L.co.code}` : ""}${L.co.office ? ` · ${L.co.office}` : ""}` }];
+  docs.push({ id: "board", title: "Minutes of the meeting of the Board of Directors", blocks: header.concat([
+    { t: "p", v: `Held at ${L.board.place || "[place]"} on ${lgDate(L.board.date)} at ${L.board.time || "[time]"}.` },
+    { t: "p", v: `Present: ${present.length ? present.join(", ") : "[directors present]"}.${String(L.board.attending || "").trim() ? ` In attendance: ${L.board.attending.trim()}.` : ""}` },
+    { t: "h", v: "1. Chair and quorum" },
+    { t: "p", v: `${L.board.chair || "[Chair]"} chaired the meeting. A quorum being present, the meeting was declared duly constituted.` },
+    { t: "h", v: "2. Declarations of interest" },
+    { t: "p", v: ints.length ? ints.map(i => `${i.dir || "[director]"} declared an interest: ${i.what || "[transaction]"} (${i.nature || "nature of interest"}${lgN(i.value) ? `, ${fmtRWF(lgN(i.value))}` : ""}), as entered in the register of interests (Article 167).`).join(" ") : "No director declared an interest in the business of the meeting." },
+    { t: "h", v: "3. Financial statements and reports" },
+    { t: "p", v: `The Board considered the financial statements for ${S.cur}${d.auditStatus === "audited" ? `, the directors' report and the independent auditor's report${String(d.auditor || "").trim() ? ` from ${d.auditor.trim()}` : ""}` : " and the directors' report"}.` },
+    { t: "h", v: "IT WAS RESOLVED:" },
+    { t: "ol", items: bRes.map(r => r.t) },
+    { t: "p", v: "There being no other business, the meeting closed." },
+    { t: "sig", who: [`${L.board.chair || "[Chair]"}, Chair`, `${sec || "[Name]"}, Company secretary`] }
+  ]) });
+  if (L.sh.mode === "written") {
+    docs.push({ id: "written", title: "Written resolution of the shareholders", blocks: header.concat([
+      { t: "p", v: `Passed in lieu of a general meeting under Article 105 of Law N° 007/2021 governing companies. Dated ${lgDate(L.sh.date)}.` },
+      { t: "p", v: "We, the undersigned shareholders, resolve:" },
+      { t: "ol", items: sRes.map(r => r.t) },
+      { t: "table", head: ["Shareholder", "Shares", "Signature", "Date"], widths: [70, 26, 46, 32], rows: (hold.length ? hold : [{ name: "[Shareholder]", shares: "" }]).map(h => [h.name, h.shares ? fmtInt(lgN(h.shares)) : "", "", ""]) },
+      { t: "note", v: `Valid once signed by shareholders holding at least 75% of the votes${tot ? ` (${fmtInt(Math.ceil(tot * 0.75))} of ${fmtInt(tot)} shares)` : ""}. Send a copy to every shareholder who did not sign within 7 days (Article 105).` }
+    ]) });
+  } else {
+    const n = isISO(L.sh.date) ? (() => { const t = parseISO(L.sh.date); t.setDate(t.getDate() - 21); return niceISO(isoDate(t)); })() : "[at least 21 days before the meeting]";
+    const re = String(L.sh.reelect || "").split(/\n|,/).map(t => t.trim()).filter(Boolean);
+    docs.push({ id: "notice", title: "Notice of the annual general meeting", blocks: header.concat([
+      { t: "p", v: `NOTICE is given that the annual general meeting of ${co} will be held at ${L.sh.place || "[place]"} on ${lgDate(L.sh.date)} at ${L.sh.time || "[time]"} to consider and, if thought fit, pass the following resolutions:` },
+      { t: "ol", items: sRes.map(r => r.t) }
+    ].concat(re.length ? [{ t: "h", v: "Directors standing for election" }, { t: "p", v: re.map(x => `${x}: [biography, business experience and other directorships held]`).join("\n") }] : []).concat([
+      { t: "p", v: `By order of the Board\n${sec ? sec + ", Company secretary" : "[Name], for the Board"}\n${n}` },
+      { t: "note", v: "Notice must reach every shareholder at least 21 days before the meeting and state the agenda and information on directors to be elected (Article 100)." }
+    ])) });
+    docs.push({ id: "agm", title: "Minutes of the annual general meeting", blocks: header.concat([
+      { t: "p", v: `Held at ${L.sh.place || "[place]"} on ${lgDate(L.sh.date)} at ${L.sh.time || "[time]"}.` },
+      { t: "table", head: ["Shareholders present or represented", "Shares"], widths: [130, 44], rows: (hold.length ? hold : [{ name: "[Shareholder]", shares: "" }]).map(h => [h.name, h.shares ? fmtInt(lgN(h.shares)) : ""]) },
+      { t: "p", v: `${L.board.chair || "[Chair]"} chaired the meeting. Notice of the meeting having been given and a quorum being present, the meeting was declared duly constituted. The shareholders were given a reasonable opportunity to discuss and comment on the management of the company (Article 101).` },
+      { t: "h", v: "IT WAS RESOLVED:" },
+      { t: "ol", items: sRes.map(r => r.t) },
+      { t: "sig", who: [`${L.board.chair || "[Chair]"}, Chair of the meeting`] }
+    ]) });
+  }
+  docs.push({ id: "rdirs", title: "Register of directors", blocks: header.concat([
+    { t: "table", head: ["Name", "Position", "Nationality", "Address", "Appointed", "Ceased"], widths: [36, 28, 22, 40, 24, 24], rows: L.dirs.filter(x => String(x.name || "").trim()).map(x => [x.name, x.role || "", x.nat || "", x.addr || "", lgDate(x.from, ""), lgDate(x.to, "")]) }
+  ]) });
+  docs.push({ id: "rsh", title: "Register of shareholders", blocks: header.concat([
+    { t: "p", v: `Issued share capital: ${L.co.shares ? fmtInt(lgN(L.co.shares)) : "[number]"} ${String(L.co.cls || "ordinary").toLowerCase()} shares${L.co.nominal ? ` of ${fmtRWF(lgN(L.co.nominal))} each` : ""}.` },
+    { t: "table", head: ["Name", "Address", "Nationality", "Class", "Shares", "%", "Registered"], widths: [36, 38, 22, 18, 20, 14, 26], rows: hold.map(h => [h.name, h.addr || "", h.nat || "", h.cls || "", fmtInt(lgN(h.shares)), tot ? (lgN(h.shares) / tot * 100).toFixed(1) + "%" : "", lgDate(h.from, "")]).concat(hold.length ? [["Total", "", "", "", fmtInt(tot), tot ? "100.0%" : "", ""]] : []) },
+    { t: "note", v: "Keep the dates of every allotment, transfer, repurchase or redemption in the last ten years, and any restriction on transfer (Article 114)." }
+  ]) });
+  docs.push({ id: "rbo", title: "Register of beneficial owners", blocks: header.concat([
+    { t: "table", head: ["Name", "Residential address", "Nationality", "Date of birth", "Nature of ownership or control", "Since"], widths: [32, 34, 22, 24, 40, 22], rows: L.bos.filter(x => String(x.name || "").trim()).map(x => [x.name, x.addr || "", x.nat || "", lgDate(x.dob, ""), x.how || "", lgDate(x.since, "")]) },
+    { t: "note", v: `Kept by ${sec ? "the company secretary" : "the Board, as there is no company secretary"}. File a copy with the Registrar General and report any change within 14 days (Article 116).` }
+  ]) });
+  docs.push({ id: "rint", title: "Register of directors' interests", blocks: header.concat([
+    { t: "table", head: ["Director", "Transaction", "Nature and extent of interest", "Value (RWF)", "Entered"], widths: [32, 46, 50, 22, 24], rows: ints.map(i => [i.dir || "", i.what || "", i.nature || "", lgN(i.value) ? fmtInt(lgN(i.value)) : "", lgDate(i.date, "")]) },
+    { t: "note", v: "Enter each interest as soon as the director becomes aware of it and disclose it to the Board (Article 167)." }
+  ]) });
+  const items = L.law.items.filter(i => String(i.what || "").trim());
+  docs.push({ id: "law", title: "Letter to the company's lawyers about litigation and claims", blocks: [
+    { t: "p", v: `${co}\n${L.co.office || "[Registered office]"}\n${lgDate(L.law.date, niceISO(todayISO()))}` },
+    { t: "p", v: `${L.law.lawyer || "[Name]"}\n${L.law.firm || "[Law firm]"}\n${L.law.address || "[Address]"}` },
+    { t: "p", v: `Dear ${L.law.lawyer || "Sir or Madam"},` },
+    { t: "h", v: `Request for information on litigation and claims: audit of the financial statements for ${S.cur}` },
+    { t: "p", v: `${String(d.auditor || "").trim() || "Our auditors"} are auditing our financial statements for ${S.cur}. In connection with that audit, please send them directly, with a copy to us, the following information as at ${niceISO(fsYearEnd())} and up to the date of your reply:` },
+    { t: "ol", items: [
+      "Any litigation, claims or assessments, pending or threatened, on which you have advised or represented the company: a description of each, the progress to date, the amount claimed or an estimate of the possible loss, and your view of the likely outcome.",
+      "Any matter listed below on which your view differs from ours, or that you consider incomplete.",
+      "Any fees owed to you by the company at the year end.",
+      "If you have no such matters to report, a confirmation of that."
+    ] }
+  ].concat(items.length ? [{ t: "table", head: ["Matter identified by the company", "Amount (RWF)", "Our assessment"], widths: [100, 32, 42], rows: items.map(i => [i.what, lgN(i.amount) ? fmtInt(lgN(i.amount)) : "", { remote: "Remote", possible: "Possible", probable: "Probable" }[i.like] || ""]) }] : []).concat([
+    { t: "p", v: `Please reply by ${isISO(d.auditDate) ? niceISO(d.auditDate) : "[date]"}. Thank you for your help.` },
+    { t: "sig", who: [`${(fsSigners()[0] || "[Name], Director")}`, `For and on behalf of ${co}`] }
+  ]) });
+  docs.push({ id: "cal", title: "Compliance calendar", blocks: header.concat([
+    { t: "table", head: ["What", "By", "Law N° 007/2021"], widths: [100, 36, 38], rows: lgCalendar().map(r => [r.what, r.always || (r.when ? niceISO(isoDate(r.when)) : "Not set"), r.basis]) }
+  ]) });
+  return docs;
+}
+
+/* Screen: inputs once per company, previews refresh as you type */
+function lgTable(list, cols, addLabel) {
+  const rows = lgGet(list) || [];
+  const inp = (i, [k, , type, , opts]) => {
+    const v = rows[i][k] ?? "", id = `lg-${list.replace(".", "-")}-${i}-${k}`, a = `id="${id}" data-lg="${list}.${i}.${k}"`;
+    if (type === "select") return `<select ${a}>${opts.map(([ov, ol]) => `<option value="${ov}"${v === ov ? " selected" : ""}>${esc(ol)}</option>`).join("")}</select>`;
+    return `<input ${a} type="${type === "date" ? "date" : "text"}"${type === "num" ? ` inputmode="numeric"` : ""} value="${esc(v)}">`;
+  };
+  return `<div class="table-box"><table class="lines lg-rows"><thead><tr>${cols.map(([, l, , w]) => `<th${w ? ` style="width:${w}"` : ""}>${esc(l)}</th>`).join("")}<th style="width:36px"></th></tr></thead><tbody>${rows.map((r, i) => `<tr>${cols.map(c => `<td>${inp(i, c)}</td>`).join("")}<td><button class="btn tiny" type="button" data-lg-del="${list}.${i}" aria-label="Remove row ${i + 1}">×</button></td></tr>`).join("") || `<tr><td colspan="${cols.length + 1}" class="muted">Nothing entered yet.</td></tr>`}</tbody></table></div><div class="bp-tools"><button class="btn small" type="button" data-lg-add="${list}">${esc(addLabel)}</button></div>`;
+}
+const LG_COLS = {
+  dirs: [["name", "Name", "text"], ["role", "Position", "select", "16%", [["Director", "Director"], ["Chair", "Chair"], ["Managing Director", "Managing Director"], ["Non-executive director", "Non-executive director"]]], ["nat", "Nationality", "text", "13%"], ["addr", "Address", "text"], ["from", "Appointed", "date", "14%"], ["to", "Ceased", "date", "14%"]],
+  holders: [["name", "Name", "text"], ["addr", "Address", "text"], ["nat", "Nationality", "text", "13%"], ["cls", "Class", "text", "11%"], ["shares", "Shares", "num", "11%"], ["from", "Registered", "date", "14%"]],
+  bos: [["name", "Name", "text"], ["addr", "Residential address", "text"], ["nat", "Nationality", "text", "12%"], ["dob", "Date of birth", "date", "14%"], ["how", "Nature of ownership or control", "text"], ["since", "Since", "date", "14%"]],
+  ints: [["dir", "Director", "text", "18%"], ["what", "Transaction", "text"], ["nature", "Nature and extent of interest", "text"], ["value", "Value (RWF)", "num", "12%"], ["date", "Entered", "date", "14%"]],
+  "law.items": [["what", "Matter", "text"], ["amount", "Amount (RWF)", "num", "14%"], ["like", "Likelihood of paying", "select", "16%", [["possible", "Possible"], ["probable", "Probable"], ["remote", "Remote"]]], ["note", "Lawyer's comment", "text"]]
+};
+const LG_ADD = { dirs: "Add a director", holders: "Add a shareholder", bos: "Add a beneficial owner", ints: "Add an interest", "law.items": "Add a matter" };
+const lgGet = path => path.split(".").reduce((o, k) => o == null ? o : o[k], LG());
+function lgSet(path, v) { const ks = path.split("."), last = ks.pop(); const o = ks.reduce((x, k) => (x[k] ??= {}), LG()); o[last] = v; }
+function lgDocHTML(doc, forWord) {
+  const P = t => esc(t).replace(/\n/g, "<br>");
+  let h = `<h2 class="lg-doc-title">${esc(doc.title)}</h2>`;
+  for (const b of doc.blocks) {
+    if (b.t === "sub") h += `<p class="lg-sub"><em>${P(b.v)}</em></p>`;
+    else if (b.t === "p") h += `<p>${P(b.v)}</p>`;
+    else if (b.t === "h") h += `<p><strong>${P(b.v)}</strong></p>`;
+    else if (b.t === "note") h += `<p class="lg-note"><em>${P(b.v)}</em></p>`;
+    else if (b.t === "ol") h += `<ol>${b.items.map(x => `<li>${P(x)}</li>`).join("")}</ol>`;
+    else if (b.t === "table") h += `<table class="lg-t"${forWord ? ` border="1" cellpadding="4" cellspacing="0" style="border-collapse:collapse;width:100%"` : ""}><thead><tr>${b.head.map(x => `<th>${esc(x)}</th>`).join("")}</tr></thead><tbody>${b.rows.length ? b.rows.map(r => `<tr>${r.map(c => `<td>${P(c ?? "")}</td>`).join("")}</tr>`).join("") : `<tr><td colspan="${b.head.length}"><em>None recorded</em></td></tr>`}</tbody></table>`;
+    else if (b.t === "sig") h += `<table class="lg-sig"${forWord ? ` style="width:100%;margin-top:28px"` : ""}><tr>${b.who.map(w => `<td><br><br>______________________________<br>${esc(w)}<br>Date: ________________</td>`).join("")}</tr></table>`;
+  }
+  return h;
+}
+function renderLegal(force) {
+  const box = $("lg-body"); if (!box) return;
+  const L = LG();
+  if (!force && renderLegal.key === LG.key && box.innerHTML) { renderLegalOut(); return; }
+  renderLegal.key = LG.key;
+  const co = L.co, fld = (k, l, type, hint, ph) => `<div class="disc"><label for="lg-co-${k}">${esc(l)}</label>${hint ? `<span class="help">${esc(hint)}</span>` : ""}<input type="${type || "text"}" id="lg-co-${k}" data-lg="co.${k}" value="${esc(co[k] || "")}"${ph ? ` placeholder="${esc(ph)}"` : ""}></div>`;
+  box.innerHTML =
+    `<div class="panel" id="lg-s-co"><div class="panel-head"><h3>Company</h3><span class="sub">${esc(lgCo())} · ${FSD().coType === "public" ? "public" : "private"} company</span></div><div class="disc-grid">` +
+      fld("code", "Company code", "", "The number on the certificate of incorporation.") + fld("office", "Registered office", "", "", "Street, sector, district") +
+      fld("incorporated", "Date of incorporation", "date") + fld("secretary", "Company secretary", "", "Required for a public company (Article 172). Leave blank if the Board keeps the registers.", "Name") +
+      fld("shares", "Issued shares", "", "", "Number") + fld("nominal", "Nominal value per share (RWF)", "", "", "RWF") +
+      fld("cls", "Class of shares", "", "", "Ordinary") + fld("lastAgm", "Date of the last annual general meeting", "date", "The next must be within 15 months of it (Article 100).") +
+    `</div></div>` +
+    `<div class="panel" id="lg-s-people"><div class="panel-head"><h3>Directors</h3><span class="sub">Register of directors</span></div><div id="lg-t-dirs">${lgTable("dirs", LG_COLS.dirs, LG_ADD.dirs)}</div>` +
+      `<h4 style="margin:18px 0 6px">Shareholders</h4><div id="lg-t-holders">${lgTable("holders", LG_COLS.holders, LG_ADD.holders)}</div><div id="lg-sh-check" class="checks" style="margin-top:8px"></div></div>` +
+    `<div class="panel" id="lg-s-bo"><div class="panel-head"><h3>Beneficial owners</h3><span class="sub">Article 116</span></div><p class="help" style="margin-bottom:8px">The people who ultimately own or control the company, directly or through others. File the register with the Registrar General and report any change within 14 days. Check the Registrar General's guidance for the ownership threshold.</p><div id="lg-t-bos">${lgTable("bos", LG_COLS.bos, LG_ADD.bos)}</div><div class="bp-tools"><button class="btn small" type="button" id="lg-bo-copy">Copy individual shareholders</button></div></div>` +
+    `<div class="panel" id="lg-s-int"><div class="panel-head"><h3>Register of directors' interests</h3><span class="sub">Article 167</span></div><div id="lg-t-ints">${lgTable("ints", LG_COLS.ints, LG_ADD.ints)}</div><div class="bp-tools"><button class="btn small" type="button" id="lg-int-dr">Use in the directors' report</button></div></div>` +
+    `<div class="panel" id="lg-s-board"><div class="panel-head"><h3>Board meeting to approve the statements</h3></div><div class="disc-grid">` +
+      `<div class="disc"><label for="lg-b-date">Date and time</label><div style="display:flex;gap:8px"><input type="date" id="lg-b-date" data-lg="board.date" value="${esc(L.board.date || "")}"><input type="text" id="lg-b-time" data-lg="board.time" value="${esc(L.board.time || "")}" style="max-width:90px" aria-label="Time"></div><label for="lg-b-place" style="margin-top:8px">Place</label><input type="text" id="lg-b-place" data-lg="board.place" value="${esc(L.board.place || "")}" placeholder="The registered office"></div>` +
+      `<div class="disc"><label for="lg-b-chair">Chair</label><select id="lg-b-chair" data-lg="board.chair"></select><span class="help" style="margin-top:8px">Directors present</span><div id="lg-b-present"></div><label for="lg-b-att" style="margin-top:8px">In attendance</label><input type="text" id="lg-b-att" data-lg="board.attending" value="${esc(L.board.attending || "")}" placeholder="For example: the auditor, the company secretary"></div>` +
+      `<div class="disc"><span class="help">Resolutions to include</span>${LG_BOARD_OPTS.map(([k, l]) => `<label class="chk"><input type="checkbox" data-lg="board.res.${k}"${L.board.res[k] !== false ? " checked" : ""}> ${esc(l)}</label>`).join("")}</div>` +
+    `</div></div>` +
+    `<div class="panel" id="lg-s-sh"><div class="panel-head"><h3>Shareholders' decisions</h3></div><div class="disc-grid">` +
+      `<div class="disc"><label for="lg-s-mode">How the shareholders decide</label><select id="lg-s-mode" data-lg="sh.mode"><option value="agm"${L.sh.mode !== "written" ? " selected" : ""}>Annual general meeting</option><option value="written"${L.sh.mode === "written" ? " selected" : ""}>Written resolution instead of a meeting (Article 105)</option></select><span class="help" style="margin-top:6px">A private company may skip the AGM when shareholders holding at least 75% of the votes sign a written resolution.</span></div>` +
+      `<div class="disc"><label for="lg-s-date">Date and time</label><div style="display:flex;gap:8px"><input type="date" id="lg-s-date" data-lg="sh.date" value="${esc(L.sh.date || "")}"><input type="text" id="lg-s-time" data-lg="sh.time" value="${esc(L.sh.time || "")}" style="max-width:90px" aria-label="Time"></div><label for="lg-s-place" style="margin-top:8px">Place</label><input type="text" id="lg-s-place" data-lg="sh.place" value="${esc(L.sh.place || "")}" placeholder="The registered office"><label for="lg-s-re" style="margin-top:8px">Directors to be elected</label><input type="text" id="lg-s-re" data-lg="sh.reelect" value="${esc(L.sh.reelect || "")}" placeholder="Names, separated by commas"></div>` +
+      `<div class="disc"><span class="help">Resolutions to include</span>${LG_SH_OPTS.map(([k, l]) => `<label class="chk"><input type="checkbox" data-lg="sh.res.${k}"${L.sh.res[k] !== false ? " checked" : ""}> ${esc(l)}</label>`).join("")}</div>` +
+    `</div></div>` +
+    `<div class="panel" id="lg-s-law"><div class="panel-head"><h3>Letter to the company's lawyers</h3><span class="sub">For the audit: litigation and claims (ISA 501)</span></div><div class="disc-grid">` +
+      `<div class="disc"><label for="lg-l-firm">Law firm</label><input type="text" id="lg-l-firm" data-lg="law.firm" value="${esc(L.law.firm || "")}"><label for="lg-l-lawyer" style="margin-top:8px">Lawyer</label><input type="text" id="lg-l-lawyer" data-lg="law.lawyer" value="${esc(L.law.lawyer || "")}"></div>` +
+      `<div class="disc"><label for="lg-l-addr">Address or email</label><input type="text" id="lg-l-addr" data-lg="law.address" value="${esc(L.law.address || "")}"><label for="lg-l-date" style="margin-top:8px">Date of the letter</label><input type="date" id="lg-l-date" data-lg="law.date" value="${esc(L.law.date || "")}"></div>` +
+    `</div><h4 style="margin:16px 0 6px">Matters known to the company, updated with the lawyer's reply</h4><div id="lg-t-law">${lgTable("law.items", LG_COLS["law.items"], LG_ADD["law.items"])}</div><div class="bp-tools"><button class="btn small" type="button" id="lg-law-note">Use in the contingencies note</button></div><div id="lg-law-chk" class="checks" style="margin-top:6px"></div></div>` +
+    `<div class="panel" id="lg-s-cal"><div class="panel-head"><h3>Compliance calendar</h3><span class="sub">Dates from Financial statements and this page</span></div><div class="table-box"><table class="lines" id="lg-cal" style="min-width:560px"></table></div></div>` +
+    `<div class="section-title" id="lg-s-docs"><h2>The papers</h2></div><div id="lg-docs"></div>`;
+  renderLegalOut();
+}
+function renderLegalOut() {
+  const L = LG(), dirs = lgDirs();
+  $("lg-company").textContent = lgCo();
+  const ch = $("lg-b-chair");
+  if (ch && document.activeElement !== ch) ch.innerHTML = `<option value="">Choose…</option>` + dirs.map(d => `<option${d.name === L.board.chair ? " selected" : ""}>${esc(d.name)}</option>`).join("");
+  const pr = $("lg-b-present");
+  if (pr && !pr.contains(document.activeElement)) pr.innerHTML = dirs.length ? dirs.map(d => `<label class="chk"><input type="checkbox" data-lg-present="${esc(d.name)}"${(L.board.present || []).includes(d.name) ? " checked" : ""}> ${esc(d.name)}</label>`).join("") : `<span class="help">Add directors above.</span>`;
+  const tot = lgShTotal(), iss = lgN(L.co.shares), chips = [];
+  if (iss && tot && Math.abs(iss - tot) > 0.5) chips.push(`<span class="chip warn">Shares registered: ${fmtInt(tot)} of ${fmtInt(iss)} issued</span>`);
+  else if (tot) chips.push(`<span class="chip good">${fmtInt(tot)} shares registered</span>`);
+  if ($("lg-sh-check")) $("lg-sh-check").innerHTML = chips.join("");
+  const items = L.law.items.filter(i => String(i.what || "").trim());
+  if ($("lg-law-chk")) $("lg-law-chk").innerHTML = items.some(i => i.like === "probable") ? `<span class="chip warn" style="white-space:normal">A probable payment needs a provision in the accounts: add it to the trial balance or books, not only to the note.</span>` : "";
+  const cal = $("lg-cal");
+  if (cal) cal.innerHTML = `<thead><tr><th>What</th><th>By</th><th>Law N° 007/2021</th><th></th></tr></thead><tbody>` + lgCalendar().map(r => `<tr><td>${esc(r.what)}</td><td>${r.always ? esc(r.always) : r.when ? esc(niceISO(isoDate(r.when))) : "<span class='muted'>Not set</span>"}</td><td>${esc(r.basis)}</td><td>${lgCalChip(r)}</td></tr>`).join("") + `</tbody>`;
+  const dl = $("lg-docs");
+  if (dl) { const open = new Set([...dl.querySelectorAll("details[open]")].map(x => x.dataset.id)); dl.innerHTML = lgDocs().map(doc => `<details class="panel lg-doc" data-id="${doc.id}"${open.has(doc.id) ? " open" : ""}><summary>${esc(doc.title)}</summary><div class="lg-paper">${lgDocHTML(doc)}</div></details>`).join(""); }
+  const w = [], d = FSD();
+  if (!dirs.length) w.push(`<span class="chip warn">Add the directors</span>`);
+  if (d.coType === "public" && dirs.length < 2) w.push(`<span class="chip bad">A public company needs at least two directors (Article 153)</span>`);
+  if (d.coType === "public" && !String(L.co.secretary || "").trim()) w.push(`<span class="chip bad">A public company must have a company secretary (Article 172)</span>`);
+  if (!L.bos.some(b => String(b.name || "").trim())) w.push(`<span class="chip warn">Beneficial owners not recorded (Article 116)</span>`);
+  if (!w.length) w.push(`<span class="chip good">Registers in place</span>`);
+  if ($("lg-checks")) $("lg-checks").innerHTML = w.join("");
+}
+let lgT = null;
+const lgSaveOut = () => { lgSave(); clearTimeout(lgT); lgT = setTimeout(renderLegalOut, 350); };
+document.addEventListener("input", e => {
+  const el = e.target.closest("[data-lg]"); if (!el) return;
+  lgSet(el.dataset.lg, el.type === "checkbox" ? el.checked : el.value); lgSaveOut();
+});
+document.addEventListener("change", e => {
+  const el = e.target.closest("[data-lg]");
+  if (el) { lgSet(el.dataset.lg, el.type === "checkbox" ? el.checked : el.value); lgSaveOut(); return; }
+  const p = e.target.closest("[data-lg-present]");
+  if (p) { const L = LG(), n = p.dataset.lgPresent, s = new Set(L.board.present || []); p.checked ? s.add(n) : s.delete(n); L.board.present = [...s]; lgSaveOut(); }
+});
+document.addEventListener("click", e => {
+  const a = e.target.closest("[data-lg-add],[data-lg-del],#lg-bo-copy,#lg-int-dr,#lg-law-note,#lg-pdf,#lg-word,#lg-xlsx"); if (!a) return;
+  const L = LG(), blank = { dirs: { name: "", role: "Director", nat: "", addr: "", from: "", to: "" }, holders: { name: "", addr: "", nat: "", cls: L.co.cls || "Ordinary", shares: "", from: "" }, bos: { name: "", addr: "", nat: "", dob: "", how: "", since: "" }, ints: { dir: "", what: "", nature: "", value: "", date: "" }, "law.items": { what: "", amount: "", like: "possible", note: "" } };
+  const redraw = list => { const id = { dirs: "lg-t-dirs", holders: "lg-t-holders", bos: "lg-t-bos", ints: "lg-t-ints", "law.items": "lg-t-law" }[list]; $(id).innerHTML = lgTable(list, LG_COLS[list], LG_ADD[list]); };
+  if (a.dataset.lgAdd) { const l = a.dataset.lgAdd; lgGet(l).push({ ...blank[l] }); lgSave(); redraw(l); renderLegalOut(); const f = $(`lg-${l.replace(".", "-")}-${lgGet(l).length - 1}-${LG_COLS[l][0][0]}`); if (f) f.focus(); }
+  else if (a.dataset.lgDel) { const p = a.dataset.lgDel.split("."), i = +p.pop(), l = p.join("."); lgGet(l).splice(i, 1); lgSave(); redraw(l); renderLegalOut(); }
+  else if (a.id === "lg-bo-copy") {
+    const have = new Set(L.bos.map(b => String(b.name || "").trim().toLowerCase())), tot = lgShTotal(); let n = 0;
+    lgHolders().filter(h => !/\b(ltd|limited|plc|company|cooperative|trust|fund|sarl)\b/i.test(h.name) && !have.has(h.name.trim().toLowerCase())).forEach(h => { L.bos.push({ name: h.name, addr: h.addr || "", nat: h.nat || "", dob: "", how: tot ? `Holds ${(lgN(h.shares) / tot * 100).toFixed(0)}% of the shares directly` : "Holds shares directly", since: h.from || "" }); n++; });
+    lgSave(); redraw("bos"); renderLegalOut(); toast(n ? `${n} shareholder${n === 1 ? "" : "s"} copied. Add each date of birth, and anyone who controls the company through others.` : "No new individual shareholders to copy.");
+  }
+  else if (a.id === "lg-int-dr") {
+    const ints = L.ints.filter(i => String(i.dir || "").trim());
+    const t = ints.length ? ints.map(i => `${i.dir} has an interest in ${i.what || "a transaction with the company"}${i.nature ? ` (${i.nature})` : ""}${lgN(i.value) ? `, valued at ${fmtRWF(lgN(i.value))}` : ""}, entered in the register of interests${isISO(i.date) ? ` on ${niceISO(i.date)}` : ""}.`).join(" ") : FS_STD.interests;
+    FSD().interests = t; store.set(FSD.key, FSD.data); renderFSDisc(true); toast("Added to the directors' report in Financial statements.");
+  }
+  else if (a.id === "lg-law-note") { FSD().contingent = lgContNote(); store.set(FSD.key, FSD.data); renderFSDisc(true); toast("Written into the contingencies note in Financial statements."); }
+  else if (a.id === "lg-pdf") exportLegalPDF();
+  else if (a.id === "lg-word") exportLegalWord();
+  else if (a.id === "lg-xlsx") exportLegalXLSX();
+});
+
+/* Downloads */
+async function exportLegalPDF() {
+  if (!(await canDownload())) return;
+  if (!window.jspdf) { toast("The PDF tool didn't load. Check your connection and reload."); return; }
+  const { jsPDF } = window.jspdf, doc = new jsPDF({ unit: "mm", format: "a4" }), W = 210, M = 20, R = W - M;
+  const plain = t => String(t ?? "").replace(/[−]/g, "-").replace(/[…]/g, "...").replace(/[–—]/g, "-").replace(/[‘’]/g, "'").replace(/[“”]/g, '"');
+  const font = (s, z) => { doc.setFont("helvetica", s); doc.setFontSize(z); };
+  let y = 0;
+  const ensure = h => { if (y + h > 277) { doc.addPage(); y = 22; } };
+  const lines = (t, w, z) => { font(z.s, z.z); return plain(t).split("\n").flatMap(x => x ? doc.splitTextToSize(x, w) : [""]); };
+  const docs = lgDocs(), toc = [];
+  y = 70; doc.setLineWidth(1); doc.line(M, y - 14, M + 30, y - 14);
+  font("bold", 22); doc.splitTextToSize(plain(lgCo()), R - M).forEach(t => { doc.text(t, M, y); y += 9; });
+  font("normal", 14); doc.text("Company secretarial papers", M, y + 2); y += 10;
+  font("normal", 10.5); doc.text(plain(`For ${S.cur} · prepared ${niceISO(todayISO())}`), M, y); y += 6;
+  doc.text("Drafts for review by the company secretary or a lawyer before use.", M, y); y += 14;
+  font("bold", 11); doc.text("Contents", M, y); y += 2; doc.setLineWidth(0.25); doc.line(M, y, R, y); const tocY = y + 7;
+  for (const d of docs) {
+    doc.addPage(); y = 22; toc.push({ t: d.title, p: doc.getNumberOfPages() });
+    font("bold", 13); doc.splitTextToSize(plain(d.title), R - M).forEach(t => { doc.text(t, M, y); y += 6.4; }); y += 2;
+    for (const b of d.blocks) {
+      if (b.t === "p" || b.t === "h" || b.t === "sub" || b.t === "note") {
+        const z = b.t === "h" ? { s: "bold", z: 10 } : b.t === "sub" || b.t === "note" ? { s: "italic", z: 8.8 } : { s: "normal", z: 10 };
+        const ls = lines(b.v, R - M, z); for (const l of ls) { ensure(5); font(z.s, z.z); doc.text(l, M, y); y += z.z * 0.48; } y += 2.6;
+      } else if (b.t === "ol") {
+        b.items.forEach((it, i) => { const ls = lines(it, R - M - 8, { s: "normal", z: 10 }); ensure(ls.length * 4.8 + 2); font("normal", 10); doc.text(`${i + 1}.`, M, y); ls.forEach(l => { doc.text(l, M + 8, y); y += 4.8; }); y += 1.6; });
+        y += 1.5;
+      } else if (b.t === "table") {
+        const tw = b.widths.reduce((t, x) => t + x, 0), k = (R - M) / tw, ws = b.widths.map(x => x * k), xs = []; let x0 = M; ws.forEach(w => { xs.push(x0); x0 += w; });
+        const head = () => { font("bold", 8.6); const hl = b.head.map((h, i) => doc.splitTextToSize(plain(h), ws[i] - 2)); const hh = Math.max(...hl.map(l => l.length)) * 3.8; ensure(hh + 6); hl.forEach((l, i) => l.forEach((t, j) => doc.text(t, xs[i], y + j * 3.8))); y += hh; doc.setLineWidth(0.3); doc.line(M, y - 2.2, R, y - 2.2); y += 2; };
+        head();
+        const rows = b.rows.length ? b.rows : [[b.head.length ? "None recorded" : ""].concat(Array(b.head.length - 1).fill(""))];
+        for (const r of rows) {
+          font("normal", 8.8); const cl = r.map((c, i) => doc.splitTextToSize(plain(c ?? ""), ws[i] - 2)); const rh = Math.max(...cl.map(l => l.length)) * 4 + 1.8;
+          if (y + rh > 277) { doc.addPage(); y = 22; head(); font("normal", 8.8); }
+          cl.forEach((l, i) => l.forEach((t, j) => doc.text(t, xs[i], y + j * 4))); y += rh; doc.setLineWidth(0.1); doc.line(M, y - 4, R, y - 4);
+        }
+        y += 3;
+      } else if (b.t === "sig") {
+        ensure(30); y += 14; const cw = (R - M - 12) / 2;
+        b.who.forEach((w, i) => { const x = M + (i % 2) * (cw + 12); doc.setLineWidth(0.25); doc.line(x, y, x + cw - 8, y); font("normal", 9); doc.splitTextToSize(plain(w), cw - 8).forEach((t, j) => doc.text(t, x, y + 5 + j * 4)); doc.text("Date: ________________", x, y + 14); });
+        y += 20;
+      }
+    }
+  }
+  doc.setPage(1); let ty = tocY; font("normal", 10.5);
+  for (const e of toc) { const t = plain(e.t), w = doc.getTextWidth(t); doc.text(t, M, ty); doc.setLineDashPattern([0.4, 1.2], 0); doc.setLineWidth(0.2); doc.line(M + w + 2, ty - 0.8, R - 8, ty - 0.8); doc.setLineDashPattern([], 0); doc.text(String(e.p), R, ty, { align: "right" }); ty += 6.4; }
+  const n = doc.getNumberOfPages();
+  for (let i = 2; i <= n; i++) { doc.setPage(i); font("normal", 7.5); doc.text(plain(`${lgCo()} - company secretarial papers - draft for review`), M, 290); doc.text(`Page ${i} of ${n}`, R, 290, { align: "right" }); }
+  await saveFile(`${lgCo().replace(/[^\w\- ]+/g, "").trim()} - company secretarial papers.pdf`, doc.output("blob"));
+  track("download-pdf-legal"); noteDownload();
+}
+async function exportLegalWord() {
+  if (!(await canDownload())) return;
+  const docs = lgDocs();
+  const body = docs.map((d, i) => (i ? `<br clear="all" style="page-break-before:always">` : "") + lgDocHTML(d, true) + `<p style="font-size:8pt;color:#555"><em>Draft prepared with Acivaz for review by the company secretary or a lawyer.</em></p>`).join("");
+  const html = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="utf-8"><title>${esc(lgCo())} - company secretarial papers</title><style>body{font-family:Calibri,Arial,sans-serif;font-size:11pt;color:#000}h2{font-size:14pt;margin:0 0 8pt}th{text-align:left;font-size:9.5pt;background:#f2f2f2}td{font-size:9.5pt;vertical-align:top}.lg-sig td{border:0;font-size:10pt;width:50%}ol li{margin-bottom:6pt}</style></head><body>${body}</body></html>`;
+  await saveFile(`${lgCo().replace(/[^\w\- ]+/g, "").trim()} - company secretarial papers.doc`, new Blob(["﻿" + html], { type: "application/msword" }));
+  track("download-word-legal"); noteDownload();
+}
+async function exportLegalXLSX() {
+  if (!(await canDownload())) return;
+  if (!window.XLSX) { toast("The Excel tool didn't load. Check your connection and reload."); return; }
+  const L = LG(), X = xlBook({ company: lgCo(), title: "Registers and compliance calendar", period: `As at ${niceISO(todayISO())}`, unit: "" }), tot = lgShTotal();
+  X.sheet([["Name", "Position", "Nationality", "Address", "Appointed", "Ceased"]].concat(L.dirs.filter(x => String(x.name || "").trim()).map(x => [x.name, x.role || "", x.nat || "", x.addr || "", lgDate(x.from, ""), lgDate(x.to, "")])), "Directors", [28, 22, 14, 30, 14, 14], { desc: "Register of directors" });
+  X.sheet([["Name", "Address", "Nationality", "Class", "Shares", "%", "Registered"]].concat(lgHolders().map(h => [h.name, h.addr || "", h.nat || "", h.cls || "", lgN(h.shares), tot ? { v: lgN(h.shares) / tot, z: XL.pct } : "", lgDate(h.from, "")])).concat([xr("total", ["Total", "", "", "", tot, tot ? { v: 1, z: XL.pct } : "", ""])]), "Shareholders", [28, 28, 14, 12, 12, 10, 14], { desc: "Register of shareholders (Article 114)" });
+  X.sheet([["Name", "Residential address", "Nationality", "Date of birth", "Nature of ownership or control", "Since"]].concat(L.bos.filter(x => String(x.name || "").trim()).map(x => [x.name, x.addr || "", x.nat || "", lgDate(x.dob, ""), x.how || "", lgDate(x.since, "")])), "Beneficial owners", [26, 28, 14, 14, 36, 14], { desc: "Register of beneficial owners (Article 116)" });
+  X.sheet([["Director", "Transaction", "Nature and extent of interest", "Value (RWF)", "Entered"]].concat(L.ints.filter(i => String(i.dir || "").trim()).map(i => [i.dir, i.what || "", i.nature || "", lgN(i.value) || "", lgDate(i.date, "")])), "Interests", [22, 34, 34, 14, 14], { desc: "Register of directors' interests (Article 167)" });
+  X.sheet([["What", "By", "Law N° 007/2021"]].concat(lgCalendar().map(r => [r.what, r.always || (r.when ? niceISO(isoDate(r.when)) : "Not set"), r.basis])), "Calendar", [60, 22, 24], { desc: "Compliance calendar" });
+  const buf = XLSX.write(X.finish(), { bookType: "xlsx", type: "array", cellStyles: true });
+  await saveFile(`${lgCo().replace(/[^\w\- ]+/g, "").trim()} - registers.xlsx`, new Blob([buf]));
+  track("download-xlsx-legal"); noteDownload();
+}
+
 /* ---------- Views and events ---------- */
 function show(view) {
   if (typeof track === "function" && show.last !== view) { show.last = view; try { track("view-" + view); } catch (e) {} }
   const isModel = MODEL_VIEWS.includes(view);
   if (isModel) modelView = view;
-  for (const v of ["home", "pack", "fs", "data", "map", "books", "manual"]) $("view-" + v).hidden = v !== view;
+  for (const v of ["home", "pack", "fs", "data", "map", "books", "legal", "manual"]) $("view-" + v).hidden = v !== view;
   document.body.classList.toggle("on-home", view === "home");
+  document.body.classList.toggle("on-legal", view === "legal");
+  if (view === "legal") renderLegal();
   if (view === "home") renderHome();
   if (view === "manual") renderPrivacy();
   $("view-model").hidden = !isModel;
-  for (const v of ["books", "pack", "fs", "data", "map", "manual", ...MODEL_VIEWS]) { const t = $("tab-" + v); if (t) { if (v === view) t.setAttribute("aria-current", "page"); else t.removeAttribute("aria-current"); } }
+  for (const v of ["books", "pack", "fs", "data", "map", "legal", "manual", ...MODEL_VIEWS]) { const t = $("tab-" + v); if (t) { if (v === view) t.setAttribute("aria-current", "page"); else t.removeAttribute("aria-current"); } }
   document.querySelectorAll(".tab-group").forEach(g => { const c = g.querySelector('.tab-item[aria-current="page"]'), p = g.querySelector(".tab-parent"); p.classList.toggle("has-current", !!c); p.querySelector(".tab-cur").textContent = c ? "· " + c.querySelector("b").textContent : ""; });
   closeMenus();
   if (view === "map") renderMapping();
