@@ -514,7 +514,10 @@ table.lines.bp-rows input { width: 100%; padding: 6px 7px; border: 1px solid var
 /* Welcome page */
 .brand-mark { background: none; border: 0; padding: 0; cursor: pointer; text-align: left; }
 .on-home #btn-xlsx, .on-home #btn-pdf, .on-legal #btn-xlsx, .on-legal #btn-pdf { display: none; }
-table.lines.lg-rows { min-width: 760px; }
+table.lines.lg-rows { min-width: 820px; }
+.sr-f { display: flex; flex-direction: column; gap: 4px; margin: 2px 0 8px 26px; padding-left: 10px; border-left: 2px solid var(--line); }
+.sr-f input, .sr-f select, .sr-f textarea { width: 100%; padding: 6px 8px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); color: var(--ink); font: inherit; font-size: 14px; }
+.sr-f label { font-weight: 500 !important; font-size: 13px !important; }
 table.lines.lg-rows input, table.lines.lg-rows select { width: 100%; padding: 6px 7px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); color: var(--ink); font: inherit; font-size: 13.5px; }
 .lg-doc { padding: 0; }
 .lg-doc > summary { cursor: pointer; padding: 14px 18px; font-weight: 600; list-style-position: inside; }
@@ -772,6 +775,8 @@ table.lines.lg-rows input, table.lines.lg-rows select { width: 100%; padding: 6p
             <button type="button" data-jump="lg-s-bo">Beneficial owners</button>
             <button type="button" data-jump="lg-s-board">Board</button>
             <button type="button" data-jump="lg-s-sh">Shareholders</button>
+            <button type="button" data-jump="lg-s-sr">Special resolutions</button>
+            <button type="button" data-jump="lg-s-aoa">Articles</button>
             <button type="button" data-jump="lg-s-law">Lawyer's letter</button>
             <button type="button" data-jump="lg-s-cal">Calendar</button>
             <button type="button" data-jump="lg-s-docs">The papers</button>
@@ -1461,11 +1466,13 @@ table.lines.lg-rows input, table.lines.lg-rows select { width: 100%; padding: 6p
             <h2>Legal papers</h2>
             <p>The <strong>Legal</strong> tab prepares the company secretarial papers that go with the year-end accounts, following Law N° 007/2021 governing companies. They draw on the figures, the dividend, the auditor and the approval date entered in Financial statements, so fill those in first. Everything is kept for each company on this device.</p>
             <ul>
-              <li><strong>Company, directors and shareholders</strong>: the company code, registered office, issued shares and the date of the last AGM. Acivaz checks that the shares registered add up to the shares issued, that a public company has at least two directors (Article 153) and a company secretary (Article 172).</li>
+              <li><strong>Company, directors and shareholders</strong>: the company code, registered office, issued shares and the date of the last AGM. Acivaz checks that the shares registered add up to the shares issued, that a public company has at least two directors (Article 153) and a company secretary (Article 172), and that at least one director lives in Rwanda (Article 157).</li>
               <li><strong>Beneficial owners</strong> (Article 116): the people who ultimately own or control the company, with residential address, nationality and date of birth. <strong>Copy individual shareholders</strong> starts the list. The register is filed with the Registrar General, and changes are reported within 14 days.</li>
               <li><strong>Directors' interests</strong> (Article 167): <strong>Use in the directors' report</strong> writes the entries into the directors' report.</li>
               <li><strong>Board minutes</strong>: approving the statements and the directors' report, recommending the dividend after the solvency test, recommending the auditor, calling the AGM and authorising filing. Untick any resolution you don't need.</li>
               <li><strong>Shareholders</strong>: either the AGM notice (sent at least 21 days ahead, Article 100) and the AGM minutes, or a written resolution signed by holders of at least 75% of the votes in place of a meeting (Article 105).</li>
+              <li><strong>Special and other shareholder resolutions</strong>: adopting or altering the articles, a change of name or status, approving a major transaction, allotting new shares, subdividing or consolidating shares, appointing or removing a director, and applying to remove a solvent company from the register. Choose an extraordinary general meeting (15 days' notice, Article 103) or a written resolution signed by holders of 75% of the votes (Article 105). Each resolution is labelled special (75% of the votes cast) or ordinary (simple majority). Allotting shares adds the directors' certificate (Article 60) and the offer to existing shareholders in proportion to their holdings (Article 59); a major transaction adds the notice of the right to require the company to buy the shares of those who voted against (Article 106). The filing deadlines go into the calendar.</li>
+              <li><strong>Articles of association</strong>: a company need not have articles, in which case the Law applies (Article 21). Acivaz drafts articles from the company details and your choices: whether the business is limited, the number of directors, pre-emption on new shares, how shares may be sold (offered first to the other shareholders, subject to Board approval, or freely), quorums, the chair's casting vote and how interested directors vote. <strong>Adopt by special resolution</strong> adds the resolution and puts the articles in the papers.</li>
               <li><strong>Letter to the company's lawyers</strong>: the request auditors rely on for litigation and claims (ISA 501). Record each matter and the lawyer's view; <strong>Use in the contingencies note</strong> writes the note in Financial statements. A payment the lawyer thinks probable needs a provision in the accounts, not only a note.</li>
               <li><strong>Compliance calendar</strong>: year end, board approval, the auditor's report, filing with the Registrar General (7 months after the year end, 4 for a public company), the AGM notice and the latest AGM date (15 months after the last one and 6 months after approval), the annual return, and changes in beneficial owners.</li>
             </ul>
@@ -5952,7 +5959,7 @@ function lgExample() {
 }
 function LG() {
   const k = lgKey();
-  if (LG.key !== k || !LG.data) { LG.key = k; const st = store.get(k); LG.data = st || (isSample ? lgExample() : lgBlank()); }
+  if (LG.key !== k || !LG.data) { LG.key = k; const st = store.get(k); LG.data = lgFill(st || (isSample ? lgExample() : lgBlank())); }
   return LG.data;
 }
 const lgSave = () => store.set(LG.key, LG.data);
@@ -6011,6 +6018,7 @@ function lgCalendar() {
   }
   if (+d.arMonth) { const now = new Date(); let y = now.getFullYear(); if (now.getMonth() + 1 > +d.arMonth) y++; rows.push({ what: "Annual return", when: new Date(y, +d.arMonth, 0), basis: "Article 143" }); }
   else rows.push({ what: "Annual return", when: null, basis: "Article 143", hint: "Set the annual return month in Financial statements" });
+  rows.push(...srCalendar());
   rows.push({ what: "Report any change in beneficial owners to the Registrar General", when: null, basis: "Article 116", always: "Within 14 days of the change" });
   return rows;
 }
@@ -6080,6 +6088,7 @@ function lgDocs() {
       { t: "sig", who: [`${L.board.chair || "[Chair]"}, Chair of the meeting`] }
     ]) });
   }
+  docs.push(...srDocs());
   docs.push({ id: "rdirs", title: "Register of directors", blocks: header.concat([
     { t: "table", head: ["Name", "Position", "Nationality", "Address", "Appointed", "Ceased"], widths: [36, 28, 22, 40, 24, 24], rows: L.dirs.filter(x => String(x.name || "").trim()).map(x => [x.name, x.role || "", x.nat || "", x.addr || "", lgDate(x.from, ""), lgDate(x.to, "")]) }
   ]) });
@@ -6113,6 +6122,7 @@ function lgDocs() {
     { t: "p", v: `Please reply by ${isISO(d.auditDate) ? niceISO(d.auditDate) : "[date]"}. Thank you for your help.` },
     { t: "sig", who: [`${(fsSigners()[0] || "[Name], Director")}`, `For and on behalf of ${co}`] }
   ]) });
+  if (L.aoa.include) docs.push(aoaDoc());
   docs.push({ id: "cal", title: "Compliance calendar", blocks: header.concat([
     { t: "table", head: ["What", "By", "Law N° 007/2021"], widths: [100, 36, 38], rows: lgCalendar().map(r => [r.what, r.always || (r.when ? niceISO(isoDate(r.when)) : "Not set"), r.basis]) }
   ]) });
@@ -6130,7 +6140,7 @@ function lgTable(list, cols, addLabel) {
   return `<div class="table-box"><table class="lines lg-rows"><thead><tr>${cols.map(([, l, , w]) => `<th${w ? ` style="width:${w}"` : ""}>${esc(l)}</th>`).join("")}<th style="width:36px"></th></tr></thead><tbody>${rows.map((r, i) => `<tr>${cols.map(c => `<td>${inp(i, c)}</td>`).join("")}<td><button class="btn tiny" type="button" data-lg-del="${list}.${i}" aria-label="Remove row ${i + 1}">×</button></td></tr>`).join("") || `<tr><td colspan="${cols.length + 1}" class="muted">Nothing entered yet.</td></tr>`}</tbody></table></div><div class="bp-tools"><button class="btn small" type="button" data-lg-add="${list}">${esc(addLabel)}</button></div>`;
 }
 const LG_COLS = {
-  dirs: [["name", "Name", "text"], ["role", "Position", "select", "16%", [["Director", "Director"], ["Chair", "Chair"], ["Managing Director", "Managing Director"], ["Non-executive director", "Non-executive director"]]], ["nat", "Nationality", "text", "13%"], ["addr", "Address", "text"], ["from", "Appointed", "date", "14%"], ["to", "Ceased", "date", "14%"]],
+  dirs: [["name", "Name", "text"], ["role", "Position", "select", "16%", [["Director", "Director"], ["Chair", "Chair"], ["Managing Director", "Managing Director"], ["Non-executive director", "Non-executive director"]]], ["nat", "Nationality", "text", "13%"], ["addr", "Address", "text"], ["res", "Lives in Rwanda", "select", "10%", [["yes", "Yes"], ["no", "No"]]], ["from", "Appointed", "date", "13%"], ["to", "Ceased", "date", "13%"]],
   holders: [["name", "Name", "text"], ["addr", "Address", "text"], ["nat", "Nationality", "text", "13%"], ["cls", "Class", "text", "11%"], ["shares", "Shares", "num", "11%"], ["from", "Registered", "date", "14%"]],
   bos: [["name", "Name", "text"], ["addr", "Residential address", "text"], ["nat", "Nationality", "text", "12%"], ["dob", "Date of birth", "date", "14%"], ["how", "Nature of ownership or control", "text"], ["since", "Since", "date", "14%"]],
   ints: [["dir", "Director", "text", "18%"], ["what", "Transaction", "text"], ["nature", "Nature and extent of interest", "text"], ["value", "Value (RWF)", "num", "12%"], ["date", "Entered", "date", "14%"]],
@@ -6180,6 +6190,7 @@ function renderLegal(force) {
       `<div class="disc"><label for="lg-s-date">Date and time</label><div style="display:flex;gap:8px"><input type="date" id="lg-s-date" data-lg="sh.date" value="${esc(L.sh.date || "")}"><input type="text" id="lg-s-time" data-lg="sh.time" value="${esc(L.sh.time || "")}" style="max-width:90px" aria-label="Time"></div><label for="lg-s-place" style="margin-top:8px">Place</label><input type="text" id="lg-s-place" data-lg="sh.place" value="${esc(L.sh.place || "")}" placeholder="The registered office"><label for="lg-s-re" style="margin-top:8px">Directors to be elected</label><input type="text" id="lg-s-re" data-lg="sh.reelect" value="${esc(L.sh.reelect || "")}" placeholder="Names, separated by commas"></div>` +
       `<div class="disc"><span class="help">Resolutions to include</span>${LG_SH_OPTS.map(([k, l]) => `<label class="chk"><input type="checkbox" data-lg="sh.res.${k}"${L.sh.res[k] !== false ? " checked" : ""}> ${esc(l)}</label>`).join("")}</div>` +
     `</div></div>` +
+    srHTML() + aoaHTML() +
     `<div class="panel" id="lg-s-law"><div class="panel-head"><h3>Letter to the company's lawyers</h3><span class="sub">For the audit: litigation and claims (ISA 501)</span></div><div class="disc-grid">` +
       `<div class="disc"><label for="lg-l-firm">Law firm</label><input type="text" id="lg-l-firm" data-lg="law.firm" value="${esc(L.law.firm || "")}"><label for="lg-l-lawyer" style="margin-top:8px">Lawyer</label><input type="text" id="lg-l-lawyer" data-lg="law.lawyer" value="${esc(L.law.lawyer || "")}"></div>` +
       `<div class="disc"><label for="lg-l-addr">Address or email</label><input type="text" id="lg-l-addr" data-lg="law.address" value="${esc(L.law.address || "")}"><label for="lg-l-date" style="margin-top:8px">Date of the letter</label><input type="date" id="lg-l-date" data-lg="law.date" value="${esc(L.law.date || "")}"></div>` +
@@ -6210,7 +6221,9 @@ function renderLegalOut() {
   if (d.coType === "public" && dirs.length < 2) w.push(`<span class="chip bad">A public company needs at least two directors (Article 153)</span>`);
   if (d.coType === "public" && !String(L.co.secretary || "").trim()) w.push(`<span class="chip bad">A public company must have a company secretary (Article 172)</span>`);
   if (!L.bos.some(b => String(b.name || "").trim())) w.push(`<span class="chip warn">Beneficial owners not recorded (Article 116)</span>`);
+  if (dirs.length && !dirs.some(x => x.res !== "no")) w.push(`<span class="chip bad">At least one director must live in Rwanda (Article 157)</span>`);
   if (!w.length) w.push(`<span class="chip good">Registers in place</span>`);
+  srOut();
   if ($("lg-checks")) $("lg-checks").innerHTML = w.join("");
 }
 let lgT = null;
@@ -6218,6 +6231,7 @@ const lgSaveOut = () => { lgSave(); clearTimeout(lgT); lgT = setTimeout(renderLe
 document.addEventListener("input", e => {
   const el = e.target.closest("[data-lg]"); if (!el) return;
   lgSet(el.dataset.lg, el.type === "checkbox" ? el.checked : el.value); lgSaveOut();
+  if (el.dataset.lg.startsWith("sr.on.")) srOut();
 });
 document.addEventListener("change", e => {
   const el = e.target.closest("[data-lg]");
@@ -6227,7 +6241,7 @@ document.addEventListener("change", e => {
 });
 document.addEventListener("click", e => {
   const a = e.target.closest("[data-lg-add],[data-lg-del],#lg-bo-copy,#lg-int-dr,#lg-law-note,#lg-pdf,#lg-word,#lg-xlsx"); if (!a) return;
-  const L = LG(), blank = { dirs: { name: "", role: "Director", nat: "", addr: "", from: "", to: "" }, holders: { name: "", addr: "", nat: "", cls: L.co.cls || "Ordinary", shares: "", from: "" }, bos: { name: "", addr: "", nat: "", dob: "", how: "", since: "" }, ints: { dir: "", what: "", nature: "", value: "", date: "" }, "law.items": { what: "", amount: "", like: "possible", note: "" } };
+  const L = LG(), blank = { dirs: { name: "", role: "Director", nat: "", addr: "", res: "yes", from: "", to: "" }, holders: { name: "", addr: "", nat: "", cls: L.co.cls || "Ordinary", shares: "", from: "" }, bos: { name: "", addr: "", nat: "", dob: "", how: "", since: "" }, ints: { dir: "", what: "", nature: "", value: "", date: "" }, "law.items": { what: "", amount: "", like: "possible", note: "" } };
   const redraw = list => { const id = { dirs: "lg-t-dirs", holders: "lg-t-holders", bos: "lg-t-bos", ints: "lg-t-ints", "law.items": "lg-t-law" }[list]; $(id).innerHTML = lgTable(list, LG_COLS[list], LG_ADD[list]); };
   if (a.dataset.lgAdd) { const l = a.dataset.lgAdd; lgGet(l).push({ ...blank[l] }); lgSave(); redraw(l); renderLegalOut(); const f = $(`lg-${l.replace(".", "-")}-${lgGet(l).length - 1}-${LG_COLS[l][0][0]}`); if (f) f.focus(); }
   else if (a.dataset.lgDel) { const p = a.dataset.lgDel.split("."), i = +p.pop(), l = p.join("."); lgGet(l).splice(i, 1); lgSave(); redraw(l); renderLegalOut(); }
@@ -6320,6 +6334,231 @@ async function exportLegalXLSX() {
   await saveFile(`${lgCo().replace(/[^\w\- ]+/g, "").trim()} - registers.xlsx`, new Blob([buf]));
   track("download-xlsx-legal"); noteDownload();
 }
+
+/* ---------- Legal: special and other shareholder resolutions, and the articles of association ---------- */
+const srBlank = () => ({ mode: "egm", date: "", time: "10:00", place: "", on: {}, clause: "", text: "", newName: "", allotN: "", allotCls: "", allotPrice: "", allotTo: "", allotClose: "", splitTo: "", majorWhat: "", majorValue: "", apptName: "", removeName: "" });
+const aoaBlank = () => ({ objects: "", minDirs: "", maxDirs: "", preempt: "keep", transfer: "rofr", quorumSh: "50", quorumBd: "", casting: true, conflict: true, include: false, adopted: "" });
+function lgFill(L) {
+  L.sr = Object.assign(srBlank(), L.sr || {}); L.sr.on = L.sr.on || {};
+  L.aoa = Object.assign(aoaBlank(), L.aoa || {});
+  (L.dirs || []).forEach(d => { if (!d.res) d.res = "yes"; });
+  return L;
+}
+const addWorkDays = (iso, n) => { const d = parseISO(iso); let k = 0; while (k < n) { d.setDate(d.getDate() + 1); if (d.getDay() % 6) k++; } return d; };
+const lgAddDays = (iso, n) => { const d = parseISO(iso); d.setDate(d.getDate() + n); return d; };
+const lgPub = () => FSD().coType === "public";
+const lgTA = () => { try { const c = compute("cur"); return c && isFinite(c.ta) ? c.ta : 0; } catch (e) { return 0; } };
+
+/* The resolutions, in the order they are put to the shareholders */
+const SR_OPTS = [
+  ["adoptArt", "Adopt new articles of association", "special"],
+  ["amendArt", "Alter a clause of the articles", "special"],
+  ["name", "Change the company name", "special"],
+  ["status", "Change from a private to a public company, or back", "special"],
+  ["major", "Approve a major transaction", "special"],
+  ["allot", "Allot new shares", "ordinary"],
+  ["split", "Subdivide or consolidate shares", "ordinary"],
+  ["appoint", "Appoint a director", "ordinary"],
+  ["remove", "Remove a director", "ordinary"],
+  ["dereg", "Apply to remove the company from the register (solvent)", "special"]
+];
+function srItems() {
+  const L = LG(), r = L.sr, co = lgCo(), out = [], on = k => !!r.on[k];
+  const cls = String(r.allotCls || L.co.cls || "ordinary").toLowerCase(), nom = lgN(L.co.nominal), to = lgN(r.splitTo);
+  if (on("adoptArt")) out.push({ k: "adoptArt", kind: "special", t: `THAT the articles of association ${r.mode === "written" ? "annexed to this resolution" : "presented to the meeting"} be adopted as the articles of association of the company, in substitution for and to the exclusion of any existing articles of association (Article 191 of Law N° 007/2021 governing companies).`, file: { what: "Notice of alteration of incorporation documents", wd: 10, basis: "Articles 192 and 193" } });
+  if (on("amendArt")) out.push({ k: "amendArt", kind: "special", t: `THAT the articles of association be altered by ${String(r.clause || "").trim() ? `replacing clause ${r.clause.trim()} with the following` : "adding the following clause"}: "${String(r.text || "").trim() || "[new wording]"}" (Article 191).`, file: { what: "Notice of alteration of incorporation documents", wd: 10, basis: "Articles 192 and 193" } });
+  if (on("name")) out.push({ k: "name", kind: "special", t: `THAT the name of the company be changed from ${co} to ${String(r.newName || "").trim() || "[new name]"}, with effect from the date recorded by the Registrar General in the amended certificate of incorporation (Articles 38 to 40).`, file: { what: "Application to change the company name", basis: "Article 38" } });
+  if (on("status")) { const pub = lgPub(); out.push({ k: "status", kind: "special", t: `THAT the company change its status from a ${pub ? "public" : "private"} company to a ${pub ? "private" : "public"} company (Article 207).`, file: { what: "Notice of alteration and application for change of status", wd: 10, basis: "Article 207" } }); }
+  if (on("major")) out.push({ k: "major", kind: "special", t: `THAT the major transaction described in the notice, namely ${String(r.majorWhat || "").trim() || "[description of the transaction]"}${lgN(r.majorValue) ? `, with a value of ${fmtRWF(lgN(r.majorValue))}` : ""}, having been recommended by the Board and reviewed by an independent professional financial adviser, be approved and adopted (Articles 196 and 197).` });
+  if (on("allot")) out.push({ k: "allot", kind: "ordinary", t: `THAT the company allot up to ${lgN(r.allotN) ? fmtInt(lgN(r.allotN)) : "[number]"} ${cls} shares${lgN(r.allotPrice) ? ` at ${fmtRWF(lgN(r.allotPrice))} per share` : ""}${String(r.allotTo || "").trim() ? ` to ${r.allotTo.trim()}` : ""}, carrying the same rights as the existing ${cls} shares, ${L.aoa.preempt === "off" && L.aoa.include ? "the articles of association having disapplied the pre-emption rights in Article 59" : "after first offering them to the existing shareholders in proportion to their holdings (Article 59)"}, and that this authority expire twelve months after the date of this resolution (Article 58).`, file: { what: "The allotment resolution", d: 15, basis: "Article 58" } });
+  if (on("split")) { let t; if (nom && to && nom > to && Number.isInteger(nom / to)) t = `THAT each existing ${cls} share of ${fmtRWF(nom)} be subdivided into ${nom / to} ${cls} shares of ${fmtRWF(to)} each`; else if (nom && to && to > nom && Number.isInteger(to / nom)) t = `THAT every ${to / nom} existing ${cls} shares of ${fmtRWF(nom)} each be consolidated into one ${cls} share of ${fmtRWF(to)}`; else t = `THAT the ${cls} shares of ${nom ? fmtRWF(nom) : "[nominal value]"} each be ${to && nom && to > nom ? "consolidated into shares" : "subdivided into shares"} of ${to ? fmtRWF(to) : "[new nominal value]"} each`; out.push({ k: "split", kind: "ordinary", t: t + ", the proportion paid and unpaid on each share remaining the same (Article 81).", file: { what: "Notice of alteration of incorporation documents", wd: 10, basis: "Articles 192 and 193" } }); }
+  if (on("appoint")) out.push({ k: "appoint", kind: "ordinary", t: `THAT ${String(r.apptName || "").trim() || "[name]"}, having consented in writing, be appointed as a director of the company (Articles 154 and 155).`, file: { what: "Notice of alteration of incorporation documents", wd: 10, basis: "Articles 192 and 193" } });
+  if (on("remove") && r.mode !== "written") out.push({ k: "remove", kind: "ordinary", t: `THAT ${r.removeName || "[name]"} be removed as a director of the company with effect from the end of this meeting (Article 160).`, file: { what: "Notice of alteration of incorporation documents", wd: 10, basis: "Articles 192 and 193" } });
+  if (on("dereg")) out.push({ k: "dereg", kind: "special", t: "THAT application be made to the Registrar General for the company to be removed from the register of companies, the company having ceased to carry on business, paid in full its liabilities to all known creditors and distributed its surplus assets (Article 208).", file: { what: "Application for removal from the register", basis: "Article 208" } });
+  return out;
+}
+const srLabel = x => x.kind === "special" ? "Special resolution" : "Ordinary resolution";
+
+function srCalendar() {
+  const r = LG().sr, rows = [], items = srItems();
+  if (!items.length) return rows;
+  const has = isISO(r.date);
+  if (r.mode !== "written") {
+    rows.push({ what: "Send the notice of the extraordinary general meeting", when: has ? lgAddDays(r.date, -15) : null, basis: "Article 103 (15 days)", hint: "Set the date of the shareholders' decisions" });
+    rows.push({ what: "Extraordinary general meeting", when: has ? parseISO(r.date) : null, basis: "Article 103", hint: "Set the meeting date" });
+  } else rows.push({ what: "Written resolutions signed by holders of at least 75% of votes", when: has ? parseISO(r.date) : null, basis: "Article 105", hint: "Set the date of the resolutions" });
+  const seen = new Set();
+  for (const x of items) {
+    if (!x.file || seen.has(x.file.what)) continue; seen.add(x.file.what);
+    rows.push({ what: x.file.what + " to the Registrar General", when: has && (x.file.wd || x.file.d) ? (x.file.wd ? addWorkDays(r.date, x.file.wd) : lgAddDays(r.date, x.file.d)) : null, basis: x.file.basis + (x.file.wd ? ` (${x.file.wd} working days)` : x.file.d ? ` (${x.file.d} days)` : ""), hint: x.file.wd || x.file.d ? "Set the date of the shareholders' decisions" : "", always: x.file.wd || x.file.d ? "" : "As soon as it is passed" });
+  }
+  if (items.some(x => x.k === "allot")) rows.push({ what: "Directors' certificate on the allotment, and notice of the allotment", when: null, basis: "Articles 60 and 65", always: "Within 15 working days of allotting" });
+  if (items.some(x => x.k === "major")) rows.push({ what: "Shareholders who voted against may require the company to buy their shares", when: null, basis: "Articles 106 and 107", always: "Within 15 days of the notice of the resolution" });
+  return rows;
+}
+
+function srDocs() {
+  const L = LG(), r = L.sr, items = srItems(), co = lgCo(), sec = String(L.co.secretary || "").trim(), hold = lgHolders(), tot = lgShTotal(), docs = [];
+  if (!items.length) return docs;
+  const header = [{ t: "sub", v: `${co}${L.co.code ? ` · Company code ${L.co.code}` : ""}${L.co.office ? ` · ${L.co.office}` : ""}` }];
+  const list = { t: "ol", items: items.map(x => `${srLabel(x).toUpperCase()}: ${x.t}`) };
+  const spec = items.some(x => x.kind === "special"), major = items.some(x => x.k === "major");
+  const notes = [];
+  if (spec) notes.push("A special resolution needs at least 75% of the votes of the shareholders entitled to vote and voting on it; an ordinary resolution needs a simple majority (Article 2).");
+  if (major) notes.push("A summary of the major transaction, the Board's recommendation and the independent financial adviser's opinion on its fairness are sent with this notice (Article 197). A shareholder who votes all of his or her shares against approving the major transaction may require the company to buy those shares (Article 106).");
+  if (r.on.remove && r.removeName) notes.push(`A copy of this notice has been sent to ${r.removeName} (Article 160).`);
+  if (r.mode === "written") {
+    docs.push({ id: "srw", title: "Written resolutions of the shareholders", blocks: header.concat([
+      { t: "p", v: `Passed in lieu of a general meeting under Article 105 of Law N° 007/2021 governing companies. Dated ${lgDate(r.date)}.` },
+      { t: "p", v: "We, the undersigned shareholders, resolve:" }, list,
+      { t: "table", head: ["Shareholder", "Shares", "Signature", "Date"], widths: [70, 26, 46, 32], rows: (hold.length ? hold : [{ name: "[Shareholder]", shares: "" }]).map(h => [h.name, h.shares ? fmtInt(lgN(h.shares)) : "", "", ""]) },
+      { t: "note", v: `Valid once signed by shareholders holding at least 75% of the votes${tot ? ` (${fmtInt(Math.ceil(tot * 0.75))} of ${fmtInt(tot)} shares)` : ""}. Send a copy to every shareholder who did not sign within 7 days (Article 105).${major ? " A shareholder who did not sign the resolution approving the major transaction may require the company to buy his or her shares (Article 106)." : ""}${r.on.remove ? " A director can only be removed at a general meeting (Article 160), so that resolution is left out here." : ""}` }
+    ]) });
+  } else {
+    const n = isISO(r.date) ? niceISO(isoDate(lgAddDays(r.date, -15))) : "[at least 15 days before the meeting]";
+    docs.push({ id: "egmn", title: "Notice of an extraordinary general meeting", blocks: header.concat([
+      { t: "p", v: `NOTICE is given that an extraordinary general meeting of ${co} will be held at ${r.place || "[place]"} on ${lgDate(r.date)} at ${r.time || "[time]"} to consider and, if thought fit, pass the following resolutions:` }, list,
+      { t: "p", v: `By order of the Board\n${sec ? sec + ", Company secretary" : "[Name], for the Board"}\n${n}` },
+      { t: "note", v: ["Notice must reach every shareholder at least 15 days before the meeting and state the agenda (Article 103)."].concat(notes).join(" ") }
+    ]) });
+    docs.push({ id: "egmm", title: "Minutes of the extraordinary general meeting", blocks: header.concat([
+      { t: "p", v: `Held at ${r.place || "[place]"} on ${lgDate(r.date)} at ${r.time || "[time]"}.` },
+      { t: "table", head: ["Shareholders present or represented", "Shares"], widths: [130, 44], rows: (hold.length ? hold : [{ name: "[Shareholder]", shares: "" }]).map(h => [h.name, h.shares ? fmtInt(lgN(h.shares)) : ""]) },
+      { t: "p", v: `${L.board.chair || "[Chair]"} chaired the meeting. Notice having been given to every shareholder and a quorum being present, the meeting was declared duly constituted. Each resolution was put to the vote with the following result:` },
+      { t: "table", head: ["Resolution", "Type", "Votes for", "Votes against", "Passed"], widths: [20, 46, 36, 36, 36], rows: items.map((x, i) => [String(i + 1), x.kind === "special" ? "Special (75%)" : "Ordinary (majority)", "", "", ""]) },
+      { t: "h", v: "IT WAS RESOLVED:" }, list,
+      { t: "sig", who: [`${L.board.chair || "[Chair]"}, Chair of the meeting`, `${sec || "[Name]"}, Company secretary`] }
+    ]) });
+  }
+  if (items.some(x => x.k === "allot")) {
+    const nN = lgN(r.allotN), price = lgN(r.allotPrice), cls = String(r.allotCls || L.co.cls || "ordinary").toLowerCase();
+    docs.push({ id: "allotc", title: "Certificate of the directors on the allotment of shares", blocks: header.concat([
+      { t: "p", v: `We, the undersigned directors, voted in favour of the Board resolution approving the allotment of up to ${nN ? fmtInt(nN) : "[number]"} ${cls} shares${String(r.allotTo || "").trim() ? ` to ${r.allotTo.trim()}` : ""}, and certify under Article 60 of Law N° 007/2021 governing companies that:` },
+      { t: "ol", items: [`the consideration for the shares is ${price ? `${fmtRWF(price)} per share, ${nN ? `${fmtRWF(price * nN)} in total, ` : ""}payable in cash on allotment` : "[amount and form of consideration]"};`, "the terms of the allotment are as set out in the shareholders' resolution authorising it;", "in our opinion, the consideration for and the terms of the allotment are fair and reasonable to the company and to all existing shareholders."] },
+      { t: "sig", who: lgDirs().slice(0, 2).map(d => `${d.name}, Director`).concat(lgDirs().length ? [] : ["[Name], Director", "[Name], Director"]) },
+      { t: "note", v: "Deliver this certificate, and the notice of alteration showing the shares allotted, to the Registrar General within 15 working days (Articles 60 and 65)." }
+    ]) });
+    if (!(L.aoa.include && L.aoa.preempt === "off")) {
+      const rows = hold.map(h => { const sh = lgN(h.shares), e = tot && nN ? Math.floor(nN * sh / tot) : 0; return [h.name, fmtInt(sh), tot ? (sh / tot * 100).toFixed(1) + "%" : "", nN ? fmtInt(e) : "", price && e ? fmtInt(e * price) : ""]; });
+      docs.push({ id: "preempt", title: "Offer of new shares to the existing shareholders", blocks: header.concat([
+        { t: "p", v: `To each shareholder of ${co}. Dated ${lgDate(r.date)}.` },
+        { t: "p", v: `The company proposes to issue up to ${nN ? fmtInt(nN) : "[number]"} new ${cls} shares${price ? ` at ${fmtRWF(price)} per share` : ""}. Under Article 59 of Law N° 007/2021 governing companies, you may take up new shares in proportion to the shares you already hold, at that price and on the same terms as any other person. Your entitlement is shown below.` },
+        { t: "table", head: ["Shareholder", "Shares held", "%", "New shares offered", "Price (RWF)"], widths: [60, 28, 20, 34, 32], rows },
+        { t: "p", v: `To accept, sign and return this offer to the company, with payment, by ${lgDate(r.allotClose, "[closing date, no more than three months away]")}. Shares not taken up may then be offered to other persons within three months, at no lower price.` },
+        { t: "sig", who: [`${sec || "[Name]"}, for the Board`, "Accepted by the shareholder"] }
+      ]) });
+    }
+  }
+  if (major) docs.push({ id: "buyout", title: "Notice of the right to require the company to buy your shares", blocks: header.concat([
+    { t: "p", v: `On ${lgDate(r.date)} the shareholders passed a special resolution approving a major transaction: ${String(r.majorWhat || "").trim() || "[description]"}.` },
+    { t: "p", v: `If you cast all the votes attached to your shares against that resolution${r.mode === "written" ? ", or did not sign it" : ""}, you are entitled to require the company to purchase your shares (Article 106 of Law N° 007/2021 governing companies).` },
+    { t: "p", v: "To do so, give the company written notice within fifteen (15) days of the date of this notice. The Board will then arrange for the company, or another person, to purchase the shares at a fair and reasonable price, or take the other steps the Law allows (Articles 107 to 110)." },
+    { t: "p", v: `By order of the Board\n${sec ? sec + ", Company secretary" : "[Name], for the Board"}\n[date of this notice]` }
+  ]) });
+  return docs;
+}
+
+/* Articles of association, from the company details and the choices made on this page */
+function aoaDoc() {
+  const L = LG(), a = L.aoa, co = lgCo(), pub = lgPub(), d = FSD();
+  const minD = Math.max(pub ? 2 : 1, lgN(a.minDirs) || (pub ? 2 : 1)), maxD = lgN(a.maxDirs);
+  const qb = lgN(a.quorumBd) || (minD > 1 ? 2 : 1), qs = Math.min(100, Math.max(1, lgN(a.quorumSh) || 50));
+  const cls = String(L.co.cls || "ordinary").toLowerCase(), sh = lgN(L.co.shares), nom = lgN(L.co.nominal);
+  const C = [];
+  let n = 0;
+  const cl = (h, ...ps) => { n++; C.push({ t: "h", v: `${n}. ${h}` }); ps.forEach(p => C.push(Array.isArray(p) ? { t: "ol", items: p } : { t: "p", v: p })); };
+  cl("Name, type and registered office", `The name of the company is ${co}. It is a ${pub ? "public" : "private"} company limited by shares, incorporated under Law N° 007/2021 governing companies. Its registered office is in Rwanda${L.co.office ? `, at ${L.co.office}` : ""}, and the Board may change it by notice to the Registrar General (Article 30).`);
+  cl("Interpretation", `In these articles, "the Law" means Law N° 007/2021 governing companies, as amended, and words defined in the Law have the same meaning. These articles bind the company and its shareholders as a contract (Article 27). Where these articles are silent, the Law applies (Article 21).`);
+  cl("Business and capacity", String(a.objects || "").trim() ? `The business of the company is limited to: ${a.objects.trim()} (Article 26).` : "The company has full capacity to carry on or undertake any business or activity, do any act and enter into any transaction, in Rwanda and elsewhere (Article 26).");
+  cl("Shares", `${sh ? `At the date of adoption, the issued share capital is ${fmtInt(sh)} ${cls} shares${nom ? ` of ${fmtRWF(nom)} each` : ""}. ` : ""}Each ${cls} share gives its holder one vote on a poll, an equal share in dividends and an equal share in surplus assets on liquidation (Article 85). The rights attached to a class of shares may be varied only with a special resolution of the holders of that class (Article 194).`);
+  cl("Issue of new shares", pub ? "The Board may allot shares, specifying the rights attached, the maximum number and the date the authority expires (Article 58). Before allotting, the Board decides the consideration and terms and certifies that they are fair and reasonable to the company and to all existing shareholders (Article 60)." : "New shares are allotted as decided by the shareholders by ordinary resolution, which states the rights attached, the maximum number and the date the authority expires (Article 58). Before allotting, the Board decides the consideration and terms and the directors voting in favour certify that they are fair and reasonable to the company and to all existing shareholders (Article 60).",
+    a.preempt === "off" ? "The pre-emption rights in Article 59 of the Law do not apply to the company." : "New shares are first offered to the existing shareholders in proportion to the shares they hold, at the same price and on the same terms as to any other person. The offer stays open for thirty (30) days, and shares not taken up may then be offered to other persons within three (3) months at no lower price (Article 59).");
+  const tr = a.transfer === "free" ? ["Shares may be transferred freely by a written instrument of transfer signed by the transferor and the transferee and delivered to the company, which enters the transfer in the register of shareholders (Articles 75 and 114)."]
+    : a.transfer === "board" ? ["Shares are transferred by a written instrument of transfer signed by the transferor and the transferee and delivered to the company (Article 75).", "The Board may refuse to register a transfer to a person who is not already a shareholder. It gives the transferor written reasons within thirty (30) days of receiving the transfer."]
+    : ["A shareholder who wishes to transfer shares (the seller) first offers them in writing to the other shareholders, in proportion to their holdings, at a price agreed with them or, failing agreement within thirty (30) days, at a fair value set by an independent valuer appointed by the Board. The cost of the valuation is shared equally by the seller and the buyers.", "Shares not accepted within thirty (30) days of the offer, or of the valuation, may be transferred to any person within ninety (90) days at a price no lower than the offer price.", "Shares are transferred by a written instrument of transfer signed by the transferor and the transferee and delivered to the company, which enters the transfer in the register of shareholders (Articles 75 and 114)."];
+  cl("Transfer and transmission of shares", ...tr, "On the death of a shareholder, the heirs or the administrator of the estate may be registered as holders of the shares on producing evidence of their entitlement (Articles 76 to 78).");
+  cl("General meetings", [
+    "The Board calls an annual general meeting once a year, no later than fifteen (15) months after the previous one and six (6) months after the financial statements are approved, on at least twenty-one (21) days' notice stating the agenda (Article 100)" + (pub ? "." : ", unless the business is done by written resolution (Article 105)."),
+    "The Board may call an extraordinary general meeting at any time, and does so when shareholders holding at least five per cent (5%) of the votes request it in writing. Notice of at least fifteen (15) days, stating the agenda, is sent to every shareholder (Article 103).",
+    `A quorum is present when shareholders holding at least ${qs}% of the voting shares are present in person or by proxy. If no quorum is present within thirty (30) minutes, the meeting stands adjourned to the same day of the following week at the same time and place, and the shareholders then present form a quorum.`,
+    "The chair of the Board chairs general meetings; if absent, the shareholders present elect a chair. Votes are taken by show of hands unless a poll is demanded by the chair or by any shareholder, in which case each share carries one vote. A shareholder may vote by a proxy appointed in writing.",
+    "An ordinary resolution is passed by a simple majority of the votes cast, and a special resolution by at least seventy-five per cent (75%) of the votes of the shareholders entitled to vote and voting (Article 2).",
+    "A resolution in writing signed by shareholders holding at least seventy-five per cent (75%) of the votes entitled to be cast on it is as valid as if passed at a meeting, and a copy is sent within seven (7) days to every shareholder who did not sign (Article 105)."
+  ]);
+  cl("Directors", [
+    `The company has at least ${minD === 1 ? "one (1) director" : `${minD} directors`}${maxD ? ` and no more than ${maxD}` : ""}, at least one of whom resides in Rwanda (Articles 153 and 157).` + (pub ? " A majority of the directors are non-executive, and at least one third are independent (Article 158)." : ""),
+    "Directors are appointed by ordinary resolution, voted on individually, and each gives written consent before appointment (Articles 154 to 156).",
+    "A director may be removed at any time by ordinary resolution passed at a general meeting whose notice includes the removal and is sent to the director concerned (Article 160).",
+    "A director ceases to hold office on resigning in writing, on becoming disqualified under Article 156 of the Law, or on being removed.",
+    "The remuneration and other benefits of directors are approved by ordinary resolution (Article 164)."
+  ]);
+  cl("Proceedings of the Board", [
+    "Any director may call a Board meeting by giving the other directors at least seven (7) days' notice, or shorter notice if all directors agree. Directors may take part by telephone or video call.",
+    `The quorum for Board meetings is ${qb === 1 ? "one (1) director" : `${qb} directors`}. Decisions are taken by a majority of the votes of the directors present.` + (a.casting ? " If votes are equal, the chair has a second, casting vote." : " If votes are equal, the proposal is not carried."),
+    "A resolution in writing signed by all the directors entitled to vote on it is as valid as if passed at a Board meeting.",
+    "The Board may delegate any of its powers to committees of directors or to a managing director, but remains responsible for their exercise (Article 146).",
+    "A director who is interested in a transaction with the company discloses the nature and extent of the interest to the Board, and it is entered in the register of interests (Article 167)." + (a.conflict ? " The interested director does not vote on that transaction and is not counted in the quorum for it." : ""),
+    "Minutes of every Board meeting are kept and signed by the chair."
+  ]);
+  cl("Company secretary", pub ? "The Board appoints a company secretary, who keeps the registers and minutes, files returns with the Registrar General and advises the Board on its duties (Articles 172 and 173)." : "The Board may appoint a company secretary. If there is none, the Board keeps the registers and minutes and makes the filings required by the Law (Articles 116 and 172).");
+  cl("Signing documents", (d.single ? "While the company has only one director, that director signs alone. Otherwise, deeds" : "Deeds") + " and documents that bind the company are signed by two directors, or by one director and the company secretary, or by a person authorised by a Board resolution.");
+  cl("Dividends", "The Board may authorise a distribution only if it is satisfied on reasonable grounds that the company will satisfy the solvency test immediately after it, and the directors voting in favour sign a certificate to that effect (Article 69). Dividends are paid in proportion to the shares held and do not bear interest.");
+  cl("Accounts and audit", `The company keeps accounting records that explain its transactions and financial position. The Board prepares financial statements and a directors' report each year and delivers them to the shareholders and the Registrar General within ${pub ? "four (4)" : "seven (7)"} months of the year end (Articles 88, 89 and 142). The shareholders appoint an auditor by ordinary resolution, unless the company is exempt (Articles 131, 132 and 210).`);
+  cl("Notices", "Notices are given in writing, by hand, by registered post or by email to the address in the register of shareholders or of directors. A notice sent by email is treated as received on the next working day.");
+  cl("Removal from the register and liquidation", "The company may be put into liquidation, or applied to be removed from the register while solvent, only by special resolution (Articles 191 and 208). Any surplus assets are distributed to the shareholders in proportion to their shares.");
+  cl("Changing these articles", "These articles may be adopted, altered or revoked only by special resolution. The directors deliver notice of the change to the Registrar General within ten (10) working days (Articles 191 and 192).");
+  return { id: "aoa", title: `Articles of association of ${co}`, blocks: [{ t: "sub", v: `${pub ? "A public" : "A private"} company limited by shares · Adopted by special resolution on ${lgDate(a.adopted || (LG().sr.on.adoptArt ? LG().sr.date : ""))}` }].concat(C).concat([{ t: "sig", who: [`${L.board.chair || "[Name]"}, Chair`, `${String(L.co.secretary || "").trim() || "[Name]"}, Company secretary`] }]) };
+}
+
+/* Screen panels */
+function srHTML() {
+  const L = LG(), r = L.sr, inp = (k, l, ph, type) => `<label for="lg-sr-${k}" style="margin-top:8px">${esc(l)}</label><input type="${type || "text"}" id="lg-sr-${k}" data-lg="sr.${k}" value="${esc(r[k] || "")}"${ph ? ` placeholder="${esc(ph)}"` : ""}>`;
+  const dirOpts = sel => `<option value="">Choose…</option>` + lgDirs().map(d => `<option${d.name === sel ? " selected" : ""}>${esc(d.name)}</option>`).join("");
+  const f = {
+    amendArt: inp("clause", "Clause number", "For example 6.2, or leave blank to add a clause") + `<label for="lg-sr-text" style="margin-top:8px">New wording</label><textarea id="lg-sr-text" data-lg="sr.text" rows="3">${esc(r.text || "")}</textarea>`,
+    name: inp("newName", "New name", "Name reserved with the Registrar General"),
+    status: `<span class="help">The company is set as ${lgPub() ? "public" : "private"} in Financial statements, so this converts it to ${lgPub() ? "private" : "public"}.${lgPub() ? "" : " A public company needs at least two directors, a company secretary, a majority of non-executive directors and one third independent (Articles 153, 158 and 172)."}</span>`,
+    major: inp("majorWhat", "The transaction", "For example: purchase of a second processing plant") + inp("majorValue", "Value (RWF)", "RWF") + `<div id="lg-sr-major-chk" class="checks" style="margin-top:6px"></div>`,
+    allot: inp("allotN", "Number of new shares", "Number") + inp("allotCls", "Class", L.co.cls || "Ordinary") + inp("allotPrice", "Price per share (RWF)", "RWF") + inp("allotTo", "To whom", "Optional: named investor") + inp("allotClose", "Pre-emption offer closes", "", "date"),
+    split: inp("splitTo", "New nominal value per share (RWF)", "RWF") + `<span class="help">Current nominal value: ${lgN(L.co.nominal) ? fmtRWF(lgN(L.co.nominal)) : "set it under Company"}.</span>`,
+    appoint: inp("apptName", "New director", "Full name"),
+    remove: `<label for="lg-sr-removeName" style="margin-top:8px">Director to remove</label><select id="lg-sr-removeName" data-lg="sr.removeName">${dirOpts(r.removeName)}</select>`
+  };
+  return `<div class="panel" id="lg-s-sr"><div class="panel-head"><h3>Special and other shareholder resolutions</h3><span class="sub">Outside the annual meeting</span></div>` +
+    `<p class="help" style="margin-bottom:10px">A special resolution needs 75% of the votes cast (Article 2) and is required to adopt or change the articles, change the company's status, approve a major transaction or remove a solvent company from the register (Article 191). Tick what the shareholders need to decide; the notice, minutes or written resolution, and any certificate or offer that goes with it, appear under The papers.</p><div class="disc-grid">` +
+    `<div class="disc"><label for="lg-sr-mode">How the shareholders decide</label><select id="lg-sr-mode" data-lg="sr.mode"><option value="egm"${r.mode !== "written" ? " selected" : ""}>Extraordinary general meeting (15 days' notice)</option><option value="written"${r.mode === "written" ? " selected" : ""}>Written resolution signed by 75% (Article 105)</option></select><label for="lg-sr-date" style="margin-top:8px">Date and time</label><div style="display:flex;gap:8px"><input type="date" id="lg-sr-date" data-lg="sr.date" value="${esc(r.date || "")}"><input type="text" id="lg-sr-time" data-lg="sr.time" value="${esc(r.time || "")}" style="max-width:90px" aria-label="Time"></div>${inp("place", "Place", "The registered office")}<div id="lg-sr-chk" class="checks" style="margin-top:8px"></div></div>` +
+    `<div class="disc"><span class="help">Resolutions</span>${SR_OPTS.map(([k, l, kind]) => `<label class="chk"><input type="checkbox" data-lg="sr.on.${k}"${r.on[k] ? " checked" : ""}> <span>${esc(l)} <span class="muted">· ${kind}</span></span></label>${f[k] ? `<div class="sr-f" data-sr-f="${k}"${r.on[k] ? "" : " hidden"}>${f[k]}</div>` : ""}`).join("")}</div>` +
+    `</div></div>`;
+}
+function aoaHTML() {
+  const a = LG().aoa, pub = lgPub(), sel = (k, l, opts, help) => `<label for="lg-aoa-${k}" style="margin-top:8px">${esc(l)}</label>${help ? `<span class="help">${esc(help)}</span>` : ""}<select id="lg-aoa-${k}" data-lg="aoa.${k}">${opts.map(([v, t]) => `<option value="${v}"${a[k] === v ? " selected" : ""}>${esc(t)}</option>`).join("")}</select>`;
+  const inp = (k, l, ph, help) => `<label for="lg-aoa-${k}" style="margin-top:8px">${esc(l)}</label>${help ? `<span class="help">${esc(help)}</span>` : ""}<input type="text" id="lg-aoa-${k}" data-lg="aoa.${k}" value="${esc(a[k] || "")}" placeholder="${esc(ph)}">`;
+  return `<div class="panel" id="lg-s-aoa"><div class="panel-head"><h3>Articles of association</h3><span class="sub">${pub ? "Public" : "Private"} company limited by shares</span></div>` +
+    `<p class="help" style="margin-bottom:10px">A company need not have articles: without them the Law governs the company, its Board and its shareholders (Article 21). Articles let the owners set their own rules, such as who may buy shares from a leaving shareholder. Acivaz drafts them from the details on this page and the choices below; they follow the Law wherever it cannot be changed.</p><div class="disc-grid">` +
+    `<div class="disc">${inp("objects", "Business of the company", "Leave blank for unrestricted", "Only fill this in to limit what the company may do (Article 26).")}${inp("minDirs", "Minimum number of directors", pub ? "2" : "1")}${inp("maxDirs", "Maximum number of directors", "No maximum")}</div>` +
+    `<div class="disc">${sel("preempt", "New shares", [["keep", "Offered first to existing shareholders (Article 59)"], ["off", "No pre-emption rights"]])}${sel("transfer", "Selling shares", [["rofr", "Offered first to the other shareholders"], ["board", "Board may refuse a new shareholder"], ["free", "Freely transferable"]])}${inp("quorumSh", "Quorum at general meetings (% of voting shares)", "50")}</div>` +
+    `<div class="disc">${inp("quorumBd", "Quorum at Board meetings (directors)", "2")}<label class="chk"><input type="checkbox" data-lg="aoa.casting"${a.casting ? " checked" : ""}> The chair has a casting vote</label><label class="chk"><input type="checkbox" data-lg="aoa.conflict"${a.conflict ? " checked" : ""}> A director with an interest does not vote on it</label><label class="chk"><input type="checkbox" data-lg="aoa.include"${a.include ? " checked" : ""}> Include the articles in the papers</label><label for="lg-aoa-adopted" style="margin-top:8px">Date adopted</label><input type="date" id="lg-aoa-adopted" data-lg="aoa.adopted" value="${esc(a.adopted || "")}"></div>` +
+    `</div><div class="bp-tools" style="margin-top:12px"><button class="btn small" type="button" id="lg-aoa-adopt">Adopt by special resolution</button></div></div>`;
+}
+function srOut() {
+  const L = LG(), r = L.sr;
+  document.querySelectorAll("[data-sr-f]").forEach(el => { el.hidden = !r.on[el.dataset.srF]; });
+  const c = [], items = srItems();
+  if (r.on.remove && r.mode === "written") c.push(`<span class="chip warn" style="white-space:normal">Removing a director needs a general meeting (Article 160)</span>`);
+  if (items.some(x => x.kind === "special")) { const tot = lgShTotal(); c.push(`<span class="chip plain" style="white-space:normal">Special resolutions: 75%${tot ? ` · ${fmtInt(Math.ceil(tot * 0.75))} of ${fmtInt(tot)} shares if all vote` : ""}</span>`); }
+  if ($("lg-sr-chk")) $("lg-sr-chk").innerHTML = c.join("");
+  const mc = $("lg-sr-major-chk");
+  if (mc) {
+    const v = lgN(r.majorValue), ta = lgTA();
+    mc.innerHTML = v && ta ? `<span class="chip ${v >= ta * 0.1 ? "plain" : "warn"}" style="white-space:normal">${(v / ta * 100).toFixed(0)}% of total assets of ${fmtRWF(ta)}. ${v >= ta * 0.1 ? "An acquisition of 10% or more, or a disposal or liability above 50%, is a major transaction (Article 196)." : "Below 10% of total assets, an acquisition is not a major transaction (Article 196)."}</span>` : "";
+  }
+}
+document.addEventListener("click", e => {
+  if (!e.target.closest("#lg-aoa-adopt")) return;
+  const L = LG(); L.sr.on.adoptArt = true; L.aoa.include = true; lgSave(); renderLegal(true);
+  const el = $("lg-s-sr"); if (el) el.scrollIntoView({ behavior: "instant", block: "start" });
+  toast("Added as a special resolution, and the articles are included in the papers.");
+});
 
 /* ---------- Views and events ---------- */
 function show(view) {
