@@ -1,13 +1,10 @@
 // Acivaz offline cache. Bump VERSION when you publish changes.
-const VERSION = "acivaz-v24";
+const VERSION = "acivaz-v12";
 const SHELL = [
   "./", "index.html", "manifest.webmanifest",
   "icon-192.png", "icon-512.png", "icon-maskable-512.png", "apple-touch-icon.png", "favicon-32.png",
-  "vendor/cpexcel.js", "vendor/xlsx.bundle.js", "vendor/jspdf.umd.min.js", "vendor/pdf-lib.min.js",
-  "fonts/fonts.css",
-  "fonts/source-serif-4-latin-500-normal.woff2", "fonts/source-serif-4-latin-600-normal.woff2", "fonts/source-serif-4-latin-700-normal.woff2",
-  "fonts/ibm-plex-sans-latin-400-normal.woff2", "fonts/ibm-plex-sans-latin-500-normal.woff2", "fonts/ibm-plex-sans-latin-600-normal.woff2",
-  "fonts/ibm-plex-mono-latin-400-normal.woff2", "fonts/ibm-plex-mono-latin-500-normal.woff2"
+  "https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js",
+  "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"
 ];
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(VERSION).then(c => Promise.all(SHELL.map(u => c.add(u).catch(() => null)))).then(() => self.skipWaiting()));
@@ -18,8 +15,6 @@ self.addEventListener("activate", e => {
 self.addEventListener("fetch", e => {
   const req = e.request;
   if (req.method !== "GET") return;
-  // Anonymous visit counts go straight to the network, never into the cache
-  if (/goatcounter\.com|gc\.zgo\.at/.test(req.url)) return;
   if (req.mode === "navigate") {
     // Network first so updates arrive; fall back to the cached app offline.
     e.respondWith(fetch(req).then(res => { const copy = res.clone(); caches.open(VERSION).then(c => c.put("index.html", copy)); return res; })
