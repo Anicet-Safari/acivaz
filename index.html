@@ -666,6 +666,9 @@ table.lines.lg-rows input, table.lines.lg-rows select { width: 100%; padding: 6p
 :root[data-theme="dark"] .fp-band { background: #13243A; }
 @media (max-width: 900px) { .fp-band-in { grid-template-columns: 1fr; gap: 24px; } }
 @media (max-width: 560px) { .fp-sheets { grid-template-columns: repeat(3, 70%); overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 8px; } .fp-sheets figure { scroll-snap-align: start; } .fp-sheets .fp-up { margin-top: 0; } }
+
+.tab-sep { align-self: center; width: 1px; height: 18px; background: var(--line); margin: 0 6px; flex: none; }
+@media (max-width: 640px) { .tab-sep { display: none; } }
 </style>
 </head>
 <body>
@@ -676,23 +679,26 @@ table.lines.lg-rows input, table.lines.lg-rows select { width: 100%; padding: 6p
       <div class="brand-co"><span id="brand-co"></span><span id="hdr-status"></span><span id="save-chip" class="save-chip" role="status" aria-live="polite"></span></div>
     </div>
     <nav class="tabs" aria-label="Workflow">
-      <button class="tab" type="button" id="tab-clients" data-view="clients"><span class="step">1</span>Clients</button>
+      <button class="tab" type="button" id="tab-home" data-view="home">Home</button>
+      <span class="tab-sep" aria-hidden="true"></span>
+      <button class="tab" type="button" id="tab-clients" data-view="clients">Clients</button>
       <div class="tab-group">
-        <button class="tab tab-parent" type="button" id="grp-period" aria-haspopup="true" aria-expanded="false" aria-controls="menu-period"><span class="step">2</span><span id="period-tab">Period</span><span class="tab-cur" hidden></span><span class="caret" aria-hidden="true">▾</span></button>
+        <button class="tab tab-parent" type="button" id="grp-period" aria-haspopup="true" aria-expanded="false" aria-controls="menu-period"><span id="period-tab">Period</span><span class="tab-cur" hidden></span><span class="caret" aria-hidden="true">▾</span></button>
         <div class="tab-menu" id="menu-period" hidden></div>
       </div>
-      <button class="tab" type="button" id="tab-data" data-view="data"><span class="step">3</span>Import</button>
-      <button class="tab" type="button" id="tab-map" data-view="map"><span class="step">4</span>Map<span class="count" id="unmapped-count" hidden></span></button>
-      <button class="tab" type="button" id="tab-adjust" data-view="adjust"><span class="step">5</span>Adjust<span class="count plain" id="adj-count" hidden></span></button>
+      <button class="tab" type="button" id="tab-data" data-view="data">Import</button>
+      <button class="tab" type="button" id="tab-map" data-view="map">Map<span class="count" id="unmapped-count" hidden></span></button>
+      <button class="tab" type="button" id="tab-adjust" data-view="adjust">Adjust<span class="count plain" id="adj-count" hidden></span></button>
       <div class="tab-group">
-        <button class="tab tab-parent" type="button" id="grp-reports" aria-haspopup="true" aria-expanded="false" aria-controls="menu-reports"><span class="step">6</span>Review <span class="tab-cur"></span><span class="caret" aria-hidden="true">▾</span></button>
+        <button class="tab tab-parent" type="button" id="grp-reports" aria-haspopup="true" aria-expanded="false" aria-controls="menu-reports">Review <span class="tab-cur"></span><span class="caret" aria-hidden="true">▾</span></button>
         <div class="tab-menu" id="menu-reports" hidden>
-          <button class="tab-item" type="button" id="tab-review" data-view="review"><span class="step">6a</span><span><b>Checklist and status</b><small>Draft, Needs review or Finalised, and the checks behind it</small></span></button>
-          <button class="tab-item" type="button" id="tab-fs" data-view="fs"><span class="step">6b</span><span><b>Financial statements</b><small>The four statements and notes in IFRS for SMEs format, with year-end disclosures</small></span></button>
-          <button class="tab-item" type="button" id="tab-pack" data-view="pack" aria-current="page"><span class="step">6c</span><span><b>Management report</b><small>Key figures, charts, ratios and commentary for owners and the board</small></span></button>
+          <button class="tab-item" type="button" id="tab-review" data-view="review"><span class="step">·</span><span><b>Checklist and status</b><small>Draft, Needs review or Finalised, and the checks behind it</small></span></button>
+          <button class="tab-item" type="button" id="tab-fs" data-view="fs"><span class="step">·</span><span><b>Financial statements</b><small>The four statements and notes in IFRS for SMEs format, with year-end disclosures</small></span></button>
+          <button class="tab-item" type="button" id="tab-pack" data-view="pack" aria-current="page"><span class="step">·</span><span><b>Management report</b><small>Key figures, charts, ratios and commentary for owners and the board</small></span></button>
         </div>
       </div>
-      <button class="tab" type="button" id="tab-export" data-view="export"><span class="step">7</span>Export</button>
+      <button class="tab" type="button" id="tab-export" data-view="export">Export</button>
+      <span class="tab-sep" aria-hidden="true"></span>
       <div class="tab-group">
         <button class="tab tab-parent" type="button" id="grp-plan" aria-haspopup="true" aria-expanded="false" aria-controls="menu-plan">More tools <span class="tab-cur"></span><span class="caret" aria-hidden="true">▾</span></button>
         <div class="tab-menu" id="menu-plan" hidden>
@@ -1007,7 +1013,6 @@ table.lines.lg-rows input, table.lines.lg-rows select { width: 100%; padding: 6p
     <section class="view" id="view-data" hidden>
       <div class="pack-title">
         <div>
-          <div class="eyebrow">Step 3 · Import</div>
           <h1 id="imp-title">Import a trial balance</h1>
           <div class="sub" id="imp-sub"></div>
         </div>
@@ -1086,7 +1091,7 @@ table.lines.lg-rows input, table.lines.lg-rows select { width: 100%; padding: 6p
       </div>
       <div class="pack-title">
         <div>
-          <div class="eyebrow">Step 1 · Books</div>
+          <div class="eyebrow">More tools · Books</div>
           <h1 id="bk-title">Books</h1>
           <div class="sub" id="bk-sub"></div>
         </div>
@@ -1617,7 +1622,6 @@ table.lines.lg-rows input, table.lines.lg-rows select { width: 100%; padding: 6p
     <section class="view" id="view-map" hidden>
       <div class="pack-title">
         <div>
-          <div class="eyebrow">Step 4 · Map</div>
           <h1 id="map-title">Account mapping</h1>
           <div class="sub">Place each account on a line of the reports. Mappings are saved for the client, so the next period maps itself. Check new and changed accounts each period: the balance checks cannot tell whether an account sits on the right line.</div>
         </div>
@@ -1641,7 +1645,6 @@ table.lines.lg-rows input, table.lines.lg-rows select { width: 100%; padding: 6p
     <section class="view" id="view-clients" hidden>
       <div class="pack-title">
         <div>
-          <div class="eyebrow">Step 1 · Clients</div>
           <h1>Clients</h1>
           <div class="sub">Each client keeps its own reporting periods, saved mappings, adjustments, disclosures and report versions, in this browser on this device.</div>
         </div>
@@ -1671,7 +1674,6 @@ table.lines.lg-rows input, table.lines.lg-rows select { width: 100%; padding: 6p
     <section class="view" id="view-adjust" hidden>
       <div class="pack-title">
         <div>
-          <div class="eyebrow">Step 5 · Adjust</div>
           <h1 id="adj-title">Adjustments</h1>
           <div class="sub">Year-end and correcting entries, posted on top of the imported trial balance for this period. The import itself is never changed, so you can reload it and keep the adjustments.</div>
         </div>
@@ -1692,7 +1694,6 @@ table.lines.lg-rows input, table.lines.lg-rows select { width: 100%; padding: 6p
     <section class="view" id="view-review" hidden>
       <div class="pack-title">
         <div>
-          <div class="eyebrow">Step 6 · Review</div>
           <h1 id="rv-title">Review</h1>
           <div class="sub" id="rv-sub"></div>
         </div>
@@ -1719,7 +1720,6 @@ table.lines.lg-rows input, table.lines.lg-rows select { width: 100%; padding: 6p
     <section class="view" id="view-export" hidden>
       <div class="pack-title">
         <div>
-          <div class="eyebrow">Step 7 · Export</div>
           <h1 id="ex-title">Export</h1>
           <div class="sub" id="ex-sub"></div>
         </div>
@@ -7487,7 +7487,7 @@ function show(view) {
   if (view === "home") renderHome();
   if (view === "manual") renderPrivacy();
   $("view-model").hidden = !isModel;
-  for (const v of ["clients", "books", "pack", "fs", "data", "map", "adjust", "review", "export", "legal", "manual", ...MODEL_VIEWS]) { const t = $("tab-" + v); if (t) { if (v === view) t.setAttribute("aria-current", "page"); else t.removeAttribute("aria-current"); } }
+  for (const v of ["home", "clients", "books", "pack", "fs", "data", "map", "adjust", "review", "export", "legal", "manual", ...MODEL_VIEWS]) { const t = $("tab-" + v); if (t) { if (v === view) t.setAttribute("aria-current", "page"); else t.removeAttribute("aria-current"); } }
   document.querySelectorAll(".tab-group").forEach(g => { const c = g.querySelector('.tab-item[aria-current="page"]'), p = g.querySelector(".tab-parent"); p.classList.toggle("has-current", !!c); p.querySelector(".tab-cur").textContent = c ? "· " + c.querySelector("b").textContent : ""; });
   closeMenus();
   if (view === "map") renderMapping();
@@ -7623,9 +7623,8 @@ if (!(WS.cur && loadPeriodData(WS.cur))) { WS.cur = null; loadSample(); }
 else if (ADJ.length) applyAdjustments();
 renderAll();
 loadUnlock();
-if (!store.get("acv:seen")) { store.set("acv:seen", todayISO()); show("home"); }
-else if (WS.clients.length) show("clients");
-else show("pack");
+if (!store.get("acv:seen")) store.set("acv:seen", todayISO());
+show("home");
 
 var installEvt = null;
 window.addEventListener("beforeinstallprompt", e => { e.preventDefault(); installEvt = e; $("btn-install").hidden = false; $("hm-install").hidden = false; });
