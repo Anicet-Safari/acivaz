@@ -531,51 +531,13 @@ table.lines.lg-rows input, table.lines.lg-rows select { width: 100%; padding: 6p
 .lg-paper table.lg-sig { width: 100%; margin-top: 18px; } .lg-paper table.lg-sig td { width: 50%; vertical-align: top; font-size: 13px; color: var(--muted); }
 .lg-disclaimer { font-size: 13px; color: var(--muted); }
 @media (max-width: 560px) { .lg-paper { margin: 0 10px 12px; padding: 16px 14px; } }
-.home { gap: 30px; }
-.hm-hero { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); gap: 36px; align-items: center; padding: 30px 0 4px; }
-.hm-copy h1 { font-size: clamp(31px, 4.1vw, 47px); line-height: 1.08; margin: 12px 0 16px; letter-spacing: -0.015em; }
-.hm-copy h1 em { font-style: normal; color: var(--accent); }
-.hm-lead { font-size: 16.5px; line-height: 1.62; color: var(--muted); max-width: 58ch; margin: 0 0 22px; }
-.hm-cta { display: flex; flex-wrap: wrap; gap: 10px; }
 .btn.big { padding: 11px 18px; font-size: 15px; }
-.hm-small { font-size: 13px; color: var(--muted); margin: 12px 0 0; }
-.hm-art { margin: 0; }
-.hm-art svg { width: 100%; height: auto; display: block; }
-.hm-season { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; padding: 14px 18px; background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--warn); font-size: 14px; }
-.hm-season strong { font-weight: 600; }
-.hm-pill { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--warn); }
-.hm-trust { display: flex; flex-wrap: wrap; gap: 8px; }
-.hm-trust .chip { font-size: 12.5px; padding: 4px 11px; white-space: normal; }
-.hm-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 255px), 1fr)); gap: 16px; }
-.hm-card { display: flex; flex-direction: column; gap: 10px; border-top: 3px solid var(--c); }
-.hm-card .ic { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; color: var(--c); background: var(--accent-soft); background: color-mix(in srgb, var(--c) 15%, transparent); }
-.hm-card .ic svg { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-.hm-card p { margin: 0; color: var(--muted); line-height: 1.55; }
-.hm-card ul { margin: 0; padding-left: 18px; font-size: 13.5px; line-height: 1.65; }
-.hm-card .go { margin-top: auto; padding-top: 4px; align-self: flex-start; font-weight: 500; }
-.hm-steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 255px), 1fr)); gap: 16px; }
-.hm-steps li { display: grid; grid-template-columns: 34px 1fr; gap: 12px; align-items: start; }
-.hm-steps .n { width: 34px; height: 34px; border-radius: 50%; background: var(--accent); color: var(--accent-ink); display: grid; place-items: center; font-weight: 600; font-family: var(--font-display); font-size: 16px; }
-.hm-steps b { display: block; font-size: 15px; margin-bottom: 3px; }
-.hm-steps span.t { color: var(--muted); line-height: 1.55; }
-.hm-two { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr)); gap: 16px; }
-.hm-who dl { margin: 10px 0 0; display: grid; gap: 12px; }
-.hm-who dt { font-weight: 600; }
-.hm-who dd { margin: 2px 0 0; color: var(--muted); line-height: 1.55; }
-.hm-price .amt { font-family: var(--font-display); font-size: 36px; font-weight: 700; color: var(--accent); line-height: 1.1; margin-top: 10px; }
-.hm-price .amt small { font-family: var(--font-body); font-size: 14px; font-weight: 500; color: var(--muted); margin-left: 4px; }
-.hm-price ul { margin: 12px 0 14px; padding-left: 18px; line-height: 1.7; }
-.hm-foot { margin: 0; padding: 4px 0 8px; color: var(--muted); font-size: 13.5px; display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: center; }
-.hm-foot a { color: var(--accent); }
-@media (max-width: 640px) { .hm-cta .btn { flex: 1 1 100%; justify-content: center; } }
-@media (max-width: 860px) { .hm-hero { grid-template-columns: 1fr; padding-top: 18px; gap: 20px; } .hm-art { max-width: 480px; } }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 
 /* Workspace: clients, periods, adjustments, review status and export */
 .brand-co { display: flex; align-items: center; gap: 8px; }
 .band-inner .tabs { order: 3; flex: 1 1 100%; border-top: 1px solid var(--line-soft); padding-top: 4px; }
 .band-inner { row-gap: 4px; }
-.hm-flow { margin: 2px 0 18px; }
 #ws-restore:empty, #ws-recovery:empty { display: none; }
 .rv-list small.warn { color: var(--warn); }
 @media (max-width: 640px) { .brand-mark small { display: none; } .brand { flex-wrap: wrap; } .brand-co { flex-wrap: wrap; white-space: normal; } }
@@ -645,19 +607,49 @@ table.lines.lg-rows input, table.lines.lg-rows select { width: 100%; padding: 6p
 .ex-card .actions { margin-top: auto; }
 .cfw-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr)); gap: 18px; }
 .cfw-grid h4 { font-family: var(--font-body); font-size: 13px; font-weight: 600; margin-bottom: 6px; }
-.hm-pricing { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: 14px; }
-.hm-pricing .panel { display: flex; flex-direction: column; gap: 6px; }
-.hm-pricing h3 { font-size: 15.5px; }
-.hm-pricing p { margin: 0; font-size: 13.5px; color: var(--muted); }
-.hm-pricing .amt { font-family: var(--font-display); font-size: 22px; font-weight: 600; color: var(--ink); }
-.hm-policy { font-size: 13.5px; }
-.hm-policy dt { font-weight: 600; margin-top: 10px; }
-.hm-policy dd { margin: 2px 0 0; color: var(--muted); }
-.hm-price-line { font-size: 13.5px; color: var(--muted); margin: 0; }
-.hm-price-line strong { color: var(--ink); }
-.hm-flow { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: 13px; }
-.hm-flow span.s { border: 1px solid var(--line); background: var(--surface); padding: 3px 10px; font-weight: 500; }
-.hm-flow span.a { color: var(--muted); }
+
+/* Front page: plain and real. The pictures are an actual statements PDF and actual screens from the app, not drawings. */
+.home { gap: 0; }
+.fp-top { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, .95fr); gap: 56px; align-items: center; padding: 44px 0 36px; }
+.fp-copy h1 { font-size: clamp(32px, 3.7vw, 46px); line-height: 1.1; letter-spacing: -0.012em; margin: 0 0 18px; max-width: 18ch; }
+.fp-lead { font-size: 17px; line-height: 1.6; color: var(--muted); max-width: 50ch; margin: 0 0 24px; }
+.fp-cta { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 18px; }
+.fp-note { font-size: 14px; line-height: 1.55; color: var(--muted); margin: 0 0 8px; max-width: 54ch; }
+.fp-note a { color: var(--accent); }
+.fp-pages { margin: 0; }
+.fp-stack { position: relative; padding: 0 0 5% 8%; max-width: 520px; margin-left: auto; }
+.fp-stack img { display: block; width: 100%; height: auto; background: #FFFFFF; border: 1px solid var(--line); box-shadow: 0 2px 6px rgba(20, 26, 34, .08), 0 14px 30px -12px rgba(20, 26, 34, .25); }
+.fp-p2 { position: absolute; top: 5%; left: 0; width: 92% !important; }
+.fp-p1 { position: relative; }
+.fp-pages figcaption { margin-left: auto; max-width: 520px !important; }
+.fp-pages figcaption, .fp-shots figcaption { font-size: 13px; line-height: 1.5; color: var(--muted); margin-top: 10px; max-width: 60ch; }
+.fp-shots figcaption b { color: var(--ink); font-weight: 600; }
+.fp-season { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: baseline; padding: 12px 16px; background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--warn); font-size: 14px; }
+.fp-season b { font-weight: 600; }
+.fp-sec { padding: 52px 0 0; }
+.fp-sec h2 { margin: 0 0 10px; }
+.fp-sec h3 { font-size: 16px; margin: 22px 0 6px; }
+.fp-intro { font-size: 15.5px; line-height: 1.6; color: var(--muted); max-width: 70ch; margin: 0; }
+.fp-shots { display: grid; grid-template-columns: 1.25fr 1fr; gap: 32px 28px; margin-top: 24px; align-items: start; }
+.fp-shots .fp-wide { grid-column: 1 / -1; }
+.fp-shots figure { margin: 0; }
+.fp-shots img { display: block; width: 100%; height: auto; border: 1px solid var(--line); background: #FFFFFF; }
+.fp-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: start; }
+.fp-plain { margin: 6px 0 0; padding-left: 18px; font-size: 15px; line-height: 1.6; }
+.fp-plain li { margin-bottom: 8px; }
+.fp-small { font-size: 14px; line-height: 1.6; color: var(--muted); margin: 10px 0 0; }
+.fp-tariff { border-collapse: collapse; margin-top: 6px; font-size: 15px; width: 100%; }
+.fp-tariff th, .fp-tariff td { text-align: left; padding: 8px 12px 8px 0; border-bottom: 1px solid var(--line); vertical-align: baseline; }
+.fp-tariff th { font-weight: 500; color: var(--muted); white-space: nowrap; width: 40%; }
+.fp-tariff td { font-weight: 600; }
+.hm-foot { margin: 48px 0 0; padding: 16px 0 8px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13.5px; display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: center; }
+@media (max-width: 900px) {
+  .fp-top { grid-template-columns: 1fr; gap: 32px; padding-top: 24px; }
+  .fp-pages { max-width: 560px; }
+  .fp-shots { grid-template-columns: 1fr; }
+  .fp-cols { grid-template-columns: 1fr; gap: 8px; }
+}
+@media (max-width: 640px) { .fp-cta .btn { flex: 1 1 100%; justify-content: center; } }
 </style>
 </head>
 <body>
@@ -713,144 +705,75 @@ table.lines.lg-rows input, table.lines.lg-rows select { width: 100%; padding: 6p
 
     <!-- WELCOME -->
     <section class="view home" id="view-home" hidden>
-      <div class="hm-hero">
-        <div class="hm-copy">
-          <div class="eyebrow">For accountants and bookkeepers in Rwanda</div>
-          <h1>Turn your trial balance into a <em>professional financial reporting pack</em></h1>
-          <p class="hm-lead">Prepare draft financial statements, notes and management reports. Review account mappings, resolve checks, and export to PDF or Excel, all in your browser.</p>
-          <div class="hm-flow" aria-label="The workflow"><span class="s">Clients</span><span class="a">→</span><span class="s">Period</span><span class="a">→</span><span class="s">Import</span><span class="a">→</span><span class="s">Map</span><span class="a">→</span><span class="s">Adjust</span><span class="a">→</span><span class="s">Review</span><span class="a">→</span><span class="s">Export</span></div>
-          <div class="hm-cta">
+      <div class="fp-top">
+        <div class="fp-copy">
+          <h1>Turn your trial balance into a professional financial reporting pack.</h1>
+          <p class="fp-lead">Prepare draft financial statements, notes and management reports. Review account mappings, resolve checks, and export to PDF or Excel, all in your browser.</p>
+          <div class="fp-cta">
             <button class="btn primary big" type="button" id="hm-open" data-goto="clients">Add your first client</button>
             <button class="btn big" type="button" data-ws="sample">See the example report</button>
           </div>
-          <p class="hm-price-line"><strong>Free for 30 days</strong> on this device, no sign-up and no card. Then <strong>RWF 20,000 a month per company</strong> for downloads. <button class="linkish" type="button" data-goto-pricing>How pricing and licences work</button></p>
-          <p class="hm-small">Acivaz prepares and checks the pack. Professional review, signing by the directors and any assessment of compliance remain separate steps.</p>
+          <p class="fp-note">Free for 30 days on this device, with no sign-up and no card. Then RWF 20,000 a month per company. <button class="linkish" type="button" data-goto-pricing>Pricing</button></p>
+          <p class="fp-note">Built and supported in Kigali by Anicet Safari, CPA (R). Questions go to him on <a href="https://wa.me/250784551341?text=Hello%2C%20I%20would%20like%20to%20know%20more%20about%20Acivaz." target="_blank" rel="noopener">WhatsApp</a>.</p>
         </div>
-        <figure class="hm-art"><svg viewBox="0 0 480 380" role="img" aria-label="Pages of a directors' report and a statement of financial position, with a chart of what moved net profit">
-  <rect x="34" y="22" width="250" height="320" rx="4" fill="var(--line)" opacity=".55"/>
-  <rect x="30" y="18" width="250" height="320" rx="4" fill="var(--surface)" stroke="var(--line)"/>
-  <text x="50" y="50" style="font-family:var(--font-display)" font-size="15" font-weight="600" fill="var(--ink)">Directors' report</text>
-  <rect x="50" y="64" width="200" height="6" rx="3" fill="var(--line)"/><rect x="50" y="76" width="176" height="6" rx="3" fill="var(--line)"/>
-  <rect x="50" y="96" width="90" height="7" rx="3" fill="var(--muted)" opacity=".55"/>
-  <rect x="50" y="110" width="44" height="6" rx="3" fill="var(--line)"/><rect x="50" y="122" width="40" height="6" rx="3" fill="var(--line)"/>
-  <rect x="50" y="146" width="44" height="7" rx="3" fill="var(--muted)" opacity=".55"/>
-  <rect x="50" y="160" width="46" height="6" rx="3" fill="var(--line)"/><rect x="50" y="172" width="38" height="6" rx="3" fill="var(--line)"/><rect x="50" y="184" width="44" height="6" rx="3" fill="var(--line)"/>
-  <rect x="50" y="208" width="40" height="7" rx="3" fill="var(--muted)" opacity=".55"/>
-  <rect x="50" y="222" width="46" height="6" rx="3" fill="var(--line)"/><rect x="50" y="234" width="36" height="6" rx="3" fill="var(--line)"/>
-  <line x1="50" y1="300" x2="96" y2="300" stroke="var(--muted)" stroke-width="1"/><text x="50" y="314" font-size="9" fill="var(--muted)" style="font-family:var(--font-body)">Director</text>
-  <rect x="114" y="62" width="250" height="300" rx="4" fill="var(--line)" opacity=".55"/>
-  <rect x="110" y="58" width="250" height="300" rx="4" fill="var(--surface)" stroke="var(--line)"/>
-  <text x="126" y="84" style="font-family:var(--font-display)" font-size="11.2" font-weight="600" fill="var(--ink)">Statement of financial position</text>
-  <g style="font-family:var(--font-body)" font-size="10.5">
-    <text x="126" y="106" fill="var(--muted)">Non-current assets</text><text x="344" y="106" text-anchor="end" fill="var(--ink)" style="font-family:var(--font-mono)">506.0</text>
-    <text x="126" y="122" fill="var(--muted)">Current assets</text><text x="344" y="122" text-anchor="end" fill="var(--ink)" style="font-family:var(--font-mono)">290.6</text>
-    <line x1="306" y1="128" x2="344" y2="128" stroke="var(--ink)" stroke-width=".8"/>
-    <text x="126" y="141" fill="var(--ink)" font-weight="600">Total assets</text><text x="344" y="141" text-anchor="end" fill="var(--ink)" font-weight="600" style="font-family:var(--font-mono)">796.6</text>
-    <line x1="306" y1="145" x2="344" y2="145" stroke="var(--ink)" stroke-width=".8"/><line x1="306" y1="147.5" x2="344" y2="147.5" stroke="var(--ink)" stroke-width=".8"/>
-  </g>
-  <rect x="126" y="166" width="70" height="6" rx="3" fill="var(--line)"/><rect x="126" y="182" width="84" height="6" rx="3" fill="var(--line)"/><rect x="126" y="198" width="62" height="6" rx="3" fill="var(--line)"/><rect x="126" y="214" width="78" height="6" rx="3" fill="var(--line)"/><rect x="126" y="236" width="88" height="7" rx="3" fill="var(--muted)" opacity=".55"/><rect x="126" y="256" width="66" height="6" rx="3" fill="var(--line)"/><rect x="126" y="272" width="80" height="6" rx="3" fill="var(--line)"/>
-  <rect x="234" y="156" width="232" height="200" rx="5" fill="var(--line)" opacity=".7"/>
-  <rect x="228" y="150" width="232" height="200" rx="5" fill="var(--surface)" stroke="var(--line)"/>
-  <rect x="228" y="150" width="232" height="4" fill="var(--accent)"/>
-  <text x="244" y="178" style="font-family:var(--font-display)" font-size="13" font-weight="600" fill="var(--ink)">What moved net profit</text>
-  <line x1="244" y1="320" x2="444" y2="320" stroke="var(--line)"/>
-  <rect x="248" y="280" width="18" height="40" fill="var(--accent)"/>
-  <rect x="272" y="190" width="18" height="90" fill="var(--pos)"/>
-  <rect x="296" y="190" width="18" height="60" fill="var(--neg)"/>
-  <rect x="320" y="250" width="18" height="14" fill="var(--neg)"/>
-  <rect x="344" y="264" width="18" height="18" fill="var(--neg)"/>
-  <rect x="368" y="272" width="18" height="10" fill="var(--pos)"/>
-  <rect x="392" y="272" width="18" height="6" fill="var(--neg)"/>
-  <rect x="416" y="278" width="18" height="42" fill="var(--accent)"/>
-  <g style="font-family:var(--font-body)" font-size="9" fill="var(--muted)" text-anchor="middle"><text x="257" y="334">Last year</text><text x="425" y="334">This year</text></g>
-  <rect x="300" y="20" width="148" height="26" rx="13" fill="var(--good-soft)" stroke="var(--good)"/>
-  <text x="374" y="37" text-anchor="middle" style="font-family:var(--font-body)" font-size="11.5" font-weight="500" fill="var(--good)">✓ Balance sheet ties</text>
-  <rect x="300" y="54" width="148" height="26" rx="13" fill="var(--accent-soft)" stroke="var(--accent)"/>
-  <text x="374" y="71" text-anchor="middle" style="font-family:var(--font-body)" font-size="11.5" font-weight="500" fill="var(--accent)">Draft · Needs review</text>
-</svg></figure>
+        <figure class="fp-pages">
+          <div class="fp-stack">
+            <img class="fp-p2" src="pdf-profit-or-loss.webp" width="890" height="900" alt="" loading="eager">
+            <img class="fp-p1" src="pdf-financial-position.webp" width="890" height="900" alt="Statement of financial position for Umucyo Agro Processors Ltd as at September 2026, with notes and comparatives, as printed in an Acivaz statements PDF" loading="eager">
+          </div>
+          <figcaption>Pages 4 and 5 of a statements PDF from Acivaz, for the example company. Your PDF looks the same, with your figures.</figcaption>
+        </figure>
       </div>
 
-      <div class="hm-season" id="hm-season"></div>
+      <div class="fp-season" id="hm-season"></div>
 
-      <div class="hm-trust" aria-label="Built for">
-        <span class="chip good">Nothing uploaded: figures stay on your device</span>
-        <span class="chip good">IFRS for SMEs format</span>
-        <span class="chip good">Law N° 007/2021 governing companies</span>
-        <span class="chip good">RRA rules for VAT and income tax</span>
-        <span class="chip good">Works offline once installed</span>
-      </div>
-
-      <div class="section-title" id="hm-pricing"><h2>Pricing and licences</h2></div>
-      <div class="hm-pricing">
-        <div class="panel"><span class="eyebrow">Free trial</span><div class="amt">30 days</div><p>Every download is free for 30 days from your first visit on this device, for any number of clients. No sign-up and no card.</p></div>
-        <div class="panel"><span class="eyebrow">Per company</span><div class="amt">RWF 20,000 <small class="muted" style="font-size:13px;font-family:var(--font-body)">a month</small></div><p>Unlimited PDF and Excel downloads for that company. From 5 companies, RWF 15,000 each. Founding price for the first 20 customers: RWF 10,000 per company, fixed for 12 months.</p></div>
-        <div class="panel"><span class="eyebrow">One device</span><div class="amt">Per browser</div><p>An unlock code opens one company in one browser on one device, because your figures are kept on that device and never uploaded. Everything on screen stays free.</p></div>
-        <div class="panel"><span class="eyebrow">Renewal</span><div class="amt">Pay by MoMo</div><p>Pay by MTN MoMo, send the company ID shown in Acivaz on WhatsApp, and receive a code for the months paid. When a code ends, only downloads stop; your work stays.</p></div>
-      </div>
-      <div class="hm-two">
-        <div class="panel">
-          <h3>Replacing a device or restoring a paid workspace</h3>
-          <dl class="hm-policy">
-            <dt>New computer, new phone or a cleared browser</dt>
-            <dd>On the old device, choose <strong>Back up everything</strong> in Clients. On the new device, choose <strong>Restore a backup</strong>. Acivaz lists the paid companies it finds and prepares a WhatsApp request. You receive replacement codes for the paid time that remains, free of charge, within one working day.</dd>
-            <dt>Lost or broken device with no backup</dt>
-            <dd>Send the MoMo transaction ID and the company name on WhatsApp. Paid time is restored on the new device's company ID. Your figures can only come back from a backup, so back up after each session.</dd>
-            <dt>One device at a time</dt>
-            <dd>A replacement code moves the licence; it does not add a second device. To work on two devices, pay for each.</dd>
-          </dl>
-        </div>
-        <div class="panel hm-who">
-          <h3>Who it is for</h3>
-          <dl>
-            <dt>Accountants and bookkeepers</dt><dd>Keep each client's periods, mappings, adjustments and disclosures together, and prepare the same clear pack every month and at year end. You pay only for the companies you work on.</dd>
-            <dt>Finance managers</dt><dd>Turn the trial balance from Tally, QuickBooks, Sage or Odoo into statements and a board report, with a review trail.</dd>
-            <dt>Incubators and lenders</dt><dd>Ask applicants for statements in one consistent, readable layout.</dd>
-          </dl>
-          <a class="btn" id="hm-wa" href="https://wa.me/250784551341?text=Hello%2C%20I%20would%20like%20to%20know%20more%20about%20Acivaz." target="_blank" rel="noopener">Ask a question on WhatsApp</a>
+      <div class="fp-sec">
+        <h2>How a close runs</h2>
+        <p class="fp-intro">The bar at the top of Acivaz follows the order you close a client's books: clients, period, import, map, adjust, review, export. Each client keeps its own periods, mappings, adjustments and disclosures, so next month starts where this one ended.</p>
+        <div class="fp-shots">
+          <figure>
+            <img src="screen-map.webp" width="1200" height="717" alt="The Map screen, with each account of the trial balance placed on a line of the reports" loading="lazy">
+            <figcaption><b>Map.</b> Acivaz suggests a line for each account and remembers your choices for that client.</figcaption>
+          </figure>
+          <figure>
+            <img src="screen-review.webp" width="1000" height="910" alt="The review checklist: four checks done by Acivaz and the items a reviewer confirms" loading="lazy">
+            <figcaption><b>Review.</b> The checks Acivaz runs itself, and the ones a reviewer confirms before the period is finalised.</figcaption>
+          </figure>
+          <figure class="fp-wide">
+            <img src="screen-export.webp" width="1600" height="630" alt="The Export screen with download buttons and a list of report versions" loading="lazy">
+            <figcaption><b>Export.</b> PDF and Excel. Drafts are marked on every page, and each download is kept as a version.</figcaption>
+          </figure>
         </div>
       </div>
 
-      <div class="section-title"><h2>What you get</h2></div>
-      <div class="hm-grid">
-        <div class="panel hm-card" style="--c: var(--accent)">
-          <div class="ic"><svg viewBox="0 0 24 24"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4"/><path d="M10 12h5M10 16h5"/></svg></div>
-          <h3>Draft financial statements</h3>
-          <p>In the IFRS for SMEs format, for shareholders, the auditor, RDB and the bank.</p>
-          <ul><li>The four statements with numbered notes</li><li>Directors' report and accounting policies</li><li>Disclosures kept for each period</li></ul>
-          <button class="linkish go" type="button" data-goto="fs">Open financial statements →</button>
+      <div class="fp-sec fp-cols">
+        <div>
+          <h2>What you get</h2>
+          <ul class="fp-plain">
+            <li><b>Draft financial statements</b> in the IFRS for SMEs format: profit or loss, financial position, changes in equity and cash flows, with notes, accounting policies and a directors' report under Law N° 007/2021.</li>
+            <li><b>A management report</b> with key figures, charts, ratios and a commentary you edit.</li>
+            <li><b>Adjusting entries</b> posted on top of the imported trial balance, which is never changed.</li>
+            <li><b>A review trail:</b> who sent the period for review, who finalised it, and every download.</li>
+          </ul>
+          <p class="fp-small">Also under More tools: Books with VAT under RRA rules, a three-year forecast, a budget, a valuation, loan schedules and a business plan.</p>
         </div>
-        <div class="panel hm-card" style="--c: var(--pos)">
-          <div class="ic"><svg viewBox="0 0 24 24"><path d="M4 20h16"/><path d="M7 16v-5M12 16V7M17 16v-8"/></svg></div>
-          <h3>Management report</h3>
-          <p>Shows owners and the board what changed and why.</p>
-          <ul><li>Charts that explain each movement</li><li>Ten ratios flagged Healthy, Watch or Act</li><li>A commentary draft you can edit</li></ul>
-          <button class="linkish go" type="button" data-goto="pack">Open the management report →</button>
-        </div>
-        <div class="panel hm-card" style="--c: var(--seg2)">
-          <div class="ic"><svg viewBox="0 0 24 24"><path d="M9 11l3 3 8-8"/><path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9"/></svg></div>
-          <h3>Review and controls</h3>
-          <p>A balanced report is not automatically a complete or correctly classified one.</p>
-          <ul><li>Adjusting entries on top of the import</li><li>Draft, Needs review, Finalised, with a checklist</li><li>Draft marks on every page until finalised</li></ul>
-          <button class="linkish go" type="button" data-goto="review">Open the review checklist →</button>
-        </div>
-        <div class="panel hm-card" style="--c: var(--g4)">
-          <div class="ic"><svg viewBox="0 0 24 24"><path d="M4 18l5-5 4 3 7-8"/><path d="M15 8h5v5"/></svg></div>
-          <h3>More tools</h3>
-          <p>Built on the same figures, when a client needs them.</p>
-          <ul><li>Books: sales, purchases, bank and VAT</li><li>Forecast, budget, valuation and loan schedules</li><li>A business plan for lenders and investors</li></ul>
-          <button class="linkish go" type="button" data-goto="books">Open the books →</button>
+        <div id="hm-pricing">
+          <h2>Pricing</h2>
+          <table class="fp-tariff">
+            <tbody>
+              <tr><th scope="row">First 30 days</th><td>Free, for any number of clients</td></tr>
+              <tr><th scope="row">Each company</th><td>RWF 20,000 a month</td></tr>
+              <tr><th scope="row">From 5 companies</th><td>RWF 15,000 a month each</td></tr>
+              <tr><th scope="row">First 20 customers</th><td>RWF 10,000 a month per company, fixed for 12 months</td></tr>
+            </tbody>
+          </table>
+          <p class="fp-small">Everything on screen is free; you pay only to download reports. Pay by MTN MoMo, send the company ID shown in Acivaz on WhatsApp, and receive a code for the months paid. A code opens one company in one browser on one device, because your figures stay on that device and are never uploaded.</p>
+          <h3>Replacing a device</h3>
+          <p class="fp-small">Back up everything in Clients on the old device and restore it on the new one. Acivaz lists the paid companies it finds and writes a WhatsApp request for you. Replacement codes for the paid time that remains are free, within one working day. With no backup, send the MoMo transaction ID and the company name, and paid time is restored; your figures can only come back from a backup. A replacement code moves the licence; it does not add a second device.</p>
         </div>
       </div>
 
-      <div class="section-title"><h2>How it works</h2></div>
-      <ol class="hm-steps">
-        <li><span class="n">1</span><span><b>Client and period</b><span class="t">Add a client and its reporting period. Each period keeps its own figures, adjustments, disclosures and report versions.</span></span></li>
-        <li><span class="n">2</span><span><b>Import and map</b><span class="t">Upload a trial balance from Excel or CSV, from Tally, QuickBooks, Sage, Odoo or your own workbook. Mappings are remembered for the client.</span></span></li>
-        <li><span class="n">3</span><span><b>Adjust and review</b><span class="t">Post adjusting entries, clear the checks, confirm the checklist and move the period from Draft to Needs review to Finalised.</span></span></li>
-        <li><span class="n">4</span><span><b>Export</b><span class="t">Download PDF and Excel. Drafts are marked on every page; each download is recorded as a version.</span></span></li>
-      </ol>
-
-      <p class="hm-foot"><span>Built in Kigali by Anicet Safari, CPA.</span><button class="linkish" type="button" data-goto="manual">Read the manual</button><button class="linkish" type="button" id="hm-install" hidden>Install Acivaz as an app</button></p>
+      <p class="hm-foot"><span>Figures are read and kept on your device. Nothing is uploaded. Works offline once installed.</span><button class="linkish" type="button" data-goto="manual">Read the manual</button><button class="linkish" type="button" id="hm-install" hidden>Install Acivaz as an app</button></p>
     </section>
 
     <!-- LEGAL -->
@@ -7658,7 +7581,7 @@ $("btn-remap").onclick = () => { autoMap(false); persist(); renderMapping(); toa
 function renderHome() {
   const now = new Date(), y = now.getFullYear(), ye = now <= new Date(y, 6, 31, 23, 59, 59) ? y - 1 : y;
   const due = new Date(ye + 1, 6, 31, 23, 59, 59), left = Math.ceil((due - now) / 864e5);
-  $("hm-season").innerHTML = `<span class="hm-pill">Filing season</span><span>Private companies with a 31 December ${ye} year end must send signed accounts, the auditor's report and the directors' report to shareholders and RDB by <strong>31 July ${ye + 1}</strong>, ${left} day${left === 1 ? "" : "s"} from today.</span><button class="linkish" type="button" data-goto="fs">Prepare year-end statements</button>`;
+  $("hm-season").innerHTML = `<b>Filing season.</b><span>Private companies with a 31 December ${ye} year end send signed accounts, the auditor's report and the directors' report to shareholders and RDB by <strong>31 July ${ye + 1}</strong>, ${left} day${left === 1 ? "" : "s"} from today.</span><button class="linkish" type="button" data-goto="clients">Start a year-end period</button>`;
   $("hm-open").textContent = WS.clients.length ? `Open your clients (${WS.clients.length})` : "Add your first client";
   $("hm-install").hidden = !installEvt;
 }
