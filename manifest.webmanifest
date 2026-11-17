@@ -1,7 +1,7 @@
 {
   "name": "Acivaz",
   "short_name": "Acivaz",
-  "description": "From trial balance to signed year-end statements: financial statements, directors' report, management report, forecast and business plan. Built for Rwanda.",
+  "description": "Turn your trial balance into a professional financial reporting pack: draft financial statements, notes and management reports for each client and period. Built for accountants in Rwanda.",
   "id": "./",
   "start_url": "./",
   "scope": "./",

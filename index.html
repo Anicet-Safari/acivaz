@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="description" content="Turn a trial balance into year-end financial statements, a directors' report, a management report, a forecast and a business plan. Built for Rwanda: IFRS for SMEs, Law N° 007/2021 and RRA tax rules. Figures stay on your device.">
+<meta name="description" content="Turn your trial balance into a professional financial reporting pack. Prepare draft financial statements, notes and management reports for each client and period, review mappings and checks, and export to PDF or Excel in your browser. Built for accountants in Rwanda.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Acivaz">
-<meta property="og:title" content="Acivaz: from trial balance to signed year-end statements">
-<meta property="og:description" content="Financial statements, directors' report, management report, forecast and business plan from a trial balance. Built for Rwanda. Free for 30 days.">
+<meta property="og:title" content="Acivaz: turn your trial balance into a professional financial reporting pack">
+<meta property="og:description" content="Draft financial statements, notes and management reports for each client and period, with adjustments, a review checklist and PDF or Excel export. Free for 30 days, then RWF 20,000 a month per company.">
 <meta property="og:url" content="https://anicet-safari.github.io/acivaz/">
 <meta property="og:image" content="https://anicet-safari.github.io/acivaz/og-image.png">
 <meta property="og:image:width" content="1200">
@@ -570,47 +570,138 @@ table.lines.lg-rows input, table.lines.lg-rows select { width: 100%; padding: 6p
 @media (max-width: 640px) { .hm-cta .btn { flex: 1 1 100%; justify-content: center; } }
 @media (max-width: 860px) { .hm-hero { grid-template-columns: 1fr; padding-top: 18px; gap: 20px; } .hm-art { max-width: 480px; } }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+
+/* Workspace: clients, periods, adjustments, review status and export */
+.brand-co { display: flex; align-items: center; gap: 8px; }
+.band-inner .tabs { order: 3; flex: 1 1 100%; border-top: 1px solid var(--line-soft); padding-top: 4px; }
+.band-inner { row-gap: 4px; }
+.hm-flow { margin: 2px 0 18px; }
+#ws-restore:empty, #ws-recovery:empty { display: none; }
+.rv-list small.warn { color: var(--warn); }
+@media (max-width: 640px) { .brand-mark small { display: none; } .brand { flex-wrap: wrap; } .brand-co { flex-wrap: wrap; white-space: normal; } }
+.brand-co #brand-co { overflow: hidden; text-overflow: ellipsis; }
+.save-chip { font-size: 11.5px; color: var(--muted); white-space: nowrap; }
+.save-chip.ok::before { content: "✓ "; color: var(--good); }
+.save-chip.bad { color: var(--bad); font-weight: 600; }
+.save-chip.bad::before { content: "× "; }
+.rs { display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; font-weight: 600; padding: 1px 8px; border: 1px solid currentColor; white-space: nowrap; letter-spacing: .01em; }
+.rs::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.rs.draft { color: var(--muted); }
+.rs.review { color: var(--warn); background: var(--warn-soft); }
+.rs.final { color: var(--good); background: var(--good-soft); }
+.rs.changed { color: var(--bad); background: var(--bad-soft); }
+.rs.big { font-size: 14px; padding: 4px 12px; }
+.tab .count.plain { background: var(--accent-soft); color: var(--accent); }
+.notice.warn { border-left-color: var(--warn); background: var(--warn-soft); }
+.notice.bad { border-left-color: var(--bad); background: var(--bad-soft); }
+.notice.good { border-left-color: var(--good); background: var(--good-soft); }
+.ws-new { display: grid; grid-template-columns: minmax(180px, 1fr) minmax(220px, 1.3fr) auto; gap: 10px; align-items: end; }
+@media (max-width: 720px) { .ws-new { grid-template-columns: 1fr; } }
+.ws-new label, .ws-np label { display: flex; flex-direction: column; gap: 4px; font-size: 12.5px; font-weight: 500; color: var(--muted); }
+.ws-new input, .ws-np input, .adj-form input, .adj-form select, .rv-actions input, .rv-actions textarea { border: 1px solid var(--line); background: var(--surface); padding: 7px 9px; border-radius: var(--radius); min-width: 0; }
+.ws-client { display: flex; flex-direction: column; gap: 10px; }
+.ws-client .panel-head { margin-bottom: 0; }
+.ws-client h3 { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.ws-np { display: flex; flex-wrap: wrap; gap: 10px; align-items: end; padding: 12px; background: var(--bg); border: 1px dashed var(--line); }
+.ws-np label { flex: 1 1 240px; }
+.ws-table, .adj-table, .rv-hist, .ex-ver { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.ws-table th, .adj-table th, .rv-hist th, .ex-ver th { text-align: left; font-size: 11.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); font-weight: 600; padding: 6px 8px; border-bottom: 1px solid var(--line); }
+.ws-table td, .adj-table td, .rv-hist td, .ex-ver td { padding: 7px 8px; border-bottom: 1px solid var(--line-soft); vertical-align: top; }
+.ws-table tr.is-cur td { background: var(--accent-soft); }
+.ws-table td.n, .adj-table td.n, .adj-table th.n, .ex-ver td.n { text-align: right; font-variant-numeric: tabular-nums; }
+.ws-table .acts, .adj-entry .acts { display: flex; gap: 6px; justify-content: flex-end; flex-wrap: wrap; }
+.adj-form .adj-head { display: grid; grid-template-columns: 150px 140px 1fr; gap: 10px; margin-bottom: 12px; }
+@media (max-width: 720px) { .adj-form .adj-head { grid-template-columns: 1fr 1fr; } .adj-form .adj-head .wide { grid-column: 1 / -1; } }
+.adj-form label { display: flex; flex-direction: column; gap: 4px; font-size: 12.5px; font-weight: 500; color: var(--muted); }
+.adj-form td input { width: 100%; text-align: right; font-variant-numeric: tabular-nums; }
+.adj-form td select { width: 100%; }
+.adj-form .newacct { display: grid; grid-template-columns: 90px 1fr 1fr; gap: 6px; margin-top: 6px; }
+.adj-form .newacct input { text-align: left; }
+.adj-table tfoot td { font-weight: 600; border-top: 1px solid var(--ink); border-bottom: 0; }
+.adj-entry { border: 1px solid var(--line); padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; }
+.adj-entry + .adj-entry { margin-top: 10px; }
+.adj-entry .hd { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: baseline; justify-content: space-between; }
+.adj-entry .hd b { font-weight: 600; }
+.rv-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.rv-list li { display: grid; grid-template-columns: 26px 1fr auto; gap: 4px 10px; padding: 10px 0; border-bottom: 1px solid var(--line-soft); align-items: start; }
+.rv-list li:last-child { border-bottom: 0; }
+.rv-list .mk { width: 20px; height: 20px; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px; border: 1px solid currentColor; margin-top: 1px; }
+.rv-list .mk.ok { color: var(--good); background: var(--good-soft); }
+.rv-list .mk.no { color: var(--bad); background: var(--bad-soft); }
+.rv-list .mk.na { color: var(--muted); }
+.rv-list b { font-weight: 600; display: block; }
+.rv-list small { color: var(--muted); font-size: 12.5px; display: block; line-height: 1.4; }
+.rv-list input[type="checkbox"] { width: 18px; height: 18px; margin: 2px 0 0; accent-color: var(--accent); }
+.rv-group { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 600; margin: 14px 0 0; }
+.rv-group:first-child { margin-top: 0; }
+.rv-actions { display: flex; flex-direction: column; gap: 12px; }
+.rv-actions label { display: flex; flex-direction: column; gap: 4px; font-size: 12.5px; font-weight: 500; color: var(--muted); }
+.rv-actions textarea { min-height: 64px; resize: vertical; }
+.rv-flow { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: 12.5px; color: var(--muted); }
+.rv-flow .on { color: var(--ink); font-weight: 600; }
+.ex-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 18px; }
+.ex-card { display: flex; flex-direction: column; gap: 10px; }
+.ex-card p { margin: 0; color: var(--muted); font-size: 13.5px; }
+.ex-card .actions { margin-top: auto; }
+.cfw-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr)); gap: 18px; }
+.cfw-grid h4 { font-family: var(--font-body); font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+.hm-pricing { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: 14px; }
+.hm-pricing .panel { display: flex; flex-direction: column; gap: 6px; }
+.hm-pricing h3 { font-size: 15.5px; }
+.hm-pricing p { margin: 0; font-size: 13.5px; color: var(--muted); }
+.hm-pricing .amt { font-family: var(--font-display); font-size: 22px; font-weight: 600; color: var(--ink); }
+.hm-policy { font-size: 13.5px; }
+.hm-policy dt { font-weight: 600; margin-top: 10px; }
+.hm-policy dd { margin: 2px 0 0; color: var(--muted); }
+.hm-price-line { font-size: 13.5px; color: var(--muted); margin: 0; }
+.hm-price-line strong { color: var(--ink); }
+.hm-flow { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: 13px; }
+.hm-flow span.s { border: 1px solid var(--line); background: var(--surface); padding: 3px 10px; font-weight: 500; }
+.hm-flow span.a { color: var(--muted); }
 </style>
 </head>
 <body>
 <header class="band gutter">
   <div class="wrap band-inner">
     <div class="brand">
-      <button class="brand-mark" type="button" data-goto="home" aria-label="Acivaz home">Acivaz<small>Books, reports and models</small></button>
-      <div class="brand-co" id="brand-co"></div>
+      <button class="brand-mark" type="button" data-goto="home" aria-label="Acivaz home">Acivaz<small>Financial reporting workspace</small></button>
+      <div class="brand-co"><span id="brand-co"></span><span id="hdr-status"></span><span id="save-chip" class="save-chip" role="status" aria-live="polite"></span></div>
     </div>
-    <nav class="tabs" aria-label="Steps">
-      <button class="tab" type="button" id="tab-books" data-view="books">Books</button>
+    <nav class="tabs" aria-label="Workflow">
+      <button class="tab" type="button" id="tab-clients" data-view="clients"><span class="step">1</span>Clients</button>
       <div class="tab-group">
-        <button class="tab tab-parent" type="button" id="grp-data" aria-haspopup="true" aria-expanded="false" aria-controls="menu-data">Data <span class="tab-cur"></span><span class="count" id="unmapped-dot" hidden></span><span class="caret" aria-hidden="true">▾</span></button>
-        <div class="tab-menu" id="menu-data" hidden>
-          <button class="tab-item" type="button" id="tab-data" data-view="data"><span class="step">2</span><span><b>Trial balance</b><small>Upload a file or paste rows from other software</small></span></button>
-          <button class="tab-item" type="button" id="tab-map" data-view="map"><span class="step">3</span><span><b>Mapping</b><small>Place each account on a line of the pack</small></span><span class="count" id="unmapped-count" hidden></span></button>
-        </div>
+        <button class="tab tab-parent" type="button" id="grp-period" aria-haspopup="true" aria-expanded="false" aria-controls="menu-period"><span class="step">2</span><span id="period-tab">Period</span><span class="tab-cur" hidden></span><span class="caret" aria-hidden="true">▾</span></button>
+        <div class="tab-menu" id="menu-period" hidden></div>
       </div>
+      <button class="tab" type="button" id="tab-data" data-view="data"><span class="step">3</span>Import</button>
+      <button class="tab" type="button" id="tab-map" data-view="map"><span class="step">4</span>Map<span class="count" id="unmapped-count" hidden></span></button>
+      <button class="tab" type="button" id="tab-adjust" data-view="adjust"><span class="step">5</span>Adjust<span class="count plain" id="adj-count" hidden></span></button>
       <div class="tab-group">
-        <button class="tab tab-parent has-current" type="button" id="grp-reports" aria-haspopup="true" aria-expanded="false" aria-controls="menu-reports">Reports <span class="tab-cur">· Management report</span><span class="caret" aria-hidden="true">▾</span></button>
+        <button class="tab tab-parent" type="button" id="grp-reports" aria-haspopup="true" aria-expanded="false" aria-controls="menu-reports"><span class="step">6</span>Review <span class="tab-cur"></span><span class="caret" aria-hidden="true">▾</span></button>
         <div class="tab-menu" id="menu-reports" hidden>
-          <button class="tab-item" type="button" id="tab-pack" data-view="pack" aria-current="page"><span class="step">4</span><span><b>Management report</b><small>Key figures, charts, ratios and commentary for owners and the board</small></span></button>
-          <button class="tab-item" type="button" id="tab-fs" data-view="fs"><span class="step">5</span><span><b>Financial statements</b><small>The four statements and notes in IFRS for SMEs format, with year-end disclosures</small></span></button>
+          <button class="tab-item" type="button" id="tab-review" data-view="review"><span class="step">6a</span><span><b>Checklist and status</b><small>Draft, Needs review or Finalised, and the checks behind it</small></span></button>
+          <button class="tab-item" type="button" id="tab-fs" data-view="fs"><span class="step">6b</span><span><b>Financial statements</b><small>The four statements and notes in IFRS for SMEs format, with year-end disclosures</small></span></button>
+          <button class="tab-item" type="button" id="tab-pack" data-view="pack" aria-current="page"><span class="step">6c</span><span><b>Management report</b><small>Key figures, charts, ratios and commentary for owners and the board</small></span></button>
         </div>
       </div>
+      <button class="tab" type="button" id="tab-export" data-view="export"><span class="step">7</span>Export</button>
       <div class="tab-group">
         <button class="tab tab-parent" type="button" id="grp-plan" aria-haspopup="true" aria-expanded="false" aria-controls="menu-plan">More tools <span class="tab-cur"></span><span class="caret" aria-hidden="true">▾</span></button>
         <div class="tab-menu" id="menu-plan" hidden>
-          <button class="tab-item" type="button" id="tab-forecast" data-view="forecast"><span class="step">6</span><span><b>Forecast</b><small>Three years, three scenarios, what drives profit</small></span></button>
-          <button class="tab-item" type="button" id="tab-budget" data-view="budget"><span class="step">7</span><span><b>Budget</b><small>The first forecast year, month by month</small></span></button>
-          <button class="tab-item" type="button" id="tab-valuation" data-view="valuation"><span class="step">8</span><span><b>Valuation</b><small>Discounted cash flow and sensitivity</small></span></button>
-          <button class="tab-item" type="button" id="tab-appraisal" data-view="appraisal"><span class="step">9</span><span><b>Loans and projects</b><small>Repayment schedules and project returns</small></span></button>
-          <button class="tab-item" type="button" id="tab-bplan" data-view="bplan"><span class="step">10</span><span><b>Business plan</b><small>A full plan for lenders and investors, built on the forecast</small></span></button>
+          <button class="tab-item" type="button" id="tab-books" data-view="books"><span class="step">·</span><span><b>Books</b><small>Keep a client's books here: sales, purchases, bank and VAT, feeding Import directly</small></span></button>
+          <button class="tab-item" type="button" id="tab-forecast" data-view="forecast"><span class="step">·</span><span><b>Forecast</b><small>Three years, three scenarios, what drives profit</small></span></button>
+          <button class="tab-item" type="button" id="tab-budget" data-view="budget"><span class="step">·</span><span><b>Budget</b><small>The first forecast year, month by month</small></span></button>
+          <button class="tab-item" type="button" id="tab-valuation" data-view="valuation"><span class="step">·</span><span><b>Valuation</b><small>Discounted cash flow and sensitivity</small></span></button>
+          <button class="tab-item" type="button" id="tab-appraisal" data-view="appraisal"><span class="step">·</span><span><b>Loans and projects</b><small>Repayment schedules and project returns</small></span></button>
+          <button class="tab-item" type="button" id="tab-bplan" data-view="bplan"><span class="step">·</span><span><b>Business plan</b><small>A full plan for lenders and investors, built on the forecast</small></span></button>
         </div>
       </div>
       <button class="tab" type="button" id="tab-manual" data-view="manual">Manual</button>
     </nav>
     <div class="actions" id="export-actions">
       <button class="btn" id="btn-install" type="button" hidden>Install app</button>
-      <button class="btn" id="btn-xlsx" type="button">Excel</button>
-      <button class="btn primary" id="btn-pdf" type="button">Download PDF pack</button>
+      <button class="btn" id="btn-xlsx" type="button" hidden>Excel</button>
+      <button class="btn primary" id="btn-pdf" type="button" hidden>Download PDF pack</button>
     </div>
   </div>
 </header>
@@ -618,19 +709,22 @@ table.lines.lg-rows input, table.lines.lg-rows select { width: 100%; padding: 6p
 <main class="gutter">
   <div class="wrap">
 
+    <div class="notice bad" id="save-warn" role="alert" hidden><span><strong>Your latest changes are not saved.</strong> <span data-save-msg></span> They may be lost when this page closes. Download a full backup now, then free some space or leave private browsing.</span><button class="btn small primary" type="button" data-ws="backup">Back up everything now</button></div>
+
     <!-- WELCOME -->
     <section class="view home" id="view-home" hidden>
       <div class="hm-hero">
         <div class="hm-copy">
-          <div class="eyebrow">For accountants, bookkeepers and business owners in Rwanda</div>
-          <h1>From trial balance to <em>signed year-end statements</em> in an afternoon</h1>
-          <p class="hm-lead">Acivaz prepares the financial statements, notes and directors' report that Law N° 007/2021 asks for, plus a management report, a forecast and a business plan your bank can read. It runs in your browser, so your clients' figures never leave your device.</p>
+          <div class="eyebrow">For accountants and bookkeepers in Rwanda</div>
+          <h1>Turn your trial balance into a <em>professional financial reporting pack</em></h1>
+          <p class="hm-lead">Prepare draft financial statements, notes and management reports. Review account mappings, resolve checks, and export to PDF or Excel, all in your browser.</p>
+          <div class="hm-flow" aria-label="The workflow"><span class="s">Clients</span><span class="a">→</span><span class="s">Period</span><span class="a">→</span><span class="s">Import</span><span class="a">→</span><span class="s">Map</span><span class="a">→</span><span class="s">Adjust</span><span class="a">→</span><span class="s">Review</span><span class="a">→</span><span class="s">Export</span></div>
           <div class="hm-cta">
-            <button class="btn primary big" type="button" id="hm-open" data-goto="pack">See the example report</button>
-            <button class="btn big" type="button" data-goto="data">Load a trial balance</button>
-            <button class="btn big" type="button" data-goto="books">Keep the books here</button>
+            <button class="btn primary big" type="button" id="hm-open" data-goto="clients">Add your first client</button>
+            <button class="btn big" type="button" data-ws="sample">See the example report</button>
           </div>
-          <p class="hm-small">Free for 30 days on this device. No sign-up and no card.</p>
+          <p class="hm-price-line"><strong>Free for 30 days</strong> on this device, no sign-up and no card. Then <strong>RWF 20,000 a month per company</strong> for downloads. <button class="linkish" type="button" data-goto-pricing>How pricing and licences work</button></p>
+          <p class="hm-small">Acivaz prepares and checks the pack. Professional review, signing by the directors and any assessment of compliance remain separate steps.</p>
         </div>
         <figure class="hm-art"><svg viewBox="0 0 480 380" role="img" aria-label="Pages of a directors' report and a statement of financial position, with a chart of what moved net profit">
   <rect x="34" y="22" width="250" height="320" rx="4" fill="var(--line)" opacity=".55"/>
@@ -672,7 +766,7 @@ table.lines.lg-rows input, table.lines.lg-rows select { width: 100%; padding: 6p
   <rect x="300" y="20" width="148" height="26" rx="13" fill="var(--good-soft)" stroke="var(--good)"/>
   <text x="374" y="37" text-anchor="middle" style="font-family:var(--font-body)" font-size="11.5" font-weight="500" fill="var(--good)">✓ Balance sheet ties</text>
   <rect x="300" y="54" width="148" height="26" rx="13" fill="var(--accent-soft)" stroke="var(--accent)"/>
-  <text x="374" y="71" text-anchor="middle" style="font-family:var(--font-body)" font-size="11.5" font-weight="500" fill="var(--accent)">Law N° 007/2021 ready</text>
+  <text x="374" y="71" text-anchor="middle" style="font-family:var(--font-body)" font-size="11.5" font-weight="500" fill="var(--accent)">Draft · Needs review</text>
 </svg></figure>
       </div>
 
@@ -686,13 +780,43 @@ table.lines.lg-rows input, table.lines.lg-rows select { width: 100%; padding: 6p
         <span class="chip good">Works offline once installed</span>
       </div>
 
+      <div class="section-title" id="hm-pricing"><h2>Pricing and licences</h2></div>
+      <div class="hm-pricing">
+        <div class="panel"><span class="eyebrow">Free trial</span><div class="amt">30 days</div><p>Every download is free for 30 days from your first visit on this device, for any number of clients. No sign-up and no card.</p></div>
+        <div class="panel"><span class="eyebrow">Per company</span><div class="amt">RWF 20,000 <small class="muted" style="font-size:13px;font-family:var(--font-body)">a month</small></div><p>Unlimited PDF and Excel downloads for that company. From 5 companies, RWF 15,000 each. Founding price for the first 20 customers: RWF 10,000 per company, fixed for 12 months.</p></div>
+        <div class="panel"><span class="eyebrow">One device</span><div class="amt">Per browser</div><p>An unlock code opens one company in one browser on one device, because your figures are kept on that device and never uploaded. Everything on screen stays free.</p></div>
+        <div class="panel"><span class="eyebrow">Renewal</span><div class="amt">Pay by MoMo</div><p>Pay by MTN MoMo, send the company ID shown in Acivaz on WhatsApp, and receive a code for the months paid. When a code ends, only downloads stop; your work stays.</p></div>
+      </div>
+      <div class="hm-two">
+        <div class="panel">
+          <h3>Replacing a device or restoring a paid workspace</h3>
+          <dl class="hm-policy">
+            <dt>New computer, new phone or a cleared browser</dt>
+            <dd>On the old device, choose <strong>Back up everything</strong> in Clients. On the new device, choose <strong>Restore a backup</strong>. Acivaz lists the paid companies it finds and prepares a WhatsApp request. You receive replacement codes for the paid time that remains, free of charge, within one working day.</dd>
+            <dt>Lost or broken device with no backup</dt>
+            <dd>Send the MoMo transaction ID and the company name on WhatsApp. Paid time is restored on the new device's company ID. Your figures can only come back from a backup, so back up after each session.</dd>
+            <dt>One device at a time</dt>
+            <dd>A replacement code moves the licence; it does not add a second device. To work on two devices, pay for each.</dd>
+          </dl>
+        </div>
+        <div class="panel hm-who">
+          <h3>Who it is for</h3>
+          <dl>
+            <dt>Accountants and bookkeepers</dt><dd>Keep each client's periods, mappings, adjustments and disclosures together, and prepare the same clear pack every month and at year end. You pay only for the companies you work on.</dd>
+            <dt>Finance managers</dt><dd>Turn the trial balance from Tally, QuickBooks, Sage or Odoo into statements and a board report, with a review trail.</dd>
+            <dt>Incubators and lenders</dt><dd>Ask applicants for statements in one consistent, readable layout.</dd>
+          </dl>
+          <a class="btn" id="hm-wa" href="https://wa.me/250784551341?text=Hello%2C%20I%20would%20like%20to%20know%20more%20about%20Acivaz." target="_blank" rel="noopener">Ask a question on WhatsApp</a>
+        </div>
+      </div>
+
       <div class="section-title"><h2>What you get</h2></div>
       <div class="hm-grid">
         <div class="panel hm-card" style="--c: var(--accent)">
           <div class="ic"><svg viewBox="0 0 24 24"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4"/><path d="M10 12h5M10 16h5"/></svg></div>
-          <h3>Year-end financial statements</h3>
-          <p>Ready for shareholders, the auditor, RDB and the bank.</p>
-          <ul><li>The four statements with numbered notes</li><li>Directors' report and accounting policies</li><li>Dividend solvency test and approval page</li></ul>
+          <h3>Draft financial statements</h3>
+          <p>In the IFRS for SMEs format, for shareholders, the auditor, RDB and the bank.</p>
+          <ul><li>The four statements with numbered notes</li><li>Directors' report and accounting policies</li><li>Disclosures kept for each period</li></ul>
           <button class="linkish go" type="button" data-goto="fs">Open financial statements →</button>
         </div>
         <div class="panel hm-card" style="--c: var(--pos)">
@@ -703,50 +827,28 @@ table.lines.lg-rows input, table.lines.lg-rows select { width: 100%; padding: 6p
           <button class="linkish go" type="button" data-goto="pack">Open the management report →</button>
         </div>
         <div class="panel hm-card" style="--c: var(--seg2)">
-          <div class="ic"><svg viewBox="0 0 24 24"><path d="M5 5a2 2 0 0 1 2-2h11v15H7a2 2 0 0 0-2 2z"/><path d="M5 20a2 2 0 0 0 2 1h11v-3"/><path d="M9 7h6"/></svg></div>
-          <h3>Books</h3>
-          <p>Simple bookkeeping that feeds the reports directly.</p>
-          <ul><li>Sales, purchases and bank</li><li>VAT at 18% with EBM receipt numbers</li><li>Income tax estimates and deadlines</li></ul>
-          <button class="linkish go" type="button" data-goto="books">Open the books →</button>
+          <div class="ic"><svg viewBox="0 0 24 24"><path d="M9 11l3 3 8-8"/><path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9"/></svg></div>
+          <h3>Review and controls</h3>
+          <p>A balanced report is not automatically a complete or correctly classified one.</p>
+          <ul><li>Adjusting entries on top of the import</li><li>Draft, Needs review, Finalised, with a checklist</li><li>Draft marks on every page until finalised</li></ul>
+          <button class="linkish go" type="button" data-goto="review">Open the review checklist →</button>
         </div>
         <div class="panel hm-card" style="--c: var(--g4)">
           <div class="ic"><svg viewBox="0 0 24 24"><path d="M4 18l5-5 4 3 7-8"/><path d="M15 8h5v5"/></svg></div>
-          <h3>Plans and funding</h3>
-          <p>Built on the actual figures, not a blank spreadsheet.</p>
-          <ul><li>Three-year forecast in three scenarios</li><li>Monthly budget, valuation and loan schedules</li><li>A full business plan for lenders and investors</li></ul>
-          <button class="linkish go" type="button" data-goto="bplan">Open the business plan →</button>
+          <h3>More tools</h3>
+          <p>Built on the same figures, when a client needs them.</p>
+          <ul><li>Books: sales, purchases, bank and VAT</li><li>Forecast, budget, valuation and loan schedules</li><li>A business plan for lenders and investors</li></ul>
+          <button class="linkish go" type="button" data-goto="books">Open the books →</button>
         </div>
       </div>
 
       <div class="section-title"><h2>How it works</h2></div>
       <ol class="hm-steps">
-        <li><span class="n">1</span><span><b>Load</b><span class="t">Upload a trial balance from Excel or CSV, from Tally, QuickBooks, Sage, Odoo or your own workbook. Or keep the books here.</span></span></li>
-        <li><span class="n">2</span><span><b>Check</b><span class="t">Acivaz places each account on a line and checks that the trial balance balances, the balance sheet ties and cash reconciles.</span></span></li>
-        <li><span class="n">3</span><span><b>Send</b><span class="t">Download a PDF and an Excel workbook, ready for the board, the auditor, a bank or RDB.</span></span></li>
+        <li><span class="n">1</span><span><b>Client and period</b><span class="t">Add a client and its reporting period. Each period keeps its own figures, adjustments, disclosures and report versions.</span></span></li>
+        <li><span class="n">2</span><span><b>Import and map</b><span class="t">Upload a trial balance from Excel or CSV, from Tally, QuickBooks, Sage, Odoo or your own workbook. Mappings are remembered for the client.</span></span></li>
+        <li><span class="n">3</span><span><b>Adjust and review</b><span class="t">Post adjusting entries, clear the checks, confirm the checklist and move the period from Draft to Needs review to Finalised.</span></span></li>
+        <li><span class="n">4</span><span><b>Export</b><span class="t">Download PDF and Excel. Drafts are marked on every page; each download is recorded as a version.</span></span></li>
       </ol>
-
-      <div class="hm-two">
-        <div class="panel hm-who">
-          <h3>Who it is for</h3>
-          <dl>
-            <dt>Accountants and bookkeepers</dt><dd>Prepare year-end statements and monthly reports for each client in the same clear format. You pay only for the companies you work on.</dd>
-            <dt>Business owners and finance managers</dt><dd>See where profit and cash went, and give your bank a business plan built on your real figures.</dd>
-            <dt>Incubators and lenders</dt><dd>Ask applicants for statements and plans in one consistent, readable layout.</dd>
-          </dl>
-        </div>
-        <div class="panel hm-price">
-          <h3>Pricing</h3>
-          <div class="amt">RWF 20,000<small>a month per company</small></div>
-          <ul>
-            <li>Everything on screen is always free. You pay to download reports.</li>
-            <li>Free for 30 days, for any number of companies.</li>
-            <li><strong>Founding price:</strong> RWF 10,000 per company for the first 20 customers, fixed for 12 months.</li>
-            <li>From 5 companies, RWF 15,000 each.</li>
-            <li>Pay by MTN MoMo and receive an unlock code on WhatsApp.</li>
-          </ul>
-          <a class="btn" id="hm-wa" href="https://wa.me/250784551341?text=Hello%2C%20I%20would%20like%20to%20know%20more%20about%20Acivaz." target="_blank" rel="noopener">Ask a question on WhatsApp</a>
-        </div>
-      </div>
 
       <p class="hm-foot"><span>Built in Kigali by Anicet Safari, CPA.</span><button class="linkish" type="button" data-goto="manual">Read the manual</button><button class="linkish" type="button" id="hm-install" hidden>Install Acivaz as an app</button></p>
     </section>
@@ -934,6 +1036,10 @@ table.lines.lg-rows input, table.lines.lg-rows select { width: 100%; padding: 6p
         <div class="panel-head"><h3>Statement of cash flows</h3><span class="sub" id="cf-sub"></span></div>
         <div id="cf-box"></div>
       </div>
+      <div class="panel" id="fs-p-cfw">
+        <div class="panel-head"><h3>Cash flow workings</h3><span class="sub">For the reviewer: how each line of the statement of cash flows ties to the balance sheet. Not part of the published statements; included in Excel.</span></div>
+        <div id="cfw-box"></div>
+      </div>
       <div class="section-title" id="sec-notes"><h2>Notes to the financial statements</h2></div>
       <div class="panel">
         <div class="notes" id="notes"></div>
@@ -945,6 +1051,14 @@ table.lines.lg-rows input, table.lines.lg-rows select { width: 100%; padding: 6p
 
     <!-- DATA -->
     <section class="view" id="view-data" hidden>
+      <div class="pack-title">
+        <div>
+          <div class="eyebrow">Step 3 · Import</div>
+          <h1 id="imp-title">Import a trial balance</h1>
+          <div class="sub" id="imp-sub"></div>
+        </div>
+      </div>
+      <div class="notice" id="imp-sample" hidden><span><strong>You are looking at example data.</strong> Loading a trial balance here starts a new client, named in Pack settings. To add it to an existing client, open that client's period first.</span><button class="linkish" type="button" data-view="clients">Go to Clients</button></div>
       <div class="grid-2">
         <div class="panel">
           <div class="panel-head"><h2>Load a trial balance</h2></div>
@@ -987,7 +1101,8 @@ table.lines.lg-rows input, table.lines.lg-rows select { width: 100%; padding: 6p
         <div class="panel">
           <div class="panel-head"><h2>Pack settings</h2></div>
           <div class="form">
-            <div class="field" style="grid-column:1/-1"><label for="s-company">Company name</label><input id="s-company" type="text"></div>
+            <div class="field"><label for="s-company">Client (company name)</label><input id="s-company" type="text"></div>
+            <div class="field"><label for="s-period">Reporting period</label><input id="s-period" type="text" placeholder="For example: Year ended 31 December 2026"></div>
             <div class="field"><label for="s-cur">This period label</label><input id="s-cur" type="text"></div>
             <div class="field"><label for="s-cmp">Comparative label</label><input id="s-cmp" type="text"></div>
             <div class="field"><label for="s-bud">Budget label</label><input id="s-bud" type="text"></div>
@@ -1205,6 +1320,12 @@ table.lines.lg-rows input, table.lines.lg-rows select { width: 100%; padding: 6p
       <div class="manual">
         <nav class="m-toc" aria-label="Manual contents">
           <button type="button" data-jump="m-start">Getting started</button>
+          <button type="button" data-jump="m-workflow">The reporting workflow</button>
+          <button type="button" class="lvl2" data-jump="m-wf-clients">Clients and periods</button>
+          <button type="button" class="lvl2" data-jump="m-wf-adjust">Adjustments</button>
+          <button type="button" class="lvl2" data-jump="m-wf-review">Review and status</button>
+          <button type="button" class="lvl2" data-jump="m-wf-export">Export and versions</button>
+          <button type="button" class="lvl2" data-jump="m-wf-backup">Full backup and restore</button>
           <button type="button" data-jump="m-books">1 · Books</button>
           <button type="button" class="lvl2" data-jump="m-books-dash">Dashboard</button>
           <button type="button" class="lvl2" data-jump="m-books-setup">Set up a company</button>
@@ -1238,13 +1359,31 @@ table.lines.lg-rows input, table.lines.lg-rows select { width: 100%; padding: 6p
         <article class="m-art">
           <section id="m-start">
             <h2>Getting started</h2>
-            <p>Acivaz takes a business from its day-to-day transactions to a board-ready management pack, then on to forecasts, a budget, a valuation, loan or project appraisal and a full business plan. The top bar has five entries: <strong>Books</strong>, <strong>Data</strong> (upload a trial balance, then mapping), <strong>Reports</strong> (the management report and the financial statements), <strong>More tools</strong> (forecast, budget, valuation, loans and projects, and the business plan) and <strong>Manual</strong>. Data, Reports and More tools open a short menu; the step you are on shows beside the menu's name.</p>
+            <p>Acivaz turns a trial balance into a professional financial reporting pack: draft financial statements with notes, and a management report. The top bar follows an accountant's workflow: <strong>Clients → Period → Import → Map → Adjust → Review → Export</strong>. Books, forecasting, valuation, loan schedules and business plans are under <strong>More tools</strong>. The bar also shows the open client and period, its review status, and when your work was last saved on this device.</p>
             <h3>How the figures flow</h3>
             <figure class="m-fig"><div class="fig-box"><svg viewBox="0 0 960 450" role="img" aria-label="Figures flow from Books or an uploaded trial balance, through mapping, into the pack; the forecast starts from the pack and feeds the budget and valuation; every download is free for the first 30 days, then needs an unlock code" font-family="IBM Plex Sans, Segoe UI, sans-serif" font-size="12"><defs><marker id="mfa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker></defs><rect x="20" y="30" width="160" height="100" rx="4" fill="var(--seg1)" fill-opacity=".13" stroke="var(--seg1)" stroke-width="1.5"/><text x="34" y="56" font-weight="700" font-size="13" fill="var(--ink)">1 Books</text><text x="34" y="78" fill="var(--ink)">Invoices and bills</text><text x="34" y="97" fill="var(--ink)">Bank, MoMo, journals</text><text x="34" y="116" fill="var(--ink)">VAT and 28% tax</text><rect x="20" y="170" width="160" height="80" rx="4" fill="var(--seg1)" fill-opacity=".13" stroke="var(--seg1)" stroke-width="1.5"/><text x="34" y="196" font-weight="700" font-size="13" fill="var(--ink)">2 Data</text><text x="34" y="218" fill="var(--ink)">Trial balance file</text><text x="34" y="237" fill="var(--ink)">Excel or CSV</text><rect x="260" y="90" width="140" height="100" rx="4" fill="var(--accent)" fill-opacity=".13" stroke="var(--accent)" stroke-width="1.5"/><text x="274" y="116" font-weight="700" font-size="13" fill="var(--ink)">Trial balance</text><text x="274" y="138" fill="var(--ink)">This period</text><text x="274" y="157" fill="var(--ink)">Comparative</text><text x="274" y="176" fill="var(--ink)">Opening</text><rect x="440" y="105" width="120" height="70" rx="4" fill="var(--accent)" fill-opacity=".13" stroke="var(--accent)" stroke-width="1.5"/><text x="454" y="131" font-weight="700" font-size="13" fill="var(--ink)">3 Mapping</text><text x="454" y="153" fill="var(--ink)">Account to line</text><rect x="600" y="30" width="170" height="190" rx="4" fill="var(--accent)" fill-opacity=".13" stroke="var(--accent)" stroke-width="1.5"/><text x="614" y="56" font-weight="700" font-size="13" fill="var(--ink)">4–5 Reports</text><text x="614" y="78" fill="var(--ink)">Profit or loss</text><text x="614" y="97" fill="var(--ink)">Financial position</text><text x="614" y="116" fill="var(--ink)">Cash flows</text><text x="614" y="135" fill="var(--ink)">Notes</text><text x="614" y="154" fill="var(--ink)">Ratios</text><text x="614" y="173" fill="var(--ink)">Charts</text><text x="614" y="192" fill="var(--ink)">Commentary</text><rect x="420" y="270" width="170" height="70" rx="4" fill="var(--seg3)" fill-opacity=".13" stroke="var(--seg3)" stroke-width="1.5"/><text x="434" y="296" font-weight="700" font-size="13" fill="var(--ink)">6 Forecast</text><text x="434" y="318" fill="var(--ink)">3 years, 3 scenarios</text><rect x="630" y="270" width="150" height="56" rx="4" fill="var(--seg3)" fill-opacity=".13" stroke="var(--seg3)" stroke-width="1.5"/><text x="644" y="296" font-weight="700" font-size="13" fill="var(--ink)">7 Budget</text><text x="644" y="318" fill="var(--ink)">Year 1 by month</text><rect x="630" y="342" width="150" height="56" rx="4" fill="var(--seg3)" fill-opacity=".13" stroke="var(--seg3)" stroke-width="1.5"/><text x="644" y="368" font-weight="700" font-size="13" fill="var(--ink)">8 Valuation</text><text x="644" y="390" fill="var(--ink)">DCF, sensitivity</text><rect x="420" y="370" width="170" height="56" rx="4" fill="var(--seg3)" fill-opacity=".13" stroke="var(--seg3)" stroke-width="1.5" stroke-dasharray="5 4"/><text x="434" y="396" font-weight="700" font-size="13" fill="var(--ink)">9 Loans and projects</text><text x="434" y="418" fill="var(--ink)">Own inputs</text><rect x="820" y="30" width="120" height="400" rx="4" fill="var(--seg2)" fill-opacity=".13" stroke="var(--seg2)" stroke-width="1.5"/><text x="834" y="56" font-weight="700" font-size="13" fill="var(--ink)">Downloads</text><text x="834" y="78" fill="var(--ink)">PDF and Excel</text><text x="834" y="97" fill="var(--ink)"></text><text x="834" y="116" fill="var(--ink)">30-day free trial,</text><text x="834" y="135" fill="var(--ink)">then RWF 20,000</text><text x="834" y="154" fill="var(--ink)">a month by MoMo</text><text x="834" y="173" fill="var(--ink)"></text><text x="834" y="192" fill="var(--ink)">Backups are</text><text x="834" y="211" fill="var(--ink)">always free</text><path d="M180 80 H220 V120 H259" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfa)"/><text x="184" y="72" text-anchor="start" font-size="11" fill="var(--muted)">Build pack</text><path d="M180 210 H220 V155 H259" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfa)"/><text x="184" y="226" text-anchor="start" font-size="11" fill="var(--muted)">Upload</text><path d="M400 140 H439" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfa)"/><path d="M560 140 H599" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfa)"/><path d="M770 90 H819" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfa)"/><path d="M685 220 V245 H505 V269" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfa)"/><text x="595" y="239" text-anchor="middle" font-size="11" fill="var(--muted)">Actuals, annualised</text><path d="M590 298 H629" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfa)"/><path d="M590 322 H610 V370 H629" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfa)"/><path d="M780 298 H819" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfa)"/><path d="M780 370 H819" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfa)"/><path d="M590 412 H819" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#mfa)"/></svg></div>
               <figcaption>Figures come either from the books or from an uploaded trial balance. Mapping places each account on a line of the pack. The forecast starts from the pack's actuals, scaled to a full year, and feeds the budget and valuation. Loans and projects use their own inputs. Every PDF or Excel download is free during the 30-day trial, then needs an unlock code.</figcaption></figure>
             <p>There are two ways in. If you keep the client's books in Acivaz, start at <strong>Books</strong> and press <strong>Build management pack</strong> when you're ready. If the books are kept in other software, start at <strong>Data</strong> and upload a trial balance.</p>
             <p>Both ways open on example data, a fictional bakery and a fictional maize processor, so you can see every screen working before you enter your own figures.</p>
             <div class="m-tip"><strong>Your data stays on your device.</strong> Files you load and books you keep are processed in your browser and never uploaded. The flip side is that clearing your browser data erases them, so back up your books regularly (see <button class="linkish" type="button" data-jump="m-books-backup">Backup and restore</button>).</div>
+          </section>
+
+          <section id="m-workflow">
+            <h2>The reporting workflow</h2>
+            <h3 id="m-wf-clients">Clients and periods</h3>
+            <p>A <strong>client</strong> is one company. Each client has <strong>reporting periods</strong>, such as <em>Year ended 31 December 2026</em> or <em>September 2026 YTD</em>. A period keeps its own trial balance, settings, adjustments, disclosures, commentary, auditor's report, review status and report versions. Account mappings are kept for the client, so the next period maps itself.</p>
+            <p>Add a client in <strong>Clients</strong>; its first period is created with it. Add another period from the client's <strong>New period</strong> button or from the Period menu. <strong>Roll forward</strong> copies the settings and the year-end disclosures as a starting point and clears the approval date, the audit report and dividends, which belong to the old period. Switch periods from the Period menu at any time; your work is saved as you go.</p>
+            <p>The example company is kept apart from your clients. Loading a trial balance while the example is open starts a new client.</p>
+            <h3 id="m-wf-adjust">Adjustments</h3>
+            <p><strong>Adjust</strong> posts journal entries on top of the imported trial balance: depreciation, accruals, prepayments, provisions, income tax and reclassifications. Each entry needs a description and must balance. Amounts are in full currency units. An entry can use an account that is not in the trial balance; choose <strong>New account</strong> and give it a line in the reports. The import itself is never changed, so you can load a corrected trial balance and the adjustments are applied again. The adjusted trial balance shows imported, adjustment and adjusted amounts for every account, and the Excel downloads include both.</p>
+            <h3 id="m-wf-review">Review and status</h3>
+            <p>Each period is <strong>Draft</strong>, <strong>Needs review</strong> or <strong>Finalised</strong>. Acivaz checks that the trial balance balances, every account is mapped, the balance sheet ties and the cash flow reconciles. A balanced report can still be wrongly classified or incomplete, so the reviewer also confirms that mappings were reviewed, balances were reconciled to supporting records, adjustments were reviewed, disclosures are complete and approval is recorded. A period can be finalised only when every check passes and every item is confirmed.</p>
+            <p>Finalising records who finalised it and when. If the figures, mappings, adjustments, disclosures or commentary change afterwards, the period goes back to Draft and the checklist is cleared. Every step is kept in the review history with your name and any note.</p>
+            <p>Acivaz checks arithmetic and completeness. It does not replace professional review, signing by the directors, or an assessment of compliance with the law or IFRS for SMEs.</p>
+            <h3 id="m-wf-export">Export and versions</h3>
+            <p><strong>Export</strong> downloads the financial statements, the management report, or the full pack, as PDF or Excel. Until the period is finalised, every PDF page carries a pale DRAFT mark and a note in the top margin, the Excel cover and each sheet say DRAFT, and the file name ends in DRAFT. Each download is recorded as a numbered version with its status and who downloaded it.</p>
+            <h3 id="m-wf-backup">Full backup and restore</h3>
+            <p>Everything is kept in this browser on this device. <strong>Back up everything</strong> in Clients downloads one file with every client, period, mapping, adjustment, disclosure, the books and attached auditor's reports. <strong>Restore a backup</strong> replaces the data in this browser with the file; this device's free trial and unlock codes are kept. If the backup came from another device with paid companies, Acivaz lists them and prepares a request for replacement codes. The top bar shows <strong>Saved</strong> with the time after each change. If the browser refuses to save (storage full, or a private window), a red warning appears: back up straight away.</p>
           </section>
 
           <section id="m-books">
@@ -1467,6 +1606,12 @@ table.lines.lg-rows input, table.lines.lg-rows select { width: 100%; padding: 6p
               <li>Paste the unlock code you receive into the payment screen and press <strong>Unlock</strong>.</li>
             </ol>
             <p>Each company has its own ID on each device, made from the device and the company name, so a code unlocks that company on that device and can't be shared. Renaming the company in Settings gives it a new ID, so keep the name as registered. When a code ends, the payment screen opens again on the next download for that company. Using another computer or browser needs its own code.</p>
+            <h3 id="m-licence">Replacing a device or restoring a paid workspace</h3>
+            <ul>
+              <li><strong>New computer, new phone or a cleared browser.</strong> On the old device, choose <strong>Back up everything</strong> in Clients. On the new device, choose <strong>Restore a backup</strong>. Acivaz lists the paid companies it finds and prepares a WhatsApp request with the old and new IDs. You receive replacement codes for the paid time that remains, free of charge, within one working day.</li>
+              <li><strong>Lost or broken device with no backup.</strong> Send the MoMo transaction ID and the company name on WhatsApp. Paid time is restored on the new device's company ID. Your figures can only come back from a backup.</li>
+              <li><strong>One device at a time.</strong> A replacement code moves the licence; it does not add a second device.</li>
+            </ul>
           </section>
 
           <section id="m-install">
@@ -1516,6 +1661,13 @@ table.lines.lg-rows input, table.lines.lg-rows select { width: 100%; padding: 6p
 
     <!-- MAPPING -->
     <section class="view" id="view-map" hidden>
+      <div class="pack-title">
+        <div>
+          <div class="eyebrow">Step 4 · Map</div>
+          <h1 id="map-title">Account mapping</h1>
+          <div class="sub">Place each account on a line of the reports. Mappings are saved for the client, so the next period maps itself. Check new and changed accounts each period: the balance checks cannot tell whether an account sits on the right line.</div>
+        </div>
+      </div>
       <div class="panel">
         <div class="panel-head">
           <h2>Account mapping</h2>
@@ -1530,6 +1682,106 @@ table.lines.lg-rows input, table.lines.lg-rows select { width: 100%; padding: 6p
       </div>
     </section>
 
+
+    <!-- CLIENTS -->
+    <section class="view" id="view-clients" hidden>
+      <div class="pack-title">
+        <div>
+          <div class="eyebrow">Step 1 · Clients</div>
+          <h1>Clients</h1>
+          <div class="sub">Each client keeps its own reporting periods, saved mappings, adjustments, disclosures and report versions, in this browser on this device.</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">
+          <div class="actions">
+            <button class="btn small primary" type="button" data-ws="backup">Back up everything</button>
+            <label class="btn small" for="ws-restore-file">Restore a backup</label>
+            <input type="file" id="ws-restore-file" accept=".json,application/json" hidden>
+          </div>
+          <span class="help" id="ws-backup-note"></span>
+        </div>
+      </div>
+      <div id="ws-restore"></div>
+      <div id="ws-recovery"></div>
+      <div class="panel">
+        <div class="panel-head"><h3>Add a client</h3><span class="sub">A client is one company. Its first reporting period is created with it.</span></div>
+        <div class="ws-new">
+          <label>Client or company name<input type="text" id="ws-new-name" placeholder="For example: Umucyo Agro Processors Ltd" autocomplete="organization"></label>
+          <label>First reporting period<input type="text" id="ws-new-period" placeholder="For example: Year ended 31 December 2026"></label>
+          <button class="btn primary" type="button" data-ws="create-client">Add client</button>
+        </div>
+      </div>
+      <div id="ws-list" class="view"></div>
+    </section>
+
+    <!-- ADJUST -->
+    <section class="view" id="view-adjust" hidden>
+      <div class="pack-title">
+        <div>
+          <div class="eyebrow">Step 5 · Adjust</div>
+          <h1 id="adj-title">Adjustments</h1>
+          <div class="sub">Year-end and correcting entries, posted on top of the imported trial balance for this period. The import itself is never changed, so you can reload it and keep the adjustments.</div>
+        </div>
+      </div>
+      <div class="panel adj-form" id="adj-form"></div>
+      <div class="panel">
+        <div class="panel-head"><h3>Adjusting entries</h3><span class="sub" id="adj-sub"></span></div>
+        <div id="adj-list"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><h3>Adjusted trial balance</h3><span class="sub" id="atb-sub"></span></div>
+        <label class="check" style="margin-bottom:10px"><input type="checkbox" id="atb-only"><span>Show only accounts with adjustments</span></label>
+        <div class="table-box"><table class="adj-table" id="atb"></table></div>
+      </div>
+    </section>
+
+    <!-- REVIEW -->
+    <section class="view" id="view-review" hidden>
+      <div class="pack-title">
+        <div>
+          <div class="eyebrow">Step 6 · Review</div>
+          <h1 id="rv-title">Review</h1>
+          <div class="sub" id="rv-sub"></div>
+        </div>
+        <div id="rv-badge"></div>
+      </div>
+      <div class="notice" id="rv-note-sample" hidden><span><strong>Example data.</strong> Review status is kept for your own clients. Open or add a client to review a real period.</span><button class="linkish" type="button" data-view="clients">Go to Clients</button></div>
+      <div class="grid-2">
+        <div class="panel">
+          <div class="panel-head"><h3>Checklist</h3><span class="sub">A balanced report is not automatically complete or correctly classified</span></div>
+          <div id="rv-checks"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><h3>Status and sign-off</h3></div>
+          <div class="rv-actions" id="rv-actions"></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><h3>Review history</h3><span class="sub">Who moved this period between Draft, Needs review and Finalised, and why</span></div>
+        <div class="table-box" id="rv-history"></div>
+      </div>
+    </section>
+
+    <!-- EXPORT -->
+    <section class="view" id="view-export" hidden>
+      <div class="pack-title">
+        <div>
+          <div class="eyebrow">Step 7 · Export</div>
+          <h1 id="ex-title">Export</h1>
+          <div class="sub" id="ex-sub"></div>
+        </div>
+      </div>
+      <div id="ex-status"></div>
+      <div class="ex-grid" id="ex-cards">
+        <div class="panel ex-card"><h3>Financial statements</h3><p>Directors' report, the four statements, notes and the approval page, in the IFRS for SMEs format.</p><div class="actions"><button class="btn small primary" type="button" data-ex="pdf:fs">PDF</button><button class="btn small" type="button" data-ex="xlsx:fs">Excel</button></div></div>
+        <div class="panel ex-card"><h3>Management report</h3><p>Key figures, charts, ratio scorecard and commentary for owners and the board.</p><div class="actions"><button class="btn small primary" type="button" data-ex="pdf:mgmt">PDF</button><button class="btn small" type="button" data-ex="xlsx:mgmt">Excel</button></div></div>
+        <div class="panel ex-card"><h3>Full reporting pack</h3><p>Both reports in one file, with the trial balance, adjustments and cash flow workings in Excel.</p><div class="actions"><button class="btn small primary" type="button" data-ex="pdf:all">PDF</button><button class="btn small" type="button" data-ex="xlsx:all">Excel</button></div></div>
+      </div>
+      <p class="help" id="ex-plan"></p>
+      <div class="panel">
+        <div class="panel-head"><h3>Report versions</h3><span class="sub">Every download from this period, newest first</span></div>
+        <div class="table-box" id="ex-versions"></div>
+      </div>
+    </section>
   </div>
 </main>
 <div class="modal-back" id="bk-modal" hidden>
@@ -1545,7 +1797,7 @@ table.lines.lg-rows input, table.lines.lg-rows select { width: 100%; padding: 6p
     <button class="modal-x" type="button" id="pw-close" aria-label="Close">×</button>
     <div class="eyebrow">Acivaz</div>
     <h2 id="pw-title">Your 30-day free trial has ended</h2>
-    <p id="pw-lead">Prices are per company: <span class="pw-price">RWF 20,000 a month for each company</span>, with unlimited PDF and Excel downloads for it. Everything on screen stays free.</p>
+    <p id="pw-lead">Prices are per company: <span class="pw-price">RWF 20,000 a month for each company</span>, with unlimited PDF and Excel downloads for it. Everything on screen stays free. New device or cleared browser? Restore your backup in Clients and request replacement codes, free for the paid time that remains.</p>
     <div class="pw-founding"><strong>Founding price: RWF 10,000 a month per company.</strong> The first 20 paying customers pay half price, fixed for 12 months. From 5 companies, each costs RWF 15,000.</div>
     <p style="margin:10px 0 0">This download is for <strong id="pw-co"></strong>.</p>
     <ol class="pw-steps">
@@ -1691,27 +1943,71 @@ const $ = id => document.getElementById(id);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const store = {
   get(k) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : null; } catch (e) { return null; } },
-  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  /* Every write reports whether it stuck. A failed write (storage full, private window, blocked) raises a warning that stays until a later write succeeds. */
+  set(k, v) {
+    try { localStorage.setItem(k, JSON.stringify(v)); saveState(true, null, k); return true; }
+    catch (e) { saveState(false, e, k); return false; }
+  },
+  del(k) { try { localStorage.removeItem(k); } catch (e) {} }
 };
+let saveFailed = false, savedAt = null;
+const failedKeys = new Set();
+function saveState(ok, err, k) {
+  if (ok) {
+    if (!/^acv:(dev|trial|dl|hello|count|seen|user|ws-ui)$/.test(k || "")) savedAt = new Date();
+    failedKeys.delete(k);
+  } else failedKeys.add(k || "?");
+  const was = saveFailed; saveFailed = failedKeys.size > 0;
+  const w = document.getElementById("save-warn");
+  if (w) {
+    w.hidden = !saveFailed;
+    const m = w.querySelector("[data-save-msg]");
+    if (m && !ok) m.textContent = err && /quota/i.test(String(err.name || err.message)) ? "This browser's storage is full." : "This browser blocked saving (a private window, or storage switched off).";
+  }
+  if (saveFailed && !was && typeof toast === "function") setTimeout(() => toast("Not saved on this device. Back up everything now."), 0);
+  clearTimeout(saveState.t); saveState.t = setTimeout(renderSaveChip, 60);
+}
+function renderSaveChip() {
+  const el = document.getElementById("save-chip"); if (!el) return;
+  if (saveFailed) { el.className = "save-chip bad"; el.textContent = "Not saved"; el.title = "Your last change could not be saved on this device. Back up everything now."; return; }
+  if (!savedAt) { el.className = "save-chip"; el.textContent = ""; return; }
+  el.className = "save-chip ok";
+  el.textContent = "Saved " + savedAt.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
+  el.title = "Saved on this device at " + savedAt.toLocaleString("en-GB") + ". Back up everything to keep a copy elsewhere.";
+}
 function toast(msg) {
   const t = $("toast"); t.textContent = msg; t.hidden = false;
   clearTimeout(toast.t); toast.t = setTimeout(() => { t.hidden = true; }, 3200);
 }
 
 /* ---------- Numbers ---------- */
+/* Reads an amount the way accounting exports write it: 1,234,567.89 · 1.234.567,89 · 1 234 567 · (1,234) · 1,234- · −1,234 · 1,234 Cr · Dr 1,234 · RWF 1,234 · 1.2E+08.
+   Anything else with letters in it (a heading, a date, "Account 4000") is not a number. */
 function toNum(v) {
   if (v === null || v === undefined) return null;
   if (typeof v === "number") return isFinite(v) ? v : null;
-  let s = String(v).trim();
-  if (!s || s === "-" || s === "–") return null;
+  let s = String(v).replace(/[    ]/g, " ").replace(/[−‒–—]/g, "-").trim();
+  if (!s || /^-+$/.test(s) || /^(n\/?a|nil)$/i.test(s)) return null;
+  if (/^[+-]?\d+(\.\d+)?e[+-]?\d+$/i.test(s)) { const n = Number(s); return isFinite(n) ? n : null; }
   let neg = false;
-  if (/^\(.*\)$/.test(s)) { neg = true; s = s.slice(1, -1); }
-  if (/\s*(dr|cr)$/i.test(s)) { if (/cr$/i.test(s)) neg = !neg; s = s.replace(/\s*(dr|cr)$/i, ""); }
-  s = s.replace(/[^0-9.\-eE]/g, "");
-  if (!s || s === "-") return null;
+  const flip = () => { neg = !neg; };
+  if (/^\(.*\)$/.test(s)) { flip(); s = s.slice(1, -1).trim(); }
+  let m = s.match(/^(dr|cr)\.?\s*(.+)$/i); if (m) { if (/cr/i.test(m[1])) flip(); s = m[2].trim(); }
+  m = s.match(/^(.+?)\s*(dr|cr)\.?$/i); if (m) { if (/cr/i.test(m[2])) flip(); s = m[1].trim(); }
+  s = s.replace(/^(rwf|frw|usd|eur|gbp|kes|ugx|tzs)\.?\s*/i, "").replace(/\s*(rwf|frw|usd|eur|gbp|kes|ugx|tzs)\.?$/i, "").replace(/[$€£]/g, "").trim();
+  if (/^\(.*\)$/.test(s)) { flip(); s = s.slice(1, -1).trim(); }
+  if (/^[+-]/.test(s)) { if (s[0] === "-") flip(); s = s.slice(1).trim(); }
+  if (/-$/.test(s)) { flip(); s = s.slice(0, -1).trim(); }
+  s = s.replace(/[\s']/g, "");
+  if (!/^[\d.,]+$/.test(s) || !/\d/.test(s)) return null;
+  const lc = s.lastIndexOf(","), ld = s.lastIndexOf(".");
+  if (lc >= 0 && ld >= 0) s = lc > ld ? s.replace(/\./g, "").replace(",", ".") : s.replace(/,/g, "");
+  else if (lc >= 0) s = /^\d{1,3}(,\d{3})+$/.test(s) ? s.replace(/,/g, "") : (s.match(/,/g).length === 1 ? s.replace(",", ".") : null);
+  else if (ld >= 0 && s.match(/\./g).length > 1) s = /^\d{1,3}(\.\d{3})+$/.test(s) ? s.replace(/\./g, "") : null;
+  if (s === null || !/^\d*\.?\d*$/.test(s)) return null;
   const n = parseFloat(s);
   if (!isFinite(n)) return null;
-  return neg ? -Math.abs(n) : n;
+  return neg ? -n : n;
 }
 const UNIT = { m: { div: 1e6, dp: 1, label: "millions", sfx: "m" }, k: { div: 1e3, dp: 0, label: "thousands", sfx: "k" }, "1": { div: 1, dp: 0, label: "", sfx: "" } };
 function amt(v, opts = {}) {
@@ -1829,33 +2125,161 @@ function signsReversed(col = "cur") {
 }
 function flipAllSigns() {
   S.flip = !S.flip; $("s-flip").checked = S.flip;
-  for (const a of A) { a.cur = -a.cur; for (const k of ["cmp", "bud", "opn"]) if (a[k] !== null && a[k] !== undefined) a[k] = -a[k]; }
+  for (const a of A) { for (const k of ["cmp", "bud", "opn", "raw"]) if (a[k] !== null && a[k] !== undefined) a[k] = -a[k]; a.cur = (a.raw ?? -a.cur) + (a.adj || 0); }
 }
-const mapKey = () => "mpb:map:" + (S.company || "").trim().toLowerCase();
-const acctKey = a => (a.code || "") + "|" + a.name.toLowerCase();
+/* ---------- Clients and reporting periods ----------
+   WS lists the clients and their periods. Each period keeps its own trial balance, settings, adjustments, review status and
+   report versions under acv:pd:<id>; its disclosures, commentary and auditor's file are kept per period too. Mappings are kept
+   per client, so the next period maps itself. Everything stays in this browser; a full backup copies all of it. */
+const WS_KEY = "acv:ws";
+let WS = { v: 1, clients: [], periods: [], cur: null }, ADJ = [], RV = null;
+const nowISO = () => new Date().toISOString();
+const wsId = p => p + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const blankReview = () => ({ status: "draft", ticks: {}, history: [], versions: [] });
+const blankSettings = company => ({ ...SAMPLE_SETTINGS, company: company || "", cur: "This period", cmp: "Comparative", bud: "Budget", opn: "Opening balances", months: 12, unit: "m", currency: "RWF", flip: false, cmpOpen: false, policies: null, model: null });
+function wsLoad() { const w = store.get(WS_KEY); WS = w && Array.isArray(w.clients) && Array.isArray(w.periods) ? w : { v: 1, clients: [], periods: [], cur: null }; }
+const wsSave = () => store.set(WS_KEY, WS);
+const pdKey = id => "acv:pd:" + id;
+const curPeriod = () => (!isSample && WS.cur && WS.periods.find(p => p.id === WS.cur)) || null;
+const curClient = () => { const p = curPeriod(); return p ? WS.clients.find(c => c.id === p.client) || null : null; };
+const clientOf = p => WS.clients.find(c => c.id === p.client) || null;
+const periodsOf = cid => WS.periods.filter(p => p.client === cid).sort((a, b) => String(b.created || "").localeCompare(String(a.created || "")));
+const sameName = (a, b) => String(a || "").trim().toLowerCase() === String(b || "").trim().toLowerCase();
+const legacyMapKey = () => "mpb:map:" + (S.company || "").trim().toLowerCase();
+const mapKey = () => curClient() ? "acv:map:" + curClient().id : legacyMapKey();
+const savedMap = () => store.get(mapKey()) || (curClient() ? store.get(legacyMapKey()) : null) || {};
+const acctKey = a => (a.code || "") + "|" + String(a.name || "").toLowerCase();
 function autoMap(keepEdits) {
-  const saved = store.get(mapKey()) || {};
+  const saved = savedMap();
   for (const a of A) {
-    if (a.src === "books" || (keepEdits && a.src === "edited")) continue;
+    if (a.src === "books" || (keepEdits && (a.src === "edited" || a.adjNew))) continue;
     const s = saved[acctKey(a)];
     if (s && CATS.some(c => c.k === s)) { a.cat = s; a.src = "saved"; }
-    else { a.cat = guessCat(a.code, a.name, a.cur); a.src = "auto"; }
+    else if (!a.adjNew) { a.cat = guessCat(a.code, a.name, a.cur); a.src = "auto"; }
   }
 }
 function saveMapping() {
-  const saved = store.get(mapKey()) || {};
+  const saved = savedMap();
   for (const a of A) if (a.cat) saved[acctKey(a)] = a.cat;
-  store.set(mapKey(), saved);
+  return store.set(mapKey(), saved);
 }
-function persist() { store.set("mpb:last2", { S, A, isSample }); }
+/* Saves the open period. Returns false if the browser refused the write (the warning banner then shows). */
+function persist() {
+  const p = curPeriod();
+  if (!p) return true;
+  const c = clientOf(p);
+  if (c && S.company && c.name !== S.company) c.name = S.company;
+  p.updated = nowISO(); p.n = A.length; p.nAdj = ADJ.length; p.status = effStatus(); p.nVer = (RV.versions || []).length;
+  const ok = store.set(pdKey(p.id), { S, A, adj: ADJ, rv: RV });
+  wsSave();
+  if (typeof renderNav === "function") renderNav();
+  return ok;
+}
+function loadPeriodData(id) {
+  const p = WS.periods.find(x => x.id === id); if (!p) return false;
+  const d = store.get(pdKey(id)) || {}, c = clientOf(p);
+  S = { ...blankSettings(c ? c.name : ""), ...(d.S || {}) };
+  if (c && !S.company) S.company = c.name;
+  A = Array.isArray(d.A) ? d.A.map(a => ({ opn: null, ...a })) : [];
+  ADJ = Array.isArray(d.adj) ? d.adj : [];
+  RV = { ...blankReview(), ...(d.rv || {}) };
+  isSample = false; compareTo = "cmp"; WS.cur = id;
+  $("commentary").value = "";
+  return true;
+}
+function openPeriod(id, view) {
+  if (curPeriod()) persist();
+  if (!loadPeriodData(id)) return;
+  wsSave(); renderAll();
+  show(view || (A.length ? (show.cur && !["home", "clients", "manual"].includes(show.cur) ? show.cur : "review") : "data"));
+}
 function loadSample() {
   S = { ...SAMPLE_SETTINGS };
   const rows = parseCSV(SAMPLE_CSV);
   A = buildAccounts(rows.slice(1), { code: 0, name: 1, cur: 2, cmp: 3, bud: 4, opn: 5 });
   autoMap(false);
-  isSample = true; compareTo = "cmp";
+  isSample = true; compareTo = "cmp"; ADJ = []; RV = blankReview();
   $("commentary").value = "";
-  persist();
+}
+function openSample(view) {
+  if (curPeriod()) persist();
+  loadSample(); WS.cur = null; wsSave(); renderAll();
+  if (view) show(view); else renderNav();
+}
+function newPeriodRec(cid, label, fromId) {
+  const c = WS.clients.find(x => x.id === cid); if (!c) return null;
+  const p = { id: wsId("p"), client: cid, label: String(label || "").trim() || "New period", created: nowISO(), updated: nowISO(), n: 0, nAdj: 0, status: "draft", nVer: 0 };
+  let st = blankSettings(c.name);
+  const from = fromId && store.get(pdKey(fromId));
+  if (from && from.S) {
+    const f = from.S;
+    st = { ...st, unit: f.unit, currency: f.currency, months: f.months, taxRate: f.taxRate, flip: f.flip, cmpOpen: f.cmpOpen, policies: f.policies ?? null };
+    /* Disclosures roll forward as a starting point. Dates, approval, the audit report and dividends belong to the old period, so they are cleared. */
+    const fd = store.get(fsKeyFor(fromId));
+    if (fd) { const g = { ...fd }; for (const k of ["approvedOn", "filed", "auditDate", "auditIssued", "auditFile", "auditDraft", "dividend", "yearEnd"]) delete g[k]; store.set(fsKeyFor(p.id), g); }
+  }
+  WS.periods.push(p);
+  store.set(pdKey(p.id), { S: st, A: [], adj: [], rv: { ...blankReview(), history: [{ at: nowISO(), by: userName(), act: "Created", note: from ? "Settings and disclosures rolled forward from " + (WS.periods.find(x => x.id === fromId) || {}).label : "" }] } });
+  return p;
+}
+function newClient(name, label) {
+  name = String(name || "").trim(); if (!name) return null;
+  const c = { id: wsId("c"), name, created: nowISO() };
+  WS.clients.push(c);
+  const p = newPeriodRec(c.id, label || "First period");
+  wsSave();
+  return p;
+}
+/* An import while the example is open starts a new client, so example data never mixes with real work. */
+function ensureWorkingPeriod(name, label) {
+  if (curPeriod()) return curPeriod();
+  const p = newClient(name || "New client", label || "Current period");
+  WS.cur = p.id; isSample = false; ADJ = []; RV = blankReview();
+  RV.history = (store.get(pdKey(p.id)) || {}).rv?.history || [];
+  wsSave();
+  return p;
+}
+/* Books send their figures to the matching client: the open period if it is that client's, otherwise a period of that name */
+function periodForBooks(name, label) {
+  const c0 = curClient();
+  if (c0 && sameName(c0.name, name)) return curPeriod();
+  if (curPeriod()) persist();
+  let c = WS.clients.find(x => sameName(x.name, name)), p;
+  if (c) p = periodsOf(c.id).find(x => sameName(x.label, label)) || newPeriodRec(c.id, label, (periodsOf(c.id)[0] || {}).id);
+  else p = newClient(name, label);
+  wsSave(); loadPeriodData(p.id); wsSave();
+  return p;
+}
+function wsInit() {
+  wsLoad();
+  if (!WS.clients.length && !store.get("acv:ws-migrated")) {
+    /* First run of this version: the trial balance that was open becomes the first client and period */
+    const last = store.get("mpb:last2") || store.get("mpb:last");
+    if (last && last.S && Array.isArray(last.A) && last.A.length && !last.isSample) {
+      const c = { id: wsId("c"), name: last.S.company || "My company", created: nowISO() };
+      const p = { id: wsId("p"), client: c.id, label: last.S.cur || "Current period", created: nowISO(), updated: nowISO(), migrated: true, n: last.A.length, nAdj: 0, status: "draft", nVer: 0 };
+      WS.clients.push(c); WS.periods.push(p); WS.cur = p.id;
+      store.set(pdKey(p.id), { S: last.S, A: last.A, adj: [], rv: { ...blankReview(), history: [{ at: nowISO(), by: "", act: "Created", note: "Moved from the trial balance that was open before clients and periods were added" }] } });
+    }
+    store.set("acv:ws-migrated", todayISO()); wsSave();
+  }
+}
+const userName = () => String(store.get("acv:user") || "").trim();
+
+/* ---------- Adjustments ----------
+   Each entry has balanced lines against account keys. The imported balance is kept as a.raw; a.cur is raw plus adjustments.
+   An adjustment to an account that is not in the trial balance adds that account, marked adjNew, until the entry is removed. */
+function applyAdjustments() {
+  const sum = {}, meta = {};
+  for (const j of ADJ) for (const l of j.lines || []) { const v = (Number(l.dr) || 0) - (Number(l.cr) || 0); sum[l.k] = (sum[l.k] || 0) + v; if (!meta[l.k]) meta[l.k] = l; }
+  A = A.filter(a => !a.adjNew || sum[acctKey(a)] !== undefined);
+  for (const a of A) if (a.raw === undefined || a.raw === null) a.raw = (a.cur || 0) - (a.adj || 0);
+  const have = new Set(A.map(acctKey));
+  for (const k of Object.keys(sum)) if (!have.has(k)) {
+    const l = meta[k];
+    A.push({ code: l.code || "", name: l.name || "Adjustment account", cur: 0, raw: 0, cmp: null, bud: null, opn: null, cat: l.cat || guessCat(l.code, l.name || "", sum[k]), src: "adj", adjNew: true });
+  }
+  for (const a of A) { a.adj = sum[acctKey(a)] || 0; a.cur = (a.raw || 0) + a.adj; }
 }
 
 /* ---------- Calculations ---------- */
@@ -1975,8 +2399,15 @@ const FS_DISC = [
   ["events", "Events after the reporting date", "Anything after the period end that changes these figures or that readers should know about.", "No events have occurred since the end of the period that require adjustment to, or disclosure in, these financial statements."],
   ["contingent", "Contingencies and commitments", "Guarantees, legal claims, and capital spending the company has committed to but not yet recorded.", "The company had no contingent liabilities or capital commitments at the end of the period."]
 ];
-const fsKey = () => "acv:fs:" + String(S.company || "").trim().toLowerCase();
-function FSD() { const k = fsKey(); if (FSD.key !== k || !FSD.data) { FSD.key = k; FSD.data = store.get(k) || { approvedOn: "", signers: "" }; } return FSD.data; }
+/* Disclosures belong to a reporting period. A period moved from the older single-company layout reads the company's old disclosures until it saves its own. */
+const legacyFsKey = () => "acv:fs:" + String(S.company || "").trim().toLowerCase();
+const fsKeyFor = id => "acv:fs:p:" + id;
+const fsKey = () => curPeriod() ? fsKeyFor(curPeriod().id) : legacyFsKey();
+function FSD() {
+  const k = fsKey();
+  if (FSD.key !== k || !FSD.data) { FSD.key = k; FSD.data = store.get(k) || (curPeriod() && curPeriod().migrated ? store.get(legacyFsKey()) : null) || { approvedOn: "", signers: "" }; }
+  return FSD.data;
+}
 let fsT = null;
 function renderFSDisc(force) {
   const box = $("fs-disc"); if (!box) return;
@@ -2116,11 +2547,16 @@ const IDB = {
   async run(mode, fn) { const db = await this.open(); return new Promise((res, rej) => { const tx = db.transaction("files", mode), rq = fn(tx.objectStore("files")); tx.oncomplete = () => res(rq ? rq.result : null); tx.onerror = () => rej(tx.error); tx.onabort = () => rej(tx.error); }); },
   get(k) { return this.run("readonly", st => st.get(k)).catch(() => null); },
   set(k, v) { return this.run("readwrite", st => st.put(v, k)); },
-  del(k) { return this.run("readwrite", st => st.delete(k)).catch(() => null); }
+  del(k) { return this.run("readwrite", st => st.delete(k)).catch(() => null); },
+  async all() {
+    const db = await this.open();
+    return new Promise((res, rej) => { const out = {}, tx = db.transaction("files", "readonly"), rq = tx.objectStore("files").openCursor(); rq.onsuccess = () => { const c = rq.result; if (c) { out[c.key] = c.value; c.continue(); } }; tx.oncomplete = () => res(out); tx.onerror = () => rej(tx.error); });
+  },
+  clear() { return this.run("readwrite", st => st.clear()); }
 };
 const AUD_MEM = {};
-const audKey = () => "audit:" + String(S.company || "").trim().toLowerCase();
-const auditFileRec = async () => AUD_MEM[audKey()] || await IDB.get(audKey());
+const audKey = () => curPeriod() ? "audit:p:" + curPeriod().id : "audit:" + String(S.company || "").trim().toLowerCase();
+const auditFileRec = async () => AUD_MEM[audKey()] || await IDB.get(audKey()) || (curPeriod() && curPeriod().migrated ? await IDB.get("audit:" + String(S.company || "").trim().toLowerCase()) : null);
 function loadScript(src) { return new Promise((res, rej) => { const el = document.createElement("script"); el.src = src; el.onload = res; el.onerror = rej; document.head.appendChild(el); }); }
 async function loadPdfLib() { if (!window.PDFLib) await loadScript("vendor/pdf-lib.min.js"); if (!window.PDFLib) throw new Error("pdf-lib did not load"); }
 const auditReady = () => { const d = FSD(); return !!(String(d.auditor || "").trim() && String(d.auditPartner || "").trim() && d.auditDate && String(d.auditDraft || "").trim()); };
@@ -2893,6 +3329,7 @@ function snapshot() {
   return { cur, cmp, bud, open, cf, built };
 }
 function renderPack() {
+  if (!A.length) { renderNav(); return; }
   const { cur, cmp, bud, open, cf, built } = snapshot();
   if (compareTo === "bud" && !bud) compareTo = "cmp";
   const base = compareTo === "bud" ? bud : cmp;
@@ -2903,7 +3340,7 @@ function renderPack() {
   $("sample-note").hidden = !isSample;
   $("pack-company").textContent = S.company || "Your company";
   $("pack-sub").textContent = `${S.cur} · ${S.months} month${Number(S.months) === 1 ? "" : "s"} · amounts in ${unitText()}`;
-  $("brand-co").textContent = (S.company || "") + (S.cur ? " · " + S.cur : "");
+  renderNav();
   document.querySelectorAll(".unit-label").forEach(e => e.textContent = "Amounts in " + unitText());
   renderChecks(cur, cf);
   $("fs-sample").hidden = !isSample;
@@ -2921,13 +3358,14 @@ function renderPack() {
   renderIS(cur, cmp, bud, built.noteOf);
   renderBS(cur, cmp, open, built.noteOf);
   renderCF(cf);
+  renderCFW(cur, open);
   renderSOCE(cur, open, built.noteOf);
   renderRatios(cur, cmp);
   renderScorecard(cur, cmp);
   renderCostLines(cur, cmp);
   renderNotes(built, cmp);
   const ck = commKey();
-  if (!$("commentary").value.trim() || renderPack.lastKey !== ck) $("commentary").value = store.get(ck) || basicDraft();
+  if (!$("commentary").value.trim() || renderPack.lastKey !== ck) $("commentary").value = commStored() || basicDraft();
   renderPack.lastKey = ck;
   renderSignoff();
   refreshPlan().catch(() => {});
@@ -2937,7 +3375,6 @@ function renderMapping() {
   const un = A.filter(a => !a.cat).length;
   $("unmapped-count").hidden = un === 0;
   $("unmapped-count").textContent = un;
-  $("unmapped-dot").hidden = un === 0; $("unmapped-dot").textContent = un;
   $("map-summary").textContent = `${A.length} accounts · ${un === 0 ? "all mapped" : un + " need a line"}`;
   const groups = {};
   for (const c of CATS) (groups[c.g] = groups[c.g] || []).push(c);
@@ -2951,14 +3388,16 @@ function renderMapping() {
   $("map").innerHTML = h + "</tbody>";
 }
 function renderSettings() {
+  $("s-period").value = curPeriod() ? curPeriod().label : "";
   $("s-company").value = S.company; $("s-cur").value = S.cur; $("s-cmp").value = S.cmp; $("s-bud").value = S.bud; $("s-opn").value = S.opn || "";
   $("s-months").value = S.months; $("s-unit").value = S.unit; $("s-currency").value = S.currency; $("s-tax").value = S.taxRate ?? 28;
   $("s-flip").checked = !!S.flip; $("s-cmpopen").checked = !!S.cmpOpen;
 }
-function renderAll() { renderSettings(); renderMapping(); renderPack(); }
+function renderAll() { renderSettings(); renderMapping(); renderPack(); renderImportHead(); renderNav(); }
 
 /* ---------- Commentary ---------- */
-const commKey = () => "mpb:comm:" + (S.company || "").toLowerCase() + "|" + (S.cur || "");
+const commKey = () => curPeriod() ? "acv:comm:p:" + curPeriod().id : "mpb:comm:" + (S.company || "").toLowerCase() + "|" + (S.cur || "");
+const commStored = () => store.get(commKey()) ?? (curPeriod() && curPeriod().migrated ? store.get("mpb:comm:" + (S.company || "").toLowerCase() + "|" + (S.cur || "")) : null);
 function basicDraft() {
   const { cur, cmp, bud, cf } = snapshot();
   const chg = (a, b) => b ? ((a - b) / Math.abs(b) * 100) : null;
@@ -3896,8 +4335,8 @@ function deviceId() {
 }
 /* Prices are per company: the company ID mixes this device's ID with the company name, so an unlock code opens one company on one device. */
 const coNorm = n => String(n || "").toLowerCase().replace(/\(example\)/g, " ").replace(/[^a-z0-9]+/g, " ").replace(/\b(ltd|limited|plc)\b/g, " ").replace(/\s+/g, " ").trim();
-function companyId(name) {
-  const t = deviceId() + "|" + coNorm(name);
+function companyId(name, dev) {
+  const t = (dev || deviceId()) + "|" + coNorm(name);
   let h1 = 0x811c9dc5, h2 = 0x9747b28c;
   for (let i = 0; i < t.length; i++) { const c = t.charCodeAt(i); h1 = Math.imul(h1 ^ c, 16777619); h2 = Math.imul(h2 ^ c, 2246822519) ^ (h2 >>> 13); }
   const al = "ABCDEFGHJKMNPQRSTUVWXYZ23456789"; let out = "";
@@ -4184,6 +4623,8 @@ function pdfGhost(doc, X, Y, Wd, Ht, title, cur, base, label) {
 }
 async function exportPDF(only) {
   if (!(await canDownload())) return;
+  syncReview();
+  const draft = draftExport(only), rep = isRepExport(only);
   const want = k => !only || only === k;
   if (!window.jspdf) { toast("The PDF tool didn't load. Check your connection and reload."); return; }
   const { jsPDF } = window.jspdf;
@@ -4214,6 +4655,7 @@ async function exportPDF(only) {
     font("normal", 11); doc.text(plain(only === "bplan" ? `Built from the accounts for ${S.cur}` : `For ${S.cur}`), M, y); y += 6;
     doc.text(plain(`Amounts in ${unitText()} unless stated`), M, y); y += 6;
     { const pb = sgLine(SG().prep, SG().prepRole); doc.text(plain(`Prepared ${prepared}${pb ? " by " + pb : ""}`), M, y); y += 6; }
+    if (rep) { font("bold", 11); doc.text(plain(draft ? "DRAFT - not finalised. Do not sign or send as final." : `Final version, finalised ${niceStamp(RV.finalAt)}${RV.finalBy ? " by " + RV.finalBy : ""}`), M, y); y += 6; font("normal", 11); }
     doc.text(plain(only === "bplan" ? "Forecasts are management estimates. Confidential." : only === "fs" ? "Prepared in the IFRS for SMEs format. " + auditLine() : "Unaudited management accounts"), M, y); y += 14;
     font("bold", 11); doc.text("Contents", M, y); y += 2; doc.setLineWidth(0.25); doc.line(M, y, R, y);
     var tocY = y + 7;
@@ -4613,7 +5055,18 @@ async function exportPDF(only) {
     for (const e of toc) { if (ty > 270) break; const t = plain(e.t); doc.text(t, M, ty); const w = doc.getTextWidth(t); doc.setLineDashPattern([0.4, 1.2], 0); doc.setLineWidth(0.2); doc.line(M + w + 2, ty - 0.8, R - 8, ty - 0.8); doc.setLineDashPattern([], 0); doc.text(String(e.p), R, ty, { align: "right" }); ty += 6.2; }
   }
   for (let i = 1; i <= n; i++) {
-    doc.setPage(i); font("normal", 7.5); doc.setTextColor(0, 0, 0);
+    doc.setPage(i);
+    if (draft && !(audAt && i >= audAt && i < audAt + aud.pages)) {
+      /* A pale diagonal DRAFT across the page and a plain mark in the top margin, until the period is finalised in Review */
+      doc.saveGraphicsState();
+      try { doc.setGState(new doc.GState({ opacity: 0.09 })); } catch (err) {}
+      font("bold", 110); doc.setTextColor(60, 60, 60);
+      const ww = doc.getTextWidth("DRAFT"), c45 = Math.SQRT1_2;
+      doc.text("DRAFT", 105 - ww / 2 * c45, 150 + ww / 2 * c45, { angle: 45 });
+      doc.restoreGraphicsState();
+      font("bold", 7.5); doc.setTextColor(0, 0, 0); doc.text("DRAFT - NOT FINALISED", R, 11, { align: "right" });
+    }
+    font("normal", 7.5); doc.setTextColor(0, 0, 0);
     if (cover && i === 1) continue;
     if (audAt && i >= audAt && i < audAt + aud.pages) continue;
     doc.text(plain(`${S.company} - ${S.cur} - ${only === "bplan" ? "business plan, confidential" : only === "mgmt" ? "management report, unaudited" : only === "fs" ? "financial statements" + ({ audited: "", exempt: ", not audited" }[auditState()] ?? ", unaudited") : only ? "management estimates, unaudited" : "management accounts, unaudited"}`), M, 290);
@@ -4630,7 +5083,8 @@ async function exportPDF(only) {
       blob = new Blob([await out.save()], { type: "application/pdf" });
     } catch (err) { toast("The auditor's report couldn't be added, so its pages are blank. Attach it again and retry."); }
   }
-  await saveFile((only ? taskFileBase(only) : fileBase()) + ".pdf", blob);
+  if (!(await saveFile((only ? taskFileBase(only) : fileBase()) + (draft ? " - DRAFT" : "") + ".pdf", blob))) return;
+  recordExport(only, "pdf");
   track(`download-pdf-${only || "pack"}`);
   noteDownload();
 }
@@ -4642,7 +5096,7 @@ const XL = { amt: '#,##0;(#,##0);"-"', dec: '#,##0.0##;(#,##0.0##);"-"', pct: '0
 const xr = (tag, cells) => Object.assign(cells, { _s: tag });
 const xp = v => v === null || v === undefined || !isFinite(v) ? "" : { v, z: XL.pct };
 const XL_AUTO = /^(total\b|gross profit|operating profit|profit before tax|net profit|net cash|net increase|enterprise value|equity value|free cash flow|closing cash|ebitda)/i;
-function xlBook({ company, title, period, unit, fs = false }) {
+function xlBook({ company, title, period, unit, fs = false, draft = false, status = "" }) {
   const wb = XLSX.utils.book_new(), list = [], enc = XLSX.utils.encode_cell;
   const prepared = new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
   const thin = { style: "thin", color: { rgb: "000000" } };
@@ -4663,7 +5117,7 @@ function xlBook({ company, title, period, unit, fs = false }) {
     return st;
   };
   function sheet(rows, name, widths, opt = {}) {
-    const all = [xr("t1", [company || "Company"]), xr("t2", [opt.title || name]), xr("t3", [[opt.period ?? period, opt.unit ?? unit].filter(Boolean).join(" · ")]), xr("gap", [])];
+    const all = [xr("t1", [company || "Company"]), xr("t2", [opt.title || name]), xr("t3", [[opt.period ?? period, opt.unit ?? unit, draft ? "DRAFT - not finalised" : ""].filter(Boolean).join(" · ")]), xr("gap", [])];
     rows.forEach((r, i) => { r = Array.isArray(r) ? r : []; all.push(i === 0 && !opt.noHead && !r._s ? xr("head", r.slice()) : r); });
     const isNum = v => typeof v === "number" || (v && typeof v === "object" && "v" in v && !("fill" in v));
     const numCols = new Set(); all.forEach(r => r.forEach((v, c) => { if (c > 0 && isNum(v)) numCols.add(c); }));
@@ -4698,7 +5152,8 @@ function xlBook({ company, title, period, unit, fs = false }) {
   }
   function finish() {
     const sg = SG(), fd = fs ? FSD() : null;
-    const rows = [["Report", title], ["Period", period], ["Currency", String(unit || "").replace(/^Amounts in /, "")], ["Prepared on", prepared], ["Prepared by", sgLine(sg.prep, sg.prepRole)]];
+    const rows = [["Report", title]].concat(status ? [xr("b", ["Status", status])] : []).concat([["Period", period]]);
+    rows.push(["Currency", String(unit || "").replace(/^Amounts in /, "")], ["Prepared on", prepared], ["Prepared by", sgLine(sg.prep, sg.prepRole)]);
     rows.push(fs ? ["Approved by the board on", fd.approvedOn ? niceISO(fd.approvedOn) : "Not yet approved"] : ["Approved by", sgLine(sg.appr, sg.apprRole)]);
     if (fs) rows.push(["Audit", auditLine() + (auditState() === "audited" ? " The signed report is in the statements PDF." : "")]);
     rows.push([], xr("sec", ["Contents"]));
@@ -4715,12 +5170,15 @@ function xlBook({ company, title, period, unit, fs = false }) {
 }
 async function exportXLSX(only) {
   if (!(await canDownload())) return;
+  syncReview();
+  const draft = draftExport(only), rep = isRepExport(only);
   const want = k => !only || only === k || (only === "bplan" && k === "forecast");
   if (!window.XLSX) { toast("The Excel tool didn't load. Check your connection and reload."); return; }
   const { cur, cmp, bud, open, cf, built } = snapshot();
   const R0 = v => v === null || v === undefined || !isFinite(v) ? "" : Math.round(v);
   const part = !only ? "all" : only === "mgmt" || only === "fs" ? only : null;
-  const X = xlBook({ company: S.company, title: (only && TASK_TITLE[only]) || "Management accounts", period: S.cur, unit: `Amounts in ${S.currency}`, fs: part === "fs" });
+  const X = xlBook({ company: S.company, title: (only && TASK_TITLE[only]) || "Management accounts", period: S.cur, unit: `Amounts in ${S.currency}`, fs: part === "fs", draft,
+    status: !rep ? "" : draft ? "DRAFT - not finalised. Do not sign or send as final." : `Final version, finalised ${niceStamp(RV.finalAt)}${RV.finalBy ? " by " + RV.finalBy : ""}` });
   if (part === "all" || part === "mgmt") {
     if (bud || cmp) {
       const rows = [["", S.cur].concat(bud ? [S.bud || "Budget", "Variance", "Variance %"] : []).concat(cmp ? [S.cmp, "Change", "Change %"] : [])];
@@ -4786,7 +5244,28 @@ async function exportXLSX(only) {
       }
       X.sheet(rows, "Notes", [70, 16, 16], { noHead: true, title: "Notes to the financial statements", desc: "Notes, including accounting policies" }); }
   }
-  if (part === "all" || part === "fs") X.sheet([["Account code", "Account name", S.cur, S.cmp, S.bud, S.opn || "Opening", "Line in the reports"]].concat(A.map(a => [a.code, a.name, R0(a.cur), R0(a.cmp), R0(a.bud), R0(a.opn), a.cat ? catLabel(a.cat) : "Not mapped"])), "Mapping", [14, 40, 16, 16, 16, 16, 30], { title: "Trial balance and mapping", desc: "Each account and the line it is reported on" });
+  if (part === "all" || part === "fs") {
+    const adj = ADJ.length > 0;
+    X.sheet([["Account code", "Account name"].concat(adj ? ["Imported", "Adjustments"] : []).concat([S.cur, S.cmp, S.bud, S.opn || "Opening", "Line in the reports"])].concat(A.map(a => [a.code, a.name].concat(adj ? [R0(a.raw ?? a.cur), R0(a.adj || 0)] : []).concat([R0(a.cur), R0(a.cmp), R0(a.bud), R0(a.opn), a.cat ? catLabel(a.cat) : "Not mapped"]))), "Mapping", [14, 40].concat(adj ? [16, 16] : []).concat([16, 16, 16, 16, 30]), { title: adj ? "Adjusted trial balance and mapping" : "Trial balance and mapping", desc: "Each account and the line it is reported on" });
+    if (adj) {
+      const rows = [["Reference", "Date", "Description", "Account code", "Account", "Debit", "Credit", "Posted by"]];
+      let td = 0, tc = 0;
+      for (const e of ADJ) for (const l of e.lines) { td += +l.dr || 0; tc += +l.cr || 0; rows.push([e.ref || "", e.date || "", e.desc || "", l.code || "", l.name || "", l.dr ? R0(+l.dr) : "", l.cr ? R0(+l.cr) : "", e.by || ""]); }
+      rows.push(xr("total", ["", "", "Total", "", "", R0(td), R0(tc), ""]));
+      X.sheet(rows, "Adjustments", [11, 12, 40, 12, 32, 15, 15, 18], { title: "Adjusting entries", desc: "Entries posted on top of the imported trial balance" });
+    }
+    const w = cfWorkings(cur, open);
+    if (w) {
+      const rows = [["", S.currency]];
+      for (const x of w) {
+        rows.push(xr("sec", [x.h]));
+        if (x.wc) { rows.push(xr("colhead", ["", "Opening", "Closing", "Cash effect"])); for (const r of x.wc) rows.push([r.l, R0(r.open), R0(r.close), R0(r.cash)]); rows.push(xr("sub", ["Net effect on operating cash flow", "", "", R0(x.wc.reduce((t, r) => t + r.cash, 0))])); }
+        else for (const r of x.rows) rows.push(r[2] ? xr("sub", [r[0], R0(r[1])]) : [r[0], R0(r[1])]);
+        rows.push(xr("note", [x.note]), []);
+      }
+      X.sheet(rows, "Cash flow workings", [56, 16, 16, 16], { title: "Cash flow workings", period: `For ${S.cur}`, desc: "How each cash flow line ties to the balance sheet" });
+    }
+  }
   if (only === "bplan") {
     const b = BP(), N = bpNums(), f = b.funding;
     const tx = [];
@@ -4833,7 +5312,8 @@ async function exportXLSX(only) {
     if (want("appraisal")) X.sheet(pRows, "Project appraisal", [26, 16, 16, 16, 20], { desc: "Net present value, IRR and payback" });
   }
   const buf = XLSX.write(X.finish(), { bookType: "xlsx", type: "array", cellStyles: true });
-  await saveFile((only ? taskFileBase(only) : fileBase()) + ".xlsx", new Blob([buf]));
+  if (!(await saveFile((only ? taskFileBase(only) : fileBase()) + (draft ? " - DRAFT" : "") + ".xlsx", new Blob([buf])))) return;
+  recordExport(only, "xlsx");
   track(`download-xlsx-${only || "pack"}`);
   noteDownload();
 }
@@ -4884,18 +5364,24 @@ function useColumns() {
   if (real(cols.cmp) && !drcr(cols.cmp)) S.cmp = hdr(cols.cmp);
   if (real(cols.bud)) S.bud = hdr(cols.bud);
   if (real(cols.opn)) S.opn = hdr(cols.opn);
-  A = accts; isSample = false; compareTo = "cmp"; S.policies = null; S.model = null;
+  const wasSample = isSample;
+  if (wasSample) { S.policies = null; S.model = null; }
+  ensureWorkingPeriod(S.company, $("s-period").value.trim() || S.cur);
+  if (wasSample && $("s-period").value.trim()) curPeriod().label = $("s-period").value.trim();
+  A = accts; isSample = false; compareTo = "cmp";
   autoMap(false);
   const flipped = signsReversed();
   if (flipped) { flipAllSigns(); autoMap(false); }
+  applyAdjustments();
   $("commentary").value = "";
-  persist();
+  reviewLog("Trial balance imported", `${A.length} accounts${ADJ.length ? `; ${ADJ.length} adjustment${ADJ.length > 1 ? "s" : ""} re-applied` : ""}`);
+  const ok = persist();
   grid = null; $("colpick").hidden = true; $("paste").value = "";
   renderAll();
   const un = A.filter(a => !a.cat).length;
-  toast(`${A.length} accounts loaded${un ? `, ${un} need a line` : ""}.${flipped ? " Your file shows credits as positive, so the signs were flipped. Untick “flip all signs” in Data to undo." : ""}`);
+  toast(`${A.length} accounts loaded into ${curPeriod().label}${un ? `, ${un} need a line` : ""}.${ADJ.length ? " Your adjustments were applied to the new figures." : ""}${flipped ? " Your file shows credits as positive, so the signs were flipped. Untick “flip all signs” in Import to undo." : ""}${ok ? "" : " Not saved on this device: back up now."}`);
   track("load-trial-balance"); maybeHello("tb");
-  show(un ? "map" : "pack");
+  show(un ? "map" : "adjust");
 }
 function readSettingsForm() {
   const prevKey = mapKey();
@@ -4909,6 +5395,7 @@ function readSettingsForm() {
   S.currency = ($("s-currency").value.trim() || "RWF").toUpperCase();
   S.cmpOpen = $("s-cmpopen").checked;
   const tr = parseFloat($("s-tax").value); S.taxRate = isFinite(tr) ? Math.min(100, Math.max(0, tr)) : 28;
+  const pl = $("s-period").value.trim(); if (curPeriod() && pl) curPeriod().label = pl;
   return prevKey !== mapKey();
 }
 
@@ -5004,8 +5491,8 @@ function newBook(name, o = {}) {
   return { id: uid(), name, fyStart: o.fyStart || 1, start: o.start || `${new Date().getFullYear()}-01-01`, currency: "RWF", vatReg: o.vatReg !== false, invPrefix: "INV-", nextInv: 1, accounts: DEFAULT_COA.map(a => ({ ...a })), txns: [], recon: {}, recons: [], lastBackup: null, changedAt: null, example: false };
 }
 function bkWrite() {
-  try { localStorage.setItem(BK_KEY, JSON.stringify(BK)); return true; }
-  catch (e) { toast("Couldn't save: this browser's storage is full or blocked. Back up your books now."); return false; }
+  try { localStorage.setItem(BK_KEY, JSON.stringify(BK)); saveState(true, null, BK_KEY); return true; }
+  catch (e) { saveState(false, e, BK_KEY); toast("Couldn't save: this browser's storage is full or blocked. Back up your books now."); return false; }
 }
 function bkLoad() {
   let st = store.get(BK_KEY);
@@ -5818,11 +6305,13 @@ function sendBooksToPack() {
   const rows = b.accounts.filter(a => [cur, cmp, opn].some(x => x && Math.abs(x[a.code] || 0) >= 1)).map(a => ({ code: a.code, name: a.name, cur: cur[a.code] || 0, cmp: cmp ? cmp[a.code] || 0 : null, bud: null, opn: opn ? opn[a.code] || 0 : null, cat: a.cat, src: "books" }));
   if (!rows.length) { toast("There are no entries to build a pack from yet."); return; }
   const rev = -sumWhere(b, cur, a => a.cat === "rev");
-  const keepPdf = S ? S.pdfModel : undefined;
+  const keepPdf = S ? S.pdfModel : undefined, coName = b.name.replace(/\s*\(example\)\s*$/i, "");
+  periodForBooks(coName, `${MONTHS[m - 1]} ${y} YTD`);
   A = rows;
-  S = { ...SAMPLE_SETTINGS, company: b.name.replace(/\s*\(example\)\s*$/i, ""), cur: `${MONTHS[m - 1]} ${y} YTD`, cmp: `${MONTHS[m - 1]} ${y - 1} YTD`, bud: "Budget", opn: `Opening ${niceISO(fs)}`, months: Math.min(12, Math.max(1, months)), unit: Math.abs(rev) >= 2e7 ? "m" : "k", currency: b.currency, flip: false, cmpOpen: false, policies: null, model: null, pdfModel: keepPdf, taxRate: bkCitPct(b) };
+  S = { ...SAMPLE_SETTINGS, company: coName, cur: `${MONTHS[m - 1]} ${y} YTD`, cmp: `${MONTHS[m - 1]} ${y - 1} YTD`, bud: "Budget", opn: `Opening ${niceISO(fs)}`, months: Math.min(12, Math.max(1, months)), unit: Math.abs(rev) >= 2e7 ? "m" : "k", currency: b.currency, flip: false, cmpOpen: false, policies: null, model: null, pdfModel: keepPdf, taxRate: bkCitPct(b) };
   isSample = false; compareTo = "cmp"; $("commentary").value = "";
-  persist(); renderAll(); show("pack");
+  applyAdjustments(); reviewLog("Figures sent from Books", `To ${niceISO(d)}`);
+  persist(); renderAll(); show(A.some(a => !a.cat) ? "map" : "adjust");
   track("books-to-reports"); maybeHello("books");
   toast(`Pack built from the books to ${niceISO(d)}.`);
 }
@@ -6571,26 +7060,492 @@ document.addEventListener("click", e => {
   toast("Added as a special resolution, and the articles are included in the papers.");
 });
 
+/* ---------- Review status ----------
+   Draft → Needs review → Finalised. Finalising stores a fingerprint of the figures, mappings, adjustments, disclosures and commentary.
+   If any of them change afterwards, the period goes back to Draft and the checklist is cleared for a fresh review. */
+const RS_TEXT = { draft: "Draft", review: "Needs review", final: "Finalised", changed: "Changed after finalising" };
+const rsChip = (st, big) => `<span class="rs ${st || "draft"}${big ? " big" : ""}">${RS_TEXT[st] || "Draft"}</span>`;
+const niceStamp = iso => { if (!iso) return ""; const d = new Date(iso); return isNaN(d) ? "" : d.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" }) + ", " + d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" }); };
+const fullAmt = v => v === null || v === undefined || !isFinite(v) || Math.abs(v) < 0.005 ? "–" : (v < 0 ? "(" : "") + Math.abs(v).toLocaleString("en-US", { maximumFractionDigits: 2 }) + (v < 0 ? ")" : "");
+function fpHash(t) {
+  let h1 = 0x811c9dc5, h2 = 0x9747b28c;
+  for (let i = 0; i < t.length; i++) { const c = t.charCodeAt(i); h1 = Math.imul(h1 ^ c, 16777619); h2 = Math.imul(h2 ^ c, 2246822519) ^ (h2 >>> 13); }
+  return (h1 >>> 0).toString(36) + (h2 >>> 0).toString(36);
+}
+function reviewFp() {
+  return fpHash(JSON.stringify([S.company, S.cur, S.cmp, S.opn, S.unit, S.currency, S.months, !!S.flip, !!S.cmpOpen, S.taxRate ?? 28, S.policies || "",
+    A.map(a => [a.code, a.name, a.cat, a.cur, a.cmp, a.opn]), ADJ.map(j => [j.id, j.date, j.ref, j.desc, j.lines]), FSD(), commStored() || ""]));
+}
+function effStatus() {
+  if (isSample || !RV) return "draft";
+  if (RV.status === "final") return RV.finalFp && reviewFp() !== RV.finalFp ? "changed" : "final";
+  return RV.status === "review" ? "review" : "draft";
+}
+function reviewLog(act, note) {
+  if (isSample || !RV) return;
+  RV.history = RV.history || [];
+  RV.history.unshift({ at: nowISO(), by: userName(), act, note: note || "" });
+  if (RV.history.length > 300) RV.history.length = 300;
+}
+function syncReview() {
+  if (isSample || !RV || RV.status !== "final" || !RV.finalFp || reviewFp() === RV.finalFp) return false;
+  RV.status = "draft"; RV.ticks = {}; RV.finalFp = null;
+  reviewLog("Returned to draft", "Figures, mappings, adjustments, disclosures or commentary changed after finalising");
+  persist();
+  toast("This period changed after it was finalised, so it is back to Draft. Review it again before you finalise.");
+  return true;
+}
+function reviewChecks() {
+  const d = FSD(), un = A.filter(a => !a.cat).length;
+  let cur = null, cf = null;
+  if (A.length) { cur = compute("cur"); cf = cashFlow(cur, openingBS()); }
+  const cs = v => S.currency + " " + Math.round(Math.abs(v)).toLocaleString("en-US");
+  const discBlank = FS_DISC.filter(([k]) => !String(d[k] || "").trim()).map(x => x[1].toLowerCase());
+  const auto = [
+    { k: "tb", l: "Trial balance balances", ok: !!cur && Math.abs(cur.tb) < 1, why: !cur ? "No trial balance imported yet." : Math.abs(cur.tb) < 1 ? "Debits equal credits after adjustments." : `Out by ${cs(cur.tb)}.`, go: cur && Math.abs(cur.tb) >= 1 ? "data" : "" },
+    { k: "mapped", l: "Every account is on a line of the reports", ok: !!A.length && un === 0, why: !A.length ? "" : un ? `${un} account${un > 1 ? "s" : ""} not mapped.` : `All ${A.length} accounts mapped.`, go: un ? "map" : "" },
+    { k: "bs", l: "Balance sheet ties", ok: !!cur && Math.abs(cur.ta - cur.tel) < 1, why: !cur ? "" : Math.abs(cur.ta - cur.tel) < 1 ? "Total assets equal equity and liabilities." : `Differs by ${cs(cur.ta - cur.tel)}.` },
+    { k: "cf", l: "Cash flow statement reconciles to cash", ok: cf ? Math.abs(cf.diff) < 1 : null, why: !cur ? "" : !cf ? "Not prepared: no opening balances. Year-end statements need them; a monthly pack can go without." : Math.abs(cf.diff) < 1 ? "Closing cash agrees to the balance sheet." : `Differs from cash by ${cs(cf.diff)}.`, go: cf && Math.abs(cf.diff) < 1 ? "" : "data" }
+  ];
+  const manual = [
+    { k: "map", l: "Account mappings reviewed", hint: "The balance checks cannot tell whether an account sits on the wrong line. Check each line in Map, especially new or renamed accounts.", go: "map" },
+    { k: "recon", l: "Balances reconciled to supporting records", hint: "Bank and mobile money to statements; receivables and payables to the ledgers; VAT, PAYE and income tax to RRA records; loans to lender statements; fixed assets to the register." },
+    { k: "adj", l: ADJ.length ? `Adjustments reviewed (${ADJ.length})` : "Adjustments reviewed", hint: ADJ.length ? "Each adjusting entry is supported and has a reason." : "No adjustments were posted. Confirm none were needed: depreciation, accruals, prepayments, provisions, tax.", go: "adjust" },
+    { k: "disc", l: "Disclosures complete for this period", hint: discBlank.length ? `Still blank in Financial statements: ${discBlank.join(", ")}.` : "Going concern, related parties, events after the reporting date and contingencies are filled in. Confirm they are true for this period.", go: "fs", warn: discBlank.length > 0 },
+    { k: "appr", l: "Approval recorded", hint: d.approvedOn ? `Board approval on ${niceISO(d.approvedOn)}${fsSigners().length ? ", signed by " + fsSigners().join("; ") : ""}.` : "Record the board approval date and signatories in Financial statements. For a monthly pack, note who approved it below.", go: "fs" }
+  ];
+  return { auto, manual };
+}
+function reviewBlockers() {
+  const { auto, manual } = reviewChecks(), t = RV.ticks || {};
+  return auto.filter(x => x.ok === false).map(x => x.l).concat(manual.filter(x => !t[x.k]).map(x => x.l));
+}
+function renderReview() {
+  syncReview();
+  const p = curPeriod(), c = curClient(), st = effStatus(), t = (RV && RV.ticks) || {};
+  $("rv-title").textContent = p ? "Review · " + p.label : "Review";
+  $("rv-sub").textContent = p ? `${c.name} · ${A.length} accounts · ${ADJ.length} adjustment${ADJ.length === 1 ? "" : "s"}` : "Example data";
+  $("rv-badge").innerHTML = rsChip(st, true);
+  $("rv-note-sample").hidden = !isSample;
+  const { auto, manual } = reviewChecks(), lock = isSample || st === "final";
+  const mk = ok => ok === true ? `<span class="mk ok">✓</span>` : ok === false ? `<span class="mk no">×</span>` : `<span class="mk na">–</span>`;
+  $("rv-checks").innerHTML = `<div class="rv-group">Checked by Acivaz</div><ul class="rv-list">` +
+    auto.map(x => `<li>${mk(x.ok)}<span><b>${esc(x.l)}</b>${x.why ? `<small>${esc(x.why)}</small>` : ""}</span><span>${x.go ? `<button class="linkish" type="button" data-view="${x.go}">Fix</button>` : ""}</span></li>`).join("") + `</ul>` +
+    `<div class="rv-group">Confirmed by the reviewer</div><ul class="rv-list">` +
+    manual.map(x => { const tk = t[x.k]; return `<li><input type="checkbox" id="rv-t-${x.k}" data-rv-tick="${x.k}"${tk ? " checked" : ""}${lock ? " disabled" : ""}><label for="rv-t-${x.k}"><b>${esc(x.l)}</b><small${x.warn ? ' class="warn"' : ""}>${esc(x.hint)}${tk ? ` Confirmed${tk.by ? " by " + esc(tk.by) : ""}, ${esc(niceStamp(tk.at))}.` : ""}</small></label><span>${x.go ? `<button class="linkish" type="button" data-view="${x.go}">Open</button>` : ""}</span></li>`; }).join("") + `</ul>`;
+  const bl = isSample ? [] : reviewBlockers(), can = !isSample && A.length && !bl.length;
+  const step = k => `<span class="${(st === "changed" ? "draft" : st) === k ? "on" : ""}">${RS_TEXT[k]}</span>`;
+  let btns = "";
+  if (isSample) btns = `<button class="btn primary" type="button" data-view="clients">Open a client to review</button>`;
+  else if (st === "final") btns = `<button class="btn" type="button" data-rv="reopen">Reopen for changes</button>`;
+  else if (st === "review") btns = `<button class="btn primary" type="button" data-rv="final"${can ? "" : " disabled"}>Finalise</button><button class="btn" type="button" data-rv="back">Return to draft</button>`;
+  else btns = `<button class="btn primary" type="button" data-rv="submit"${A.length ? "" : " disabled"}>Send for review</button><button class="btn" type="button" data-rv="final"${can ? "" : " disabled"}>Finalise</button>`;
+  $("rv-actions").innerHTML = `<div class="rv-flow">${step("draft")}<span>→</span>${step("review")}<span>→</span>${step("final")}</div>` +
+    (st === "final" ? `<p class="help" style="margin:0">Finalised ${esc(niceStamp(RV.finalAt))}${RV.finalBy ? " by " + esc(RV.finalBy) : ""}. Downloads are now final versions. Any change to the figures, mappings, adjustments, disclosures or commentary sends the period back to Draft.</p>` : "") +
+    `<label>Your name<input type="text" id="rv-user" value="${esc(userName())}" placeholder="Recorded in the history and on downloads" autocomplete="name"${isSample ? " disabled" : ""}></label>` +
+    `<label>Note for the history (optional)<textarea id="rv-note" placeholder="For example: queries raised with the client, or what was checked"${isSample ? " disabled" : ""}></textarea></label>` +
+    `<div class="actions">${btns}</div>` +
+    (st !== "final" && bl.length ? `<p class="help" style="margin:0"><strong>Before finalising:</strong> ${bl.map(esc).join("; ")}.</p>` : "") +
+    `<p class="help" style="margin:0">Until a period is finalised, every download is marked DRAFT. Acivaz checks that the figures add up and the pack is complete. It does not replace professional review, signing by the directors, or an assessment of compliance with the law or IFRS for SMEs.</p>`;
+  const h = (RV && RV.history) || [];
+  $("rv-history").innerHTML = h.length ? `<table class="rv-hist"><thead><tr><th>When</th><th>Who</th><th>What</th><th>Note</th></tr></thead><tbody>${h.map(x => `<tr><td style="white-space:nowrap">${esc(niceStamp(x.at))}</td><td>${esc(x.by || "–")}</td><td>${esc(x.act)}</td><td>${esc(x.note || "")}</td></tr>`).join("")}</tbody></table>` : `<p class="help">Nothing yet. Imports, adjustments and status changes are recorded here.</p>`;
+}
+document.addEventListener("change", e => {
+  const el = e.target.closest("[data-rv-tick]"); if (!el || isSample) return;
+  const k = el.dataset.rvTick; RV.ticks = RV.ticks || {};
+  if (el.checked) RV.ticks[k] = { by: userName(), at: nowISO() }; else delete RV.ticks[k];
+  persist(); renderReview();
+});
+document.addEventListener("input", e => { if (e.target.id === "rv-user") { store.set("acv:user", e.target.value.trim()); } });
+document.addEventListener("click", e => {
+  const b = e.target.closest("[data-rv]"); if (!b || b.disabled || isSample) return;
+  const note = ($("rv-note") && $("rv-note").value.trim()) || "", act = b.dataset.rv;
+  if (!userName() && act !== "back") { toast("Enter your name first, so the history shows who did this."); $("rv-user").focus(); return; }
+  if (act === "submit") { RV.status = "review"; reviewLog("Sent for review", note); toast("Sent for review. The reviewer confirms the checklist, then finalises."); }
+  else if (act === "back") { RV.status = "draft"; reviewLog("Returned to draft", note); toast("Back to Draft."); }
+  else if (act === "reopen") { RV.status = "draft"; RV.ticks = {}; RV.finalFp = null; reviewLog("Reopened for changes", note); toast("Reopened. Downloads are marked DRAFT until you finalise again."); }
+  else if (act === "final") {
+    const bl = reviewBlockers();
+    if (bl.length) { toast("Finish the checklist first: " + bl[0] + "."); return; }
+    RV.status = "final"; RV.finalFp = reviewFp(); RV.finalAt = nowISO(); RV.finalBy = userName();
+    reviewLog("Finalised", note); toast("Finalised. Downloads from Export are now final versions.");
+  }
+  persist(); renderReview();
+});
+
+/* ---------- Export ---------- */
+const REP_LABEL = { all: "Full reporting pack", fs: "Financial statements", mgmt: "Management report" };
+const isRepExport = only => !only || only === "fs" || only === "mgmt";
+const draftExport = only => isRepExport(only) && effStatus() !== "final";
+function recordExport(only, fmt) {
+  if (isSample || !RV || !isRepExport(only)) return;
+  RV.versions = RV.versions || [];
+  const n = (RV.versions[0] ? RV.versions[0].n : 0) + 1;
+  RV.versions.unshift({ n, at: nowISO(), what: only || "all", fmt, status: effStatus(), by: userName() });
+  if (RV.versions.length > 300) RV.versions.length = 300;
+  persist();
+  if (show.cur === "export") renderExport();
+}
+function renderExport() {
+  syncReview();
+  const p = curPeriod(), c = curClient(), st = effStatus();
+  $("ex-title").textContent = p ? "Export · " + p.label : "Export";
+  $("ex-sub").textContent = p ? `${c.name} · PDF and Excel, prepared in this browser` : "Example data";
+  $("ex-status").innerHTML = st === "final"
+    ? `<div class="notice good"><span><strong>Finalised</strong> ${esc(niceStamp(RV.finalAt))}${RV.finalBy ? " by " + esc(RV.finalBy) : ""}. Downloads are final versions, without draft marks.</span></div>`
+    : `<div class="notice warn"><span><strong>${esc(RS_TEXT[st])}.</strong> Each PDF page and each Excel cover sheet is marked DRAFT until this period is finalised in Review.</span>${isSample ? "" : `<button class="linkish" type="button" data-view="review">Go to Review</button>`}</div>`;
+  $("ex-plan").innerHTML = PW_ON ? `${$("plan-status").innerHTML || ""} · <button class="linkish" type="button" data-goto-pricing>Pricing and licence policy</button>` : "";
+  const v = (RV && RV.versions) || [];
+  $("ex-versions").innerHTML = v.length ? `<table class="ex-ver"><thead><tr><th>Version</th><th>When</th><th>Report</th><th>Format</th><th>Status</th><th>By</th></tr></thead><tbody>${v.map(x => `<tr><td class="n">${x.n}</td><td style="white-space:nowrap">${esc(niceStamp(x.at))}</td><td>${esc(REP_LABEL[x.what] || x.what)}</td><td>${x.fmt === "pdf" ? "PDF" : "Excel"}</td><td>${rsChip(x.status)}</td><td>${esc(x.by || "–")}</td></tr>`).join("")}</tbody></table>` : `<p class="help">${isSample ? "Versions are recorded for your own clients." : "No downloads from this period yet."}</p>`;
+}
+document.addEventListener("click", e => {
+  const b = e.target.closest("[data-ex]"); if (!b) return;
+  const [fmt, what] = b.dataset.ex.split(":"), only = what === "all" ? undefined : what;
+  if (fmt === "pdf") exportPDF(only); else exportXLSX(only);
+});
+document.addEventListener("click", e => {
+  if (!e.target.closest("[data-goto-pricing]")) return;
+  show("home"); setTimeout(() => { const el = $("hm-pricing"); if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 90, behavior: "instant" }); }, 60);
+});
+
+/* ---------- Adjust ---------- */
+let adjF = null, adjEdit = null;
+const adjBlank = () => ({ date: todayISO(), ref: "AJ" + String(ADJ.length + 1).padStart(2, "0"), desc: "", lines: [{ k: "", dr: "", cr: "" }, { k: "", dr: "", cr: "" }] });
+const catOptions = sel => `<option value="">Line in the reports…</option>` + CATS.filter(c => c.k !== "ign").map(c => `<option value="${c.k}"${c.k === sel ? " selected" : ""}>${esc(c.l)}</option>`).join("");
+function acctOptions(sel) {
+  const list = A.slice().sort((x, y) => String(x.code).localeCompare(String(y.code), undefined, { numeric: true }) || x.name.localeCompare(y.name));
+  return `<option value="">Choose an account…</option>` + list.map(a => { const k = acctKey(a); return `<option value="${esc(k)}"${k === sel ? " selected" : ""}>${esc((a.code ? a.code + "  " : "") + a.name)}${a.adjNew ? " (added by an adjustment)" : ""}</option>`; }).join("") + `<option value="__new"${sel === "__new" ? " selected" : ""}>New account…</option>`;
+}
+function adjTotals() { let dr = 0, cr = 0; for (const l of adjF.lines) { dr += toNum(l.dr) || 0; cr += toNum(l.cr) || 0; } return { dr, cr }; }
+function renderAdjTotals() {
+  const t = adjTotals(), d = Math.round((t.dr - t.cr) * 100) / 100;
+  if ($("af-dr")) $("af-dr").textContent = fullAmt(t.dr);
+  if ($("af-cr")) $("af-cr").textContent = fullAmt(t.cr);
+  if ($("af-diff")) $("af-diff").textContent = !t.dr && !t.cr ? "" : d === 0 ? "Balanced" : `Out by ${fullAmt(Math.abs(d))}`;
+}
+function renderAdjForm() {
+  if (!adjF) adjF = adjBlank();
+  const f = adjF;
+  $("adj-form").innerHTML = `<div class="panel-head"><h3>${adjEdit ? "Change entry " + esc(f.ref) : "New adjusting entry"}</h3><span class="sub">Amounts in full ${esc(S.currency)}${S.unit === "1" ? "" : `, not ${UNIT[S.unit].label}`}. Debits on the left, credits on the right.</span></div>
+  <div class="adj-head"><label>Date<input type="date" data-af="date" value="${esc(f.date)}"></label><label>Reference<input type="text" data-af="ref" value="${esc(f.ref)}"></label><label class="wide">Description<input type="text" data-af="desc" value="${esc(f.desc)}" placeholder="For example: depreciation for the year, audit fee accrual, reclassify director's loan"></label></div>
+  <table class="adj-table"><thead><tr><th style="width:56%">Account</th><th class="n">Debit</th><th class="n">Credit</th><th></th></tr></thead><tbody>` +
+    f.lines.map((l, i) => `<tr><td><select data-al="k" data-i="${i}" aria-label="Account on line ${i + 1}">${acctOptions(l.k)}</select>${l.k === "__new" ? `<div class="newacct"><input type="text" data-al="code" data-i="${i}" value="${esc(l.code || "")}" placeholder="Code" aria-label="New account code"><input type="text" data-al="name" data-i="${i}" value="${esc(l.name || "")}" placeholder="Account name" aria-label="New account name"><select data-al="cat" data-i="${i}" aria-label="Line in the reports">${catOptions(l.cat)}</select></div>` : ""}</td><td><input type="text" inputmode="decimal" data-al="dr" data-i="${i}" value="${esc(l.dr)}" aria-label="Debit on line ${i + 1}"></td><td><input type="text" inputmode="decimal" data-al="cr" data-i="${i}" value="${esc(l.cr)}" aria-label="Credit on line ${i + 1}"></td><td>${f.lines.length > 2 ? `<button class="linkish" type="button" data-af-act="del" data-i="${i}" aria-label="Remove line ${i + 1}">Remove</button>` : ""}</td></tr>`).join("") +
+    `</tbody><tfoot><tr><td>Total <span class="muted" id="af-diff" style="font-weight:500;margin-left:8px"></span></td><td class="n" id="af-dr"></td><td class="n" id="af-cr"></td><td></td></tr></tfoot></table>
+  <div class="actions" style="margin-top:12px;align-items:center"><button class="btn small" type="button" data-af-act="add">Add a line</button><button class="btn primary" type="button" data-af-act="post"${isSample ? " disabled" : ""}>${adjEdit ? "Save changes" : "Post entry"}</button>${adjEdit ? `<button class="btn" type="button" data-af-act="cancel">Cancel</button>` : ""}<span class="status" id="af-status" style="color:var(--bad)"></span></div>` +
+    (isSample ? `<p class="help" style="margin-top:8px">Adjustments are posted to your own clients' periods. Open a client to post one.</p>` : "");
+  renderAdjTotals();
+}
+function renderAdjust() {
+  const p = curPeriod();
+  $("adj-title").textContent = p ? "Adjust · " + p.label : "Adjustments";
+  renderAdjForm();
+  $("adj-sub").textContent = ADJ.length ? `${ADJ.length} entr${ADJ.length === 1 ? "y" : "ies"}, included in every report for this period` : "";
+  const acc = k => A.find(a => acctKey(a) === k);
+  $("adj-list").innerHTML = !ADJ.length ? `<p class="help">No adjustments for this period. Typical year-end entries: depreciation, accruals and prepayments, provisions for doubtful debts and slow stock, income tax, and reclassifications the reviewer asks for.</p>` :
+    ADJ.map(j => { let dr = 0, cr = 0; const rows = (j.lines || []).map(l => { dr += +l.dr || 0; cr += +l.cr || 0; const a = acc(l.k); return `<tr><td>${esc(((a ? a.code : l.code) ? (a ? a.code : l.code) + "  " : "") + (a ? a.name : l.name || ""))}</td><td>${a && a.cat ? esc(catLabel(a.cat)) : `<span class="chip bad">Not mapped</span>`}</td><td class="n">${l.dr ? fullAmt(+l.dr) : ""}</td><td class="n">${l.cr ? fullAmt(+l.cr) : ""}</td></tr>`; }).join("");
+      return `<div class="adj-entry"><div class="hd"><span><b>${esc(j.ref || "")}</b> · ${esc(niceISO(j.date))} · ${esc(j.desc)}</span><span class="acts"><button class="btn small" type="button" data-aj="edit" data-id="${esc(j.id)}">Change</button><button class="btn small" type="button" data-aj="del" data-id="${esc(j.id)}">Delete</button></span></div><table class="adj-table"><thead><tr><th>Account</th><th>Line in the reports</th><th class="n">Debit</th><th class="n">Credit</th></tr></thead><tbody>${rows}</tbody><tfoot><tr><td colspan="2">Total</td><td class="n">${fullAmt(dr)}</td><td class="n">${fullAmt(cr)}</td></tr></tfoot></table><span class="help">Posted${j.by ? " by " + esc(j.by) : ""}, ${esc(niceStamp(j.at))}</span></div>`; }).join("");
+  const only = $("atb-only").checked;
+  let tr = 0, ta = 0, tc = 0;
+  const rows = A.slice().sort((x, y) => String(x.code).localeCompare(String(y.code), undefined, { numeric: true })).filter(a => { tr += a.raw ?? a.cur ?? 0; ta += a.adj || 0; tc += a.cur || 0; return !only || a.adj; });
+  $("atb-sub").textContent = `In full ${S.currency}. Debits positive, credits in brackets.`;
+  $("atb").innerHTML = `<thead><tr><th>Code</th><th>Account</th><th>Line in the reports</th><th class="n">Imported</th><th class="n">Adjustments</th><th class="n">Adjusted</th></tr></thead><tbody>` +
+    rows.map(a => `<tr><td class="code">${esc(a.code)}</td><td>${esc(a.name)}</td><td>${a.cat ? esc(catLabel(a.cat)) : `<span class="chip bad">Not mapped</span>`}</td><td class="n">${fullAmt(a.raw ?? a.cur)}</td><td class="n">${fullAmt(a.adj || 0)}</td><td class="n"><b>${fullAmt(a.cur)}</b></td></tr>`).join("") +
+    `</tbody><tfoot><tr><td></td><td>Total (should be nil)</td><td></td><td class="n">${fullAmt(tr)}</td><td class="n">${fullAmt(ta)}</td><td class="n">${fullAmt(tc)}</td></tr></tfoot>`;
+}
+$("adj-form").addEventListener("input", e => {
+  const el = e.target;
+  if (el.dataset.af) { adjF[el.dataset.af] = el.value; return; }
+  if (el.dataset.al) {
+    const l = adjF.lines[+el.dataset.i]; l[el.dataset.al] = el.value;
+    if (el.dataset.al === "k") { if (el.value === "__new") { l.code = l.code || ""; l.name = l.name || ""; } renderAdjForm(); const s = document.querySelector(`[data-al="${el.value === "__new" ? "code" : "dr"}"][data-i="${el.dataset.i}"]`); if (s) s.focus(); return; }
+    renderAdjTotals();
+  }
+});
+$("adj-form").addEventListener("click", e => {
+  const b = e.target.closest("[data-af-act]"); if (!b) return;
+  const act = b.dataset.afAct, st = $("af-status");
+  if (act === "add") { adjF.lines.push({ k: "", dr: "", cr: "" }); renderAdjForm(); return; }
+  if (act === "del") { adjF.lines.splice(+b.dataset.i, 1); renderAdjForm(); return; }
+  if (act === "cancel") { adjF = null; adjEdit = null; renderAdjust(); return; }
+  if (act !== "post" || isSample) return;
+  const lines = adjF.lines.map(l => ({ ...l, drN: toNum(l.dr) || 0, crN: toNum(l.cr) || 0 })).filter(l => l.k || l.drN || l.crN);
+  const fail = m => { st.textContent = m; };
+  if (!String(adjF.desc).trim()) return fail("Describe the entry, so a reviewer can see why it was made.");
+  if (lines.length < 2) return fail("An entry needs at least two lines.");
+  for (const l of lines) {
+    if (!l.k) return fail("Choose an account on every line.");
+    if (l.drN < 0 || l.crN < 0) return fail("Enter amounts as positive numbers. Use the other column for the opposite side.");
+    if ((l.drN && l.crN) || (!l.drN && !l.crN)) return fail("Each line needs a debit or a credit, not both.");
+    if (l.k === "__new" && (!String(l.name || "").trim() || !l.cat)) return fail("Give the new account a name and a line in the reports.");
+  }
+  const dr = lines.reduce((t, l) => t + l.drN, 0), cr = lines.reduce((t, l) => t + l.crN, 0);
+  if (Math.abs(dr - cr) >= 0.005) return fail(`Debits and credits differ by ${fullAmt(Math.abs(dr - cr))}. An entry must balance.`);
+  const out = lines.map(l => {
+    if (l.k === "__new") { const code = String(l.code || "").trim(), name = String(l.name).trim(); return { k: acctKey({ code, name }), code, name, cat: l.cat, dr: l.drN, cr: l.crN }; }
+    const a = A.find(x => acctKey(x) === l.k) || {};
+    return { k: l.k, code: a.code || "", name: a.name || "", cat: a.cat || "", dr: l.drN, cr: l.crN };
+  });
+  const entry = { id: adjEdit || wsId("j"), date: adjF.date, ref: String(adjF.ref || "").trim(), desc: String(adjF.desc).trim(), lines: out, by: userName(), at: nowISO() };
+  const i = ADJ.findIndex(j => j.id === adjEdit);
+  if (i >= 0) ADJ[i] = entry; else ADJ.push(entry);
+  applyAdjustments();
+  reviewLog(adjEdit ? "Adjustment changed" : "Adjustment posted", `${entry.ref}: ${entry.desc} (${fullAmt(dr)})`);
+  const ok = persist();
+  toast(`${adjEdit ? "Entry changed" : "Entry posted"}: ${entry.ref}. Every report for this period now includes it.${ok ? "" : " Not saved on this device: back up now."}`);
+  adjF = null; adjEdit = null;
+  renderMapping(); renderAdjust();
+});
+$("adj-list").addEventListener("click", e => {
+  const b = e.target.closest("[data-aj]"); if (!b || isSample) return;
+  const j = ADJ.find(x => x.id === b.dataset.id); if (!j) return;
+  if (b.dataset.aj === "edit") {
+    adjEdit = j.id;
+    adjF = { date: j.date, ref: j.ref, desc: j.desc, lines: j.lines.map(l => ({ k: l.k, dr: l.dr ? String(l.dr) : "", cr: l.cr ? String(l.cr) : "" })) };
+    renderAdjForm(); $("adj-form").scrollIntoView({ block: "start" });
+  } else if (b.dataset.aj === "del") {
+    if (!b.dataset.armed) { b.dataset.armed = "1"; b.textContent = "Confirm delete"; b.classList.add("danger"); setTimeout(() => { if (b.isConnected) { delete b.dataset.armed; b.textContent = "Delete"; b.classList.remove("danger"); } }, 4000); return; }
+    ADJ = ADJ.filter(x => x.id !== j.id);
+    if (adjEdit === j.id) { adjEdit = null; adjF = null; }
+    applyAdjustments(); reviewLog("Adjustment deleted", `${j.ref}: ${j.desc}`); persist();
+    renderMapping(); renderAdjust(); toast(`Entry ${j.ref} deleted.`);
+  }
+});
+$("atb-only").addEventListener("change", renderAdjust);
+
+/* ---------- Cash flow workings: how each cash flow line ties to the balance sheet ---------- */
+function cfWorkings(cur, open) {
+  if (!open) return null;
+  const o = open.r, lab = atLabel(open.label), sec = [];
+  const add = cur.nca - o.nca + cur.dep;
+  sec.push({ h: "Property, plant and equipment", rows: [["Carrying amount at " + lab, o.nca], ["Depreciation for the period", -cur.dep], ["Additions less disposals (balancing figure)", add], ["Carrying amount at " + S.cur, cur.nca, 1]], note: add < 0 ? "The balancing figure is negative: disposals exceeded additions, or an account is on the wrong line. Check it against the fixed asset register." : "Shown in investing activities. Check it against the fixed asset register: additions, disposals and any revaluation." });
+  const wc = [["inv", "Inventory", 1], ["rec", "Trade receivables", 1], ["oca", "Other current assets", 1], ["pay", "Trade payables", -1], ["ocl", "Other current liabilities", -1]].map(([k, l, sg]) => ({ l, open: o[k], close: cur[k], move: cur[k] - o[k], cash: sg > 0 ? -(cur[k] - o[k]) : cur[k] - o[k] }));
+  sec.push({ h: "Working capital", wc, note: "An increase in an asset uses cash; an increase in a liability provides it. Income tax and VAT payable sit in other current liabilities." });
+  sec.push({ h: "Borrowings", rows: [["Long-term borrowings at " + lab, o.ncl], ["Drawn less repaid (balancing figure)", cur.ncl - o.ncl], ["Long-term borrowings at " + S.cur, cur.ncl, 1]], note: "Agree the movement to the lender's statements. Interest is charged in profit or loss and treated as paid." });
+  const eqb = cur.eq - o.teq;
+  sec.push({ h: "Equity", rows: [["Equity at " + lab, o.teq], ["Profit for the period", cur.np], ["Capital introduced less dividends and drawings (balancing figure)", eqb], ["Equity at " + S.cur, cur.teq, 1]], note: Math.abs(eqb) >= 1 ? "Agree the balancing figure to shares issued and dividends declared or paid in the period." : "No capital movements or dividends in the period." });
+  const cf = cashFlow(cur, open);
+  sec.push({ h: "Cash and bank", rows: [["Cash and bank at " + lab, o.cash], ["Net increase/(decrease) per the statement of cash flows", cf.net], ["Cash and bank, calculated", cf.closeCalc, 1], ["Cash and bank per the balance sheet", cur.cash], ["Difference", cf.diff, 1]], note: Math.abs(cf.diff) < 1 ? "The statement of cash flows reconciles to the balance sheet." : "A difference usually means an account is on the wrong line, or the opening balances are not the closing balances of the prior year." });
+  return sec;
+}
+function renderCFW(cur, open) {
+  const box = $("cfw-box"); if (!box) return;
+  const w = cfWorkings(cur, open);
+  if (!w) { box.innerHTML = `<p class="help">Workings appear once the period has opening balances.</p>`; return; }
+  const tbl = rows => `<table class="adj-table"><tbody>${rows.map(r => `<tr${r[2] ? ' style="font-weight:600"' : ""}><td>${esc(r[0])}</td><td class="n">${amt(r[1])}</td></tr>`).join("")}</tbody></table>`;
+  box.innerHTML = `<div class="cfw-grid">` + w.map(x => `<div><h4>${esc(x.h)}</h4>${x.wc ? `<table class="adj-table"><thead><tr><th></th><th class="n">Opening</th><th class="n">Closing</th><th class="n">Cash effect</th></tr></thead><tbody>${x.wc.map(r => `<tr><td>${esc(r.l)}</td><td class="n">${amt(r.open)}</td><td class="n">${amt(r.close)}</td><td class="n">${amt(r.cash)}</td></tr>`).join("")}</tbody><tfoot><tr><td>Net effect on operating cash flow</td><td></td><td></td><td class="n">${amt(x.wc.reduce((t, r) => t + r.cash, 0))}</td></tr></tfoot></table>` : tbl(x.rows)}<p class="help" style="margin-top:6px">${esc(x.note)}</p></div>`).join("") + `</div>`;
+}
+
+/* ---------- Clients dashboard ---------- */
+function renderClients() {
+  const last = store.get("acv:lastFull");
+  $("ws-backup-note").innerHTML = last ? `Last full backup ${esc(niceStamp(last))}` : WS.clients.length ? `<span class="chip warn">Not backed up yet</span>` : "";
+  const cp = curPeriod();
+  const cards = WS.clients.slice().sort((a, b) => a.name.localeCompare(b.name)).map(c => {
+    const ps = periodsOf(c.id), latest = ps[0];
+    const rows = ps.map(p => { const isCur = cp && p.id === cp.id, st = isCur ? effStatus() : p.status || "draft"; return `<tr class="${isCur ? "is-cur" : ""}"><td><b>${esc(p.label)}</b>${isCur ? ` <span class="muted">· open</span>` : ""}</td><td>${rsChip(st)}</td><td class="n">${isCur ? A.length : p.n || 0}</td><td class="n">${isCur ? ADJ.length : p.nAdj || 0}</td><td class="n">${isCur ? (RV.versions || []).length : p.nVer || 0}</td><td style="white-space:nowrap">${esc(niceStamp(p.updated))}</td><td><div class="acts"><button class="btn small primary" type="button" data-ws="open" data-p="${p.id}">${isCur ? "Continue" : "Open"}</button><button class="btn small" type="button" data-ws="del-period" data-p="${p.id}">Delete</button></div></td></tr>`; }).join("");
+    return `<div class="panel ws-client"><div class="panel-head"><h3>${esc(c.name)} <span class="muted" style="font-family:var(--font-body);font-size:13px;font-weight:500">${ps.length} period${ps.length === 1 ? "" : "s"}</span></h3><div class="actions"><button class="btn small" type="button" data-ws="np-toggle" data-c="${c.id}">New period</button><button class="btn small" type="button" data-ws="del-client" data-c="${c.id}">Delete client</button></div></div>
+      <div class="ws-np" id="np-${c.id}" hidden><label>Period name<input type="text" id="np-label-${c.id}" placeholder="For example: Year ended 31 December 2027"></label>${latest ? `<label class="check" style="flex:0 1 auto;flex-direction:row;color:var(--ink)"><input type="checkbox" id="np-roll-${c.id}" checked><span>Roll forward settings and disclosures from ${esc(latest.label)}</span></label>` : ""}<button class="btn small primary" type="button" data-ws="np-create" data-c="${c.id}">Create period</button></div>
+      ${ps.length ? `<div class="table-box"><table class="ws-table"><thead><tr><th>Reporting period</th><th>Status</th><th class="n">Accounts</th><th class="n">Adjustments</th><th class="n">Downloads</th><th>Last saved</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>` : `<p class="help">No periods yet.</p>`}</div>`;
+  });
+  $("ws-list").innerHTML = (cards.length ? cards.join("") : `<div class="panel"><p class="help" style="margin:0">No clients yet. Add your first client above, then import its trial balance.</p></div>`) +
+    `<div class="panel"><div class="panel-head"><h3>Example: ${esc(SAMPLE_SETTINGS.company)}</h3><span class="sub">A fictional maize and feed processor, to see every step before you load real figures</span></div><div class="actions"><button class="btn small" type="button" data-ws="sample">${isSample ? "Continue with the example" : "Open the example"}</button></div></div>`;
+  renderRestorePanel(); renderRecovery().catch(() => {});
+}
+function deletePeriodData(id) {
+  for (const k of [pdKey(id), fsKeyFor(id), "acv:comm:p:" + id]) store.del(k);
+  IDB.del("audit:p:" + id);
+  WS.periods = WS.periods.filter(p => p.id !== id);
+}
+function armed(b, label) {
+  if (b.dataset.armed) return true;
+  const t = b.textContent; b.dataset.armed = "1"; b.textContent = label; b.classList.add("danger");
+  setTimeout(() => { if (b.isConnected) { delete b.dataset.armed; b.textContent = t; b.classList.remove("danger"); } }, 4500);
+  return false;
+}
+document.addEventListener("click", async e => {
+  const per = e.target.closest("[data-period]");
+  if (per) { closeMenus(); if (!curPeriod() || per.dataset.period !== curPeriod().id) openPeriod(per.dataset.period); return; }
+  const b = e.target.closest("[data-ws]"); if (!b) return;
+  const act = b.dataset.ws;
+  if (act === "backup") fullBackup();
+  else if (act === "sample") { closeMenus(); openSample("pack"); toast("Example data opened. Your clients are unchanged."); }
+  else if (act === "create-client") {
+    const n = $("ws-new-name").value.trim(), l = $("ws-new-period").value.trim();
+    if (!n) { toast("Enter the client's name."); $("ws-new-name").focus(); return; }
+    if (WS.clients.some(c => sameName(c.name, n))) { toast("There is already a client with that name. Add a period to it instead."); return; }
+    const p = newClient(n, l || "First period");
+    $("ws-new-name").value = ""; $("ws-new-period").value = "";
+    openPeriod(p.id, "data"); toast(`${n} added. Import its trial balance for ${p.label}.`);
+  }
+  else if (act === "np-toggle") { const f = $("np-" + b.dataset.c); f.hidden = !f.hidden; if (!f.hidden) $("np-label-" + b.dataset.c).focus(); }
+  else if (act === "new-period") { closeMenus(); const c = curClient(); show("clients"); if (c) { const f = $("np-" + c.id); f.hidden = false; f.scrollIntoView({ block: "center" }); $("np-label-" + c.id).focus(); } }
+  else if (act === "np-create") {
+    const cid = b.dataset.c, l = $("np-label-" + cid).value.trim(), roll = $("np-roll-" + cid);
+    if (!l) { toast("Name the period, for example Year ended 31 December 2027."); $("np-label-" + cid).focus(); return; }
+    if (periodsOf(cid).some(p => sameName(p.label, l))) { toast("This client already has a period with that name."); return; }
+    const p = newPeriodRec(cid, l, roll && roll.checked ? (periodsOf(cid)[0] || {}).id : null);
+    wsSave(); openPeriod(p.id, "data"); toast(`${l} created. Import its trial balance.`);
+  }
+  else if (act === "open") { if (curPeriod() && b.dataset.p === curPeriod().id) show(A.length ? "review" : "data"); else openPeriod(b.dataset.p); }
+  else if (act === "del-period") {
+    if (!armed(b, "Confirm delete")) return;
+    const id = b.dataset.p, wasCur = curPeriod() && curPeriod().id === id, p = WS.periods.find(x => x.id === id);
+    deletePeriodData(id); wsSave();
+    if (wasCur) { const other = p && periodsOf(p.client)[0]; if (other) { loadPeriodData(other.id); wsSave(); renderAll(); } else openSample(); }
+    renderClients(); renderNav(); toast(`${p ? p.label : "Period"} deleted.`);
+  }
+  else if (act === "del-client") {
+    const c = WS.clients.find(x => x.id === b.dataset.c); if (!c) return;
+    if (!armed(b, `Confirm: delete ${c.name} and its periods`)) return;
+    const wasCur = curClient() && curClient().id === c.id;
+    for (const p of periodsOf(c.id)) deletePeriodData(p.id);
+    store.del("acv:map:" + c.id);
+    WS.clients = WS.clients.filter(x => x.id !== c.id); wsSave();
+    if (wasCur) openSample();
+    renderClients(); renderNav(); toast(`${c.name} deleted.`);
+  }
+  else if (act === "restore-yes") wsRestoreApply();
+  else if (act === "restore-no") { wsRestoreJ = null; renderRestorePanel(); }
+  else if (act === "recovery-dismiss") { store.del("acv:recovery"); renderRecovery(); }
+});
+
+/* ---------- Navigation: Clients → Period → Import → Map → Adjust → Review → Export ---------- */
+function renderNav() {
+  const p = curPeriod(), c = curClient(), st = effStatus();
+  $("brand-co").textContent = isSample ? "Example data · " + SAMPLE_SETTINGS.company : c ? `${c.name} · ${p.label}` : "";
+  $("hdr-status").innerHTML = p ? rsChip(st) : "";
+  $("period-tab").textContent = isSample ? "Example" : p ? p.label : "Period";
+  const items = [];
+  if (c) {
+    for (const x of periodsOf(c.id)) { const on = x.id === p.id; items.push(`<button class="tab-item" type="button" data-period="${x.id}"${on ? ' aria-current="true"' : ""}><span class="step">${on ? "●" : "·"}</span><span><b>${esc(x.label)}</b><small>${RS_TEXT[on ? st : x.status || "draft"]} · ${on ? A.length : x.n || 0} accounts · saved ${esc(niceStamp(x.updated))}</small></span></button>`); }
+    items.push(`<button class="tab-item" type="button" data-ws="new-period"><span class="step">+</span><span><b>New period for ${esc(c.name)}</b><small>Settings and disclosures roll forward; mappings are reused</small></span></button>`);
+  } else items.push(`<button class="tab-item" type="button" data-view="clients"><span class="step">+</span><span><b>Choose a client</b><small>Each period belongs to a client. Open or add one in Clients.</small></span></button>`);
+  if (!isSample) items.push(`<button class="tab-item" type="button" data-ws="sample"><span class="step">·</span><span><b>Example data</b><small>${esc(SAMPLE_SETTINGS.company)}, fictional</small></span></button>`);
+  items.push(`<button class="tab-item" type="button" data-view="clients"><span class="step">·</span><span><b>All clients</b><small>${WS.clients.length} client${WS.clients.length === 1 ? "" : "s"}, ${WS.periods.length} period${WS.periods.length === 1 ? "" : "s"} on this device</small></span></button>`);
+  $("menu-period").innerHTML = items.join("");
+  $("adj-count").hidden = !ADJ.length; $("adj-count").textContent = ADJ.length;
+  renderSaveChip();
+}
+function renderImportHead() {
+  const p = curPeriod(), c = curClient();
+  $("imp-title").textContent = p ? "Import · " + p.label : "Import a trial balance";
+  $("imp-sub").textContent = p ? `${c.name}. ${A.length ? `${A.length} accounts loaded. A new file replaces them; this period's adjustments, mappings and disclosures are kept.` : "No trial balance for this period yet."}` : "Example data is open.";
+  $("imp-sample").hidden = !isSample;
+  $("map-title").textContent = p ? "Map · " + p.label : "Account mapping";
+}
+
+/* ---------- Full backup and restore: every client, period, mapping, disclosure, book and attached file ---------- */
+const b64enc = u => { let t = ""; for (let i = 0; i < u.length; i += 0x8000) t += String.fromCharCode.apply(null, u.subarray(i, i + 0x8000)); return btoa(t); };
+const b64dec = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+function binEnc(v) {
+  if (v instanceof ArrayBuffer) return { __bin: b64enc(new Uint8Array(v)) };
+  if (ArrayBuffer.isView(v)) return { __bin: b64enc(new Uint8Array(v.buffer, v.byteOffset, v.byteLength)) };
+  if (Array.isArray(v)) return v.map(binEnc);
+  if (v && typeof v === "object") { const o = {}; for (const k of Object.keys(v)) o[k] = binEnc(v[k]); return o; }
+  return v;
+}
+function binDec(v) {
+  if (Array.isArray(v)) return v.map(binDec);
+  if (v && typeof v === "object") { if (typeof v.__bin === "string" && Object.keys(v).length === 1) return b64dec(v.__bin).buffer; const o = {}; for (const k of Object.keys(v)) o[k] = binDec(v[k]); return o; }
+  return v;
+}
+const DEVICE_KEYS = /^acv:(dev|codes|code|trial|dl|hello|count|seen|recovery)$/;
+async function fullBackup() {
+  if (curPeriod()) persist();
+  try {
+    const ls = {};
+    for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (/^(acv|mpb):/.test(k)) ls[k] = localStorage.getItem(k); }
+    let idb = {}; try { idb = binEnc(await IDB.all()); } catch (err) {}
+    const now = nowISO();
+    const ok = await saveFile(`Acivaz full backup ${todayISO()}.json`, JSON.stringify({ app: "Acivaz", kind: "workspace-backup", v: 2, exported: now, device: deviceId(), clients: WS.clients.length, periods: WS.periods.length, ls, idb }));
+    if (ok) {
+      store.set("acv:lastFull", now);
+      try { if (BK && BK.books) { BK.books.forEach(x => { x.lastBackup = now; }); bkWrite(); } } catch (err) {}
+      toast("Full backup downloaded: every client, period, book and attached file. Keep it somewhere safe, such as Google Drive or your email.");
+      if (show.cur === "clients") renderClients();
+    }
+  } catch (err) { toast("The backup couldn't be made. Try again."); }
+}
+let wsRestoreJ = null;
+const jparse = s => { try { return JSON.parse(s); } catch (e) { return null; } };
+$("ws-restore-file").addEventListener("change", async e => {
+  const f = e.target.files && e.target.files[0]; e.target.value = "";
+  if (!f) return;
+  try {
+    const j = JSON.parse(await f.text());
+    if (j && j.kind === "books-backup" && j.store && Array.isArray(j.store.books)) { bkRestore = j; bkView = "setup"; show("books"); toast("That is a books-only backup. Check it below, then restore the books."); return; }
+    if (!j || j.kind !== "workspace-backup" || !j.ls || typeof j.ls !== "object") throw new Error("not a backup");
+    wsRestoreJ = j; renderRestorePanel(); $("ws-restore").scrollIntoView({ block: "center" });
+  } catch (err) { toast("That file isn't an Acivaz backup."); }
+});
+function renderRestorePanel() {
+  const box = $("ws-restore"); if (!box) return;
+  const j = wsRestoreJ; if (!j) { box.innerHTML = ""; return; }
+  const w = jparse(j.ls["acv:ws"]) || {}, bk = jparse(j.ls["acv:books"]) || {};
+  const nC = (w.clients || []).length, nP = (w.periods || []).length, nB = (bk.books || []).filter(b => !/\(example\)/i.test(b.name || "")).length;
+  box.innerHTML = `<div class="notice warn"><span><strong>Restore this backup?</strong> Made ${esc(niceStamp(j.exported))}: ${nC} client${nC === 1 ? "" : "s"}, ${nP} period${nP === 1 ? "" : "s"}${nB ? `, books for ${nB} compan${nB === 1 ? "y" : "ies"}` : ""}. It replaces the clients, periods, books and files in this browser. Unlock codes and the free trial on this device are kept.</span><button class="btn small primary" type="button" data-ws="restore-yes">Replace with the backup</button><button class="btn small" type="button" data-ws="restore-no">Cancel</button></div>`;
+}
+async function wsRestoreApply() {
+  const j = wsRestoreJ; if (!j) return;
+  try {
+    const drop = [];
+    for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (/^(acv|mpb):/.test(k) && !DEVICE_KEYS.test(k)) drop.push(k); }
+    drop.forEach(k => localStorage.removeItem(k));
+    for (const [k, v] of Object.entries(j.ls)) if (/^(acv|mpb):/.test(k) && !DEVICE_KEYS.test(k) && typeof v === "string") localStorage.setItem(k, v);
+    const oldDev = jparse(j.ls["acv:dev"]), codes = jparse(j.ls["acv:codes"]) || {}, legacy = jparse(j.ls["acv:code"]);
+    if (oldDev && oldDev === deviceId()) { const cs = codeStore(); for (const k of Object.keys(codes)) if (!cs[k]) cs[k] = codes[k]; store.set("acv:codes", cs); if (legacy && !store.get("acv:code")) store.set("acv:code", legacy); }
+    else if (oldDev && (Object.keys(codes).length || legacy)) store.set("acv:recovery", { dev: oldDev, codes, legacy: legacy || "", at: nowISO() });
+    try { await IDB.clear(); for (const [k, v] of Object.entries(j.idb || {})) await IDB.set(k, binDec(v)); } catch (err) {}
+    if (!localStorage.getItem("acv:ws-migrated")) localStorage.setItem("acv:ws-migrated", JSON.stringify(todayISO()));
+    toast("Backup restored. Reloading…");
+    setTimeout(() => location.reload(), 700);
+  } catch (err) { toast("The backup couldn't be restored: this browser's storage may be full. Free some space and try again."); }
+}
+/* Licence recovery: codes are tied to the device they were issued for. A backup from another device shows what was paid for, and sends a ready-made request for replacement codes. */
+async function renderRecovery() {
+  const box = $("ws-recovery"); if (!box) return;
+  const r = store.get("acv:recovery");
+  if (!PW_ON || !r || !r.dev) { box.innerHTML = ""; return; }
+  const bk = store.get("acv:books") || {};
+  const names = new Set(WS.clients.map(c => c.name).concat((bk.books || []).map(b => String(b.name || "").replace(/\s*\(example\)\s*$/i, ""))).filter(Boolean));
+  const rows = [];
+  for (const n of names) { const oldId = companyId(n, r.dev), code = (r.codes || {})[oldId]; if (!code) continue; const d = await verifyCode(code, oldId); if (d && d >= new Date()) rows.push({ n, oldId, newId: companyId(n), d, code }); }
+  if (r.legacy) { const d = await verifyCode(r.legacy, r.dev); if (d && d >= new Date()) rows.push({ n: "Every company (older device-wide code)", oldId: r.dev, newId: deviceId(), d, code: r.legacy }); }
+  if (!rows.length) { box.innerHTML = ""; return; }
+  const msg = "Hello, I restored my Acivaz backup on a new device and need replacement unlock codes.\n" + rows.map(x => `\nCompany: ${x.n}\nOld ID: ${x.oldId}\nNew ID: ${x.newId}\nPaid until: ${niceDate(x.d)}\nOld code: ${x.code}`).join("\n");
+  box.innerHTML = `<div class="notice"><span><strong>Paid downloads found in this backup.</strong> ${rows.map(x => `${esc(x.n)} until ${esc(niceDate(x.d))}`).join("; ")}. Unlock codes work on the device they were issued for, so send this request and you will receive replacement codes for the paid time that remains, free of charge.</span><a class="btn small primary" href="https://wa.me/${PAY.wa}?text=${encodeURIComponent(msg)}" target="_blank" rel="noopener">Request replacement codes on WhatsApp</a><button class="linkish" type="button" data-ws="recovery-dismiss">Dismiss</button></div>`;
+}
+
 /* ---------- Views and events ---------- */
+const NEEDS_TB = ["pack", "fs", "review", "export", "map", "adjust", ...MODEL_VIEWS];
 function show(view) {
   if (view === "legal") view = "home"; // Legal papers are switched off for now
+  if (!A.length && NEEDS_TB.includes(view)) { if (show.cur !== "data") toast("Import a trial balance for this period first."); view = "data"; }
   if (typeof track === "function" && show.last !== view) { show.last = view; try { track("view-" + view); } catch (e) {} }
+  show.cur = view;
+  syncReview();
   const isModel = MODEL_VIEWS.includes(view);
   if (isModel) modelView = view;
-  for (const v of ["home", "pack", "fs", "data", "map", "books", "legal", "manual"]) $("view-" + v).hidden = v !== view;
+  for (const v of ["home", "clients", "pack", "fs", "data", "map", "adjust", "review", "export", "books", "legal", "manual"]) $("view-" + v).hidden = v !== view;
   document.body.classList.toggle("on-home", view === "home");
   document.body.classList.toggle("on-legal", view === "legal");
   if (view === "legal") renderLegal();
   if (view === "home") renderHome();
   if (view === "manual") renderPrivacy();
   $("view-model").hidden = !isModel;
-  for (const v of ["books", "pack", "fs", "data", "map", "legal", "manual", ...MODEL_VIEWS]) { const t = $("tab-" + v); if (t) { if (v === view) t.setAttribute("aria-current", "page"); else t.removeAttribute("aria-current"); } }
+  for (const v of ["clients", "books", "pack", "fs", "data", "map", "adjust", "review", "export", "legal", "manual", ...MODEL_VIEWS]) { const t = $("tab-" + v); if (t) { if (v === view) t.setAttribute("aria-current", "page"); else t.removeAttribute("aria-current"); } }
   document.querySelectorAll(".tab-group").forEach(g => { const c = g.querySelector('.tab-item[aria-current="page"]'), p = g.querySelector(".tab-parent"); p.classList.toggle("has-current", !!c); p.querySelector(".tab-cur").textContent = c ? "· " + c.querySelector("b").textContent : ""; });
   closeMenus();
   if (view === "map") renderMapping();
   if (view === "pack" || view === "fs") renderPack();
   if (isModel) { renderModel(); renderSignoff(); }
   if (view === "books") renderBooks();
+  if (view === "clients") renderClients();
+  if (view === "data" || view === "map") renderImportHead();
+  if (view === "adjust") renderAdjust();
+  if (view === "review") renderReview();
+  if (view === "export") renderExport();
+  renderNav();
   window.scrollTo({ top: 0 });
 }
 function closeMenus(except) {
@@ -6644,7 +7599,7 @@ $("btn-fs-pdf").onclick = () => exportPDF("fs");
 $("btn-fs-xlsx").onclick = () => exportXLSX("fs");
 $("btn-template").onclick = () => saveFile("trial-balance-template.csv",
   "Account code,Account name,This period YTD,Comparative YTD,Budget YTD,Opening balances\n4000,Sales,-500000000,-420000000,-520000000,\n5000,Purchases,320000000,270000000,330000000,\n1300,Cash at bank,25000000,31000000,,28000000\n");
-$("btn-sample").onclick = () => { loadSample(); renderAll(); show("pack"); toast("Example data loaded."); };
+$("btn-sample").onclick = () => { openSample("pack"); toast("Example data opened. Your clients are unchanged."); };
 $("btn-paste").onclick = () => {
   const t = $("paste").value;
   if (!t.trim()) { toast("Paste some rows first."); return; }
@@ -6658,7 +7613,7 @@ const drop = $("drop");
 ["dragenter", "dragover"].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add("over"); }));
 ["dragleave", "drop"].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove("over"); }));
 drop.addEventListener("drop", e => { const f = e.dataTransfer.files[0]; if (f) readFile(f); });
-for (const id of ["s-company", "s-cur", "s-cmp", "s-bud", "s-opn", "s-months", "s-unit", "s-currency", "s-tax", "s-cmpopen"]) {
+for (const id of ["s-company", "s-period", "s-cur", "s-cmp", "s-bud", "s-opn", "s-months", "s-unit", "s-currency", "s-tax", "s-cmpopen"]) {
   $(id).addEventListener("change", () => {
     if (readSettingsForm()) autoMap(true);
     persist(); renderMapping(); renderPack();
@@ -6704,20 +7659,19 @@ function renderHome() {
   const now = new Date(), y = now.getFullYear(), ye = now <= new Date(y, 6, 31, 23, 59, 59) ? y - 1 : y;
   const due = new Date(ye + 1, 6, 31, 23, 59, 59), left = Math.ceil((due - now) / 864e5);
   $("hm-season").innerHTML = `<span class="hm-pill">Filing season</span><span>Private companies with a 31 December ${ye} year end must send signed accounts, the auditor's report and the directors' report to shareholders and RDB by <strong>31 July ${ye + 1}</strong>, ${left} day${left === 1 ? "" : "s"} from today.</span><button class="linkish" type="button" data-goto="fs">Prepare year-end statements</button>`;
-  $("hm-open").textContent = isSample ? "See the example report" : `Open ${S.company || "your"} reports`;
+  $("hm-open").textContent = WS.clients.length ? `Open your clients (${WS.clients.length})` : "Add your first client";
   $("hm-install").hidden = !installEvt;
 }
 
 /* ---------- Start ---------- */
-const last = store.get("mpb:last2") || store.get("mpb:last");
-if (last && last.S && Array.isArray(last.A) && last.A.length && !last.isSample) {
-  S = { ...SAMPLE_SETTINGS, ...last.S };
-  A = last.A.map(a => ({ opn: null, ...a }));
-  isSample = false;
-} else loadSample();
+wsInit();
+if (!(WS.cur && loadPeriodData(WS.cur))) { WS.cur = null; loadSample(); }
+else if (ADJ.length) applyAdjustments();
 renderAll();
 loadUnlock();
 if (!store.get("acv:seen")) { store.set("acv:seen", todayISO()); show("home"); }
+else if (WS.clients.length) show("clients");
+else show("pack");
 
 var installEvt = null;
 window.addEventListener("beforeinstallprompt", e => { e.preventDefault(); installEvt = e; $("btn-install").hidden = false; $("hm-install").hidden = false; });
