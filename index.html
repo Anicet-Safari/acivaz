@@ -89,7 +89,6 @@ h4 { font-size: 15.5px; font-weight: 600; }
 button, select, input, textarea { font: inherit; color: inherit; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
-.band { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--surface); border-bottom: 3px solid var(--accent); }
 .band-inner { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 20px; padding-block: 10px; }
 .brand { display: flex; align-items: baseline; gap: 10px; min-width: 0; flex: 1 1 260px; }
 .brand-mark { font-family: var(--font-display); font-weight: 700; font-size: 23px; color: var(--accent); letter-spacing: -0.01em; white-space: nowrap; }
@@ -97,8 +96,6 @@ button, select, input, textarea { font: inherit; color: inherit; }
 .brand-co { color: var(--muted); font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
 .tabs { display: flex; flex-wrap: wrap; gap: 2px; max-width: 100%; }
 .tab-group { position: relative; }
-.tab .caret { font-size: 10px; transition: transform .15s; }
-.tab[aria-expanded="true"] .caret { transform: rotate(180deg); }
 .tab .tab-cur { font-weight: 500; color: var(--muted); }
 .tab-menu { position: absolute; top: calc(100% + 6px); left: 0; z-index: 30; width: 300px; max-width: calc(100vw - 32px); background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: 0 12px 28px rgba(15, 23, 35, .18); padding: 6px; display: flex; flex-direction: column; gap: 2px; }
 .tab-item { display: grid; grid-template-columns: 20px 1fr auto; gap: 0 10px; align-items: start; text-align: left; border: 0; background: transparent; padding: 9px 10px; border-radius: var(--radius); cursor: pointer; color: var(--ink); font: inherit; }
@@ -535,13 +532,9 @@ table.lines.lg-rows input, table.lines.lg-rows select { width: 100%; padding: 6p
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 
 /* Workspace: clients, periods, adjustments, review status and export */
-.brand-co { display: flex; align-items: center; gap: 8px; }
-.band-inner .tabs { order: 3; flex: 1 1 100%; border-top: 1px solid var(--line-soft); padding-top: 4px; }
-.band-inner { row-gap: 4px; }
 #ws-restore:empty, #ws-recovery:empty { display: none; }
 .rv-list small.warn { color: var(--warn); }
 @media (max-width: 640px) { .brand-mark small { display: none; } .brand { flex-wrap: wrap; } .brand-co { flex-wrap: wrap; white-space: normal; } }
-.brand-co #brand-co { overflow: hidden; text-overflow: ellipsis; }
 .save-chip { font-size: 11.5px; color: var(--muted); white-space: nowrap; }
 .save-chip.ok::before { content: "✓ "; color: var(--good); }
 .save-chip.bad { color: var(--bad); font-weight: 600; }
@@ -676,28 +669,80 @@ table.lines.lg-rows input, table.lines.lg-rows select { width: 100%; padding: 6p
 .fp-tool span { font-size: 14px; line-height: 1.55; color: var(--muted); }
 @media (max-width: 900px) { .fp-tools { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 560px) { .fp-tools { grid-template-columns: 1fr; } }
+
+/* Header: a navy bar with the brand and the open client and period (click to switch), then one quiet row of tabs */
+.band { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--surface); border-bottom: 1px solid var(--line); }
+.band-top { background: #1F3A5F; color: #FFFFFF; }
+.band-top-in { display: flex; align-items: center; justify-content: space-between; gap: 12px 24px; min-height: 56px; padding-block: 6px; flex-wrap: wrap; }
+.band-top .brand-mark { color: #FFFFFF; font-size: 24px; }
+.ctx { display: flex; align-items: center; gap: 12px; min-width: 0; flex-wrap: wrap; justify-content: flex-end; }
+.ctx-btn { display: inline-flex; align-items: center; gap: 12px; background: rgba(255, 255, 255, .08); border: 1px solid rgba(255, 255, 255, .22); color: #FFFFFF; padding: 5px 12px 5px 14px; border-radius: var(--radius); cursor: pointer; font: inherit; text-align: left; max-width: min(460px, 70vw); }
+.ctx-btn:hover, .ctx-btn[aria-expanded="true"] { background: rgba(255, 255, 255, .14); border-color: rgba(255, 255, 255, .4); }
+.ctx-text { display: flex; flex-direction: column; min-width: 0; line-height: 1.25; }
+.ctx-client { font-size: 12px; color: #B9C8DA; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ctx-period { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ctx-menu { left: auto; right: 0; width: 340px; color: var(--ink); }
+.caret { width: 10px; height: 6px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; transition: transform .15s; }
+[aria-expanded="true"] > .caret { transform: rotate(180deg); }
+.band-top .rs { background: #FFFFFF; }
+.band-top .rs.draft { color: #4A5563; border-color: #FFFFFF; }
+.band-top .save-chip { color: #B9C8DA; }
+.band-top .save-chip.ok::before { color: #8FD4A8; }
+.band-top .save-chip.bad { color: #FFB4A8; }
+.band-top .btn { background: transparent; color: #FFFFFF; border-color: rgba(255, 255, 255, .4); }
+.band-nav { background: var(--surface); }
+.band-nav .tabs { gap: 0; padding: 0; border: 0; }
+.band-nav .tab { padding: 12px 12px 10px; border-bottom-width: 2px; font-size: 14.5px; color: var(--muted); }
+.band-nav .tab:hover { color: var(--ink); }
+.band-nav .tab[aria-current="page"], .band-nav .tab.has-current { color: var(--accent); border-bottom-color: var(--accent); }
+.band-nav .tab-menu { top: calc(100% + 1px); }
+.band-nav .tab-sep { height: 20px; margin: 0 8px; }
+.band-nav .tab .tab-cur { display: none; }
+.band-nav .tab-parent { gap: 6px; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .band-top { background: #13243A; } }
+:root[data-theme="dark"] .band-top { background: #13243A; }
+@media (max-width: 640px) {
+  .band-top-in { min-height: 50px; }
+  .band-top .brand-mark { font-size: 21px; }
+  .ctx { gap: 8px; }
+  .ctx-btn { max-width: 62vw; padding: 4px 10px; }
+  .ctx-client { display: none; }
+  #hdr-status, .band-top .save-chip { display: none; }
+  .band-nav .tab { padding: 10px 9px 8px; font-size: 14px; }
+}
 </style>
 </head>
 <body>
-<header class="band gutter">
-  <div class="wrap band-inner">
-    <div class="brand">
-      <button class="brand-mark" type="button" data-goto="home" aria-label="Acivaz home">Acivaz<small>Financial reporting workspace</small></button>
-      <div class="brand-co"><span id="brand-co"></span><span id="hdr-status"></span><span id="save-chip" class="save-chip" role="status" aria-live="polite"></span></div>
+<header class="band">
+  <div class="band-top gutter">
+    <div class="wrap band-top-in">
+      <button class="brand-mark" type="button" data-goto="home" aria-label="Acivaz home">Acivaz</button>
+      <div class="ctx">
+        <div class="tab-group ctx-group">
+          <button class="ctx-btn tab-parent" type="button" id="grp-period" aria-haspopup="true" aria-expanded="false" aria-controls="menu-period" title="Switch client or reporting period"><span class="ctx-text"><span class="ctx-client" id="brand-co"></span><span class="ctx-period" id="period-tab">Period</span></span><span class="tab-cur" hidden></span><svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg></button>
+          <div class="tab-menu ctx-menu" id="menu-period" hidden></div>
+        </div>
+        <span id="hdr-status"></span>
+        <span id="save-chip" class="save-chip" role="status" aria-live="polite"></span>
+        <div class="actions" id="export-actions">
+          <button class="btn" id="btn-install" type="button" hidden>Install app</button>
+          <button class="btn" id="btn-xlsx" type="button" hidden>Excel</button>
+          <button class="btn primary" id="btn-pdf" type="button" hidden>Download PDF pack</button>
+        </div>
+      </div>
     </div>
+  </div>
+  <div class="band-nav gutter">
+    <div class="wrap">
     <nav class="tabs" aria-label="Workflow">
       <button class="tab" type="button" id="tab-home" data-view="home">Home</button>
       <span class="tab-sep" aria-hidden="true"></span>
       <button class="tab" type="button" id="tab-clients" data-view="clients">Clients</button>
-      <div class="tab-group">
-        <button class="tab tab-parent" type="button" id="grp-period" aria-haspopup="true" aria-expanded="false" aria-controls="menu-period"><span id="period-tab">Period</span><span class="tab-cur" hidden></span><span class="caret" aria-hidden="true">▾</span></button>
-        <div class="tab-menu" id="menu-period" hidden></div>
-      </div>
       <button class="tab" type="button" id="tab-data" data-view="data">Import</button>
       <button class="tab" type="button" id="tab-map" data-view="map">Map<span class="count" id="unmapped-count" hidden></span></button>
       <button class="tab" type="button" id="tab-adjust" data-view="adjust">Adjust<span class="count plain" id="adj-count" hidden></span></button>
       <div class="tab-group">
-        <button class="tab tab-parent" type="button" id="grp-reports" aria-haspopup="true" aria-expanded="false" aria-controls="menu-reports">Review <span class="tab-cur"></span><span class="caret" aria-hidden="true">▾</span></button>
+        <button class="tab tab-parent" type="button" id="grp-reports" aria-haspopup="true" aria-expanded="false" aria-controls="menu-reports">Review <span class="tab-cur"></span><svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg></button>
         <div class="tab-menu" id="menu-reports" hidden>
           <button class="tab-item" type="button" id="tab-review" data-view="review"><span class="step">·</span><span><b>Checklist and status</b><small>Draft, Needs review or Finalised, and the checks behind it</small></span></button>
           <button class="tab-item" type="button" id="tab-fs" data-view="fs"><span class="step">·</span><span><b>Financial statements</b><small>The four statements and notes in IFRS for SMEs format, with year-end disclosures</small></span></button>
@@ -707,7 +752,7 @@ table.lines.lg-rows input, table.lines.lg-rows select { width: 100%; padding: 6p
       <button class="tab" type="button" id="tab-export" data-view="export">Export</button>
       <span class="tab-sep" aria-hidden="true"></span>
       <div class="tab-group">
-        <button class="tab tab-parent" type="button" id="grp-plan" aria-haspopup="true" aria-expanded="false" aria-controls="menu-plan">More tools <span class="tab-cur"></span><span class="caret" aria-hidden="true">▾</span></button>
+        <button class="tab tab-parent" type="button" id="grp-plan" aria-haspopup="true" aria-expanded="false" aria-controls="menu-plan">More tools <span class="tab-cur"></span><svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg></button>
         <div class="tab-menu" id="menu-plan" hidden>
           <button class="tab-item" type="button" id="tab-books" data-view="books"><span class="step">·</span><span><b>Books</b><small>Keep a client's books here: sales, purchases, bank and VAT, feeding Import directly</small></span></button>
           <button class="tab-item" type="button" id="tab-forecast" data-view="forecast"><span class="step">·</span><span><b>Forecast</b><small>Three years, three scenarios, what drives profit</small></span></button>
@@ -719,10 +764,6 @@ table.lines.lg-rows input, table.lines.lg-rows select { width: 100%; padding: 6p
       </div>
       <button class="tab" type="button" id="tab-manual" data-view="manual">Manual</button>
     </nav>
-    <div class="actions" id="export-actions">
-      <button class="btn" id="btn-install" type="button" hidden>Install app</button>
-      <button class="btn" id="btn-xlsx" type="button" hidden>Excel</button>
-      <button class="btn primary" id="btn-pdf" type="button" hidden>Download PDF pack</button>
     </div>
   </div>
 </header>
@@ -7378,9 +7419,9 @@ document.addEventListener("click", async e => {
 /* ---------- Navigation: Clients → Period → Import → Map → Adjust → Review → Export ---------- */
 function renderNav() {
   const p = curPeriod(), c = curClient(), st = effStatus();
-  $("brand-co").textContent = isSample ? "Example data · " + SAMPLE_SETTINGS.company : c ? `${c.name} · ${p.label}` : "";
+  $("brand-co").textContent = isSample ? "Example data" : c ? c.name : "No client open";
   $("hdr-status").innerHTML = p ? rsChip(st) : "";
-  $("period-tab").textContent = isSample ? "Example" : p ? p.label : "Period";
+  $("period-tab").textContent = isSample ? SAMPLE_SETTINGS.company : p ? p.label : "Choose a client";
   const items = [];
   if (c) {
     for (const x of periodsOf(c.id)) { const on = x.id === p.id; items.push(`<button class="tab-item" type="button" data-period="${x.id}"${on ? ' aria-current="true"' : ""}><span class="step">${on ? "●" : "·"}</span><span><b>${esc(x.label)}</b><small>${RS_TEXT[on ? st : x.status || "draft"]} · ${on ? A.length : x.n || 0} accounts · saved ${esc(niceStamp(x.updated))}</small></span></button>`); }
