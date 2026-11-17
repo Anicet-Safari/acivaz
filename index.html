@@ -610,7 +610,7 @@ table.lines.lg-rows input, table.lines.lg-rows select { width: 100%; padding: 6p
 
 /* Front page: plain and real. The pictures are an actual statements PDF and actual screens from the app, not drawings. */
 .home { gap: 0; }
-.fp-top { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, .95fr); gap: 56px; align-items: center; padding: 44px 0 36px; }
+.fp-top { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, .95fr); gap: 56px; align-items: center; padding: 44px 0 44px; }
 .fp-copy h1 { font-size: clamp(32px, 3.7vw, 46px); line-height: 1.1; letter-spacing: -0.012em; margin: 0 0 18px; max-width: 18ch; }
 .fp-lead { font-size: 17px; line-height: 1.6; color: var(--muted); max-width: 50ch; margin: 0 0 24px; }
 .fp-cta { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 18px; }
@@ -650,6 +650,22 @@ table.lines.lg-rows input, table.lines.lg-rows select { width: 100%; padding: 6p
   .fp-cols { grid-template-columns: 1fr; gap: 8px; }
 }
 @media (max-width: 640px) { .fp-cta .btn { flex: 1 1 100%; justify-content: center; } }
+
+/* A navy band with real pages on it: the one place the front page spends colour */
+.on-home main { overflow-x: clip; }
+.fp-band { margin: 8px calc(50% - 50vw) 36px; padding: 52px max(16px, calc(50vw - 590px)) 48px; background: #1F3A5F; color: #DCE5F0; }
+.fp-band-in { display: grid; grid-template-columns: minmax(0, .7fr) minmax(0, 2fr); gap: 44px; align-items: center; }
+.fp-band h2 { color: #FFFFFF; font-size: clamp(24px, 2.6vw, 30px); margin: 0 0 12px; }
+.fp-band p { margin: 0; font-size: 15px; line-height: 1.6; color: #C4D2E2; max-width: 40ch; }
+.fp-sheets { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; align-items: start; }
+.fp-sheets figure { margin: 0; }
+.fp-sheets img { display: block; width: 100%; height: auto; background: #FFFFFF; box-shadow: 0 18px 36px -14px rgba(0, 0, 0, .55); }
+.fp-sheets .fp-up { margin-top: -18px; }
+.fp-sheets figcaption { font-size: 12.5px; color: #AFC0D4; margin-top: 10px; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .fp-band { background: #13243A; } }
+:root[data-theme="dark"] .fp-band { background: #13243A; }
+@media (max-width: 900px) { .fp-band-in { grid-template-columns: 1fr; gap: 24px; } }
+@media (max-width: 560px) { .fp-sheets { grid-template-columns: repeat(3, 70%); overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 8px; } .fp-sheets figure { scroll-snap-align: start; } .fp-sheets .fp-up { margin-top: 0; } }
 </style>
 </head>
 <body>
@@ -723,6 +739,21 @@ table.lines.lg-rows input, table.lines.lg-rows select { width: 100%; padding: 6p
           </div>
           <figcaption>Pages 4 and 5 of a statements PDF from Acivaz, for the example company. Your PDF looks the same, with your figures.</figcaption>
         </figure>
+      </div>
+
+
+      <div class="fp-band">
+        <div class="fp-band-in">
+          <div class="fp-band-text">
+            <h2>What your client receives</h2>
+            <p>Pages from the PDFs Acivaz made for the example company: the cover of the financial statements, and the charts and ratio scorecard from the management report. Every figure comes from the trial balance.</p>
+          </div>
+          <div class="fp-sheets">
+            <figure><img src="page-statements-cover.webp" width="640" height="905" alt="Cover page of the financial statements PDF, with the contents listed by page" loading="lazy"><figcaption>Financial statements, cover</figcaption></figure>
+            <figure class="fp-up"><img src="page-charts.webp" width="640" height="905" alt="Management report page with four colour charts: results against last year, what moved net profit, where each 100 of income went, and how cash moved" loading="lazy"><figcaption>Management report, charts</figcaption></figure>
+            <figure><img src="page-scorecard.webp" width="640" height="905" alt="Management report page with the ratio scorecard and cost lines per 100 of revenue" loading="lazy"><figcaption>Management report, ratio scorecard</figcaption></figure>
+          </div>
+        </div>
       </div>
 
       <div class="fp-season" id="hm-season"></div>
