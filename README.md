@@ -15,7 +15,7 @@ Prepare draft financial statements, notes and management reports. Review account
 - **Map.** Put each account on a line of the reports.
 - **Adjust.** Post balanced adjusting entries on top of the import. The import is never changed, and the adjusted trial balance shows the imported, adjustment and adjusted amounts.
 - **Review.** Each period is **Draft**, **Needs review** or **Finalised**. Acivaz checks the trial balance, mapping, balance sheet and cash flow. The reviewer then confirms the mappings, reconciliations, adjustments, disclosures and approval. If anything changes after finalising, the period goes back to Draft. Every step is kept in the review history.
-- **Export.** Financial statements, management report or the full pack, as PDF and Excel. Until a period is finalised, every page is marked DRAFT. Each download is recorded as a numbered version.
+- **Export.** Financial statements, management report or the full pack, as PDF and Excel. Each download is recorded as a numbered version with the period's status; finalised packs say so on the cover.
 
 What the reports contain:
 

@@ -771,8 +771,8 @@ table.lines.lg-rows input, table.lines.lg-rows select { width: 100%; padding: 6p
             <figcaption><b>Review.</b> The checks Acivaz runs itself, and the ones a reviewer confirms before the period is finalised.</figcaption>
           </figure>
           <figure class="fp-wide">
-            <img src="screen-export.webp" width="1600" height="630" alt="The Export screen with download buttons and a list of report versions" loading="lazy">
-            <figcaption><b>Export.</b> PDF and Excel. Drafts are marked on every page, and each download is kept as a version.</figcaption>
+            <img src="screen-export.webp" width="1600" height="682" alt="The Export screen with download buttons and a list of report versions" loading="lazy">
+            <figcaption><b>Export.</b> PDF and Excel. Each download is kept as a version, with the period's status at the time.</figcaption>
           </figure>
         </div>
       </div>
@@ -1335,7 +1335,7 @@ table.lines.lg-rows input, table.lines.lg-rows select { width: 100%; padding: 6p
             <p>Finalising records who finalised it and when. If the figures, mappings, adjustments, disclosures or commentary change afterwards, the period goes back to Draft and the checklist is cleared. Every step is kept in the review history with your name and any note.</p>
             <p>Acivaz checks arithmetic and completeness. It does not replace professional review, signing by the directors, or an assessment of compliance with the law or IFRS for SMEs.</p>
             <h3 id="m-wf-export">Export and versions</h3>
-            <p><strong>Export</strong> downloads the financial statements, the management report, or the full pack, as PDF or Excel. Until the period is finalised, every PDF page carries a pale DRAFT mark and a note in the top margin, the Excel cover and each sheet say DRAFT, and the file name ends in DRAFT. Each download is recorded as a numbered version with its status and who downloaded it.</p>
+            <p><strong>Export</strong> downloads the financial statements, the management report, or the full pack, as PDF or Excel. Each download is recorded as a numbered version with the period's status at the time and who downloaded it. Once a period is finalised, the PDF cover and the Excel cover sheet say so, with the date and the reviewer's name.</p>
             <h3 id="m-wf-backup">Full backup and restore</h3>
             <p>Everything is kept in this browser on this device. <strong>Back up everything</strong> in Clients downloads one file with every client, period, mapping, adjustment, disclosure, the books and attached auditor's reports. <strong>Restore a backup</strong> replaces the data in this browser with the file; this device's free trial and unlock codes are kept. If the backup came from another device with paid companies, Acivaz lists them and prepares a request for replacement codes. The top bar shows <strong>Saved</strong> with the time after each change. If the browser refuses to save (storage full, or a private window), a red warning appears: back up straight away.</p>
           </section>
@@ -4609,7 +4609,7 @@ async function exportPDF(only) {
     font("normal", 11); doc.text(plain(only === "bplan" ? `Built from the accounts for ${S.cur}` : `For ${S.cur}`), M, y); y += 6;
     doc.text(plain(`Amounts in ${unitText()} unless stated`), M, y); y += 6;
     { const pb = sgLine(SG().prep, SG().prepRole); doc.text(plain(`Prepared ${prepared}${pb ? " by " + pb : ""}`), M, y); y += 6; }
-    if (rep) { font("bold", 11); doc.text(plain(draft ? "DRAFT - not finalised. Do not sign or send as final." : `Final version, finalised ${niceStamp(RV.finalAt)}${RV.finalBy ? " by " + RV.finalBy : ""}`), M, y); y += 6; font("normal", 11); }
+    if (rep && effStatus() === "final") { font("bold", 11); doc.text(plain(`Final version, finalised ${niceStamp(RV.finalAt)}${RV.finalBy ? " by " + RV.finalBy : ""}`), M, y); y += 6; font("normal", 11); }
     doc.text(plain(only === "bplan" ? "Forecasts are management estimates. Confidential." : only === "fs" ? "Prepared in the IFRS for SMEs format. " + auditLine() : "Unaudited management accounts"), M, y); y += 14;
     font("bold", 11); doc.text("Contents", M, y); y += 2; doc.setLineWidth(0.25); doc.line(M, y, R, y);
     var tocY = y + 7;
@@ -5132,7 +5132,7 @@ async function exportXLSX(only) {
   const R0 = v => v === null || v === undefined || !isFinite(v) ? "" : Math.round(v);
   const part = !only ? "all" : only === "mgmt" || only === "fs" ? only : null;
   const X = xlBook({ company: S.company, title: (only && TASK_TITLE[only]) || "Management accounts", period: S.cur, unit: `Amounts in ${S.currency}`, fs: part === "fs", draft,
-    status: !rep ? "" : draft ? "DRAFT - not finalised. Do not sign or send as final." : `Final version, finalised ${niceStamp(RV.finalAt)}${RV.finalBy ? " by " + RV.finalBy : ""}` });
+    status: rep && effStatus() === "final" ? `Final version, finalised ${niceStamp(RV.finalAt)}${RV.finalBy ? " by " + RV.finalBy : ""}` : "" });
   if (part === "all" || part === "mgmt") {
     if (bud || cmp) {
       const rows = [["", S.cur].concat(bud ? [S.bud || "Budget", "Variance", "Variance %"] : []).concat(cmp ? [S.cmp, "Change", "Change %"] : [])];
@@ -7100,7 +7100,7 @@ function renderReview() {
     `<label>Note for the history (optional)<textarea id="rv-note" placeholder="For example: queries raised with the client, or what was checked"${isSample ? " disabled" : ""}></textarea></label>` +
     `<div class="actions">${btns}</div>` +
     (st !== "final" && bl.length ? `<p class="help" style="margin:0"><strong>Before finalising:</strong> ${bl.map(esc).join("; ")}.</p>` : "") +
-    `<p class="help" style="margin:0">Until a period is finalised, every download is marked DRAFT. Acivaz checks that the figures add up and the pack is complete. It does not replace professional review, signing by the directors, or an assessment of compliance with the law or IFRS for SMEs.</p>`;
+    `<p class="help" style="margin:0">Each download records the period's status at the time. Acivaz checks that the figures add up and the pack is complete. It does not replace professional review, signing by the directors, or an assessment of compliance with the law or IFRS for SMEs.</p>`;
   const h = (RV && RV.history) || [];
   $("rv-history").innerHTML = h.length ? `<table class="rv-hist"><thead><tr><th>When</th><th>Who</th><th>What</th><th>Note</th></tr></thead><tbody>${h.map(x => `<tr><td style="white-space:nowrap">${esc(niceStamp(x.at))}</td><td>${esc(x.by || "–")}</td><td>${esc(x.act)}</td><td>${esc(x.note || "")}</td></tr>`).join("")}</tbody></table>` : `<p class="help">Nothing yet. Imports, adjustments and status changes are recorded here.</p>`;
 }
@@ -7117,7 +7117,7 @@ document.addEventListener("click", e => {
   if (!userName() && act !== "back") { toast("Enter your name first, so the history shows who did this."); $("rv-user").focus(); return; }
   if (act === "submit") { RV.status = "review"; reviewLog("Sent for review", note); toast("Sent for review. The reviewer confirms the checklist, then finalises."); }
   else if (act === "back") { RV.status = "draft"; reviewLog("Returned to draft", note); toast("Back to Draft."); }
-  else if (act === "reopen") { RV.status = "draft"; RV.ticks = {}; RV.finalFp = null; reviewLog("Reopened for changes", note); toast("Reopened. Downloads are marked DRAFT until you finalise again."); }
+  else if (act === "reopen") { RV.status = "draft"; RV.ticks = {}; RV.finalFp = null; reviewLog("Reopened for changes", note); toast("Reopened. Finalise again when the review is done."); }
   else if (act === "final") {
     const bl = reviewBlockers();
     if (bl.length) { toast("Finish the checklist first: " + bl[0] + "."); return; }
@@ -7130,7 +7130,7 @@ document.addEventListener("click", e => {
 /* ---------- Export ---------- */
 const REP_LABEL = { all: "Full reporting pack", fs: "Financial statements", mgmt: "Management report" };
 const isRepExport = only => !only || only === "fs" || only === "mgmt";
-const draftExport = only => isRepExport(only) && effStatus() !== "final";
+const draftExport = () => false; /* Draft marks on downloads are switched off; the review status is still recorded with each version */
 function recordExport(only, fmt) {
   if (isSample || !RV || !isRepExport(only)) return;
   RV.versions = RV.versions || [];
@@ -7146,8 +7146,8 @@ function renderExport() {
   $("ex-title").textContent = p ? "Export · " + p.label : "Export";
   $("ex-sub").textContent = p ? `${c.name} · PDF and Excel, prepared in this browser` : "Example data";
   $("ex-status").innerHTML = st === "final"
-    ? `<div class="notice good"><span><strong>Finalised</strong> ${esc(niceStamp(RV.finalAt))}${RV.finalBy ? " by " + esc(RV.finalBy) : ""}. Downloads are final versions, without draft marks.</span></div>`
-    : `<div class="notice warn"><span><strong>${esc(RS_TEXT[st])}.</strong> Each PDF page and each Excel cover sheet is marked DRAFT until this period is finalised in Review.</span>${isSample ? "" : `<button class="linkish" type="button" data-view="review">Go to Review</button>`}</div>`;
+    ? `<div class="notice good"><span><strong>Finalised</strong> ${esc(niceStamp(RV.finalAt))}${RV.finalBy ? " by " + esc(RV.finalBy) : ""}. Downloads are recorded as final versions.</span></div>`
+    : `<div class="notice warn"><span><strong>${esc(RS_TEXT[st])}.</strong> This period is not finalised yet. Downloads are recorded with this status in the list of versions below.</span>${isSample ? "" : `<button class="linkish" type="button" data-view="review">Go to Review</button>`}</div>`;
   $("ex-plan").innerHTML = PW_ON ? `${$("plan-status").innerHTML || ""} · <button class="linkish" type="button" data-goto-pricing>Pricing and licence policy</button>` : "";
   const v = (RV && RV.versions) || [];
   $("ex-versions").innerHTML = v.length ? `<table class="ex-ver"><thead><tr><th>Version</th><th>When</th><th>Report</th><th>Format</th><th>Status</th><th>By</th></tr></thead><tbody>${v.map(x => `<tr><td class="n">${x.n}</td><td style="white-space:nowrap">${esc(niceStamp(x.at))}</td><td>${esc(REP_LABEL[x.what] || x.what)}</td><td>${x.fmt === "pdf" ? "PDF" : "Excel"}</td><td>${rsChip(x.status)}</td><td>${esc(x.by || "–")}</td></tr>`).join("")}</tbody></table>` : `<p class="help">${isSample ? "Versions are recorded for your own clients." : "No downloads from this period yet."}</p>`;
