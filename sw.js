@@ -1,5 +1,5 @@
 // Acivaz offline cache. Bump VERSION when you publish changes.
-const VERSION = "acivaz-v32";
+const VERSION = "acivaz-v34";
 const SHELL = [
   "./", "index.html", "manifest.webmanifest",
   "icon-192.png", "icon-512.png", "icon-maskable-512.png", "apple-touch-icon.png", "favicon-32.png",
@@ -24,6 +24,11 @@ self.addEventListener("fetch", e => {
     // Network first so updates arrive; fall back to the cached app offline.
     e.respondWith(fetch(req).then(res => { const copy = res.clone(); caches.open(VERSION).then(c => c.put("index.html", copy)); return res; })
       .catch(() => caches.match("index.html").then(r => r || caches.match("./"))));
+    return;
+  }
+  // Front-page pictures: network first, so a new picture shows straight away; the cached copy is for offline use.
+  if (/\.webp(\?|$)/.test(req.url)) {
+    e.respondWith(fetch(req).then(res => { if (res && res.ok) { const copy = res.clone(); caches.open(VERSION).then(c => c.put(req, copy)); } return res; }).catch(() => caches.match(req)));
     return;
   }
   // Everything else: cache first, then network, keeping a copy (fonts, libraries, icons).

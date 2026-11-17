@@ -669,6 +669,16 @@ table.lines.lg-rows input, table.lines.lg-rows select { width: 100%; padding: 6p
 
 .tab-sep { align-self: center; width: 1px; height: 18px; background: var(--line); margin: 0 6px; flex: none; }
 @media (max-width: 640px) { .tab-sep { display: none; } }
+
+.fp-tools { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px 24px; margin-top: 24px; }
+.fp-tool { display: flex; flex-direction: column; gap: 6px; text-align: left; background: none; border: 0; padding: 0; font: inherit; color: inherit; cursor: pointer; }
+.fp-tool img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: contain; object-position: center; background: #FFFFFF; border: 1px solid var(--line); padding: 8px; margin-bottom: 6px; transition: border-color .15s; }
+.fp-tool:hover img { border-color: var(--accent); }
+.fp-tool b { font-size: 15.5px; font-weight: 600; color: var(--accent); }
+.fp-tool:hover b { text-decoration: underline; text-underline-offset: 3px; }
+.fp-tool span { font-size: 14px; line-height: 1.55; color: var(--muted); }
+@media (max-width: 900px) { .fp-tools { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .fp-tools { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
@@ -740,8 +750,8 @@ table.lines.lg-rows input, table.lines.lg-rows select { width: 100%; padding: 6p
         </div>
         <figure class="fp-pages">
           <div class="fp-stack">
-            <img class="fp-p2" src="pdf-profit-or-loss.webp" width="890" height="900" alt="" loading="eager">
-            <img class="fp-p1" src="pdf-financial-position.webp" width="890" height="900" alt="Statement of financial position for Umucyo Agro Processors Ltd as at September 2026, with notes and comparatives, as printed in an Acivaz statements PDF" loading="eager">
+            <img class="fp-p2" src="pdf-profit-or-loss.webp?v=33" width="890" height="900" alt="" loading="eager">
+            <img class="fp-p1" src="pdf-financial-position.webp?v=33" width="890" height="900" alt="Statement of financial position for Umucyo Agro Processors Ltd as at September 2026, with notes and comparatives, as printed in an Acivaz statements PDF" loading="eager">
           </div>
           <figcaption>Pages 4 and 5 of a statements PDF from Acivaz, for the example company. Your PDF looks the same, with your figures.</figcaption>
         </figure>
@@ -755,9 +765,9 @@ table.lines.lg-rows input, table.lines.lg-rows select { width: 100%; padding: 6p
             <p>Pages from the PDFs Acivaz made for the example company: the cover of the financial statements, and the charts and ratio scorecard from the management report. Every figure comes from the trial balance.</p>
           </div>
           <div class="fp-sheets">
-            <figure><img src="page-statements-cover.webp" width="640" height="905" alt="Cover page of the financial statements PDF, with the contents listed by page" loading="lazy"><figcaption>Financial statements, cover</figcaption></figure>
-            <figure class="fp-up"><img src="page-charts.webp" width="640" height="905" alt="Management report page with four colour charts: results against last year, what moved net profit, where each 100 of income went, and how cash moved" loading="lazy"><figcaption>Management report, charts</figcaption></figure>
-            <figure><img src="page-scorecard.webp" width="640" height="905" alt="Management report page with the ratio scorecard and cost lines per 100 of revenue" loading="lazy"><figcaption>Management report, ratio scorecard</figcaption></figure>
+            <figure><img src="page-statements-cover.webp?v=33" width="640" height="905" alt="Cover page of the financial statements PDF, with the contents listed by page" loading="lazy"><figcaption>Financial statements, cover</figcaption></figure>
+            <figure class="fp-up"><img src="page-charts.webp?v=33" width="640" height="905" alt="Management report page with four colour charts: results against last year, what moved net profit, where each 100 of income went, and how cash moved" loading="lazy"><figcaption>Management report, charts</figcaption></figure>
+            <figure><img src="page-scorecard.webp?v=33" width="640" height="905" alt="Management report page with the ratio scorecard and cost lines per 100 of revenue" loading="lazy"><figcaption>Management report, ratio scorecard</figcaption></figure>
           </div>
         </div>
       </div>
@@ -769,17 +779,30 @@ table.lines.lg-rows input, table.lines.lg-rows select { width: 100%; padding: 6p
         <p class="fp-intro">The bar at the top of Acivaz follows the order you close a client's books: clients, period, import, map, adjust, review, export. Each client keeps its own periods, mappings, adjustments and disclosures, so next month starts where this one ended.</p>
         <div class="fp-shots">
           <figure>
-            <img src="screen-map.webp" width="1200" height="717" alt="The Map screen, with each account of the trial balance placed on a line of the reports" loading="lazy">
+            <img src="screen-map.webp?v=33" width="1200" height="717" alt="The Map screen, with each account of the trial balance placed on a line of the reports" loading="lazy">
             <figcaption><b>Map.</b> Acivaz suggests a line for each account and remembers your choices for that client.</figcaption>
           </figure>
           <figure>
-            <img src="screen-review.webp" width="1000" height="911" alt="The review checklist: four checks done by Acivaz and the items a reviewer confirms" loading="lazy">
+            <img src="screen-review.webp?v=33" width="1000" height="911" alt="The review checklist: four checks done by Acivaz and the items a reviewer confirms" loading="lazy">
             <figcaption><b>Review.</b> The checks Acivaz runs itself, and the ones a reviewer confirms before the period is finalised.</figcaption>
           </figure>
           <figure class="fp-wide">
-            <img src="screen-export.webp" width="1600" height="659" alt="The Export screen with download buttons and a list of report versions" loading="lazy">
+            <img src="screen-export.webp?v=33" width="1600" height="659" alt="The Export screen with download buttons and a list of report versions" loading="lazy">
             <figcaption><b>Export.</b> PDF and Excel. Each download is kept as a version, with the period's status at the time.</figcaption>
           </figure>
+        </div>
+      </div>
+
+      <div class="fp-sec" id="hm-tools">
+        <h2>More tools</h2>
+        <p class="fp-intro">When a client needs more than the year-end pack, these work from the same figures. Open them from More tools in the top bar.</p>
+        <div class="fp-tools">
+          <button type="button" class="fp-tool" data-goto="books"><img src="tool-books.webp?v=33" width="900" height="543" alt="Books dashboard showing cash in and out month by month" loading="lazy"><b>Books</b><span>Sales, purchases, bank and mobile money, with VAT under RRA rules. Sends a trial balance straight to Import.</span></button>
+          <button type="button" class="fp-tool" data-goto="forecast"><img src="tool-forecast.webp?v=33" width="900" height="452" alt="Closing cash over three years in a base, upside and downside case" loading="lazy"><b>Forecast</b><span>Three years in base, upside and downside cases, with what drives profit.</span></button>
+          <button type="button" class="fp-tool" data-goto="budget"><img src="tool-budget.webp?v=33" width="900" height="491" alt="Monthly revenue and net profit for the budget year" loading="lazy"><b>Budget</b><span>The first forecast year, month by month, phased to the client's seasons.</span></button>
+          <button type="button" class="fp-tool" data-goto="valuation"><img src="tool-valuation.webp?v=33" width="900" height="257" alt="Equity value sensitivity table by discount rate and long-term growth" loading="lazy"><b>Valuation</b><span>Discounted cash flow with a sensitivity table, read as a range rather than a price.</span></button>
+          <button type="button" class="fp-tool" data-goto="appraisal"><img src="tool-loans.webp?v=33" width="900" height="629" alt="Loan repayment schedule with principal and interest by year" loading="lazy"><b>Loans and projects</b><span>Repayment schedules, and the return, payback and net present value of a project.</span></button>
+          <button type="button" class="fp-tool" data-goto="bplan"><img src="tool-bplan.webp?v=33" width="900" height="557" alt="Business plan executive summary with a table of revenue, margin, profit and cash" loading="lazy"><b>Business plan</b><span>A full plan for lenders and investors, with the numbers taken from the forecast.</span></button>
         </div>
       </div>
 
@@ -792,7 +815,6 @@ table.lines.lg-rows input, table.lines.lg-rows select { width: 100%; padding: 6p
             <li><b>Adjusting entries</b> posted on top of the imported trial balance, which is never changed.</li>
             <li><b>A review trail:</b> who sent the period for review, who finalised it, and every download.</li>
           </ul>
-          <p class="fp-small">Also under More tools: Books with VAT under RRA rules, a three-year forecast, a budget, a valuation, loan schedules and a business plan.</p>
         </div>
         <div id="hm-pricing">
           <h2>Pricing</h2>
