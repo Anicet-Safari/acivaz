@@ -7,7 +7,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Acivaz">
 <meta property="og:title" content="Acivaz: turn your trial balance into a professional financial reporting pack">
-<meta property="og:description" content="Draft financial statements, notes and management reports for each client and period, with adjustments, a review checklist and PDF or Excel export. Free for 30 days, then RWF 20,000 a month per company.">
+<meta property="og:description" content="Draft financial statements, notes and management reports for each client and period, with adjustments, a review checklist and PDF or Excel export. Free for 30 days.">
 <meta property="og:url" content="https://anicet-safari.github.io/acivaz/">
 <meta property="og:image" content="https://anicet-safari.github.io/acivaz/og-image.png">
 <meta property="og:image:width" content="1200">
@@ -638,10 +638,7 @@ table.lines.lg-rows input, table.lines.lg-rows select { width: 100%; padding: 6p
 .fp-plain { margin: 6px 0 0; padding-left: 18px; font-size: 15px; line-height: 1.6; }
 .fp-plain li { margin-bottom: 8px; }
 .fp-small { font-size: 14px; line-height: 1.6; color: var(--muted); margin: 10px 0 0; }
-.fp-tariff { border-collapse: collapse; margin-top: 6px; font-size: 15px; width: 100%; }
-.fp-tariff th, .fp-tariff td { text-align: left; padding: 8px 12px 8px 0; border-bottom: 1px solid var(--line); vertical-align: baseline; }
-.fp-tariff th { font-weight: 500; color: var(--muted); white-space: nowrap; width: 40%; }
-.fp-tariff td { font-weight: 600; }
+.fp-small a { color: var(--accent); }
 .hm-foot { margin: 48px 0 0; padding: 16px 0 8px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13.5px; display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: center; }
 @media (max-width: 900px) {
   .fp-top { grid-template-columns: 1fr; gap: 32px; padding-top: 24px; }
@@ -745,7 +742,7 @@ table.lines.lg-rows input, table.lines.lg-rows select { width: 100%; padding: 6p
             <button class="btn primary big" type="button" id="hm-open" data-goto="clients">Add your first client</button>
             <button class="btn big" type="button" data-ws="sample">See the example report</button>
           </div>
-          <p class="fp-note">Free for 30 days on this device, with no sign-up and no card. Then RWF 20,000 a month per company. <button class="linkish" type="button" data-goto-pricing>Pricing</button></p>
+          <p class="fp-note">Free for 30 days on this device, with no sign-up and no card. <button class="linkish" type="button" data-goto-pricing>How paying works</button></p>
           <p class="fp-note">Built and supported in Kigali. Ask a question on <a href="https://wa.me/250784551341?text=Hello%2C%20I%20would%20like%20to%20know%20more%20about%20Acivaz." target="_blank" rel="noopener">WhatsApp</a>.</p>
         </div>
         <figure class="fp-pages">
@@ -817,15 +814,8 @@ table.lines.lg-rows input, table.lines.lg-rows select { width: 100%; padding: 6p
           </ul>
         </div>
         <div id="hm-pricing">
-          <h2>Pricing</h2>
-          <table class="fp-tariff">
-            <tbody>
-              <tr><th scope="row">First 30 days</th><td>Free, for any number of clients</td></tr>
-              <tr><th scope="row">Each company</th><td>RWF 20,000 a month</td></tr>
-              <tr><th scope="row">From 5 companies</th><td>RWF 15,000 a month each</td></tr>
-              <tr><th scope="row">First 20 customers</th><td>RWF 10,000 a month per company, fixed for 12 months</td></tr>
-            </tbody>
-          </table>
+          <h2>How paying works</h2>
+          <p class="fp-small" style="margin-top:6px">The first 30 days are free, for any number of clients, with no sign-up and no card. After that you pay per company, by the month. <a href="https://wa.me/250784551341?text=Hello%2C%20I%20would%20like%20to%20know%20the%20price%20of%20Acivaz." target="_blank" rel="noopener">Ask for the price on WhatsApp</a>.</p>
           <p class="fp-small">Everything on screen is free; you pay only to download reports. Pay by MTN MoMo, send the company ID shown in Acivaz on WhatsApp, and receive a code for the months paid. A code opens one company in one browser on one device, because your figures stay on that device and are never uploaded.</p>
           <h3>Replacing a device</h3>
           <p class="fp-small">Back up everything in Clients on the old device and restore it on the new one. Acivaz lists the paid companies it finds and writes a WhatsApp request for you. Replacement codes for the paid time that remains are free, within one working day. With no backup, send the MoMo transaction ID and the company name, and paid time is restored; your figures can only come back from a backup. A replacement code moves the licence; it does not add a second device.</p>
